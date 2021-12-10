@@ -1,9 +1,12 @@
 <template>
   <v-container class="padswap-header-box">
-    <div class="padswap-farm-picker" style="margin-bottom: 70px;">
-      <div class="padswap-farm-picker-left padswap-toad-picker">Toad</div>
-      <div class="padswap-farm-picker-right padswap-pad-picker">Pad</div>
-    </div>
+    <slider-tabs
+      class="padswap-ecosystem-tabs"
+      :value="1"
+    >
+      <v-tab>Toad</v-tab>
+      <v-tab>Pad</v-tab>
+    </slider-tabs>
     <v-img src="../assets/Toad Pad.png" />
     <div style="font-size: 36px; margin-top: 20px;">Pad Farms</div>
     <div style="font-size: 14px; color: #B3B8C1; margin-top: 10px;">Stake tokens to earn PAD, LP and partner tokens.</div>
@@ -11,17 +14,14 @@
       <v-card>
         <div class="d-flex align-center justify-space-between">
           <div class="d-flex align-center">
-          <div class="padswap-farm-picker">
-            <div class="padswap-farm-picker-left padswap-v2farms-picker">
-              V2 Farms
+            <slider-tabs class="padswap-farm-type-tabs">
+              <v-tab>V2&nbsp;Farms</v-tab>
+              <v-tab>Retiring</v-tab>
+            </slider-tabs>
+
+            <div class="d-flex align-center ml-5">
+              <v-switch /> Staked
             </div>
-            <div class="padswap-farm-picker-right padswap-retiringfarms-picker">
-              Retiring
-            </div>
-          </div>
-          <div class="d-flex align-center ml-5">
-            <v-switch /> Staked
-          </div>
           </div>
           <div class="d-flex align-center">
             Sort by:
@@ -37,13 +37,13 @@
             <div class="mx-3"></div>
             Search
             <v-text-field
-            solo
-            hide-details="true"
-            background-color="#292D38"
-            rounded
-            class="ml-2"
-            placeholder="Enter Token Name"
-            append-icon="mdi-magnify"
+              solo
+              hide-details="true"
+              background-color="#292D38"
+              rounded
+              class="ml-2"
+              placeholder="Enter Token Name"
+              append-icon="mdi-magnify"
             />
           </div>
         </div>
@@ -68,10 +68,11 @@
 <script lang="ts">
 import Vue from 'vue'
 import Farm from '../components/Farm.vue'
+import SliderTabs from '../components/SliderTabs.vue'
 
 export default Vue.extend({
   name: 'Home',
-  components: { Farm }
+  components: { Farm, SliderTabs }
 })
 </script>
 
@@ -95,42 +96,40 @@ export default Vue.extend({
   border-radius: 8px;
 }
 
+.padswap-ecosystem-tabs {
+  margin-bottom: 70px;
+}
+.padswap-ecosystem-tabs /deep/ .v-tabs-bar {
+  background: #FFFFFF;
+}
+.padswap-ecosystem-tabs /deep/ .v-tabs-slider-wrapper {
+  background: linear-gradient(180deg, #F99DF3 0%, #FA77F1 100%);
+}
+.padswap-ecosystem-tabs .v-tab {
+  padding: 11px 0px;
+  font-weight: bold;
+  color: #595E67 !important;
+  min-width: 87px;
+}
+.padswap-ecosystem-tabs .v-tab--active {
+  color: #920087 !important;
+}
+
+.padswap-farm-type-tabs /deep/ .v-tabs-bar {
+  background: #292D38;
+}
+.padswap-farm-type-tabs .v-tab {
+  color: #879CA5 !important;
+}
+.padswap-farm-type-tabs .v-tab--active {
+  color: #181D26 !important;
+}
+
 .padswap-header-box {
   margin-top: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-.padswap-farm-picker {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  background: #FFFFFF;
-  box-sizing: border-box;
-  border-radius: 100px;
-  font-size: 14px;
-  font-weight: bold;
-}
-.padswap-toad-picker {
-  color: #595E67;
-  padding: 10px 29px;
-}
-.padswap-pad-picker {
-  background: linear-gradient(180deg, #F99DF3 0%, #FA77F1 100%);
-  color: #920087;
-  border-radius: 100px;
-  padding: 10px 28px;
-}
-.padswap-v2farms-picker {
-  color: #181D26;
-  padding: 7px 15px;
-}
-.padswap-retiringfarms-picker {
-  color: #879CA5;
-  background: #292D38;
-  border-radius: 100px;
-  padding: 7px 15px;
-  font-weight: 500;
 }
 .padswap-farm-title {
   font-family: Roboto Mono;
