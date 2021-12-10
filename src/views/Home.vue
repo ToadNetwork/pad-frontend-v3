@@ -52,16 +52,27 @@
       </v-card>
       <v-card class="padswap-farms mt-4 pa-3">
         <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">Regular Farms</div>
-        <farm />
-        <farm v-for="i in 5" :key="i" />
+        <farm
+          v-for="farm in regularFarms.farms"
+          :key="farm.contract"
+          :name="farm.name"
+        />
       </v-card>
       <v-card class="padswap-farms mt-6 pa-3">
         <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">LP Farms</div>
-        <farm v-for="i in 2" :key="i" />
+        <farm
+          v-for="farm in lpFarms.farms"
+          :key="farm.contract"
+          :name="farm.name"
+        />
       </v-card>
       <v-card class="padswap-farms mt-6 pa-3">
         <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">Partner Farms</div>
-        <farm v-for="i in 2" :key="i" />
+        <farm
+          v-for="farm in partnerFarms.farms"
+          :key="farm.contract"
+          :name="farm.name"
+        />
       </v-card>
     </v-sheet>
   </v-container>
@@ -71,10 +82,18 @@
 import Vue from 'vue'
 import Farm from '../components/Farm.vue'
 import SliderTabs from '../components/SliderTabs.vue'
+import farms from '../farms_config.json'
 
 export default Vue.extend({
   name: 'Home',
-  components: { Farm, SliderTabs }
+  components: { Farm, SliderTabs },
+  data() {
+    return {
+      regularFarms: farms.regularFarms,
+      lpFarms: farms.lpFarms,
+      partnerFarms: farms.partnerFarms
+    }
+  }
 })
 </script>
 

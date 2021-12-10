@@ -5,12 +5,20 @@
       class="padswap-farm d-flex align-center justify-space-between"
       :class="isDetailsVisible ? 'padswap-farm-expanded' : ''"
     >
-      <div class="d-flex align-center">
-        <v-img src="../assets/tokens/BNB.png" class="padswap-token-img" />
-        <v-img src="../assets/tokens/BUSD.png" class="padswap-token-img mr-4" style="margin-left: -5px;" />
-        <div class="padswap-farm-title">BNB-BUSD</div>
+      <div class="d-flex align-center" style="width: 15%">
+        <v-img
+          :src="require(`../assets/tokens/${token0}.svg`)"
+          class="padswap-token-img"
+        />
+        <v-img
+          :src="require(`../assets/tokens/${token1 ? token1 : token0}.svg`)"
+          class="padswap-token-img mr-4"
+          style="margin-left: -5px"
+          contain
+        />
+        <div class="padswap-farm-title">{{ name }}</div>
       </div>
-      <div class="d-flex align-center justify-space-between" style="width: 45%;">
+      <div class="d-flex align-center justify-space-between flex-grow-1" style="max-width: 50%">
         <div class="d-flex" style="flex-direction: column;">
           <div class="padswap-farm-data-title">YEARLY APY</div>
           <div class="padswap-farm-data-item">417.04%</div>
@@ -24,7 +32,7 @@
           <div class="padswap-farm-data-item">~</div>
         </div>
       </div>
-      <div>
+      <div class="flex-shrink-1">
         <v-btn class="padswap-farm-btn mr-5">
           Enable
         </v-btn>
@@ -45,39 +53,39 @@
           <v-container class="padswap-farm-data">
             <v-row>
               <v-col class="padswap-pink">
-                GET PAD-BNB
+                GET {{ name }}
                 <v-icon dense>mdi-arrow-top-right</v-icon>
               </v-col>
               <v-col></v-col>
             </v-row>
             <v-row>
-              <v-col>POOL SIZE:</v-col>
+              <v-col>POOL&nbsp;SIZE:</v-col>
               <v-col>200.468M PAD</v-col>
             </v-row>
             <v-row>
-              <v-col>POOL VALUE:</v-col>
+              <v-col>POOL&nbsp;VALUE:</v-col>
               <v-col>$2.60K</v-col>
             </v-row>
             <v-row>
-              <v-col>LP/TOKEN PRICE:</v-col>
+              <v-col>LP/TOKEN&nbsp;PRICE:</v-col>
               <v-col>$0.1434</v-col>
             </v-row>
           </v-container>
           <v-container class="padswap-farm-data">
             <v-row>
-              <v-col>PAD-BNB BALANCE:</v-col>
+              <v-col>{{ name }}&nbsp;BALANCE:</v-col>
               <v-col>102.9179</v-col>
             </v-row>
             <v-row>
-              <v-col>PAD-BNB STAKED:</v-col>
+              <v-col>{{ name }}&nbsp;STAKED:</v-col>
               <v-col>3283.949974</v-col>
             </v-row>
             <v-row>
-              <v-col>STAKED VALUE</v-col>
+              <v-col>STAKED&nbsp;VALUE</v-col>
               <v-col class="padswap-pink">$470.91</v-col>
             </v-row>
             <v-row>
-              <v-col>EARNED VALUE:</v-col>
+              <v-col>EARNED&nbsp;VALUE:</v-col>
               <v-col class="padswap-pink">$11.3122</v-col>
             </v-row>
           </v-container>
@@ -134,10 +142,16 @@ import Vue from 'vue'
 
 export default Vue.extend({
   name: 'Farm',
+  props: {
+    name: String
+  },
   data() {
+    const [token0, token1] = this.name.split('-')
     return {
       expand: false,
-      isDetailsVisible: false
+      isDetailsVisible: false,
+      token0,
+      token1
     }
   }
 })
@@ -187,8 +201,6 @@ export default Vue.extend({
   font-size: 16px;
 }
 .padswap-token-img {
-  height: 30px;
-  width: 30px;
   max-width: 30px;
 }
 .padswap-farm-btn {
