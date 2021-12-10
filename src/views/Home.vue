@@ -8,94 +8,71 @@
     <div style="font-size: 36px; margin-top: 20px;">Pad Farms</div>
     <div style="font-size: 14px; color: #B3B8C1; margin-top: 10px;">Stake tokens to earn PAD, LP and partner tokens.</div>
     <v-sheet style="margin-top: 60px;">
-    <v-card>
-      <div class="d-flex align-center justify-space-between">
-        <div class="d-flex align-center">
-        <div class="padswap-farm-picker">
-          <div class="padswap-farm-picker-left padswap-v2farms-picker">
-            V2 Farms
+      <v-card>
+        <div class="d-flex align-center justify-space-between">
+          <div class="d-flex align-center">
+          <div class="padswap-farm-picker">
+            <div class="padswap-farm-picker-left padswap-v2farms-picker">
+              V2 Farms
+            </div>
+            <div class="padswap-farm-picker-right padswap-retiringfarms-picker">
+              Retiring
+            </div>
           </div>
-          <div class="padswap-farm-picker-right padswap-retiringfarms-picker">
-            Retiring
+          <div class="d-flex align-center ml-5">
+            <v-switch /> Staked
           </div>
-        </div>
-        <div class="d-flex align-center ml-5">
-          <v-switch /> Staked
-        </div>
-        </div>
-        <div class="d-flex align-center">
-          Sort by:
-          <v-select
+          </div>
+          <div class="d-flex align-center">
+            Sort by:
+            <v-select
+              solo
+              hide-details="true"
+              class="ml-2"
+              background-color="#292D38"
+              rounded
+              :items="['Hot']"
+              value="Hot"
+            />
+            <div class="mx-3"></div>
+            Search
+            <v-text-field
             solo
             hide-details="true"
-            class="ml-2"
             background-color="#292D38"
             rounded
-            :items="['Hot']"
-            value="Hot"
-          />
-          <div class="mx-3"></div>
-          Search
-          <v-text-field
-           solo
-           hide-details="true"
-           background-color="#292D38"
-           rounded
-           class="ml-2"
-           placeholder="Enter Token Name"
-           append-icon="mdi-magnify"
-          />
-        </div>
-      </div>
-    </v-card>
-    <v-card class="padswap-farms mt-4 pa-3">
-      <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">Regular Farms</div>
-
-      <v-card
-        v-for="i in 6"
-        :key="i"
-        class="d-flex align-center justify-space-between"
-      >
-        <div class="d-flex align-center">
-          <v-img src="../assets/tokens/BNB.png" class="padswap-token-img" />
-          <v-img src="../assets/tokens/BUSD.png" class="padswap-token-img mr-4" style="margin-left: -5px;" />
-          <div class="padswap-farm-title">BNB-BUSD</div>
-        </div>
-        <div class="d-flex align-center justify-space-between" style="width: 45%;">
-          <div class="d-flex" style="flex-direction: column;">
-            <div class="padswap-farm-data-title">YEARLY APY</div>
-            <div class="padswap-farm-data-item">417.04%</div>
+            class="ml-2"
+            placeholder="Enter Token Name"
+            append-icon="mdi-magnify"
+            />
           </div>
-          <div class="d-flex" style="flex-direction: column;">
-            <div class="padswap-farm-data-title">DAILY ROI</div>
-            <div class="padswap-farm-data-item">0.45%</div>
-          </div>
-          <div class="d-flex" style="flex-direction: column;">
-            <div class="padswap-farm-data-title">PAD EARNED</div>
-            <div class="padswap-farm-data-item">~</div>
-          </div>
-        </div>
-        <div>
-          <v-btn
-            rounded
-            class="padswap-farm-btn mr-5"
-          >
-            Enable
-          </v-btn>
-          <v-icon color="#00FC4C">mdi-chevron-down</v-icon>
         </div>
       </v-card>
-    </v-card>
+      <v-card class="padswap-farms mt-4 pa-3">
+        <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">Regular Farms</div>
+        <Farm />
+        <Farm v-for="i in 5" :key="i" />
+      </v-card>
+      <v-card class="padswap-farms mt-6 pa-3">
+        <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">LP Farms</div>
+        <Farm v-for="i in 2" :key="i" />
+      </v-card>
+      <v-card class="padswap-farms mt-6 pa-3">
+        <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">Partner Farms</div>
+        <Farm v-for="i in 2" :key="i" />
+      </v-card>
     </v-sheet>
   </v-container>
 </template>
 
 <script lang="ts">
-  import Vue from 'vue'
+import Vue from 'vue'
+import Farm from '../components/Farm.vue'
 
-  export default Vue.extend({
-    name: 'Home'
-  })
+export default Vue.extend({
+  name: 'Home',
+  components: { Farm }
+})
 </script>
 
 <style scoped>
@@ -165,33 +142,5 @@
 }
 .v-card.padswap-farms {
   background: rgba(255, 255, 255, 0.05);
-}
-.padswap-farms .v-card {
-  padding-top: 30px;
-  padding-bottom: 30px;
-  margin-bottom: 5px;
-}
-.padswap-token-img {
-  height: 30px;
-  width: 30px;
-  max-width: 30px;
-}
-.padswap-farm-btn {
-  border-radius: 100px;
-  background: linear-gradient(180deg, #00FC4c 0%, #00D741 100%);
-  color: #00310F;
-  width: 120px;
-  text-transform: none;
-  font-size: 16px;
-  font-weight: bold;
-  font-family: Roboto Mono;
-}
-.padswap-farm-data-title {
-  font-size: 12px;
-  color: #71767F;
-}
-.padswap-farm-data-item {
-  font-size: 24px;
-  color: #FFFFFF;
 }
 </style>

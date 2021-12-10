@@ -3,7 +3,7 @@
     <v-app-bar
       app
       dark
-      outlined="false"
+      flat
     >
       <div>
         <v-img
@@ -67,8 +67,6 @@ export default Vue.extend({
   padding-left: 120px;
   padding-right: 120px;
   background-color: transparent !important;
-  box-shadow: none;
-  border: none;
 }
 
 .padswap-navbar div {
