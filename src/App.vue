@@ -16,7 +16,65 @@
 
       <div class="d-flex padswap-navbar">
         <div>Toad<v-icon>mdi-chevron-down</v-icon></div>
-        <div>Padswap<v-icon>mdi-chevron-down</v-icon></div>
+        <v-menu offset-y>
+          <template v-slot:activator="{ on, attrs }">
+            <div
+              v-bind="attrs"
+              v-on="on"
+            >
+              <span>Padswap</span>
+              <v-icon>mdi-chevron-down</v-icon>
+            </div>
+          </template>
+          <v-list class="padswap-nav-menu">
+            <!-- TODO: separate component -->
+            <v-list-item>
+              <v-list-item-icon>
+                <v-img src="./assets/icons/Icon-Swap.svg" />
+              </v-list-item-icon>
+              <v-list-item-content>
+                <div>Swap</div>
+                <v-subheader>Buy or sell tokens on PadSwap</v-subheader>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-icon>
+                <v-img src="./assets/icons/Icon-Pad.svg" />
+              </v-list-item-icon>
+              <v-list-item-content>
+                <div>Pad Farms</div>
+                <v-subheader>Earn tokens by providing liquidity</v-subheader>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-icon>
+                <v-img src="./assets/icons/Icon-Pad.svg" />
+              </v-list-item-icon>
+              <v-list-item-content>
+                <div>Add Liquidity</div>
+                <v-subheader>Create LP tokens to add to farms</v-subheader>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-icon>
+                <v-img src="./assets/icons/Vault.svg" />
+              </v-list-item-icon>
+              <v-list-item-content>
+                <div>Vault</div>
+                <v-subheader>PAD's backing reserves</v-subheader>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-icon>
+                <v-img src="./assets/icons/Icon-Chart.svg" />
+              </v-list-item-icon>
+              <v-list-item-content>
+                <div>Stats</div>
+                <v-subheader>Analyze token prices and volume</v-subheader>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
         <div>Shop<v-icon>mdi-chevron-down</v-icon></div>
         <div>Games<v-icon></v-icon></div>
         <div>About<v-icon>mdi-chevron-down</v-icon></div>
@@ -79,5 +137,23 @@ export default Vue.extend({
   line-height: 20px;
   padding: 0px 20px;
   /* TODO: bigger font and vertical height */
+}
+
+.padswap-nav-menu {
+  border-radius: 8px !important;
+  background-color: #000000 !important;
+}
+.padswap-nav-menu .v-list-item {
+  padding: 11px 25px;
+  font-family: Roboto;
+}
+.padswap-nav-menu .v-list-item > div {
+  margin-bottom: 0px;
+}
+.padswap-nav-menu .v-list-item .v-subheader {
+  padding: 0px;
+  margin-top: 2px;
+  height: auto;
+  font-size: 12px;
 }
 </style>
