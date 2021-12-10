@@ -145,7 +145,7 @@ export default Vue.extend({
 
 <style scoped>
 .padswap-farm {
-  background: #181D26;
+  background: #181D26 !important;
   border-radius: 15px !important;
   width: 100%;
   color: #B3B8C1 !important;

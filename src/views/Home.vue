@@ -1,15 +1,17 @@
 <template>
-  <v-container class="padswap-header-box">
-    <slider-tabs
-      class="padswap-ecosystem-tabs"
-      :value="1"
-    >
-      <v-tab>Toad</v-tab>
-      <v-tab>Pad</v-tab>
-    </slider-tabs>
-    <v-img src="../assets/Toad Pad.png" />
-    <div style="font-size: 36px; margin-top: 20px;">Pad Farms</div>
-    <div style="font-size: 14px; color: #B3B8C1; margin-top: 10px;">Stake tokens to earn PAD, LP and partner tokens.</div>
+  <v-container>
+    <div class="padswap-header-box">
+      <slider-tabs
+        class="padswap-ecosystem-tabs"
+        :value="1"
+      >
+        <v-tab>Toad</v-tab>
+        <v-tab>Pad</v-tab>
+      </slider-tabs>
+      <v-img src="../assets/Toad Pad.png" />
+      <div style="font-size: 36px; margin-top: 20px;">Pad Farms</div>
+      <div style="font-size: 14px; color: #B3B8C1; margin-top: 10px;">Stake tokens to earn PAD, LP and partner tokens.</div>
+    </div>
     <v-sheet style="margin-top: 60px;">
       <v-card>
         <div class="d-flex align-center justify-space-between">
@@ -50,16 +52,16 @@
       </v-card>
       <v-card class="padswap-farms mt-4 pa-3">
         <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">Regular Farms</div>
-        <Farm />
-        <Farm v-for="i in 5" :key="i" />
+        <farm />
+        <farm v-for="i in 5" :key="i" />
       </v-card>
       <v-card class="padswap-farms mt-6 pa-3">
         <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">LP Farms</div>
-        <Farm v-for="i in 2" :key="i" />
+        <farm v-for="i in 2" :key="i" />
       </v-card>
       <v-card class="padswap-farms mt-6 pa-3">
         <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">Partner Farms</div>
-        <Farm v-for="i in 2" :key="i" />
+        <farm v-for="i in 2" :key="i" />
       </v-card>
     </v-sheet>
   </v-container>
