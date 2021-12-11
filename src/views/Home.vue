@@ -3,11 +3,23 @@
     <div class="padswap-header-box">
       <slider-tabs
         class="padswap-ecosystem-tabs"
-        :value="1"
+        :value="0"
       >
-        <v-tab>Toad</v-tab>
-        <v-tab>Pad</v-tab>
+        <v-tab class="d-flex flex-column">
+          <v-img style="max-height: 30px; max-width: 30px;" src="../assets/tokens/PAD.svg" />
+          <div>BSC</div>
+        </v-tab>
+        <v-tab class="d-flex flex-column">
+          <v-img style="max-height: 30px; max-width: 30px;" src="../assets/tokens/PAD.svg" />
+          <div>Moonriver</div>
+        </v-tab>
+        <v-tab class="d-flex flex-column">
+          <v-img style="max-height: 30px; max-width: 30px;" src="../assets/tokens/TOAD.svg" />
+          <div>Toad</div>
+        </v-tab>
       </slider-tabs>
+      <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
+
       <v-img src="../assets/Toad Pad.png" />
       <div style="font-size: 36px; margin-top: 20px;">Pad Farms</div>
       <div style="font-size: 14px; color: #B3B8C1; margin-top: 10px;">Stake tokens to earn PAD, LP and partner tokens.</div>
@@ -117,8 +129,12 @@ export default Vue.extend({
   border-radius: 8px;
 }
 
-.padswap-ecosystem-tabs {
-  margin-bottom: 70px;
+.padswap-ecosystem-subheader {
+  font-size: 14px;
+  color: #B3B8C1;
+  margin-top: 4px;
+  margin-bottom: 55px;
+  height: auto;
 }
 .padswap-ecosystem-tabs /deep/ .v-tabs-bar {
   background: #FFFFFF;
@@ -127,10 +143,10 @@ export default Vue.extend({
   background: linear-gradient(180deg, #F99DF3 0%, #FA77F1 100%);
 }
 .padswap-ecosystem-tabs .v-tab {
-  padding: 11px 0px;
+  padding: 10px 0px;
   font-weight: bold;
   color: #595E67 !important;
-  min-width: 87px;
+  min-width: 100px;
 }
 .padswap-ecosystem-tabs .v-tab--active {
   color: #920087 !important;
