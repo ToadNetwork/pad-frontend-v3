@@ -208,7 +208,8 @@ export default Vue.extend({
 .v-application {
   font-family: Roboto Mono;
   letter-spacing: 0.25px;
-  background-image: url(assets/BG.png) !important;
+  background-image: url(assets/BG.svg) !important;
+  background-size: contain !important;
   background-color: #000000 !important;
   background-repeat: no-repeat !important;
   padding: 0px 35px;
