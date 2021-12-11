@@ -10,7 +10,7 @@
         class="padswap-navbar-item"
       >
         <span>{{ title }}</span>
-        <v-icon v-show="!nonExpandable">mdi-chevron-down</v-icon>
+        <v-icon class="padswap-chevron-down" v-show="!nonExpandable">mdi-chevron-down</v-icon>
       </div>
     </template>
     <v-list class="padswap-nav-menu">

@@ -14,7 +14,7 @@
 
       <v-spacer></v-spacer>
 
-      <div class="d-flex padswap-navbar">
+      <div class="d-flex align-center padswap-navbar">
         <nav-menu title="Toad">
           <v-list-item>
             <v-list-item-icon>
@@ -169,12 +169,15 @@
           </v-list-item>
         </nav-menu>
       </div>
-      <div class="d-flex padswap-navbar ml-4">
-        <!-- TODO: pad icon -->
+      <div class="d-flex align-center padswap-navbar ml-4">
+        <v-img
+          src="./assets/tokens/PAD.svg"
+          style="width: 16px; height: 16px; margin-right: 6px; padding-right: 0px;"
+        />
         <div style="color: #00FC4C;">
           $0.000013
         </div>
-        <div>EN<v-icon>mdi-chevron-down</v-icon></div>
+        <div>EN<v-icon class="padswap-chevron-down">mdi-chevron-down</v-icon></div>
         <div class="padswap-address-box">0x1...289</div>
       </div>
     </v-app-bar>
@@ -227,8 +230,13 @@ export default Vue.extend({
   border: 1.5px solid #00FC4C;
   box-sizing: border-box;
   border-radius: 100px;
-  line-height: 20px;
-  padding: 0px 20px;
-  /* TODO: bigger font and vertical height */
+  padding: 6px 26px;
+  font-size: 16px;
+}
+
+/deep/ .padswap-chevron-down {
+  font-size: 20px;
+  padding-left: 3px;
+  margin-top: -2.6px;
 }
 </style>
