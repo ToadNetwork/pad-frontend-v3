@@ -177,7 +177,7 @@
         <div style="color: #00FC4C;">
           $0.000013
         </div>
-        <div>EN<v-icon class="padswap-chevron-down">mdi-chevron-down</v-icon></div>
+        <div style="white-space: nowrap">EN<v-icon class="padswap-chevron-down">mdi-chevron-down</v-icon></div>
         <div class="padswap-address-box">0x1...289</div>
       </div>
     </v-app-bar>

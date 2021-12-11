@@ -34,6 +34,7 @@ export default Vue.extend({
 <style scoped>
 .padswap-navbar-item {
   padding-right: 25px;
+  white-space: nowrap;
 }
 .padswap-nav-menu {
   border-radius: 8px !important;
