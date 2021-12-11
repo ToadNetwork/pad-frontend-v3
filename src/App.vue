@@ -7,7 +7,7 @@
     >
       <div>
         <v-img
-          src="./assets/logo-white.png"
+          :src="$padswapTheme.theme.headerLogoSrc"
           width="162.42px"
         />
       </div>
@@ -194,11 +194,7 @@ import NavMenu from './components/NavMenu.vue'
 
 export default Vue.extend({
   name: 'App',
-  components: { NavMenu },
-
-  data: () => ({
-    //
-  }),
+  components: { NavMenu }
 })
 </script>
 

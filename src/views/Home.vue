@@ -98,6 +98,7 @@ import Farm from '../components/Farm.vue'
 import SliderTabs from '../components/SliderTabs.vue'
 import farmsBsc from '../farms_config_bsc.json'
 import farmsMoonriver from '../farms_config_movr.json'
+import { BscPadswapTheme, MoonriverPadswapTheme } from '../padswap-theme'
 
 // TODO: config
 const farmsToad = {
@@ -163,6 +164,18 @@ export default Vue.extend({
       }
 
       return visibleFarms
+    }
+  },
+  watch: {
+    ecosystem(val) {
+      let theme
+      if (val == Ecosystem.Moonriver) {
+        theme = MoonriverPadswapTheme
+      } else {
+        theme = BscPadswapTheme
+      }
+
+      this.$padswapTheme.theme = theme
     }
   }
 })

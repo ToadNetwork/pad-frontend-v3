@@ -2,8 +2,10 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import vuetify from './plugins/vuetify'
+import { PadswapThemePlugin } from './padswap-theme'
 
 Vue.config.productionTip = false
+Vue.use(PadswapThemePlugin)
 
 new Vue({
   router,
