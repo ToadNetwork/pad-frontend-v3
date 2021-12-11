@@ -25,43 +25,41 @@
       <div style="font-size: 14px; color: #B3B8C1; margin-top: 10px;">Stake tokens to earn PAD, LP and partner tokens.</div>
     </div>
     <v-sheet style="margin-top: 60px;">
-      <v-card>
-        <div class="d-flex align-center justify-space-between">
-          <div class="d-flex align-center">
-            <slider-tabs class="padswap-farm-type-tabs">
-              <v-tab>V2&nbsp;Farms</v-tab>
-              <v-tab>Retiring</v-tab>
-            </slider-tabs>
-
-            <div class="d-flex align-center ml-5">
-              <v-switch /> Staked
-            </div>
-          </div>
-          <div class="d-flex align-center">
-            Sort&nbsp;by:
-            <v-select
-              solo
-              hide-details="true"
-              class="ml-2"
-              background-color="#292D38"
-              rounded
-              :items="['Hot']"
-              value="Hot"
-            />
-            <div class="mx-3"></div>
-            Search:
-            <v-text-field
-              solo
-              hide-details="true"
-              background-color="#292D38"
-              rounded
-              class="ml-2"
-              placeholder="Enter Token Name"
-              append-icon="mdi-magnify"
-            />
-          </div>
+      <v-card class="d-flex align-center flex-wrap flex-md-nowrap justify-space-around justify-md-start">
+        <slider-tabs class="padswap-farm-type-tabs mr-0">
+          <v-tab>V2&nbsp;Farms</v-tab>
+          <v-tab>Retiring</v-tab>
+        </slider-tabs>
+        <div class="d-flex align-center px-sm-5 mr-md-auto">
+          <v-switch /> Staked
+        </div>
+        <div class="d-flex align-center mr-md-5 py-2">
+          Sort&nbsp;by:
+          <v-select
+            solo
+            hide-details="true"
+            class="ml-2"
+            background-color="#292D38"
+            style="max-width: 200px"
+            rounded
+            :items="['Hot']"
+            value="Hot"
+          />
+        </div>
+        <div class="d-flex align-center py-2">
+          Search:
+          <v-text-field
+            solo
+            hide-details="true"
+            background-color="#292D38"
+            rounded
+            class="ml-2"
+            placeholder="Enter Token Name"
+            append-icon="mdi-magnify"
+          />
         </div>
       </v-card>
+
       <v-card class="padswap-farms mt-4 pa-3">
         <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">Regular Farms</div>
         <farm
@@ -152,11 +150,16 @@ export default Vue.extend({
   color: #920087 !important;
 }
 
+.padswap-farm-type-tabs {
+  width: 180px;
+  max-width: 180px;
+}
 .padswap-farm-type-tabs /deep/ .v-tabs-bar {
   background: #292D38;
 }
 .padswap-farm-type-tabs .v-tab {
   color: #879CA5 !important;
+  max-width: 90px;
 }
 .padswap-farm-type-tabs .v-tab--active {
   color: #181D26 !important;
@@ -178,5 +181,9 @@ export default Vue.extend({
 }
 .v-card.padswap-farms {
   background: rgba(255, 255, 255, 0.05);
+}
+
+.v-text-field /deep/ .v-icon {
+  opacity: 0.5;
 }
 </style>
