@@ -26,7 +26,10 @@
     </div>
     <v-sheet style="margin-top: 60px;">
       <v-card class="d-flex align-center flex-wrap flex-md-nowrap justify-space-around justify-md-start">
-        <slider-tabs class="padswap-farm-type-tabs mr-0">
+        <slider-tabs
+          v-model="farmType"
+          class="padswap-farm-type-tabs mr-0"
+        >
           <v-tab>V2&nbsp;Farms</v-tab>
           <v-tab>Retiring</v-tab>
         </slider-tabs>
@@ -49,6 +52,7 @@
         <div class="d-flex align-center py-2">
           Search:
           <v-text-field
+            v-model="searchText"
             solo
             hide-details="true"
             background-color="#292D38"
@@ -63,7 +67,7 @@
       <v-card class="padswap-farms mt-4 pa-3">
         <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">Regular Farms</div>
         <farm
-          v-for="farm in regularFarms.farms"
+          v-for="farm in displayedFarms.regularFarms"
           :key="farm.contract"
           :name="farm.name"
         />
@@ -71,7 +75,7 @@
       <v-card class="padswap-farms mt-6 pa-3">
         <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">LP Farms</div>
         <farm
-          v-for="farm in lpFarms.farms"
+          v-for="farm in displayedFarms.lpFarms"
           :key="farm.contract"
           :name="farm.name"
         />
@@ -79,7 +83,7 @@
       <v-card class="padswap-farms mt-6 pa-3">
         <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">Partner Farms</div>
         <farm
-          v-for="farm in partnerFarms.farms"
+          v-for="farm in displayedFarms.partnerFarms"
           :key="farm.contract"
           :name="farm.name"
         />
@@ -94,14 +98,47 @@ import Farm from '../components/Farm.vue'
 import SliderTabs from '../components/SliderTabs.vue'
 import farms from '../farms_config.json'
 
+type FarmData = {
+  name: String,
+  contract: String,
+  acceptedToken: String,
+  token1: String,
+  token2: String
+}
+
+enum FarmType {
+  Default = 0,
+  IncludeRetired = 1
+}
+
 export default Vue.extend({
   name: 'Home',
   components: { Farm, SliderTabs },
   data() {
     return {
-      regularFarms: farms.regularFarms,
-      lpFarms: farms.lpFarms,
-      partnerFarms: farms.partnerFarms
+      farmType: FarmType.Default,
+      searchText: ''
+    }
+  },
+  computed: {
+    displayedFarms() {
+      const visibleFarms = {
+        regularFarms: Array.from<FarmData>(farms.regularFarms.farms),
+        lpFarms: Array.from<FarmData>(farms.lpFarms.farms),
+        partnerFarms: Array.from<FarmData>(farms.partnerFarms.farms)
+      }
+
+      if (this.farmType == FarmType.IncludeRetired) {
+        visibleFarms.regularFarms.push(...farms.regularFarms.retiredFarms)
+      }
+
+      if (this.searchText) {
+        visibleFarms.regularFarms = visibleFarms.regularFarms.filter(f => f.name.toLowerCase().includes(this.searchText.toLowerCase()))
+        visibleFarms.lpFarms = visibleFarms.lpFarms.filter(f => f.name.toLowerCase().includes(this.searchText.toLowerCase()))
+        visibleFarms.partnerFarms.filter(f => f.name.toLowerCase().includes(this.searchText.toLowerCase()))
+      }
+
+      return visibleFarms
     }
   }
 })
