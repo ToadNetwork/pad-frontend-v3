@@ -3,7 +3,7 @@
     <div class="padswap-header-box">
       <slider-tabs
         class="padswap-ecosystem-tabs"
-        :value="0"
+        v-model="ecosystem"
       >
         <v-tab class="d-flex flex-column">
           <v-img style="max-height: 30px; max-width: 30px;" src="../assets/tokens/PAD.svg" />
@@ -96,7 +96,15 @@
 import Vue from 'vue'
 import Farm from '../components/Farm.vue'
 import SliderTabs from '../components/SliderTabs.vue'
-import farms from '../farms_config.json'
+import farmsBsc from '../farms_config_bsc.json'
+import farmsMoonriver from '../farms_config_movr.json'
+
+// TODO: config
+const farmsToad = {
+  regularFarms: { farms: [], retiredFarms: [] },
+  lpFarms: { farms: [] },
+  partnerFarms: { farms: [] }
+}
 
 type FarmData = {
   name: String,
@@ -111,17 +119,33 @@ enum FarmType {
   IncludeRetired = 1
 }
 
+enum Ecosystem {
+  BSC = 0,
+  Moonriver = 1,
+  Toad = 2
+}
+
 export default Vue.extend({
   name: 'Home',
   components: { Farm, SliderTabs },
   data() {
     return {
+      ecosystem: Ecosystem.BSC,
       farmType: FarmType.Default,
       searchText: ''
     }
   },
   computed: {
     displayedFarms() {
+      let farms
+      if (this.ecosystem == Ecosystem.Toad) {
+        farms = farmsToad
+      } else if (this.ecosystem == Ecosystem.Moonriver) {
+        farms = farmsMoonriver
+      } else {
+        farms = farmsBsc
+      }
+
       const visibleFarms = {
         regularFarms: Array.from<FarmData>(farms.regularFarms.farms),
         lpFarms: Array.from<FarmData>(farms.lpFarms.farms),
