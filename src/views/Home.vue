@@ -38,7 +38,7 @@
             </div>
           </div>
           <div class="d-flex align-center">
-            Sort by:
+            Sort&nbsp;by:
             <v-select
               solo
               hide-details="true"
@@ -49,7 +49,7 @@
               value="Hot"
             />
             <div class="mx-3"></div>
-            Search
+            Search:
             <v-text-field
               solo
               hide-details="true"
