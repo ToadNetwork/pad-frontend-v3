@@ -367,6 +367,7 @@ export default Vue.extend({
 
       const allFarms: FarmData[] = []
       allFarms.push(...this.currentFarmSet.regularFarms.farms,
+                    ...this.currentFarmSet.regularFarms.retiredFarms,
                     ...this.currentFarmSet.lpFarms.farms,
                     ...this.currentFarmSet.partnerFarms.farms)
       const priceModel = this.priceModel
