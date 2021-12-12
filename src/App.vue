@@ -1,5 +1,6 @@
 <template>
-  <v-app>
+  <v-app
+   v-bind:style="{ 'background-image': `url(${$padswapTheme.theme.backgroundImageSrc})` }">
     <v-app-bar
       app
       dark
@@ -207,7 +208,6 @@ export default Vue.extend({
 .v-application {
   font-family: Roboto Mono;
   letter-spacing: 0.25px;
-  background-image: url(assets/BG.svg) !important;
   background-size: contain !important;
   background-color: #000000 !important;
   background-repeat: no-repeat !important;
