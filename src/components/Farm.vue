@@ -21,11 +21,11 @@
       <div class="d-flex align-center justify-space-between flex-grow-1" style="max-width: 50%">
         <div class="d-flex" style="flex-direction: column;">
           <div class="padswap-farm-data-title">YEARLY APY</div>
-          <div class="padswap-farm-data-item">417.04%</div>
+          <div class="padswap-farm-data-item">{{ apy | formatPercent }}</div>
         </div>
         <div class="d-flex" style="flex-direction: column;">
           <div class="padswap-farm-data-title">DAILY ROI</div>
-          <div class="padswap-farm-data-item">0.45%</div>
+          <div class="padswap-farm-data-item">{{ roi | formatPercent }}</div>
         </div>
         <div class="d-flex" style="flex-direction: column;">
           <div class="padswap-farm-data-title">PAD EARNED</div>
@@ -42,6 +42,15 @@
           {{ expand ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
         </v-icon>
       </div>
+      <v-overlay
+        absolute
+        v-model="isLoading"
+      >
+        <v-progress-circular
+          indeterminate
+          style="opacity: 0.6"
+        />
+      </v-overlay>
     </v-card>
     <v-expand-transition
       @enter="isDetailsVisible = true"
@@ -137,13 +146,15 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from 'vue'
 
 export default Vue.extend({
   name: 'Farm',
   props: {
-    name: String
+    name: String,
+    roi: Number,
+    apy: Number
   },
   data() {
     const [token0, token1] = this.name.split('-')
@@ -152,6 +163,23 @@ export default Vue.extend({
       isDetailsVisible: false,
       token0,
       token1
+    }
+  },
+  computed: {
+    isLoading() {
+      if (!(this.name as any).includes('-')) {
+        return false // TODO: remove
+      }
+      return this.roi === undefined
+    }
+  }, filters: {
+    formatPercent(val: number | null) {
+      val = val ?? 0
+      return val.toLocaleString(undefined, {
+        style: 'percent',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })
     }
   }
 })
