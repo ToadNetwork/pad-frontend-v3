@@ -425,7 +425,7 @@ export default Vue.extend({
   height: auto;
 }
 .padswap-ecosystem-tabs /deep/ .v-tabs-bar {
-  background: #FFFFFF;
+  background: rgba(24, 29, 38, 0.7);
 }
 .padswap-ecosystem-tabs /deep/ .v-tabs-slider-wrapper {
   background: linear-gradient(180deg, #F99DF3 0%, #FA77F1 100%);
@@ -433,11 +433,11 @@ export default Vue.extend({
 .padswap-ecosystem-tabs .v-tab {
   padding: 10px 0px;
   font-weight: bold;
-  color: #595E67 !important;
+  color: #FFFFFF;
   min-width: 100px;
 }
 .padswap-ecosystem-tabs .v-tab--active {
-  color: #920087 !important;
+  color: #66015e !important;
 }
 
 .padswap-farm-type-tabs {
