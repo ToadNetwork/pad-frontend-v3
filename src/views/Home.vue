@@ -25,7 +25,7 @@
           <v-img
             style="max-height: 30px; max-width: 30px;"
             contain
-            src="../assets/Regular Toad.svg"
+            src="../assets/tokens/bsc/TOAD.svg"
           />
           <div>Toad</div>
         </v-tab>
