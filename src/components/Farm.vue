@@ -7,11 +7,11 @@
     >
       <div class="d-flex align-center" style="width: 15%">
         <v-img
-          :src="require(`../assets/tokens/${token0}.svg`)"
+          :src="require(`../assets/tokens/${chain.toLowerCase()}/${token0}.svg`)"
           class="padswap-token-img"
         />
         <v-img
-          :src="require(`../assets/tokens/${token1 ? token1 : token0}.svg`)"
+          :src="require(`../assets/tokens/${chain.toLowerCase()}/${token1 ? token1 : token0}.svg`)"
           class="padswap-token-img mr-4"
           style="margin-left: -5px"
           contain
@@ -153,6 +153,7 @@ export default Vue.extend({
   name: 'Farm',
   props: {
     name: String,
+    chain: String,
     roi: Number,
     apy: Number
   },

@@ -6,15 +6,15 @@
         v-model="ecosystem"
       >
         <v-tab class="d-flex flex-column">
-          <v-img style="max-height: 30px; max-width: 30px;" src="../assets/tokens/PAD.svg" />
+          <v-img style="max-height: 30px; max-width: 30px;" src="../assets/tokens/bsc/PAD.svg" />
           <div>BSC</div>
         </v-tab>
         <v-tab class="d-flex flex-column">
-          <v-img style="max-height: 30px; max-width: 30px;" src="../assets/tokens/PAD.svg" />
+          <v-img style="max-height: 30px; max-width: 30px;" src="../assets/tokens/moonriver/PAD.svg" />
           <div>Moonriver</div>
         </v-tab>
         <v-tab class="d-flex flex-column">
-          <v-img style="max-height: 30px; max-width: 30px;" src="../assets/tokens/TOAD.svg" />
+          <v-img style="max-height: 30px; max-width: 30px;" src="../assets/tokens/bsc/TOAD.svg" />
           <div>Toad</div>
         </v-tab>
       </slider-tabs>
@@ -70,6 +70,7 @@
           v-for="farm in displayedFarms.regularFarms"
           :key="farm.contract"
           :name="farm.name"
+          :chain="ecosystem == 1 ? 'moonriver' : 'bsc'"
           :roi="farm.roi"
           :apy="farm.apy"
         />
@@ -80,6 +81,7 @@
           v-for="farm in displayedFarms.lpFarms"
           :key="farm.contract"
           :name="farm.name"
+          :chain="ecosystem == 1 ? 'moonriver' : 'bsc'"
           :roi="farm.roi"
           :apy="farm.apy"
         />
@@ -90,6 +92,7 @@
           v-for="farm in displayedFarms.partnerFarms"
           :key="farm.contract"
           :name="farm.name"
+          :chain="ecosystem == 1 ? 'moonriver' : 'bsc'"
           :roi="farm.roi"
           :apy="farm.apy"
         />

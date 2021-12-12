@@ -171,7 +171,7 @@
       </div>
       <div class="d-flex align-center padswap-navbar ml-4">
         <v-img
-          src="./assets/tokens/PAD.svg"
+          :src="$padswapTheme.theme.padLogoSrc"
           style="width: 16px; height: 16px; margin-right: 6px; padding-right: 0px;"
         />
         <div style="color: #00FC4C;">

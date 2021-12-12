@@ -1,7 +1,8 @@
 import Vue from 'vue'
 
 interface IPadswapTheme {
-  headerLogoSrc: String
+  headerLogoSrc: string,
+  padLogoSrc: string
 }
 
 declare module 'vue/types/vue' {
@@ -11,11 +12,13 @@ declare module 'vue/types/vue' {
 }
 
 const BscPadswapTheme = {
-  headerLogoSrc: require('./assets/themes/bsc/logo.png')
+  headerLogoSrc: require('./assets/themes/bsc/logo.png'),
+  padLogoSrc: require('./assets/tokens/bsc/PAD.svg')
 }
 
 const MoonriverPadswapTheme = {
-  headerLogoSrc: require('./assets/themes/moonriver/logo.svg')
+  headerLogoSrc: require('./assets/themes/moonriver/logo.svg'),
+  padLogoSrc: require('./assets/tokens/moonriver/PAD.svg')
 }
 
 const PadswapThemePlugin = {
