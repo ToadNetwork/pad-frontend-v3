@@ -179,7 +179,18 @@
           $0.000013
         </div>
         <div style="white-space: nowrap">EN<v-icon class="padswap-chevron-down">mdi-chevron-down</v-icon></div>
-        <div class="padswap-address-box">0x1...289</div>
+        <div
+          @click="connectWallet"
+          class="padswap-address-box"
+          :class="{ 'padswap-connect': !isConnected }"
+        >
+          <template v-if="!isConnected">
+            Connect
+          </template>
+          <template v-else>
+            {{ $store.state.address | formatAddress }}
+          </template>
+        </div>
       </div>
     </v-app-bar>
 
@@ -191,11 +202,75 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { mapGetters } from 'vuex'
 import NavMenu from './components/NavMenu.vue'
+import { ethers } from 'ethers'
+// @ts-ignore
+import WalletConnectProvider from '@walletconnect/web3-provider'
+import Web3Modal from 'web3modal'
+import { delay } from './utils'
+
+const web3Modal = new Web3Modal({
+  network: 'binance',
+  cacheProvider: true,
+  providerOptions: {
+    walletconnect: {
+      package: WalletConnectProvider,
+      options: {
+        rpc: {
+          56: 'https://bsc-dataseed1.defibit.io/',
+          1285: 'https://moonriver.api.onfinality.io/public'
+        },
+        bridge: 'https://pancakeswap.bridge.walletconnect.org/',
+        network: 'binance' // TODO: change for moonriver
+      }
+    }
+  }
+})
 
 export default Vue.extend({
   name: 'App',
-  components: { NavMenu }
+  components: { NavMenu },
+  data() {
+    return {
+      address: null
+    }
+  },
+  computed: {
+    ...mapGetters(['isConnected'])
+  },
+  async mounted() {
+    await delay(0)
+    if (web3Modal.cachedProvider) {
+      await this.connectWallet()
+    }
+  },
+  methods: {
+    async connectWallet() {
+      if (this.isConnected) {
+        return
+      }
+
+      const provider = await web3Modal.connect()
+      const web3 = new ethers.providers.Web3Provider(provider)
+      this.$store.commit('setWeb3Connection', { web3, address: provider.selectedAddress })
+
+      provider.on('accountsChanged', (accounts: string[]) => {
+        let web3Args
+        if (provider.selectedAddress) {
+          web3Args = { web3, address: provider.selectedAddress }
+        } else {
+          web3Args = { web3: null, address: null}
+        }
+        this.$store.commit('setWeb3Connection', web3Args)
+      })
+    }
+  },
+  filters: {
+    formatAddress(val: string) {
+      return val.substring(0, 3) + '...' + val.substring(val.length - 3)
+    }
+  }
 })
 </script>
 
@@ -234,5 +309,9 @@ export default Vue.extend({
   font-size: 20px;
   padding-left: 3px;
   margin-top: -2.6px;
+}
+
+.padswap-connect {
+  cursor: pointer;
 }
 </style>

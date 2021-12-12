@@ -134,12 +134,12 @@ import Vue from 'vue'
 import { ethers } from 'ethers'
 import { providers } from '@0xsequence/multicall'
 
-import Farm from '../components/Farm.vue'
-import SliderTabs from '../components/SliderTabs.vue'
-import farmsBsc from '../farms_config_bsc.json'
-import farmsMoonriver from '../farms_config_movr.json'
-import { BscPadswapTheme, MoonriverPadswapTheme } from '../padswap-theme'
-import { PriceModel } from '../price-model'
+import Farm from '@/components/Farm.vue'
+import SliderTabs from '@/components/SliderTabs.vue'
+import farmsBsc from '@/farms_config_bsc.json'
+import farmsMoonriver from '@/farms_config_movr.json'
+import { BscPadswapTheme, MoonriverPadswapTheme } from '@/padswap-theme'
+import { PriceModel } from '@/price-model'
 import {
   PADSWAP_FARM_ABI,
   PADSWAP_LP_FARM_ABI,
@@ -149,6 +149,7 @@ import {
   PADSWAP_PAIR_ABI,
   MULTICALL_ADDRESS
 } from '../constants'
+import { delay } from '@/utils'
 
 // TODO: config
 const farmsToad = {
@@ -214,10 +215,6 @@ const MINTER = {
   [Ecosystem.BSC]: BSC_MINTER_ADDRESS,
   [Ecosystem.Moonriver]: MOVR_MINTER_ADDRESS,
   [Ecosystem.Toad]: BSC_MINTER_ADDRESS
-}
-
-async function delay(ms: number) {
-  await new Promise(res => setTimeout(res, ms))
 }
 
 function initializeFarms(farms: FarmData[], type: FarmType) {
