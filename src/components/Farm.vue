@@ -18,18 +18,34 @@
         />
         <div class="padswap-farm-title">{{ name }}</div>
       </div>
-      <div class="d-flex align-center justify-space-between flex-grow-1" style="max-width: 50%">
-        <div class="d-flex" style="flex-direction: column;">
+      <div
+        class="d-flex align-center justify-space-between flex-grow-1 ml-10"
+        style="max-width: 55%"
+      >
+        <div class="d-flex flex-column" style="min-width: 33.3%">
           <div class="padswap-farm-data-title">YEARLY APY</div>
           <div class="padswap-farm-data-item">{{ apy | formatPercent }}</div>
         </div>
-        <div class="d-flex" style="flex-direction: column;">
+        <div class="d-flex flex-column" style="min-width: 33.3%">
           <div class="padswap-farm-data-title">DAILY ROI</div>
           <div class="padswap-farm-data-item">{{ roi | formatPercent }}</div>
         </div>
-        <div class="d-flex" style="flex-direction: column;">
+        <div class="d-flex flex-column" style="min-width: 33.3%">
           <div class="padswap-farm-data-title">PAD EARNED</div>
-          <div class="padswap-farm-data-item">~</div>
+          <div class="padswap-farm-data-item">
+            <template v-if="userRewardsBalance">
+              {{ userRewardsBalance | formatDecimals(4) }}
+              <div class="padswap-farm-note">
+                Earned value:
+                <span class="padswap-farm-note-value">
+                  ${{ earnedValue | formatDecimals(4) }}
+                </span>
+              </div>
+            </template>
+            <template v-else>
+              ~
+            </template>
+          </div>
         </div>
       </div>
       <div class="flex-shrink-1">
@@ -69,6 +85,7 @@
             </v-row>
             <v-row>
               <v-col>TVL:</v-col>
+              <!-- TODO: unify formatting -->
               <v-col>${{ tvl | formatUnits('K') }}</v-col>
             </v-row>
             <v-row>
@@ -87,19 +104,19 @@
           <v-container class="padswap-farm-data">
             <v-row>
               <v-col>{{ name }}&nbsp;BALANCE:</v-col>
-              <v-col>102.9179</v-col>
+              <v-col>{{ userLpBalance | formatDecimals(4) }}</v-col>
             </v-row>
             <v-row>
               <v-col>{{ name }}&nbsp;STAKED:</v-col>
-              <v-col>3283.949974</v-col>
+              <v-col>{{ userStakedBalance | formatDecimals(4) }}</v-col>
             </v-row>
             <v-row>
               <v-col>STAKED&nbsp;VALUE</v-col>
-              <v-col class="padswap-pink">$470.91</v-col>
+              <v-col class="padswap-pink">${{ stakedLpValue | formatDecimals(2) }}</v-col>
             </v-row>
             <v-row>
               <v-col>EARNED&nbsp;VALUE:</v-col>
-              <v-col class="padswap-pink">$11.3122</v-col>
+              <v-col class="padswap-pink">${{ earnedValue | formatDecimals(4) }}</v-col>
             </v-row>
           </v-container>
           <div class="d-flex flex-column flex-grow-1" style="width: 100%">
@@ -136,7 +153,7 @@
               </div>
               <div class="padswap-dw-balance">
                 {{ name }} BALANCE: 
-                <span class="padswap-dw-balance-amount">102.9179</span>
+                <span class="padswap-dw-balance-amount">{{ userLpBalance | formatDecimals(4) }}</span>
               </div>
             </div>
             <v-subheader class="d-flex align-baseline px-0 mt-3">
@@ -163,7 +180,11 @@ export default Vue.extend({
     poolSize: Number,
     poolValue: Number,
     tvl: Number,
-    lpPrice: Number
+    lpPrice: Number,
+    rewardTokenPrice: Number,
+    userLpBalance: Number,
+    userStakedBalance: Number,
+    userRewardsBalance: Number
   },
   data() {
     const [token0, token1] = this.name.split('-')
@@ -180,15 +201,31 @@ export default Vue.extend({
         return false // TODO: remove
       }
       return this.roi === undefined
+    },
+    stakedLpValue() {
+      if (!this.userStakedBalance) {
+        return 0
+      }
+
+      return (this.userStakedBalance as number) * (this.lpPrice as number)
+    },
+    earnedValue() {
+      if (!this.userRewardsBalance) {
+        return 0
+      }
+
+      return (this.userRewardsBalance as number) * (this.rewardTokenPrice as number)
     }
-  }, filters: {
+  },
+  filters: {
     formatPercent(val: number | null) {
       val = val ?? 0
-      return val.toLocaleString(undefined, {
+      const formatted = val.toLocaleString(undefined, {
         style: 'percent',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       })
+      return formatted.replaceAll(',', '')
     },
     formatUnits(val: number, units: string) {
       let denom = 1e0
@@ -201,7 +238,15 @@ export default Vue.extend({
       const formatted = (val / denom).toLocaleString(undefined, {
         maximumFractionDigits: 3
       })
-      return `${formatted}${units || ''}`
+      return `${formatted}${units || ''}`.replaceAll(',', '')
+    },
+    formatDecimals(val: number, maxDecimals: number) {
+      val = val ?? 0
+      const formatted = val.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: maxDecimals
+      })
+      return formatted.replaceAll(',', '')
     }
   }
 })
@@ -270,6 +315,13 @@ export default Vue.extend({
 .padswap-farm-data-item {
   font-size: 24px;
   color: #FFFFFF;
+}
+.padswap-farm-note {
+  font-size: 12px;
+  color: #979CA5;
+}
+.padswap-farm-note-value {
+  color: #FB53EF;
 }
 .padswap-deposit-withdraw-box {
   border: 1px solid #595E67;

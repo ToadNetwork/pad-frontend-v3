@@ -93,6 +93,10 @@
           :poolValue="farm.poolValue"
           :tvl="farm.tvl"
           :lpPrice="farm.lpPrice"
+          :rewardTokenPrice="farm.rewardTokenPrice"
+          :userLpBalance="farm.userLpBalance"
+          :userStakedBalance="farm.userStakedBalance"
+          :userRewardsBalance="farm.userRewardsBalance"
         />
       </v-card>
       <v-card class="padswap-farms mt-6 pa-3">
@@ -108,6 +112,10 @@
           :poolValue="farm.poolValue"
           :tvl="farm.tvl"
           :lpPrice="farm.lpPrice"
+          :rewardTokenPrice="farm.rewardTokenPrice"
+          :userLpBalance="farm.userLpBalance"
+          :userStakedBalance="farm.userStakedBalance"
+          :userRewardsBalance="farm.userRewardsBalance"
         />
       </v-card>
       <v-card class="padswap-farms mt-6 pa-3">
@@ -123,6 +131,10 @@
           :poolValue="farm.poolValue"
           :tvl="farm.tvl"
           :lpPrice="farm.lpPrice"
+          :rewardTokenPrice="farm.rewardTokenPrice"
+          :userLpBalance="farm.userLpBalance"
+          :userStakedBalance="farm.userStakedBalance"
+          :userRewardsBalance="farm.userRewardsBalance"
         />
       </v-card>
     </v-sheet>
@@ -181,7 +193,10 @@ type FarmData = {
   lpPrice: number | undefined,
   rewardTokenPrice: number | undefined,
   roi: number | undefined,
-  apy: number | undefined
+  apy: number | undefined,
+  userLpBalance: number | undefined,
+  userStakedBalance: number | undefined,
+  userRewardsBalance: number | undefined
 }
 
 type FarmSet = {
@@ -217,7 +232,7 @@ const MINTER = {
   [Ecosystem.Toad]: BSC_MINTER_ADDRESS
 }
 
-function initializeFarms(farms: FarmData[], type: FarmType) {
+function initializeFarms(farms: FarmData[], type: FarmType): FarmData[] {
   return farms.map(f => ({
     ...f,
     rewardToken: f.rewardToken,
@@ -231,7 +246,10 @@ function initializeFarms(farms: FarmData[], type: FarmType) {
     lpPrice: undefined,
     rewardTokenPrice: undefined,
     roi: undefined,
-    apy: undefined
+    apy: undefined,
+    userLpBalance: undefined,
+    userStakedBalance: undefined,
+    userRewardsBalance: undefined
   }))
 }
 
@@ -340,6 +358,12 @@ export default Vue.extend({
       } else {
         return PriceModel.getPriceModelForChain(this.dataseed, 56)
       }
+    },
+    isConnected(): boolean {
+      return this.$store.getters.isConnected
+    },
+    userAddress(): string {
+      return this.$store.state.address
     }
   },
   watch: {
@@ -387,7 +411,15 @@ export default Vue.extend({
         const p3 = pairContract.totalSupply().then((n: ethers.BigNumber) => farm.pairTotalSupply = parseFloat(ethers.utils.formatEther(n)))
         const p4 = minterContract.sharesOf(farm.contract).then((n: ethers.BigNumber) => farm.mintShare = parseFloat(ethers.utils.formatEther(n)))
         promises.push(p1, p2, p3, p4)
+
+        if (this.isConnected) {
+          const p5 = pairContract.balanceOf(this.userAddress).then((n: ethers.BigNumber) => farm.userLpBalance = parseFloat(ethers.utils.formatEther(n)))
+          const p6 = farmContract.sharesOf(this.userAddress).then((n: ethers.BigNumber) => farm.userStakedBalance = parseFloat(ethers.utils.formatEther(n)))
+          const p7 = farmContract.rewardsOf(this.userAddress).then((n: ethers.BigNumber) => farm.userRewardsBalance = parseFloat(ethers.utils.formatEther(n)))
+          promises.push(p5, p6, p7)
+        }
       }
+
       await Promise.all(promises)
       const padAddress = PAD[this.ecosystem]
       this.padPrice = priceModel.getPriceUsd(padAddress)
@@ -403,22 +435,21 @@ export default Vue.extend({
           farm.poolValue = farm.poolSize! * this.padPrice
           farm.tvl = reserveUsd
 
-          let rewardTokenPrice
           let dripRate
           let decay
           if (farm.type == FarmType.Regular) {
-            rewardTokenPrice = this.padPrice
+            farm.rewardTokenPrice = this.padPrice
             dripRate = 0.1
             decay = 0
-            farm.roi = farm.poolSize! * rewardTokenPrice * dripRate / (farm.lpPrice! * farm.farmTotalSupply!)
+            farm.roi = farm.poolSize! * farm.rewardTokenPrice * dripRate / (farm.lpPrice! * farm.farmTotalSupply!)
           } else if (farm.type == FarmType.Partner) {
             const rewardTokenAddress = TOKENS[farm.rewardToken!]
-            rewardTokenPrice = priceModel.getPriceUsd(rewardTokenAddress)
+            farm.rewardTokenPrice = priceModel.getPriceUsd(rewardTokenAddress)
             dripRate = 0.0069
             decay = 0.0075
-            farm.roi = farm.poolSize! * rewardTokenPrice * dripRate / (farm.lpPrice! * farm.farmTotalSupply!)
+            farm.roi = farm.poolSize! * farm.rewardTokenPrice * dripRate / (farm.lpPrice! * farm.farmTotalSupply!)
           } else {
-            rewardTokenPrice = 1
+            farm.rewardTokenPrice = 1
             dripRate = 0.0075
             decay = 0.0075
             farm.roi = farm.poolSize! * dripRate / farm.farmTotalSupply!
