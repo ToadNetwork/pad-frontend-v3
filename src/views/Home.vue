@@ -61,7 +61,7 @@
             background-color="#292D38"
             style="max-width: 200px"
             rounded
-            :items="['Hot']"
+            :items="['Hot', 'APY', 'TVL', 'Earned', 'Staked']"
             value="Hot"
           />
         </div>
