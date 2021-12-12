@@ -68,16 +68,20 @@
               <v-col></v-col>
             </v-row>
             <v-row>
+              <v-col>TVL:</v-col>
+              <v-col>${{ tvl | formatUnits('K') }}</v-col>
+            </v-row>
+            <v-row>
               <v-col>POOL&nbsp;SIZE:</v-col>
-              <v-col>200.468M PAD</v-col>
+              <v-col>{{ poolSize | formatUnits('M') }} PAD</v-col>
             </v-row>
             <v-row>
               <v-col>POOL&nbsp;VALUE:</v-col>
-              <v-col>$2.60K</v-col>
+              <v-col>${{ poolValue | formatUnits('K') }}</v-col>
             </v-row>
             <v-row>
               <v-col>LP/TOKEN&nbsp;PRICE:</v-col>
-              <v-col>$0.1434</v-col>
+              <v-col>${{ lpPrice | formatUnits() }}</v-col>
             </v-row>
           </v-container>
           <v-container class="padswap-farm-data">
@@ -131,7 +135,7 @@
                 </v-btn>
               </div>
               <div class="padswap-dw-balance">
-                PAD-BNB BALANCE: 
+                {{ name }} BALANCE: 
                 <span class="padswap-dw-balance-amount">102.9179</span>
               </div>
             </div>
@@ -155,7 +159,11 @@ export default Vue.extend({
     name: String,
     chain: String,
     roi: Number,
-    apy: Number
+    apy: Number,
+    poolSize: Number,
+    poolValue: Number,
+    tvl: Number,
+    lpPrice: Number
   },
   data() {
     const [token0, token1] = this.name.split('-')
@@ -181,6 +189,19 @@ export default Vue.extend({
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       })
+    },
+    formatUnits(val: number, units: string) {
+      let denom = 1e0
+      if (units == 'M') {
+        denom = 1e6
+      } else if (units == 'K') {
+        denom = 1e3
+      }
+
+      const formatted = (val / denom).toLocaleString(undefined, {
+        maximumFractionDigits: 3
+      })
+      return `${formatted}${units || ''}`
     }
   }
 })

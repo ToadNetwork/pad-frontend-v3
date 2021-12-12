@@ -89,6 +89,10 @@
           :chain="ecosystem == 1 ? 'moonriver' : 'bsc'"
           :roi="farm.roi"
           :apy="farm.apy"
+          :poolSize="farm.poolSize"
+          :poolValue="farm.poolValue"
+          :tvl="farm.tvl"
+          :lpPrice="farm.lpPrice"
         />
       </v-card>
       <v-card class="padswap-farms mt-6 pa-3">
@@ -100,6 +104,10 @@
           :chain="ecosystem == 1 ? 'moonriver' : 'bsc'"
           :roi="farm.roi"
           :apy="farm.apy"
+          :poolSize="farm.poolSize"
+          :poolValue="farm.poolValue"
+          :tvl="farm.tvl"
+          :lpPrice="farm.lpPrice"
         />
       </v-card>
       <v-card class="padswap-farms mt-6 pa-3">
@@ -111,6 +119,10 @@
           :chain="ecosystem == 1 ? 'moonriver' : 'bsc'"
           :roi="farm.roi"
           :apy="farm.apy"
+          :poolSize="farm.poolSize"
+          :poolValue="farm.poolValue"
+          :tvl="farm.tvl"
+          :lpPrice="farm.lpPrice"
         />
       </v-card>
     </v-sheet>
@@ -160,6 +172,8 @@ type FarmData = {
   rewardToken: string | undefined,
   type: FarmType | undefined,
   poolSize: number | undefined,
+  poolValue: number | undefined,
+  tvl: number | undefined,
   farmTotalSupply: number | undefined,
   pairTotalSupply: number | undefined,
   mintShare: number | undefined,
@@ -212,6 +226,8 @@ function initializeFarms(farms: FarmData[], type: FarmType) {
     rewardToken: f.rewardToken,
     type,
     poolSize: undefined,
+    poolValue: undefined,
+    tvl: undefined,
     farmTotalSupply: undefined,
     pairTotalSupply: undefined,
     mintShare: undefined,
@@ -375,6 +391,8 @@ export default Vue.extend({
         } else {
           const reserveUsd = priceModel.getReserveUsd(farm.acceptedToken)
           farm.lpPrice = reserveUsd / farm.pairTotalSupply!
+          farm.poolValue = farm.poolSize! * this.padPrice
+          farm.tvl = reserveUsd
 
           let rewardTokenPrice
           let dripRate
