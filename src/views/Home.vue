@@ -20,7 +20,11 @@
       </slider-tabs>
       <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
 
-      <v-img src="../assets/Toad Pad.png" />
+      <v-img
+        :src="$padswapTheme.theme.toadPadImageSrc"
+        contain
+        height="105"
+      />
       <div style="font-size: 36px; margin-top: 20px;">Pad Farms</div>
       <div style="font-size: 14px; color: #B3B8C1; margin-top: 10px;">Stake tokens to earn PAD, LP and partner tokens.</div>
     </div>
@@ -421,7 +425,7 @@ export default Vue.extend({
   font-size: 14px;
   color: #B3B8C1;
   margin-top: 4px;
-  margin-bottom: 55px;
+  margin-bottom: 50px;
   height: auto;
 }
 .padswap-ecosystem-tabs /deep/ .v-tabs-bar {
