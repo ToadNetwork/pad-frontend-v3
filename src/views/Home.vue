@@ -62,7 +62,7 @@
             style="max-width: 200px"
             rounded
             :items="['Hot', 'APY', 'TVL', 'Earned', 'Staked']"
-            value="Hot"
+            v-model="sortBy"
           />
         </div>
         <div class="d-flex align-center py-2">
@@ -260,6 +260,7 @@ export default Vue.extend({
       active: true,
       ecosystem: Ecosystem.BSC,
       farmViewOption: FarmViewOption.Default,
+      sortBy: 'Hot',
       searchText: '',
       padPrice: 0,
       test: 0
@@ -309,6 +310,16 @@ export default Vue.extend({
         visibleFarms.lpFarms = visibleFarms.lpFarms.filter(f => f.name.toLowerCase().includes(this.searchText.toLowerCase()))
         visibleFarms.partnerFarms.filter(f => f.name.toLowerCase().includes(this.searchText.toLowerCase()))
       }
+
+      let sortfn = (_1: FarmData, _2: FarmData) => 1
+      if (this.sortBy == 'APY') {
+        sortfn = (f1, f2) => f2.apy! - f1.apy!
+      } else if (this.sortBy == 'TVL') {
+        sortfn = (f1, f2) => f2.tvl! - f1.tvl!
+      }
+      visibleFarms.regularFarms.sort(sortfn)
+      visibleFarms.lpFarms.sort(sortfn)
+      visibleFarms.partnerFarms.sort(sortfn)
 
       return visibleFarms
     },
