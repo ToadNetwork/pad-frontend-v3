@@ -6,15 +6,27 @@
         v-model="ecosystem"
       >
         <v-tab class="d-flex flex-column">
-          <v-img style="max-height: 30px; max-width: 30px;" src="../assets/tokens/bsc/PAD.svg" />
+          <v-img
+            style="max-height: 30px; max-width: 30px;"
+            contain
+            src="../assets/tokens/bsc/PAD.svg"
+          />
           <div>BSC</div>
         </v-tab>
         <v-tab class="d-flex flex-column">
-          <v-img style="max-height: 30px; max-width: 30px;" src="../assets/tokens/moonriver/PAD.svg" />
+          <v-img
+            style="max-height: 30px; max-width: 30px;"
+            contain
+            src="../assets/tokens/moonriver/PAD.svg"
+          />
           <div>Moonriver</div>
         </v-tab>
         <v-tab class="d-flex flex-column">
-          <v-img style="max-height: 30px; max-width: 30px;" src="../assets/tokens/bsc/TOAD.svg" />
+          <v-img
+            style="max-height: 30px; max-width: 30px;"
+            contain
+            src="../assets/Regular Toad.svg"
+          />
           <div>Toad</div>
         </v-tab>
       </slider-tabs>
