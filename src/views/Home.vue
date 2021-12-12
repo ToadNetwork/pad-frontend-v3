@@ -92,7 +92,7 @@
         />
       </v-card>
       <v-card class="padswap-farms mt-6 pa-3">
-        <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">LP Farms</div>
+        <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">DPLP Farms</div>
         <farm
           v-for="farm in displayedFarms.lpFarms"
           :key="farm.contract"
