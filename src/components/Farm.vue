@@ -128,15 +128,15 @@
             <div class="d-flex flex-column padswap-deposit-withdraw-box">
               <div class="d-flex mb-2">
                 <div
-                  @click="detailsAction = 'deposit'"
-                  :class="{ 'padswap-selected-action': detailsAction == 'deposit' }"
+                  @click="dwAction = 'deposit'"
+                  :class="{ 'padswap-selected-action': dwAction == 'deposit' }"
                   class="padswap-action"
                 >
                   Deposit
                 </div>
                 <div
-                  @click="detailsAction = 'withdraw'"
-                  :class="{ 'padswap-selected-action': detailsAction == 'withdraw' }"
+                  @click="dwAction = 'withdraw'"
+                  :class="{ 'padswap-selected-action': dwAction == 'withdraw' }"
                   class="padswap-action ml-7"
                 >
                   Withdraw
@@ -144,6 +144,7 @@
               </div>
               <div class="d-flex mb-1">
                 <v-text-field
+                  v-model="dwActionAmount"
                   solo
                   outlined
                   rounded
@@ -155,6 +156,7 @@
                   height="40px">
                   <template v-slot:append>
                     <v-btn
+                      @click="setMax"
                       x-small
                       color="#595E67"
                       class="padswap-max-btn mr-n3">
@@ -165,18 +167,18 @@
                 <v-btn
                   class="padswap-farm-btn pa-5"
                 >
-                  {{ detailsAction == 'deposit' ? 'Deposit' : 'Withdraw' }}
+                  {{ dwAction == 'deposit' ? 'Deposit' : 'Withdraw' }}
                 </v-btn>
               </div>
               <div class="padswap-dw-balance">
-                <template v-if="detailsAction == 'deposit'">
+                <template v-if="dwAction == 'deposit'">
                   {{ name }} BALANCE:
                 </template>
                 <template v-else>
                   {{ name }} STAKED:
                 </template>
                 <span class="padswap-dw-balance-amount">
-                  <template v-if="detailsAction == 'deposit'">
+                  <template v-if="dwAction == 'deposit'">
                     {{ userLpBalance | formatDecimals(4) }}
                   </template>
                   <template v-else>
@@ -222,7 +224,8 @@ export default Vue.extend({
     return {
       expand: false,
       isDetailsVisible: false,
-      detailsAction: 'deposit',
+      dwAction: 'deposit',
+      dwActionAmount: <number | null> null,
       token0,
       token1
     }
@@ -251,6 +254,15 @@ export default Vue.extend({
       }
 
       return (this.userRewardsBalance as number) * (this.rewardTokenPrice as number)
+    }
+  },
+  methods: {
+    setMax() {
+      if (this.dwAction == 'deposit') {
+        this.dwActionAmount = this.userLpBalance
+      } else {
+        this.dwActionAmount = this.userStakedBalance
+      }
     }
   },
   filters: {
