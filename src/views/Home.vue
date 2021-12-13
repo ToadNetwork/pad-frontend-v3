@@ -171,6 +171,7 @@ import {
   MULTICALL_ADDRESS
 } from '../constants'
 import { delay } from '@/utils'
+import AwaitLock from 'await-lock'
 
 // TODO: config
 const farmsToad = {
@@ -289,7 +290,10 @@ export default Vue.extend({
       stakedOnly: false,
       sortBy: 'Earned',
       searchText: '',
-      test: 0
+      syncLocks: {
+        [Ecosystem.BSC]: new AwaitLock(),
+        [Ecosystem.Moonriver]: new AwaitLock()
+      }
     }
   },
   async mounted() {
@@ -385,6 +389,13 @@ export default Vue.extend({
     },
     userAddress(): string {
       return this.$store.state.address
+    },
+    lastChainTransactionBlock(): Object {
+      // access properties explicitly to trigger reactivity
+      return {
+        [56]: this.$store.state.lastChainTransactionBlock[56],
+        [1285]: this.$store.state.lastChainTransactionBlock[1285]
+      }
     }
   },
   watch: {
@@ -398,6 +409,9 @@ export default Vue.extend({
 
       this.$padswapTheme.theme = theme
       setTimeout(() => this.sync())
+    },
+    lastChainTransactionBlock() {
+      setTimeout(() => this.sync())
     }
   },
   methods: {
@@ -407,6 +421,16 @@ export default Vue.extend({
         return
       }
 
+      const mutex = this.syncLocks[this.ecosystem]
+      await mutex.acquireAsync()
+
+      try {
+        await this.syncInternal()
+      } finally {
+        mutex.release()
+      }
+    },
+    async syncInternal() {
       const allFarms: FarmData[] = []
       allFarms.push(...this.currentFarmSet.regularFarms.farms,
                     ...this.currentFarmSet.regularFarms.retiredFarms,

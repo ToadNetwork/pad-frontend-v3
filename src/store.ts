@@ -6,9 +6,11 @@ import web3Modal from '@/wallet'
 
 Vue.use(Vuex)
 
+type ChainId = 56 | 1285
+
 type SafeSendTransactionArgs = {
   tx: ethers.PopulatedTransaction,
-  targetChainId: number
+  targetChainId: ChainId
 }
 
 export default new Vuex.Store({
@@ -16,6 +18,10 @@ export default new Vuex.Store({
     web3: <ethers.Signer | null> null,
     address: null,
     chainId: <number | null> null,
+    lastChainTransactionBlock: {
+      [56]: <number | null> null,
+      [1285]: <number | null> null
+    },
     padPrice: null
   },
   mutations: {
@@ -97,7 +103,9 @@ export default new Vuex.Store({
 
       const web3 = state.web3!
       const txResponse = await web3.sendTransaction(tx)
-      return await txResponse.wait()
+      const txReceipt = await txResponse.wait()
+
+      state.lastChainTransactionBlock[targetChainId] = txReceipt.blockNumber
     }
   }
 })
