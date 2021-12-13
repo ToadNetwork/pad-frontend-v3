@@ -50,7 +50,7 @@
           <v-tab>Retiring</v-tab>
         </slider-tabs>
         <div class="d-flex align-center px-sm-5 mr-md-auto">
-          <v-switch /> Staked
+          <v-switch v-model="stakedOnly" /> Staked
         </div>
         <div class="d-flex align-center mr-md-5 py-2">
           Sort&nbsp;by:
@@ -275,6 +275,7 @@ export default Vue.extend({
       active: true,
       ecosystem: Ecosystem.BSC,
       farmViewOption: FarmViewOption.Default,
+      stakedOnly: false,
       sortBy: 'Earned',
       searchText: '',
       padPrice: 0,
@@ -324,6 +325,12 @@ export default Vue.extend({
         visibleFarms.regularFarms = visibleFarms.regularFarms.filter(f => f.name.toLowerCase().includes(this.searchText.toLowerCase()))
         visibleFarms.lpFarms = visibleFarms.lpFarms.filter(f => f.name.toLowerCase().includes(this.searchText.toLowerCase()))
         visibleFarms.partnerFarms.filter(f => f.name.toLowerCase().includes(this.searchText.toLowerCase()))
+      }
+
+      if (this.stakedOnly) {
+        visibleFarms.regularFarms = visibleFarms.regularFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance > 0)
+        visibleFarms.lpFarms = visibleFarms.lpFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance > 0)
+        visibleFarms.partnerFarms = visibleFarms.partnerFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance > 0)
       }
 
       let sortfn = (_1: FarmData, _2: FarmData) => 1
