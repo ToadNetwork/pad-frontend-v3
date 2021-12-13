@@ -176,7 +176,7 @@
           style="width: 16px; height: 16px; margin-right: 6px; padding-right: 0px;"
         />
         <div style="color: #00FC4C;">
-          $0.000013
+          ${{ padPrice | formatPrice }}
         </div>
         <div style="white-space: nowrap">EN<v-icon class="padswap-chevron-down">mdi-chevron-down</v-icon></div>
         <div
@@ -202,7 +202,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import NavMenu from './components/NavMenu.vue'
 import { ethers } from 'ethers'
 // @ts-ignore
@@ -237,7 +237,8 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapGetters(['isConnected'])
+    ...mapGetters(['isConnected']),
+    ...mapState(['padPrice'])
   },
   async mounted() {
     await delay(0)
@@ -269,6 +270,9 @@ export default Vue.extend({
   filters: {
     formatAddress(val: string) {
       return val.substring(0, 3) + '...' + val.substring(val.length - 3)
+    },
+    formatPrice(val: number) {
+      return val.toLocaleString(undefined, { maximumFractionDigits: 7 })
     }
   }
 })

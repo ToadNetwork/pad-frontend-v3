@@ -278,7 +278,6 @@ export default Vue.extend({
       stakedOnly: false,
       sortBy: 'Earned',
       searchText: '',
-      padPrice: 0,
       test: 0
     }
   },
@@ -433,7 +432,8 @@ export default Vue.extend({
 
       await Promise.all(promises)
       const padAddress = PAD[this.ecosystem]
-      this.padPrice = priceModel.getPriceUsd(padAddress)
+      const padPrice = priceModel.getPriceUsd(padAddress)
+      this.$store.commit('setPadPrice', padPrice)
 
       for (const farm of allFarms) {
         const isSingleToken = farm.token1 == farm.token2
@@ -443,13 +443,13 @@ export default Vue.extend({
         } else {
           const reserveUsd = priceModel.getReserveUsd(farm.acceptedToken)
           farm.lpPrice = reserveUsd / farm.pairTotalSupply!
-          farm.poolValue = farm.poolSize! * this.padPrice
+          farm.poolValue = farm.poolSize! * padPrice
           farm.tvl = reserveUsd
 
           let dripRate
           let decay
           if (farm.type == FarmType.Regular) {
-            farm.rewardTokenPrice = this.padPrice
+            farm.rewardTokenPrice = padPrice
             dripRate = 0.1
             decay = 0
             farm.roi = farm.poolSize! * farm.rewardTokenPrice * dripRate / (farm.lpPrice! * farm.farmTotalSupply!)

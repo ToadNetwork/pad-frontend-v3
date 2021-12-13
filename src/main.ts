@@ -21,7 +21,7 @@ const store = new Vuex.Store({
       state.address = address
     },
     setPadPrice(state, padPrice) {
-      this.padPrice = padPrice
+      state.padPrice = padPrice
     }
   },
   getters: {
