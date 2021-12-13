@@ -35,9 +35,10 @@ const PadswapThemePlugin = {
   }
 }
 
+Vue.use(PadswapThemePlugin)
+
 export {
   IPadswapTheme,
   BscPadswapTheme,
-  MoonriverPadswapTheme,
-  PadswapThemePlugin
+  MoonriverPadswapTheme
 }

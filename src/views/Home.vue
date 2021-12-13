@@ -86,6 +86,8 @@
           v-for="farm in displayedFarms.regularFarms"
           :key="farm.contract"
           :name="farm.name"
+          :contract="farm.contract"
+          :acceptedToken="farm.acceptedToken"
           :chain="ecosystem == 1 ? 'moonriver' : 'bsc'"
           :roi="farm.roi"
           :apy="farm.apy"
@@ -106,6 +108,8 @@
           v-for="farm in displayedFarms.lpFarms"
           :key="farm.contract"
           :name="farm.name"
+          :contract="farm.contract"
+          :acceptedToken="farm.acceptedToken"
           :chain="ecosystem == 1 ? 'moonriver' : 'bsc'"
           :roi="farm.roi"
           :apy="farm.apy"
@@ -126,6 +130,8 @@
           v-for="farm in displayedFarms.partnerFarms"
           :key="farm.contract"
           :name="farm.name"
+          :contract="farm.contract"
+          :acceptedToken="farm.acceptedToken"
           :chain="ecosystem == 1 ? 'moonriver' : 'bsc'"
           :roi="farm.roi"
           :apy="farm.apy"
@@ -162,8 +168,7 @@ import {
   BSC_MINTER_ADDRESS,
   MOVR_MINTER_ADDRESS,
   PADSWAP_PAIR_ABI,
-  MULTICALL_ADDRESS,
-  FARM_ALLOWANCE
+  MULTICALL_ADDRESS
 } from '../constants'
 import { delay } from '@/utils'
 
@@ -432,7 +437,7 @@ export default Vue.extend({
           const p5 = pairContract.balanceOf(this.userAddress).then((n: ethers.BigNumber) => farm.userLpBalance = parseFloat(ethers.utils.formatEther(n)))
           const p6 = pairContract.allowance(this.userAddress, farm.contract).then((n: ethers.BigNumber) => farm.userAllowance = parseInt(n.toString()))
           const p7 = farmContract.sharesOf(this.userAddress).then((n: ethers.BigNumber) => farm.userStakedBalance = parseFloat(ethers.utils.formatEther(n)))
-          const p8 = farmContract.rewardsOf(this.userAddress).then((n: ethers.BigNumber) => farm.userRewardsBalance = parseFloat(ethers.utils.formatEther(n)))
+          const p8 = farmContract.estimateRewardsOf(this.userAddress).then((n: ethers.BigNumber) => farm.userRewardsBalance = parseFloat(ethers.utils.formatEther(n)))
           promises.push(p5, p6, p7, p8)
         }
       }

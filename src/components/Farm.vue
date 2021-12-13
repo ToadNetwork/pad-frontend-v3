@@ -49,7 +49,10 @@
         </div>
       </div>
       <div class="flex-shrink-1">
-        <v-btn class="padswap-farm-btn mr-5">
+        <v-btn
+          @click.stop="isEnabled ? harvest() : enable()"
+          class="padswap-farm-btn mr-5"
+        >
           <template v-if="isEnabled">
             Harvest
           </template>
@@ -200,12 +203,19 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { FARM_ALLOWANCE } from '@/constants'
+import { mapActions, mapState } from 'vuex'
+import { ethers } from 'ethers'
+
+import { ERC20_ABI, FARM_REQUIRED_ALLOWANCE, PADSWAP_FARM_ABI } from '@/constants'
+
+const APPROVE_AMOUNT = '115792089237316195423570985008687907853269984665640564039457584007913129639935'
 
 export default Vue.extend({
   name: 'Farm',
   props: {
     name: String,
+    contract: String,
+    acceptedToken: String,
     chain: String,
     roi: Number,
     apy: Number,
@@ -238,8 +248,7 @@ export default Vue.extend({
       return this.roi === undefined
     },
     isEnabled(): boolean {
-      console.log(this.userAllowance)
-      return this.userAllowance !== undefined && this.userAllowance >= FARM_ALLOWANCE
+      return this.userAllowance !== undefined && this.userAllowance >= FARM_REQUIRED_ALLOWANCE
     },
     stakedLpValue(): number {
       if (!this.userStakedBalance) {
@@ -254,7 +263,17 @@ export default Vue.extend({
       }
 
       return (this.userRewardsBalance as number) * (this.rewardTokenPrice as number)
-    }
+    },
+    farmContract(): ethers.Contract {
+      return new ethers.Contract(this.contract, PADSWAP_FARM_ABI, this.web3)
+    },
+    tokenContract(): ethers.Contract {
+      return new ethers.Contract(this.acceptedToken, ERC20_ABI, this.web3)
+    },
+    chainId(): number {
+      return this.chain == 'moonriver' ? 1285 : 56
+    },
+    ...mapState(['web3'])
   },
   methods: {
     setMax() {
@@ -263,7 +282,22 @@ export default Vue.extend({
       } else {
         this.dwActionAmount = this.userStakedBalance
       }
-    }
+    },
+    async enable() {
+      const tx = await this.tokenContract.populateTransaction.approve(this.farmContract.address, APPROVE_AMOUNT)
+      await this.safeSendTransaction({ tx, targetChainId: this.chainId})
+    },
+    async harvest() {
+      const tx = await this.farmContract.populateTransaction.harvest()
+      await this.safeSendTransaction({ tx, targetChainId: this.chainId})
+    },
+    async deposit() {
+      // TODO
+    },
+    async withdraw() {
+      // TODO
+    },
+    ...mapActions(['safeSendTransaction'])
   },
   filters: {
     formatPercent(val: number | null) {

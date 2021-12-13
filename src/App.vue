@@ -204,29 +204,8 @@
 import Vue from 'vue'
 import { mapGetters, mapState } from 'vuex'
 import NavMenu from './components/NavMenu.vue'
-import { ethers } from 'ethers'
-// @ts-ignore
-import WalletConnectProvider from '@walletconnect/web3-provider'
-import Web3Modal from 'web3modal'
-import { delay } from './utils'
-
-const web3Modal = new Web3Modal({
-  network: 'binance',
-  cacheProvider: true,
-  providerOptions: {
-    walletconnect: {
-      package: WalletConnectProvider,
-      options: {
-        rpc: {
-          56: 'https://bsc-dataseed1.defibit.io/',
-          1285: 'https://moonriver.api.onfinality.io/public'
-        },
-        bridge: 'https://pancakeswap.bridge.walletconnect.org/',
-        network: 'binance' // TODO: change for moonriver
-      }
-    }
-  }
-})
+import web3Modal from '@/wallet'
+import { delay } from '@/utils'
 
 export default Vue.extend({
   name: 'App',
@@ -252,19 +231,7 @@ export default Vue.extend({
         return
       }
 
-      const provider = await web3Modal.connect()
-      const web3 = new ethers.providers.Web3Provider(provider)
-      this.$store.commit('setWeb3Connection', { web3, address: provider.selectedAddress })
-
-      provider.on('accountsChanged', (accounts: string[]) => {
-        let web3Args
-        if (provider.selectedAddress) {
-          web3Args = { web3, address: provider.selectedAddress }
-        } else {
-          web3Args = { web3: null, address: null}
-        }
-        this.$store.commit('setWeb3Connection', web3Args)
-      })
+      this.$store.dispatch('requestConnect')
     }
   },
   filters: {
