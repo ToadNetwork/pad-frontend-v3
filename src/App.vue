@@ -271,7 +271,8 @@ export default Vue.extend({
     formatAddress(val: string) {
       return val.substring(0, 3) + '...' + val.substring(val.length - 3)
     },
-    formatPrice(val: number) {
+    formatPrice(val: number | null) {
+      val = val ?? 0
       return val.toLocaleString(undefined, { maximumFractionDigits: 7 })
     }
   }
