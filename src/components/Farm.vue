@@ -127,8 +127,20 @@
           <div class="d-flex flex-column flex-grow-1" style="width: 100%">
             <div class="d-flex flex-column padswap-deposit-withdraw-box">
               <div class="d-flex mb-2">
-                <div class="padswap-action padswap-selected-action">Deposit</div>
-                <div class="padswap-action ml-7">Withdraw</div>
+                <div
+                  @click="detailsAction = 'deposit'"
+                  :class="{ 'padswap-selected-action': detailsAction == 'deposit' }"
+                  class="padswap-action"
+                >
+                  Deposit
+                </div>
+                <div
+                  @click="detailsAction = 'withdraw'"
+                  :class="{ 'padswap-selected-action': detailsAction == 'withdraw' }"
+                  class="padswap-action ml-7"
+                >
+                  Withdraw
+                </div>
               </div>
               <div class="d-flex mb-1">
                 <v-text-field
@@ -153,12 +165,24 @@
                 <v-btn
                   class="padswap-farm-btn pa-5"
                 >
-                  Deposit
+                  {{ detailsAction == 'deposit' ? 'Deposit' : 'Withdraw' }}
                 </v-btn>
               </div>
               <div class="padswap-dw-balance">
-                {{ name }} BALANCE: 
-                <span class="padswap-dw-balance-amount">{{ userLpBalance | formatDecimals(4) }}</span>
+                <template v-if="detailsAction == 'deposit'">
+                  {{ name }} BALANCE:
+                </template>
+                <template v-else>
+                  {{ name }} STAKED:
+                </template>
+                <span class="padswap-dw-balance-amount">
+                  <template v-if="detailsAction == 'deposit'">
+                    {{ userLpBalance | formatDecimals(4) }}
+                  </template>
+                  <template v-else>
+                    {{ userStakedBalance | formatDecimals(4) }}
+                  </template>
+                </span>
               </div>
             </div>
             <v-subheader class="d-flex align-baseline px-0 mt-3">
@@ -198,29 +222,30 @@ export default Vue.extend({
     return {
       expand: false,
       isDetailsVisible: false,
+      detailsAction: 'deposit',
       token0,
       token1
     }
   },
   computed: {
-    isLoading() {
+    isLoading(): boolean {
       if (!(this.name as any).includes('-')) {
         return false // TODO: remove
       }
       return this.roi === undefined
     },
-    isEnabled() {
+    isEnabled(): boolean {
       console.log(this.userAllowance)
       return this.userAllowance !== undefined && this.userAllowance >= FARM_ALLOWANCE
     },
-    stakedLpValue() {
+    stakedLpValue(): number {
       if (!this.userStakedBalance) {
         return 0
       }
 
       return (this.userStakedBalance as number) * (this.lpPrice as number)
     },
-    earnedValue() {
+    earnedValue(): number {
       if (!this.userRewardsBalance) {
         return 0
       }
@@ -342,10 +367,12 @@ export default Vue.extend({
 .padswap-action {
   color: #979CA5;
   font-size: 16px;
+  cursor: pointer;
 }
 .padswap-action.padswap-selected-action {
   color: #FB53EF;
   text-decoration: underline;
+  cursor: unset;
 }
 .v-text-field {
   border-radius: 8px;
