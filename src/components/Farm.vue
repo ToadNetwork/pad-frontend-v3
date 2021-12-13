@@ -50,7 +50,12 @@
       </div>
       <div class="flex-shrink-1">
         <v-btn class="padswap-farm-btn mr-5">
-          Enable
+          <template v-if="isEnabled">
+            Harvest
+          </template>
+          <template v-else>
+            Enable
+          </template>
         </v-btn>
         <v-icon
           color="#00FC4C"
@@ -169,6 +174,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { FARM_ALLOWANCE } from '@/constants'
 
 export default Vue.extend({
   name: 'Farm',
@@ -184,7 +190,8 @@ export default Vue.extend({
     rewardTokenPrice: Number,
     userLpBalance: Number,
     userStakedBalance: Number,
-    userRewardsBalance: Number
+    userRewardsBalance: Number,
+    userAllowance: Number
   },
   data() {
     const [token0, token1] = this.name.split('-')
@@ -201,6 +208,10 @@ export default Vue.extend({
         return false // TODO: remove
       }
       return this.roi === undefined
+    },
+    isEnabled() {
+      console.log(this.userAllowance)
+      return this.userAllowance !== undefined && this.userAllowance >= FARM_ALLOWANCE
     },
     stakedLpValue() {
       if (!this.userStakedBalance) {

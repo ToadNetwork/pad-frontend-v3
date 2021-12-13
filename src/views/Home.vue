@@ -97,6 +97,7 @@
           :userLpBalance="farm.userLpBalance"
           :userStakedBalance="farm.userStakedBalance"
           :userRewardsBalance="farm.userRewardsBalance"
+          :userAllowance="farm.userAllowance"
         />
       </v-card>
       <v-card class="padswap-farms mt-6 pa-3">
@@ -116,6 +117,7 @@
           :userLpBalance="farm.userLpBalance"
           :userStakedBalance="farm.userStakedBalance"
           :userRewardsBalance="farm.userRewardsBalance"
+          :userAllowance="farm.userAllowance"
         />
       </v-card>
       <v-card class="padswap-farms mt-6 pa-3">
@@ -135,6 +137,7 @@
           :userLpBalance="farm.userLpBalance"
           :userStakedBalance="farm.userStakedBalance"
           :userRewardsBalance="farm.userRewardsBalance"
+          :userAllowance="farm.userAllowance"
         />
       </v-card>
     </v-sheet>
@@ -159,7 +162,8 @@ import {
   BSC_MINTER_ADDRESS,
   MOVR_MINTER_ADDRESS,
   PADSWAP_PAIR_ABI,
-  MULTICALL_ADDRESS
+  MULTICALL_ADDRESS,
+  FARM_ALLOWANCE
 } from '../constants'
 import { delay } from '@/utils'
 
@@ -196,7 +200,8 @@ type FarmData = {
   apy: number | undefined,
   userLpBalance: number | undefined,
   userStakedBalance: number | undefined,
-  userRewardsBalance: number | undefined
+  userRewardsBalance: number | undefined,
+  userAllowance: number | undefined
 }
 
 type FarmSet = {
@@ -249,7 +254,8 @@ function initializeFarms(farms: FarmData[], type: FarmType): FarmData[] {
     apy: undefined,
     userLpBalance: undefined,
     userStakedBalance: undefined,
-    userRewardsBalance: undefined
+    userRewardsBalance: undefined,
+    userAllowance: undefined
   }))
 }
 
@@ -424,9 +430,10 @@ export default Vue.extend({
 
         if (this.isConnected) {
           const p5 = pairContract.balanceOf(this.userAddress).then((n: ethers.BigNumber) => farm.userLpBalance = parseFloat(ethers.utils.formatEther(n)))
-          const p6 = farmContract.sharesOf(this.userAddress).then((n: ethers.BigNumber) => farm.userStakedBalance = parseFloat(ethers.utils.formatEther(n)))
-          const p7 = farmContract.rewardsOf(this.userAddress).then((n: ethers.BigNumber) => farm.userRewardsBalance = parseFloat(ethers.utils.formatEther(n)))
-          promises.push(p5, p6, p7)
+          const p6 = pairContract.allowance(this.userAddress, farm.contract).then((n: ethers.BigNumber) => farm.userAllowance = parseInt(n.toString()))
+          const p7 = farmContract.sharesOf(this.userAddress).then((n: ethers.BigNumber) => farm.userStakedBalance = parseFloat(ethers.utils.formatEther(n)))
+          const p8 = farmContract.rewardsOf(this.userAddress).then((n: ethers.BigNumber) => farm.userRewardsBalance = parseFloat(ethers.utils.formatEther(n)))
+          promises.push(p5, p6, p7, p8)
         }
       }
 
