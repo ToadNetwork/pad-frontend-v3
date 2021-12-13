@@ -147,16 +147,22 @@
               </div>
               <div class="d-flex mb-1">
                 <v-text-field
-                  v-model="dwActionAmount"
+                  v-model.number="dwActionAmount"
+                  type="number"
+                  min="0.0"
                   solo
                   outlined
                   rounded
                   dense
+                  color="#00FC4c"
                   background-color="#71767F"
-                  hide-details
+                  hide-spin-buttons
+                  :hide-details="validationStatus.message == null"
+                  :error-messages="validationStatus.message"
                   append-icon
                   class="mr-3"
-                  height="40px">
+                  height="40px"
+                >
                   <template v-slot:append>
                     <v-btn
                       @click="setMax"
@@ -168,7 +174,10 @@
                   </template>
                 </v-text-field>
                 <v-btn
+                  @click="dwAction == 'deposit' ? deposit() : withdraw()"
                   class="padswap-farm-btn pa-5"
+                  :class="{ 'padswap-shake': isAnimating }"
+                  :ripple="validationStatus.status"
                 >
                   {{ dwAction == 'deposit' ? 'Deposit' : 'Withdraw' }}
                 </v-btn>
@@ -206,7 +215,13 @@ import Vue from 'vue'
 import { mapActions, mapState } from 'vuex'
 import { ethers } from 'ethers'
 
+import { delay } from '@/utils'
 import { ERC20_ABI, FARM_REQUIRED_ALLOWANCE, PADSWAP_FARM_ABI } from '@/constants'
+
+type ValidationStatus = {
+  status: boolean,
+  message?: string
+}
 
 const APPROVE_AMOUNT = '115792089237316195423570985008687907853269984665640564039457584007913129639935'
 
@@ -234,7 +249,8 @@ export default Vue.extend({
     return {
       expand: false,
       isDetailsVisible: false,
-      dwAction: 'deposit',
+      isAnimating: false,
+      dwAction: <'deposit' | 'withdraw'> 'deposit',
       dwActionAmount: <number | null> null,
       token0,
       token1
@@ -264,6 +280,21 @@ export default Vue.extend({
 
       return (this.userRewardsBalance as number) * (this.rewardTokenPrice as number)
     },
+    validationStatus(): ValidationStatus {
+      if (this.dwActionAmount == null || this.dwActionAmount <= 0) {
+        return { status: false }
+      }
+
+      if (this.dwAction == 'deposit' && this.dwActionAmount > this.userLpBalance) {
+        return { status: false, message: 'Insufficient balance'}
+      }
+
+      if (this.dwAction == 'withdraw' && this.dwActionAmount > this.userStakedBalance) {
+        return { status: false, message: 'Insufficient balance'}
+      }
+
+      return { status: true }
+    },
     farmContract(): ethers.Contract {
       return new ethers.Contract(this.contract, PADSWAP_FARM_ABI, this.web3)
     },
@@ -292,10 +323,32 @@ export default Vue.extend({
       await this.safeSendTransaction({ tx, targetChainId: this.chainId})
     },
     async deposit() {
-      // TODO
+      if (!this.validationStatus.status) {
+        this.rejectAction()
+        return
+      }
+
+      const amount = ethers.utils.parseEther(this.dwActionAmount!.toString())
+      const tx = await this.farmContract.populateTransaction.deposit(amount)
+      await this.safeSendTransaction({ tx, targetChainId: this.chainId })
     },
     async withdraw() {
-      // TODO
+      if (!this.validationStatus.status) {
+        this.rejectAction()
+        return
+      }
+
+      const amount = ethers.utils.parseEther(this.dwActionAmount!.toString())
+      const tx = await this.farmContract.populateTransaction.remove(amount)
+      await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+    },
+    async rejectAction() {
+      if (this.isAnimating) {
+        return
+      }
+      this.isAnimating = true
+      await delay(300)
+      this.isAnimating = false
     },
     ...mapActions(['safeSendTransaction'])
   },
@@ -422,7 +475,6 @@ export default Vue.extend({
 }
 .v-text-field {
   border-radius: 8px;
-  border: solid 1px #979CA5;
   width: 330px;
 }
 .padswap-dw-balance {
@@ -441,5 +493,24 @@ export default Vue.extend({
   text-transform: none;
   font-size: 12px;
   font-weight: bold;
+}
+
+.padswap-shake {
+  animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+  transform: translate3d(0, 0, 0);
+}
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
 }
 </style>
