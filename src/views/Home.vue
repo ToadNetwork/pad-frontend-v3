@@ -501,16 +501,17 @@ export default Vue.extend({
         return
       }
 
-      const mutex = this.syncLocks[this.ecosystem]
+      const ecosystem = this.ecosystem
+      const mutex = this.syncLocks[ecosystem]
       await mutex.acquireAsync()
 
       try {
-        await this.syncInternal()
+        await this.syncInternal(ecosystem)
       } finally {
         mutex.release()
       }
     },
-    async syncInternal() {
+    async syncInternal(ecosystem: Ecosystem) {
       const allFarms: FarmData[] = []
       allFarms.push(...this.currentFarmSet.regularFarms.farms,
                     ...this.currentFarmSet.regularFarms.retiredFarms,
@@ -519,7 +520,7 @@ export default Vue.extend({
       const priceModel = this.priceModel
 
       let mintSupply: number
-      const minterAddress = MINTER[this.ecosystem]
+      const minterAddress = MINTER[ecosystem]
       const minterContract = new ethers.Contract(minterAddress, MINTER_ABI, this.multicall)
       const blockNumber = await this.multicall.getBlockNumber()
       const promises = [
@@ -547,7 +548,7 @@ export default Vue.extend({
       }
 
       await Promise.all(promises)
-      const padAddress = PAD[this.ecosystem]
+      const padAddress = PAD[ecosystem]
       const padPrice = priceModel.getPriceUsd(padAddress)
       this.$store.commit('setPadPrice', padPrice)
 
