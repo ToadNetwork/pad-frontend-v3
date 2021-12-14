@@ -14,7 +14,7 @@ declare module 'vue/types/vue' {
 }
 
 const BscPadswapTheme = {
-  headerLogoSrc: require('./assets/themes/bsc/logo.png'),
+  headerLogoSrc: require('./assets/themes/bsc/logo.svg'),
   padLogoSrc: require('./assets/tokens/bsc/PAD.svg'),
   backgroundImageSrc: require('./assets/themes/bsc/BG.svg'),
   toadPadImageSrc: require('./assets/themes/bsc/toad-pad.svg')
