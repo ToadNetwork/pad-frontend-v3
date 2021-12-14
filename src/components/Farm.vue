@@ -387,7 +387,6 @@ export default Vue.extend({
       return { status: true }
     },
     farmDataMinWidths(): string[] {
-      console.log(this.$vuetify.breakpoint)
       if (this.$vuetify.breakpoint.xl) {
         return ['200px', '200px', '200px']
       } else if (this.$vuetify.breakpoint.lg) {
