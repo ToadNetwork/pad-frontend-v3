@@ -98,7 +98,7 @@
             </v-row>
             <v-row>
               <v-col>POOL&nbsp;SIZE:</v-col>
-              <v-col>{{ poolSize | formatUnits('M') }} PAD</v-col>
+              <v-col>{{ poolSize | formatUnits('M') }} {{ this.displayedRewardToken }}</v-col>
             </v-row>
             <v-row>
               <v-col>POOL&nbsp;VALUE:</v-col>
@@ -231,6 +231,8 @@ export default Vue.extend({
     name: String,
     contract: String,
     acceptedToken: String,
+    rewardToken: String,
+    type: Number,
     chain: String,
     roi: Number,
     apy: Number,
@@ -258,9 +260,6 @@ export default Vue.extend({
   },
   computed: {
     isLoading(): boolean {
-      if (!(this.name as any).includes('-')) {
-        return false // TODO: remove
-      }
       return this.roi === undefined
     },
     isEnabled(): boolean {
@@ -272,6 +271,15 @@ export default Vue.extend({
       }
 
       return (this.userStakedBalance as number) * (this.lpPrice as number)
+    },
+    displayedRewardToken(): string {
+      if (this.rewardToken) {
+        return this.rewardToken
+      } else if (this.type == 1) { // LP farm
+        return this.name
+      } else {
+        return 'PAD'
+      }
     },
     earnedValue(): number {
       if (!this.userRewardsBalance) {

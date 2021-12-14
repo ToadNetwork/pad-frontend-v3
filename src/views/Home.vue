@@ -88,6 +88,8 @@
           :name="farm.name"
           :contract="farm.contract"
           :acceptedToken="farm.acceptedToken"
+          :rewardToken="farm.rewardToken"
+          :type="farm.type"
           :chain="ecosystem == 1 ? 'moonriver' : 'bsc'"
           :roi="farm.roi"
           :apy="farm.apy"
@@ -110,6 +112,8 @@
           :name="farm.name"
           :contract="farm.contract"
           :acceptedToken="farm.acceptedToken"
+          :rewardToken="farm.rewardToken"
+          :type="farm.type"
           :chain="ecosystem == 1 ? 'moonriver' : 'bsc'"
           :roi="farm.roi"
           :apy="farm.apy"
@@ -132,6 +136,8 @@
           :name="farm.name"
           :contract="farm.contract"
           :acceptedToken="farm.acceptedToken"
+          :rewardToken="farm.rewardToken"
+          :type="farm.type"
           :chain="ecosystem == 1 ? 'moonriver' : 'bsc'"
           :roi="farm.roi"
           :apy="farm.apy"
@@ -200,7 +206,7 @@ type FarmData = {
   farmTotalSupply: number | undefined,
   pairTotalSupply: number | undefined,
   mintShare: number | undefined,
-  lpPrice: number | undefined,
+  lpPrice: number | undefined, // token price for single-stake farms
   rewardTokenPrice: number | undefined,
   roi: number | undefined,
   apy: number | undefined,
@@ -472,38 +478,38 @@ export default Vue.extend({
       this.$store.commit('setPadPrice', padPrice)
 
       for (const farm of allFarms) {
-        const isSingleToken = farm.token1 == farm.token2
-        if (isSingleToken) {
-          // TODO
-          continue
+        const isSingleStake = farm.token1 == farm.token2
+        if (isSingleStake) {
+          farm.lpPrice = priceModel.getPriceUsd(farm.acceptedToken)
+          farm.tvl = farm.lpPrice * farm.farmTotalSupply!
         } else {
           const reserveUsd = priceModel.getReserveUsd(farm.acceptedToken)
           farm.lpPrice = reserveUsd / farm.pairTotalSupply!
-          farm.poolValue = farm.poolSize! * padPrice
           farm.tvl = reserveUsd
-
-          let dripRate
-          let decay
-          if (farm.type == FarmType.Regular) {
-            farm.rewardTokenPrice = padPrice
-            dripRate = 0.1
-            decay = 0
-            farm.roi = farm.poolSize! * farm.rewardTokenPrice * dripRate / (farm.lpPrice! * farm.farmTotalSupply!)
-          } else if (farm.type == FarmType.Partner) {
-            const rewardTokenAddress = TOKENS[farm.rewardToken!]
-            farm.rewardTokenPrice = priceModel.getPriceUsd(rewardTokenAddress)
-            dripRate = 0.0069
-            decay = 0.0075
-            farm.roi = farm.poolSize! * farm.rewardTokenPrice * dripRate / (farm.lpPrice! * farm.farmTotalSupply!)
-          } else {
-            farm.rewardTokenPrice = 1
-            dripRate = 0.0075
-            decay = 0.0075
-            farm.roi = farm.poolSize! * dripRate / farm.farmTotalSupply!
-          }
-
-          farm.apy = this.getApy(farm.roi, decay)
         }
+
+        let dripRate
+        let decay
+        if (farm.type == FarmType.Regular) {
+          dripRate = 0.1
+          decay = 0
+          farm.rewardTokenPrice = padPrice
+          farm.roi = farm.poolSize! * farm.rewardTokenPrice * dripRate / (farm.lpPrice! * farm.farmTotalSupply!)
+        } else if (farm.type == FarmType.Partner) {
+          dripRate = 0.0069
+          decay = 0.0075
+          const rewardTokenAddress = TOKENS[farm.rewardToken!]
+          farm.rewardTokenPrice = priceModel.getPriceUsd(rewardTokenAddress)
+          farm.roi = farm.poolSize! * farm.rewardTokenPrice * dripRate / (farm.lpPrice! * farm.farmTotalSupply!)
+        } else {
+          dripRate = 0.0075
+          decay = 0.0075
+          farm.rewardTokenPrice = farm.lpPrice
+          farm.roi = farm.poolSize! * dripRate / farm.farmTotalSupply!
+        }
+
+        farm.poolValue = farm.poolSize! * farm.rewardTokenPrice
+        farm.apy = this.getApy(farm.roi, decay)
       }
     },
     getApy(roi: number, decay: number) {
