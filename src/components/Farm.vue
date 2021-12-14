@@ -34,11 +34,11 @@
           <div class="padswap-farm-data-title">{{ displayedRewardToken }} EARNED</div>
           <div class="padswap-farm-data-item">
             <template v-if="userRewardsBalance">
-              {{ userRewardsBalance | formatDecimals(4) }}
+              {{ userRewardsBalance | formatNumber(4) }}
               <div class="padswap-farm-note">
                 Earned value:
                 <span class="padswap-farm-note-value">
-                  ${{ earnedValue | formatDecimals(4) }}
+                  ${{ earnedValue | formatNumber(4) }}
                 </span>
               </div>
             </template>
@@ -93,38 +93,37 @@
             </v-row>
             <v-row>
               <v-col>TVL:</v-col>
-              <!-- TODO: unify formatting -->
-              <v-col>${{ tvl | formatUnits('K') }}</v-col>
+              <v-col>${{ tvl | formatNumberKM }}</v-col>
             </v-row>
             <v-row>
               <v-col>POOL&nbsp;SIZE:</v-col>
-              <v-col>{{ poolSize | formatUnits('M') }} {{ this.displayedRewardToken }}</v-col>
+              <v-col>{{ poolSize | formatNumberKM }} {{ this.displayedRewardToken }}</v-col>
             </v-row>
             <v-row>
               <v-col>POOL&nbsp;VALUE:</v-col>
-              <v-col>${{ poolValue | formatUnits('K') }}</v-col>
+              <v-col>${{ poolValue | formatNumberKM }}</v-col>
             </v-row>
             <v-row>
               <v-col>LP/TOKEN&nbsp;PRICE:</v-col>
-              <v-col>${{ lpPrice | formatUnits() }}</v-col>
+              <v-col>${{ lpPrice | formatNumberKM }}</v-col>
             </v-row>
           </v-container>
           <v-container class="padswap-farm-data">
             <v-row>
               <v-col>{{ name }}&nbsp;BALANCE:</v-col>
-              <v-col>{{ userLpBalance | formatDecimals(4) }}</v-col>
+              <v-col>{{ userLpBalance | formatNumber(4) }}</v-col>
             </v-row>
             <v-row>
               <v-col>{{ name }}&nbsp;STAKED:</v-col>
-              <v-col>{{ userStakedBalance | formatDecimals(4) }}</v-col>
+              <v-col>{{ userStakedBalance | formatNumber(4) }}</v-col>
             </v-row>
             <v-row>
               <v-col>STAKED&nbsp;VALUE</v-col>
-              <v-col class="padswap-pink">${{ stakedLpValue | formatDecimals(2) }}</v-col>
+              <v-col class="padswap-pink">${{ stakedLpValue | formatNumber(2) }}</v-col>
             </v-row>
             <v-row>
               <v-col>EARNED&nbsp;VALUE:</v-col>
-              <v-col class="padswap-pink">${{ earnedValue | formatDecimals(4) }}</v-col>
+              <v-col class="padswap-pink">${{ earnedValue | formatNumber(4) }}</v-col>
             </v-row>
           </v-container>
           <div class="d-flex flex-column flex-grow-1" style="width: 100%">
@@ -191,10 +190,10 @@
                 </template>
                 <span class="padswap-dw-balance-amount">
                   <template v-if="dwAction == 'deposit'">
-                    {{ userLpBalance | formatDecimals(4) }}
+                    {{ userLpBalance | formatNumber(4) }}
                   </template>
                   <template v-else>
-                    {{ userStakedBalance | formatDecimals(4) }}
+                    {{ userStakedBalance | formatNumber(4) }}
                   </template>
                 </span>
               </div>
@@ -217,6 +216,7 @@ import { ethers } from 'ethers'
 
 import { delay } from '@/utils'
 import { ERC20_ABI, FARM_REQUIRED_ALLOWANCE, PADSWAP_FARM_ABI } from '@/constants'
+import { formatMixin } from '@/format'
 
 type ValidationStatus = {
   status: boolean,
@@ -227,6 +227,7 @@ const APPROVE_AMOUNT = '11579208923731619542357098500868790785326998466564056403
 
 export default Vue.extend({
   name: 'Farm',
+  mixins: [formatMixin],
   props: {
     name: String,
     contract: String,
@@ -359,38 +360,6 @@ export default Vue.extend({
       this.isAnimating = false
     },
     ...mapActions(['safeSendTransaction'])
-  },
-  filters: {
-    formatPercent(val: number | null) {
-      val = val ?? 0
-      const formatted = val.toLocaleString(undefined, {
-        style: 'percent',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      })
-      return formatted.replaceAll(',', '')
-    },
-    formatUnits(val: number, units: string) {
-      let denom = 1e0
-      if (units == 'M') {
-        denom = 1e6
-      } else if (units == 'K') {
-        denom = 1e3
-      }
-
-      const formatted = (val / denom).toLocaleString(undefined, {
-        maximumFractionDigits: 3
-      })
-      return `${formatted}${units || ''}`.replaceAll(',', '')
-    },
-    formatDecimals(val: number, maxDecimals: number) {
-      val = val ?? 0
-      const formatted = val.toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: maxDecimals
-      })
-      return formatted.replaceAll(',', '')
-    }
   }
 })
 </script>

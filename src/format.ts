@@ -25,6 +25,19 @@ export const formatMixin = Vue.extend({
       const formattedNoCommas = formatted.replaceAll(',', '')
       return formattedNoCommas + suffix
     },
+    formatNumber(val: number | null,
+                 maximumFractionDigits: number = 3,
+                 minimumFractionDigits: number = 2) {
+      if (!val) {
+        val = 0
+      }
+
+      const formatted = val.toLocaleString(undefined, {
+        minimumFractionDigits,
+        maximumFractionDigits
+      })
+      return formatted?.replaceAll(',', '')
+    },
     formatPercent(val: number | null) {
       if (!val) {
         val = 0
