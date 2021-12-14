@@ -111,12 +111,12 @@
             class="padswap-user-stats-bar d-flex align-center flex-wrap flex-md-nowrap justify-space-around py-4 px-4"
           >
             <div class="d-flex flex-column">
-              <div class="padswap-data-item">≈ {{ totals.dailyPAD | formatNumberKM(3) }}</div>
-              <div class="padswap-data-title">DAILY PAD (EXPECTED)</div>
+              <div class="padswap-data-item">≈ ${{ totals.dailyUSD | formatNumberKM(2) }}</div>
+              <div class="padswap-data-title">DAILY (EXPECTED)</div>
             </div>
             <div class="d-flex flex-column">
-              <div class="padswap-data-item">≈ ${{ totals.dailyUSD | formatNumberKM(2) }}</div>
-              <div class="padswap-data-title">DAILY USD (EXPECTED)</div>
+              <div class="padswap-data-item">≈ ${{ totals.dailyUSD * 7 | formatNumberKM(2) }}</div>
+              <div class="padswap-data-title">WEEKLY (EXPECTED)</div>
             </div>
           </v-card>
         </v-col>
