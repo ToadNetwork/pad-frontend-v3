@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="padswap-farms-home">
     <div class="padswap-header-box">
       <slider-tabs
         class="padswap-ecosystem-tabs"

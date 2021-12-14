@@ -265,7 +265,7 @@ export default Vue.extend({
     padding: 0px;
   }
 
-  .container {
+  .padswap-farms-home {
     padding: 0px;
   }
 

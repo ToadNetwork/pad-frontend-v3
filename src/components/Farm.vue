@@ -146,128 +146,145 @@
       @afterLeave="isDetailsVisible = false">
       <div v-show="expand">
         <v-card
-          class="padswap-farm-details d-flex align-baseline justify-space-between"
+          class="padswap-farm-details"
         >
-          <v-container class="padswap-farm-data">
-            <v-row>
-              <v-col class="padswap-pink">
-                GET {{ name }}
-                <v-icon dense>mdi-arrow-top-right</v-icon>
-              </v-col>
-              <v-col></v-col>
-            </v-row>
-            <v-row>
-              <v-col>TVL:</v-col>
-              <v-col>${{ tvl | formatNumberKM }}</v-col>
-            </v-row>
-            <v-row>
-              <v-col>POOL&nbsp;SIZE:</v-col>
-              <v-col>{{ poolSize | formatNumberKM }} {{ this.displayedRewardToken }}</v-col>
-            </v-row>
-            <v-row>
-              <v-col>POOL&nbsp;VALUE:</v-col>
-              <v-col>${{ poolValue | formatNumberKM }}</v-col>
-            </v-row>
-            <v-row>
-              <v-col>LP/TOKEN&nbsp;PRICE:</v-col>
-              <v-col>${{ lpPrice | formatNumberKM }}</v-col>
-            </v-row>
-          </v-container>
-          <v-container class="padswap-farm-data">
-            <v-row>
-              <v-col>{{ name }}&nbsp;BALANCE:</v-col>
-              <v-col>{{ userLpBalance | formatNumber(4) }}</v-col>
-            </v-row>
-            <v-row>
-              <v-col>{{ name }}&nbsp;STAKED:</v-col>
-              <v-col>{{ userStakedBalance | formatNumber(4) }}</v-col>
-            </v-row>
-            <v-row>
-              <v-col>STAKED&nbsp;VALUE</v-col>
-              <v-col class="padswap-pink">${{ stakedLpValue | formatNumber(2) }}</v-col>
-            </v-row>
-            <v-row>
-              <v-col>EARNED&nbsp;VALUE:</v-col>
-              <v-col class="padswap-pink">${{ earnedValue | formatNumber(4) }}</v-col>
-            </v-row>
-          </v-container>
-          <div class="d-flex flex-column flex-grow-1" style="width: 100%">
-            <div class="d-flex flex-column padswap-deposit-withdraw-box">
-              <div class="d-flex mb-2">
-                <div
-                  @click="dwAction = 'deposit'"
-                  :class="{ 'padswap-selected-action': dwAction == 'deposit' }"
-                  class="padswap-action"
-                >
-                  Deposit
-                </div>
-                <div
-                  @click="dwAction = 'withdraw'"
-                  :class="{ 'padswap-selected-action': dwAction == 'withdraw' }"
-                  class="padswap-action ml-7"
-                >
-                  Withdraw
-                </div>
-              </div>
-              <div class="d-flex mb-1">
-                <v-text-field
-                  v-model.number="dwActionAmount"
-                  type="number"
-                  min="0.0"
-                  solo
-                  outlined
-                  rounded
-                  dense
-                  color="#00FC4c"
-                  background-color="#71767F"
-                  hide-spin-buttons
-                  :hide-details="validationStatus.message == null"
-                  :error-messages="validationStatus.message"
-                  append-icon
-                  class="mr-3"
-                  height="40px"
-                >
-                  <template v-slot:append>
+          <v-row justify="space-between">
+            <v-col
+              class="padswap-farm-data"
+              sm="3"
+              cols="12"
+            >
+              <v-row>
+                <v-col cols="6" class="padswap-pink">
+                  GET {{ name }}
+                  <v-icon dense>mdi-arrow-top-right</v-icon>
+                </v-col>
+                <v-col cols="6"></v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="6">TVL:</v-col>
+                <v-col cols="6">${{ tvl | formatNumberKM }}</v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="6">POOL&nbsp;SIZE:</v-col>
+                <v-col cols="6">{{ poolSize | formatNumberKM }}&nbsp;{{ this.displayedRewardToken }}</v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="6">POOL&nbsp;VALUE:</v-col>
+                <v-col cols="6">${{ poolValue | formatNumberKM }}</v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="6">LP/TOKEN&nbsp;PRICE:</v-col>
+                <v-col cols="6">${{ lpPrice | formatNumberKM }}</v-col>
+              </v-row>
+            </v-col>
+            <v-col
+              class="padswap-farm-data"
+              sm="3"
+              cols="12"
+            >
+              <v-row>
+                <v-col>{{ name }}&nbsp;BALANCE:</v-col>
+                <v-col>{{ userLpBalance | formatNumber(4) }}</v-col>
+              </v-row>
+              <v-row>
+                <v-col>{{ name }}&nbsp;STAKED:</v-col>
+                <v-col>{{ userStakedBalance | formatNumber(4) }}</v-col>
+              </v-row>
+              <v-row>
+                <v-col>STAKED&nbsp;VALUE</v-col>
+                <v-col class="padswap-pink">${{ stakedLpValue | formatNumber(2) }}</v-col>
+              </v-row>
+              <v-row>
+                <v-col>EARNED&nbsp;VALUE:</v-col>
+                <v-col class="padswap-pink">${{ earnedValue | formatNumber(4) }}</v-col>
+              </v-row>
+            </v-col>
+            <v-col
+              sm="6"
+              cols="12"
+              class="px-0 pt-sm-0 pt-4"
+              style="max-width: 600px"
+            >
+              <div class="d-flex flex-column">
+                <div class="d-flex flex-column padswap-deposit-withdraw-box">
+                  <div class="d-flex mb-2">
+                    <div
+                      @click="dwAction = 'deposit'"
+                      :class="{ 'padswap-selected-action': dwAction == 'deposit' }"
+                      class="padswap-action"
+                    >
+                      Deposit
+                    </div>
+                    <div
+                      @click="dwAction = 'withdraw'"
+                      :class="{ 'padswap-selected-action': dwAction == 'withdraw' }"
+                      class="padswap-action ml-7"
+                    >
+                      Withdraw
+                    </div>
+                  </div>
+                  <div class="d-flex mb-1">
+                    <v-text-field
+                      v-model.number="dwActionAmount"
+                      type="number"
+                      min="0.0"
+                      solo
+                      outlined
+                      rounded
+                      dense
+                      color="#00FC4c"
+                      background-color="#71767F"
+                      hide-spin-buttons
+                      :hide-details="validationStatus.message == null"
+                      :error-messages="validationStatus.message"
+                      append-icon
+                      class="mr-3"
+                      height="40px"
+                    >
+                      <template v-slot:append>
+                        <v-btn
+                          @click="setMax"
+                          x-small
+                          color="#595E67"
+                          class="padswap-max-btn mr-n3">
+                          Max
+                        </v-btn>
+                      </template>
+                    </v-text-field>
                     <v-btn
-                      @click="setMax"
-                      x-small
-                      color="#595E67"
-                      class="padswap-max-btn mr-n3">
-                      Max
+                      @click="dwAction == 'deposit' ? deposit() : withdraw()"
+                      class="padswap-farm-btn padswap-dw-btn pa-5"
+                      :class="{ 'padswap-shake': isAnimating }"
+                      :ripple="validationStatus.status"
+                    >
+                      {{ dwAction == 'deposit' ? 'Deposit' : 'Withdraw' }}
                     </v-btn>
-                  </template>
-                </v-text-field>
-                <v-btn
-                  @click="dwAction == 'deposit' ? deposit() : withdraw()"
-                  class="padswap-farm-btn pa-5"
-                  :class="{ 'padswap-shake': isAnimating }"
-                  :ripple="validationStatus.status"
-                >
-                  {{ dwAction == 'deposit' ? 'Deposit' : 'Withdraw' }}
-                </v-btn>
+                  </div>
+                  <div class="padswap-dw-balance">
+                    <template v-if="dwAction == 'deposit'">
+                      {{ name }} BALANCE:
+                    </template>
+                    <template v-else>
+                      {{ name }} STAKED:
+                    </template>
+                    <span class="padswap-dw-balance-amount">
+                      <template v-if="dwAction == 'deposit'">
+                        {{ userLpBalance | formatNumber(4) }}
+                      </template>
+                      <template v-else>
+                        {{ userStakedBalance | formatNumber(4) }}
+                      </template>
+                    </span>
+                  </div>
+                </div>
+                <v-subheader class="d-flex align-baseline px-0 mt-3">
+                  <v-icon small class="mr-2">mdi-information-outline</v-icon>
+                  <div>V2 Farms: 1% fee when staking and unstaking. This fee goes to the PadSwap vault.</div>
+                </v-subheader>
               </div>
-              <div class="padswap-dw-balance">
-                <template v-if="dwAction == 'deposit'">
-                  {{ name }} BALANCE:
-                </template>
-                <template v-else>
-                  {{ name }} STAKED:
-                </template>
-                <span class="padswap-dw-balance-amount">
-                  <template v-if="dwAction == 'deposit'">
-                    {{ userLpBalance | formatNumber(4) }}
-                  </template>
-                  <template v-else>
-                    {{ userStakedBalance | formatNumber(4) }}
-                  </template>
-                </span>
-              </div>
-            </div>
-            <v-subheader class="d-flex align-baseline px-0 mt-3">
-              <v-icon small class="mr-2">mdi-information-outline</v-icon>
-              <div>V2 Farms: 1% fee when staking and unstaking. This fee goes to the PadSwap vault.</div>
-            </v-subheader>
-          </div>
+            </v-col>
+          </v-row>
         </v-card>
       </div>
     </v-expand-transition>
@@ -468,7 +485,7 @@ export default Vue.extend({
   border-bottom-left-radius: 15px !important;
   border-bottom-right-radius: 15px !important;
   width: 100%;
-  padding: 30px;
+  padding: 45px;
   font-size: 14px;
   font-family: Roboto;
 }
@@ -503,6 +520,12 @@ export default Vue.extend({
   font-weight: bold;
   font-family: Roboto Mono;
 }
+@media all and (max-width: 970px) {
+  .padswap-farm-btn.padswap-dw-btn {
+    width: 100px;
+    font-size: 15px;
+  }
+}
 .padswap-farm-data-title {
   font-size: 12px;
   color: #71767F;
@@ -536,7 +559,6 @@ export default Vue.extend({
 }
 .v-text-field {
   border-radius: 8px;
-  width: 330px;
 }
 .padswap-dw-balance {
   font-size: 12px;
