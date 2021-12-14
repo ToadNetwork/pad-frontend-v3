@@ -40,8 +40,11 @@
       <div style="font-size: 36px; margin-top: 20px;">Pad Farms</div>
       <div style="font-size: 14px; color: #B3B8C1; margin-top: 10px;">Stake tokens to earn PAD, LP and partner tokens.</div>
     </div>
-    <v-sheet style="margin-top: 60px;">
-      <v-card class="d-flex align-center flex-wrap flex-md-nowrap justify-space-around justify-md-start">
+    <v-sheet style="margin-top: 70px;">
+      <v-card
+        class="d-flex align-center flex-wrap flex-md-nowrap justify-space-between px-0 justify-md-start"
+        style="background: transparent"
+      >
         <slider-tabs
           v-model="farmViewOption"
           class="padswap-farm-type-tabs mr-0"
@@ -79,6 +82,45 @@
           />
         </div>
       </v-card>
+
+      <v-row class="pt-3 pb-3">
+        <v-col cols="8">
+          <v-card
+            class="padswap-user-stats-bar d-flex align-center flex-wrap flex-md-nowrap justify-space-around py-4 px-0"
+          >
+            <div class="d-flex flex-column">
+              <div class="padswap-data-item">${{ totals.staked | formatNumberKM(2) }}</div>
+              <div class="padswap-data-title">TOTAL STAKED</div>
+            </div>
+            <div class="d-flex flex-column">
+              <div class="padswap-data-item">${{ totals.rewards | formatNumberKM }}</div>
+              <div class="padswap-data-title">PENDING REWARDS</div>
+            </div>
+            <div class="d-flex flex-column">
+              <div class="padswap-data-item">{{ totals.averageROI | formatPercent }}</div>
+              <div class="padswap-data-title">AVERAGE ROI</div>
+            </div>
+            <div class="d-flex flex-column">
+              <div class="padswap-data-item">{{ totals.averageAPY | formatPercent }}</div>
+              <div class="padswap-data-title">AVERAGE APY</div>
+            </div>
+          </v-card>
+        </v-col>
+        <v-col cols="4">
+          <v-card
+            class="padswap-user-stats-bar d-flex align-center flex-wrap flex-md-nowrap justify-space-around py-4 px-4"
+          >
+            <div class="d-flex flex-column">
+              <div class="padswap-data-item">≈ {{ totals.dailyPAD | formatNumberKM(3) }}</div>
+              <div class="padswap-data-title">DAILY PAD (EXPECTED)</div>
+            </div>
+            <div class="d-flex flex-column">
+              <div class="padswap-data-item">≈ ${{ totals.dailyUSD | formatNumberKM(2) }}</div>
+              <div class="padswap-data-title">DAILY USD (EXPECTED)</div>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
 
       <v-card class="padswap-farms mt-4 pa-3">
         <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">Regular Farms</div>
@@ -160,6 +202,8 @@
 import Vue from 'vue'
 import { ethers } from 'ethers'
 import { providers } from '@0xsequence/multicall'
+import AwaitLock from 'await-lock'
+import { List } from 'linq-collections'
 
 import Farm from '@/components/Farm.vue'
 import SliderTabs from '@/components/SliderTabs.vue'
@@ -177,7 +221,7 @@ import {
   MULTICALL_ADDRESS
 } from '../constants'
 import { delay } from '@/utils'
-import AwaitLock from 'await-lock'
+import { formatMixin } from '@/format'
 
 // TODO: config
 const farmsToad = {
@@ -282,6 +326,7 @@ function initializeFarmSet(farmSet: FarmSet) {
 
 export default Vue.extend({
   name: 'Home',
+  mixins: [formatMixin],
   components: { Farm, SliderTabs },
   data() {
     return {
@@ -368,6 +413,35 @@ export default Vue.extend({
       visibleFarms.partnerFarms.sort(sortfn)
 
       return visibleFarms
+    },
+    totals(): Object {
+      const allFarms: FarmData[] = []
+      allFarms.push(...this.currentFarmSet.regularFarms.farms,
+                    ...this.currentFarmSet.regularFarms.retiredFarms,
+                    ...this.currentFarmSet.lpFarms.farms,
+                    ...this.currentFarmSet.partnerFarms.farms)
+      const farmsList = new List(allFarms)
+
+      const totals: any = {
+        staked: farmsList.sum(f => f.userStakedBalance! * f.lpPrice!),
+        rewards: farmsList.sum(f => f.userRewardsBalance! * f.rewardTokenPrice!)
+      }
+
+      const weightedTotalROI = farmsList.sum(f => f.userStakedBalance! * f.lpPrice! * f.roi!)
+      const weightedTotalAPY = farmsList.sum(f => f.userStakedBalance! * f.lpPrice! * f.apy!)
+      totals.averageROI = weightedTotalROI / totals.staked
+      totals.averageAPY = weightedTotalAPY / totals.staked
+
+      const padPrice = this.$store.state.padPrice
+      totals.dailyPAD = totals.staked * totals.averageROI / padPrice
+      totals.dailyUSD = totals.staked * totals.averageROI
+
+      for (const total in totals) {
+        if (isNaN(totals[total])) {
+          totals[total] = 0
+        }
+      }
+      return totals
     },
     dataseed(): ethers.providers.Provider {
       if (this.ecosystem == Ecosystem.Moonriver) {
@@ -598,6 +672,15 @@ export default Vue.extend({
 }
 .v-card.padswap-farms {
   background: rgba(255, 255, 255, 0.05);
+}
+
+.padswap-data-title {
+  font-size: 12px;
+  color: #71767F;
+}
+.padswap-data-item {
+  font-size: 24px;
+  color: #FFFFFF;
 }
 
 .v-text-field /deep/ .v-icon {
