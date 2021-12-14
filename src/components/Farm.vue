@@ -31,7 +31,7 @@
           <div class="padswap-farm-data-item">{{ roi | formatPercent }}</div>
         </div>
         <div class="d-flex flex-column" style="min-width: 33.3%">
-          <div class="padswap-farm-data-title">PAD EARNED</div>
+          <div class="padswap-farm-data-title">{{ displayedRewardToken }} EARNED</div>
           <div class="padswap-farm-data-item">
             <template v-if="userRewardsBalance">
               {{ userRewardsBalance | formatDecimals(4) }}
