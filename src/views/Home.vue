@@ -41,112 +41,114 @@
       <div style="font-size: 14px; color: #B3B8C1; margin-top: 10px;">Stake tokens to earn PAD, LP and partner tokens.</div>
     </div>
     <v-sheet style="margin-top: 70px;">
-      <v-card
-        class="d-flex align-center flex-wrap flex-md-nowrap justify-space-between px-0 justify-md-start"
-        style="background: transparent"
-      >
-        <slider-tabs
-          v-model="farmViewOption"
-          class="padswap-farm-type-tabs mr-0"
+      <div class="padswap-widgets">
+        <v-card
+          class="d-flex align-center flex-wrap flex-md-nowrap justify-space-between px-0 justify-md-start"
+          style="background: transparent"
         >
-          <v-tab>V2&nbsp;Farms</v-tab>
-          <v-tab>Retiring</v-tab>
-        </slider-tabs>
-        <div class="d-flex align-center px-sm-5 mr-md-auto">
-          <v-switch v-model="stakedOnly" /> Staked
-        </div>
-        <div class="d-flex align-center mr-md-5 py-2">
-          Sort&nbsp;by:
-          <v-select
-            solo
-            hide-details="true"
-            class="ml-2"
-            background-color="#292D38"
-            style="max-width: 200px"
-            rounded
-            :items="['Hot', 'APY', 'TVL', 'Earned', 'Staked']"
-            v-model="sortBy"
-          />
-        </div>
-        <div class="d-flex align-center py-2">
-          Search:
-          <v-text-field
-            v-model="searchText"
-            solo
-            hide-details="true"
-            background-color="#292D38"
-            rounded
-            class="ml-2"
-            placeholder="Enter Token Name"
-            append-icon="mdi-magnify"
-          />
-        </div>
-      </v-card>
+          <slider-tabs
+            v-model="farmViewOption"
+            class="padswap-farm-type-tabs mr-0"
+          >
+            <v-tab>V2&nbsp;Farms</v-tab>
+            <v-tab>Retiring</v-tab>
+          </slider-tabs>
+          <div class="d-flex align-center px-sm-5 mr-md-auto">
+            <v-switch v-model="stakedOnly" /> Staked
+          </div>
+          <div class="d-flex align-center mr-md-5 py-2">
+            Sort&nbsp;by:
+            <v-select
+              solo
+              hide-details="true"
+              class="ml-2"
+              background-color="#292D38"
+              style="max-width: 200px"
+              rounded
+              :items="['Hot', 'APY', 'TVL', 'Earned', 'Staked']"
+              v-model="sortBy"
+            />
+          </div>
+          <div class="d-flex align-center py-2">
+            Search:
+            <v-text-field
+              v-model="searchText"
+              solo
+              hide-details="true"
+              background-color="#292D38"
+              rounded
+              class="ml-2"
+              placeholder="Enter Token Name"
+              append-icon="mdi-magnify"
+            />
+          </div>
+        </v-card>
 
-      <v-row class="pt-3 pb-3">
-        <v-col sm="8" cols="12">
-          <v-card
-            class="py-4 px-2"
-          >
-            <v-row>
-              <v-col
-                class="d-flex justify-center"
-                sm="3"
-                cols="6"
-              >
-                <div class="d-flex flex-column">
-                  <div class="padswap-data-item">${{ totals.staked | formatNumberKM(2) }}</div>
-                  <div class="padswap-data-title">TOTAL STAKED</div>
-                </div>
-              </v-col>
-              <v-col
-                class="d-flex justify-center"
-                sm="3"
-                cols="6"
-              >
-                <div class="d-flex flex-column">
-                  <div class="padswap-data-item">${{ totals.rewards | formatNumberKM }}</div>
-                  <div class="padswap-data-title">PENDING REWARDS</div>
-                </div>
-              </v-col>
-              <v-col
-                class="d-flex justify-center"
-                sm="3"
-                cols="6"
-              >
-                <div class="d-flex flex-column">
-                  <div class="padswap-data-item">{{ totals.averageROI | formatPercent }}</div>
-                  <div class="padswap-data-title">AVERAGE ROI</div>
-                </div>
-              </v-col>
-              <v-col
-                class="d-flex justify-center"
-                sm="3"
-                cols="6"
-              >
-                <div class="d-flex flex-column ml-sm-0 ml-n7">
-                  <div class="padswap-data-item">{{ totals.averageAPY | formatPercent }}</div>
-                  <div class="padswap-data-title">AVERAGE APY</div>
-                </div>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-col>
-        <v-col sm="4" cols="12">
-          <v-card
-            class="d-flex align-center flex-wrap flex-md-nowrap justify-space-around py-4 px-4"
-          >
-            <div class="d-flex flex-column">
-              <div class="padswap-data-item">≈ ${{ totals.dailyUSD | formatNumberKM(2) }}</div>
-              <div class="padswap-data-title">DAILY (EXPECTED)</div>
-            </div>
-            <div class="d-flex flex-column">
-              <div class="padswap-data-item">≈ ${{ totals.dailyUSD * 7 | formatNumberKM(2) }}</div>
-              <div class="padswap-data-title">WEEKLY (EXPECTED)</div>
-            </div>
-          </v-card>
-        </v-col>
-      </v-row>
+        <v-row class="pt-3 pb-3">
+          <v-col md="8" cols="12">
+            <v-card
+              class="py-4 px-2"
+            >
+              <v-row>
+                <v-col
+                  class="d-flex justify-center"
+                  md="3"
+                  cols="6"
+                >
+                  <div class="d-flex flex-column">
+                    <div class="padswap-data-item">${{ totals.staked | formatNumberKM(2) }}</div>
+                    <div class="padswap-data-title">TOTAL STAKED</div>
+                  </div>
+                </v-col>
+                <v-col
+                  class="d-flex justify-center"
+                  md="3"
+                  cols="6"
+                >
+                  <div class="d-flex flex-column">
+                    <div class="padswap-data-item">${{ totals.rewards | formatNumberKM }}</div>
+                    <div class="padswap-data-title">PENDING REWARDS</div>
+                  </div>
+                </v-col>
+                <v-col
+                  class="d-flex justify-center"
+                  md="3"
+                  cols="6"
+                >
+                  <div class="d-flex flex-column">
+                    <div class="padswap-data-item">{{ totals.averageROI | formatPercent }}</div>
+                    <div class="padswap-data-title">AVERAGE ROI</div>
+                  </div>
+                </v-col>
+                <v-col
+                  class="d-flex justify-center"
+                  md="3"
+                  cols="6"
+                >
+                  <div class="d-flex flex-column ml-sm-0 ml-n7">
+                    <div class="padswap-data-item">{{ totals.averageAPY | formatPercent }}</div>
+                    <div class="padswap-data-title">AVERAGE APY</div>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+          <v-col md="4" cols="12">
+            <v-card
+              class="d-flex align-center flex-wrap flex-md-nowrap justify-space-around py-4 px-4"
+            >
+              <div class="d-flex flex-column">
+                <div class="padswap-data-item">≈ ${{ totals.dailyUSD | formatNumberKM(2) }}</div>
+                <div class="padswap-data-title">DAILY (EXPECTED)</div>
+              </div>
+              <div class="d-flex flex-column">
+                <div class="padswap-data-item">≈ ${{ totals.dailyUSD * 7 | formatNumberKM(2) }}</div>
+                <div class="padswap-data-title">WEEKLY (EXPECTED)</div>
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
+      </div>
 
       <v-card class="padswap-farms mt-4 pa-3">
         <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">Regular Farms</div>

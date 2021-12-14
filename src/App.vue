@@ -260,6 +260,20 @@ export default Vue.extend({
   background-repeat: no-repeat !important;
   padding: 0px 35px;
 }
+@media all and (max-width: 700px) {
+  .v-application {
+    padding: 0px;
+  }
+
+  .container {
+    padding: 0px;
+  }
+
+  .container /deep/ .padswap-header-box,
+  .container /deep/ .padswap-widgets {
+    padding: 12px;
+  }
+}
 .v-sheet.v-toolbar.v-app-bar {
   padding-left: 120px;
   padding-right: 120px;

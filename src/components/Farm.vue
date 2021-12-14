@@ -2,70 +2,135 @@
   <div style="margin-bottom: 5px">
     <v-card
       @click="expand = !expand"
-      class="padswap-farm d-flex align-center justify-space-between"
+      class="padswap-farm"
       :class="isDetailsVisible ? 'padswap-farm-expanded' : ''"
     >
-      <div class="d-flex align-center" style="width: 15%">
-        <v-img
-          :src="require(`../assets/tokens/${chain.toLowerCase()}/${token0}.svg`)"
-          class="padswap-token-img"
-        />
-        <v-img
-          :src="require(`../assets/tokens/${chain.toLowerCase()}/${token1 ? token1 : token0}.svg`)"
-          class="padswap-token-img mr-4"
-          style="margin-left: -5px"
-          contain
-        />
-        <div class="padswap-farm-title">{{ name }}</div>
-      </div>
-      <div
-        class="d-flex align-center justify-space-between flex-grow-1 ml-10"
-        style="max-width: 55%"
-      >
-        <div class="d-flex flex-column" style="min-width: 33.3%">
-          <div class="padswap-farm-data-title">YEARLY APY</div>
-          <div class="padswap-farm-data-item">{{ apy | formatPercent }}</div>
-        </div>
-        <div class="d-flex flex-column" style="min-width: 33.3%">
-          <div class="padswap-farm-data-title">DAILY ROI</div>
-          <div class="padswap-farm-data-item">{{ roi | formatPercent }}</div>
-        </div>
-        <div class="d-flex flex-column" style="min-width: 33.3%">
-          <div class="padswap-farm-data-title">{{ displayedRewardToken }} EARNED</div>
-          <div class="padswap-farm-data-item">
-            <template v-if="userRewardsBalance">
-              {{ userRewardsBalance | formatNumber(4) }}
-              <div class="padswap-farm-note">
-                Earned value:
-                <span class="padswap-farm-note-value">
-                  ${{ earnedValue | formatNumber(4) }}
-                </span>
+      <v-row justify-md="space-between" class="flex-md-nowrap">
+        <v-col
+          class="d-flex align-center px-3 justify-start-md justify-center pt-sm-0 pb-sm-0 pt-4 pb-8"
+          md="auto"
+          sm="4"
+          cols="12"
+        >
+          <div
+            class="d-flex justify-start-md justify-center"
+            style="min-width: 170px"
+          >
+            <div
+              class="d-flex flex-shrink-1 flex-grow-0"
+              style="width: 55px"
+            >
+              <div class="d-flex">
+                <v-img
+                  :src="require(`../assets/tokens/${chain.toLowerCase()}/${token0}.svg`)"
+                  class="padswap-token-img"
+                  contain
+                />
+                <v-img
+                  :src="require(`../assets/tokens/${chain.toLowerCase()}/${token1 ? token1 : token0}.svg`)"
+                  class="padswap-token-img"
+                  style="margin-left: -5px"
+                  contain
+                />
               </div>
+            </div>
+            <div
+              class="d-flex align-center pl-4"
+            >
+              <div class="padswap-farm-title">{{ name }}</div>
+            </div>
+          </div>
+        </v-col>
+
+        <v-col
+          class="px-3"
+          :style="{ 'min-width': farmDataMinWidths[0] }"
+          md="auto"
+          sm="4"
+          cols="6"
+        >
+          <div
+            class="d-flex flex-column"
+            :style="{ 'padding-left': $vuetify.breakpoint.smAndDown ? '4vw' : 'initial' }"
+          >
+            <div class="padswap-farm-data-title">YEARLY APY</div>
+            <div class="padswap-farm-data-item">{{ apy | formatPercent }}</div>
+          </div>
+        </v-col>
+
+        <v-col
+          class="px-3"
+          :style="{ 'min-width': farmDataMinWidths[1] }"
+          md="auto"
+          sm="4"
+          cols="6"
+        >
+          <div
+            class="d-flex flex-column"
+            :style="{ 'padding-left': $vuetify.breakpoint.smAndDown ? '4vw' : 'initial' }"
+          >
+            <div class="padswap-farm-data-title">DAILY ROI</div>
+            <div class="padswap-farm-data-item">{{ roi | formatPercent }}</div>
+          </div>
+        </v-col>
+
+        <v-col
+          class="px-3"
+          :style="{ 'min-width': farmDataMinWidths[2] }"
+          md="auto"
+          sm="4"
+          cols="6"
+        >
+          <div
+            class="d-flex flex-column"
+            :style="{ 'padding-left': $vuetify.breakpoint.xs ? '4vw' : 'initial' }"
+          >
+            <div class="padswap-farm-data-title">{{ displayedRewardToken }} EARNED</div>
+            <div class="padswap-farm-data-item">
+              <template v-if="userRewardsBalance">
+                {{ userRewardsBalance | formatNumber(4) }}
+                <div class="padswap-farm-note">
+                  Earned value:
+                  <span class="padswap-farm-note-value">
+                    ${{ earnedValue | formatNumber(4) }}
+                  </span>
+                </div>
+              </template>
+              <template v-else>
+                ~
+              </template>
+            </div>
+          </div>
+        </v-col>
+
+        <v-col
+          class="d-flex align-center justify-start-md justify-center"
+          md="auto"
+          sm="4"
+          cols="6"
+        >
+          <v-btn
+            @click.stop="isEnabled ? harvest() : enable()"
+            class="padswap-farm-btn"
+          >
+            <template v-if="isEnabled">
+              Harvest
             </template>
             <template v-else>
-              ~
+              Enable
             </template>
-          </div>
-        </div>
-      </div>
-      <div class="flex-shrink-1">
-        <v-btn
-          @click.stop="isEnabled ? harvest() : enable()"
-          class="padswap-farm-btn mr-5"
-        >
-          <template v-if="isEnabled">
-            Harvest
-          </template>
-          <template v-else>
-            Enable
-          </template>
-        </v-btn>
-        <v-icon
-          color="#00FC4C"
-        >
-          {{ expand ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-        </v-icon>
-      </div>
+          </v-btn>
+          <v-icon
+            class="pl-lg-5 pl-1 d-md-flex d-none"
+            color="#00FC4C"
+          >
+            {{ expand ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+          </v-icon>
+        </v-col>
+
+        <v-col cols="4" class="d-md-none d-sm-flex d-none" />
+      </v-row>
+
       <v-overlay
         absolute
         v-model="isLoading"
@@ -304,6 +369,18 @@ export default Vue.extend({
 
       return { status: true }
     },
+    farmDataMinWidths(): string[] {
+      console.log(this.$vuetify.breakpoint)
+      if (this.$vuetify.breakpoint.xl) {
+        return ['200px', '200px', '200px']
+      } else if (this.$vuetify.breakpoint.lg) {
+        return ['130px', '130px', '200px']
+      } else if (this.$vuetify.breakpoint.md) {
+        return ['100px', '100px', '200px']
+      } else {
+        return ['initial', 'initial', 'initial']
+      }
+    },
     farmContract(): ethers.Contract {
       return new ethers.Contract(this.contract, PADSWAP_FARM_ABI, this.web3)
     },
@@ -370,8 +447,13 @@ export default Vue.extend({
   border-radius: 15px !important;
   width: 100%;
   color: #B3B8C1 !important;
-  padding: 30px !important;
+  padding: 39px 40px !important;
   font-family: Roboto;
+}
+@media all and (max-width: 700px) {
+  .padswap-farm {
+    padding: 39px 20px !important;
+  }
 }
 .padswap-farm-expanded {
   border-top-left-radius: 15px !important;
@@ -406,6 +488,7 @@ export default Vue.extend({
   font-family: Roboto Mono;
   color: #FB53EF;
   font-size: 16px;
+  white-space: nowrap;
 }
 .padswap-token-img {
   max-width: 30px;
@@ -427,6 +510,7 @@ export default Vue.extend({
 .padswap-farm-data-item {
   font-size: 24px;
   color: #FFFFFF;
+  white-space: nowrap;
 }
 .padswap-farm-note {
   font-size: 12px;
