@@ -7,13 +7,13 @@
     >
       <v-row justify-md="space-between" class="flex-md-nowrap">
         <v-col
-          class="d-flex align-center px-3 justify-start-md justify-center pt-sm-0 pb-sm-0 pt-4 pb-8"
+          class="d-flex align-center px-3 justify-md-start justify-center pt-sm-0 pb-sm-0 pt-4 pb-8"
           md="auto"
           sm="4"
           cols="12"
         >
           <div
-            class="d-flex justify-start-md justify-center"
+            class="d-flex justify-md-start justify-center"
             style="min-width: 170px"
           >
             <div
