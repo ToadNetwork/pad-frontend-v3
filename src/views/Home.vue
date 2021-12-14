@@ -84,31 +84,57 @@
       </v-card>
 
       <v-row class="pt-3 pb-3">
-        <v-col cols="8">
+        <v-col sm="8" cols="12">
           <v-card
-            class="padswap-user-stats-bar d-flex align-center flex-wrap flex-md-nowrap justify-space-around py-4 px-0"
+            class="py-4 px-2"
           >
-            <div class="d-flex flex-column">
-              <div class="padswap-data-item">${{ totals.staked | formatNumberKM(2) }}</div>
-              <div class="padswap-data-title">TOTAL STAKED</div>
-            </div>
-            <div class="d-flex flex-column">
-              <div class="padswap-data-item">${{ totals.rewards | formatNumberKM }}</div>
-              <div class="padswap-data-title">PENDING REWARDS</div>
-            </div>
-            <div class="d-flex flex-column">
-              <div class="padswap-data-item">{{ totals.averageROI | formatPercent }}</div>
-              <div class="padswap-data-title">AVERAGE ROI</div>
-            </div>
-            <div class="d-flex flex-column">
-              <div class="padswap-data-item">{{ totals.averageAPY | formatPercent }}</div>
-              <div class="padswap-data-title">AVERAGE APY</div>
-            </div>
+            <v-row>
+              <v-col
+                class="d-flex justify-center"
+                sm="3"
+                cols="6"
+              >
+                <div class="d-flex flex-column">
+                  <div class="padswap-data-item">${{ totals.staked | formatNumberKM(2) }}</div>
+                  <div class="padswap-data-title">TOTAL STAKED</div>
+                </div>
+              </v-col>
+              <v-col
+                class="d-flex justify-center"
+                sm="3"
+                cols="6"
+              >
+                <div class="d-flex flex-column">
+                  <div class="padswap-data-item">${{ totals.rewards | formatNumberKM }}</div>
+                  <div class="padswap-data-title">PENDING REWARDS</div>
+                </div>
+              </v-col>
+              <v-col
+                class="d-flex justify-center"
+                sm="3"
+                cols="6"
+              >
+                <div class="d-flex flex-column">
+                  <div class="padswap-data-item">{{ totals.averageROI | formatPercent }}</div>
+                  <div class="padswap-data-title">AVERAGE ROI</div>
+                </div>
+              </v-col>
+              <v-col
+                class="d-flex justify-center"
+                sm="3"
+                cols="6"
+              >
+                <div class="d-flex flex-column ml-sm-0 ml-n7">
+                  <div class="padswap-data-item">{{ totals.averageAPY | formatPercent }}</div>
+                  <div class="padswap-data-title">AVERAGE APY</div>
+                </div>
+              </v-col>
+            </v-row>
           </v-card>
         </v-col>
-        <v-col cols="4">
+        <v-col sm="4" cols="12">
           <v-card
-            class="padswap-user-stats-bar d-flex align-center flex-wrap flex-md-nowrap justify-space-around py-4 px-4"
+            class="d-flex align-center flex-wrap flex-md-nowrap justify-space-around py-4 px-4"
           >
             <div class="d-flex flex-column">
               <div class="padswap-data-item">≈ ${{ totals.dailyUSD | formatNumberKM(2) }}</div>
