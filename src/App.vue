@@ -1,171 +1,44 @@
 <template>
   <v-app
-   v-bind:style="{ 'background-image': `url(${$padswapTheme.theme.backgroundImageSrc})` }">
+   v-bind:style="{ 'background-image': `url(${$padswapTheme.theme.backgroundImageSrc})` }"
+  >
     <v-app-bar
       app
       dark
-      flat
+      :elevation="isNavigationDrawerOpen ? 24 : 0"
+      clipped-left
     >
+      <v-app-bar-nav-icon
+        @click="isNavigationDrawerOpen = !isNavigationDrawerOpen"
+        class="d-sm-none d-flex"
+      />
       <div>
         <v-img
           :src="$padswapTheme.theme.headerLogoSrc"
+          class="d-sm-flex d-none"
           width="162.42px"
         />
       </div>
 
       <v-spacer></v-spacer>
 
-      <div class="d-flex align-center padswap-navbar">
-        <nav-menu title="Toad">
-          <v-list-item>
+      <div class="d-sm-flex d-none align-center padswap-navbar">
+        <nav-menu
+          v-for="navSection in this.navSections"
+          :key="navSection.title"
+          :title="navSection.title"
+          :non-expandable="navSection.items.length == 0"
+        >
+          <v-list-item
+            v-for="navItem in navSection.items"
+            :key="navItem.name"
+          >
             <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-News.svg" />
+              <v-img :src="navItem.iconSrc" />
             </v-list-item-icon>
             <v-list-item-content>
-              <div>News</div>
-              <v-subheader>Latest news and announcements</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-Toad.svg" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <div>Toad Farms</div>
-              <v-subheader>Earn tokens by providing liquidity</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-Church.svg" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <div>Temple</div>
-              <v-subheader>Convert non-believers into hodlers</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-        </nav-menu>
-        <nav-menu title="Padswap">
-          <v-list-item>
-            <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-Swap.svg" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <div>Swap</div>
-              <v-subheader>Buy or sell tokens on PadSwap</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-Pad.svg" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <div>Pad Farms</div>
-              <v-subheader>Earn tokens by providing liquidity</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-Pad.svg" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <div>Add Liquidity</div>
-              <v-subheader>Create LP tokens to add to farms</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-Vault.svg" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <div>Vault</div>
-              <v-subheader>PAD's backing reserves</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-Chart.svg" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <div>Stats</div>
-              <v-subheader>Analyze token prices and volume</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-        </nav-menu>
-        <nav-menu title="Shop">
-          <v-list-item>
-            <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-Piramyd.svg" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <div>Piramyd Store</div>
-              <v-subheader>Official Toad Merch</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-Amazon.svg" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <div>Amazon Store</div>
-              <v-subheader>Official Toad Merch</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-        </nav-menu>
-        <nav-menu title="Games" non-expandable />
-        <nav-menu title="About">
-          <v-list-item>
-            <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-Wiki.svg" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <div>TOAD Wiki</div>
-              <v-subheader>Learn more about TOAD and PAD</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-Academy.svg" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <div>Toad Academy</div>
-              <v-subheader>Learn more about crypto</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-Audit.svg" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <div>Toad Network Audit Report</div>
-              <v-subheader>Contracts audit report by SpaceAudits</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-Audit.svg" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <div>PadSwap Audit Report</div>
-              <v-subheader>Contracts audit report by SpaceAudits</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-Paper.svg" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <div>Toad Network White Paper</div>
-              <v-subheader>Toad Network's White Paper</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-icon>
-              <v-img src="./assets/icons/Icon-Paper.svg" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <div>PadSwap White Paper</div>
-              <v-subheader>PadSwap's White Paper</v-subheader>
+              <div>{{ navItem.name }}</div>
+              <v-subheader>{{ navItem.desc }}</v-subheader>
             </v-list-item-content>
           </v-list-item>
         </nav-menu>
@@ -175,10 +48,18 @@
           :src="$padswapTheme.theme.padLogoSrc"
           style="width: 16px; height: 16px; margin-right: 6px; padding-right: 0px;"
         />
-        <div style="color: #00FC4C;">
+        <div
+          style="color: #00FC4C;"
+        >
           ${{ padPrice | formatPrice }}
         </div>
-        <div style="white-space: nowrap">EN<v-icon class="padswap-chevron-down">mdi-chevron-down</v-icon></div>
+        <div
+          class="d-sm-flex d-none"
+          style="white-space: nowrap"
+        >
+          EN
+          <v-icon class="padswap-chevron-down">mdi-chevron-down</v-icon>
+        </div>
         <div
           @click="connectWallet"
           class="padswap-address-box"
@@ -194,6 +75,47 @@
       </div>
     </v-app-bar>
 
+    <v-navigation-drawer
+      v-model="isNavigationDrawerOpen"
+      app
+      dark
+      temporary
+      class="padswap-navigation-drawer"
+      style="top: 56px"
+    >
+      <v-list nav>
+        <v-list-group
+          v-for="navSection in navSections"
+          :key="navSection.title"
+          :append-icon="navSection.items.length > 0 ? 'mdi-chevron-down' : ''"
+        >
+          <template v-slot:activator>
+            <v-list-item-title>
+              {{ navSection.title }}
+            </v-list-item-title>
+          </template>
+          <v-list-item
+            v-for="navItem of navSection.items"
+            :key="navItem.name"
+            link
+          >
+            <v-list-item-icon>
+              <v-img :src="navItem.iconSrc" />
+            </v-list-item-icon>
+            <v-list-item-title>
+              {{ navItem.name }}
+              <v-subheader>{{ navItem.desc }}</v-subheader>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list-group>
+      </v-list>
+
+      <!-- allows scrolling -->
+      <div style="height: 200px">
+        &nbsp;
+      </div>
+    </v-navigation-drawer>
+
     <v-main>
       <router-view/>
     </v-main>
@@ -203,16 +125,143 @@
 <script lang="ts">
 import Vue from 'vue'
 import { mapGetters, mapState } from 'vuex'
-import NavMenu from './components/NavMenu.vue'
 import web3Modal from '@/wallet'
+
+import NavMenu from '@/components/NavMenu.vue'
 import { delay } from '@/utils'
+
+type NavItem = {
+  name: string,
+  desc: string,
+  href: string,
+  iconSrc: string
+}
+
+type NavSection = {
+  title: string,
+  items: NavItem[]
+}
+
+const navSections: NavSection[] = [{
+  title: 'Toad',
+  items: [{
+    name: 'News',
+    desc: 'Latest news and announcements',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-News.svg')
+  },
+  {
+    name: 'Toad Farms',
+    desc: 'Earn tokens by providing liquidity',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-Toad.svg')
+  },
+  {
+    name: 'Temple',
+    desc: 'Convert non-believers into hodlers',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-Church.svg')
+  }]
+},
+{
+  title: 'Padswap',
+  items: [{
+    name: 'Swap',
+    desc: 'Buy or sell tokens on PadSwap',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-Swap.svg')
+  },
+  {
+    name: 'Pad Farms',
+    desc: 'Earn tokens by providing liquidity',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-Pad.svg')
+  },
+  {
+    name: 'Add Liquidity',
+    desc: 'Create LP tokens to add to farms',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-Pad.svg')
+  },
+  {
+    name: 'Vault',
+    desc: 'PAD\'s backing reserves',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-Vault.svg')
+  },
+  {
+    name: 'Stats',
+    desc: 'Analyze token prices and volume',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-Chart.svg')
+  }]
+},
+{
+  title: 'Shop',
+  items: [{
+    name: 'Piramyd Store',
+    desc: 'Official Toad Merch',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-Piramyd.svg')
+  },
+  {
+    name: 'Amazon Store',
+    desc: 'Official Toad Merch',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-Amazon.svg')
+  }]
+},
+{
+  title: 'Games',
+  items: []
+},
+{
+  title: 'About',
+  items: [{
+    name: 'TOAD Wiki',
+    desc: 'Learn more about TOAD and PAD',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-Wiki.svg')
+  },
+  {
+    name: 'Toad Academy',
+    desc: 'Learn more about crypto',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-Academy.svg')
+  },
+  {
+    name: 'Toad Network Audit Report',
+    desc: 'Contracts audit report by Spade Audits',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-Audit.svg')
+  },
+  {
+    name: 'PadSwap Audit Report',
+    desc: 'Contracts audit report by Spade Audits',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-Audit.svg')
+  },
+  {
+    name: 'Toad Network White Paper',
+    desc: 'Toad Network\'s White Paper',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-Paper.svg')
+  },
+  {
+    name: 'PadSwap White Paper',
+    desc: 'PadSwap\'s White Paper',
+    href: '',
+    iconSrc: require('./assets/icons/Icon-Paper.svg')
+  }]
+}]
 
 export default Vue.extend({
   name: 'App',
   components: { NavMenu },
   data() {
     return {
-      address: null
+      navSections,
+      isNavigationDrawerOpen: false
     }
   },
   computed: {
@@ -273,7 +322,13 @@ export default Vue.extend({
   .container /deep/ .padswap-widgets {
     padding: 12px;
   }
+
+  .v-app-bar {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+  }
 }
+
 .v-sheet.v-toolbar.v-app-bar {
   padding-left: 120px;
   padding-right: 120px;
@@ -299,5 +354,22 @@ export default Vue.extend({
 
 .padswap-connect {
   cursor: pointer;
+}
+
+.padswap-navigation-drawer {
+  border-radius: 8px;
+  background-color: #000000 !important;
+  width: 90vw !important;
+}
+.padswap-navigation-drawer .v-list-item .v-subheader {
+  padding: 0px;
+  margin-top: 2px;
+  height: auto;
+  font-size: 12px;
+  white-space: normal;
+}
+.padswap-navigation-drawer /deep/ .v-list-group__header.v-list-item--active {
+  color: #FFFFFF;
+  filter: invert(68%) sepia(70%) saturate(3531%) hue-rotate(94deg) brightness(108%) contrast(117%);
 }
 </style>
