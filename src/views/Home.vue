@@ -662,7 +662,7 @@ export default Vue.extend({
   padding: 10px 0px;
   font-weight: bold;
   color: #FFFFFF;
-  min-width: 100px;
+  min-width: 120px;
 }
 .padswap-ecosystem-tabs .v-tab--active {
   color: #66015e !important;
