@@ -156,8 +156,14 @@
             >
               <v-row>
                 <v-col cols="6" class="padswap-pink">
-                  GET {{ name }}
-                  <v-icon dense>mdi-arrow-top-right</v-icon>
+                  <a
+                    :href="`https://padswap.exchange/#/add/${token1Address}/${token2Address}`"
+                    target="_blank"
+                    style="color: unset; text-decoration: unset;"
+                  >
+                    GET {{ name }}
+                    <v-icon dense>mdi-arrow-top-right</v-icon>
+                  </a>
                 </v-col>
                 <v-col cols="6"></v-col>
               </v-row>
@@ -314,6 +320,8 @@ export default Vue.extend({
     name: String,
     contract: String,
     acceptedToken: String,
+    token1Address: String,
+    token2Address: String,
     rewardToken: String,
     type: Number,
     chain: String,
