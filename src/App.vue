@@ -32,9 +32,11 @@
           <v-list-item
             v-for="navItem in navSection.items"
             :key="navItem.name"
+            :href="navItem.href"
+            target="_blank"
           >
             <v-list-item-icon>
-              <v-img :src="navItem.iconSrc" />
+              <v-icon>{{ navItem.icon }}</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <div>{{ navItem.name }}</div>
@@ -100,7 +102,7 @@
             link
           >
             <v-list-item-icon>
-              <v-img :src="navItem.iconSrc" />
+              <v-icon>{{ navItem.icon }}</v-icon>
             </v-list-item-icon>
             <v-list-item-title>
               {{ navItem.name }}
@@ -134,7 +136,7 @@ type NavItem = {
   name: string,
   desc: string,
   href: string,
-  iconSrc: string
+  icon: string
 }
 
 type NavSection = {
@@ -143,115 +145,111 @@ type NavSection = {
 }
 
 const navSections: NavSection[] = [{
-  title: 'Toad',
-  items: [{
-    name: 'News',
-    desc: 'Latest news and announcements',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-News.svg')
-  },
-  {
-    name: 'Toad Farms',
-    desc: 'Earn tokens by providing liquidity',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-Toad.svg')
-  },
-  {
-    name: 'Temple',
-    desc: 'Convert non-believers into hodlers',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-Church.svg')
-  }]
-},
-{
-  title: 'Padswap',
+  title: 'Products',
   items: [{
     name: 'Swap',
-    desc: 'Buy or sell tokens on PadSwap',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-Swap.svg')
+    desc: 'Buy or sell any token instantly on PadSwap',
+    href: 'https://padswap.exchange/#/swap',
+    icon: 'mdi-swap-horizontal'
   },
   {
-    name: 'Pad Farms',
-    desc: 'Earn tokens by providing liquidity',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-Pad.svg')
+    name: 'LaunchPad',
+    desc: 'Partake in exclusive presales',
+    href: 'https://dapps.padswap.exchange/launchpad',
+    icon: 'mdi-rocket-launch'
   },
   {
-    name: 'Add Liquidity',
-    desc: 'Create LP tokens to add to farms',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-Pad.svg')
+    name: 'Bridge',
+    desc: 'Bridge tokens between chains',
+    href: 'https://dapps.padswap.exchange/bridge',
+    icon: 'mdi-bridge'
   },
   {
     name: 'Vault',
     desc: 'PAD\'s backing reserves',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-Vault.svg')
+    href: 'https://dapps.padswap.exchange/vault',
+    icon: 'mdi-safe-square-outline'
+  },
+  {
+    name: 'Farms',
+    desc: 'Earn passive income by staking liquidity',
+    href: '/',
+    icon: 'mdi-sprout'
   },
   {
     name: 'Stats',
-    desc: 'Analyze token prices and volume',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-Chart.svg')
+    desc: 'Analyze token prices and their volume',
+    href: 'https://info.padswap.exchange/home',
+    icon: 'mdi-chart-bar'
   }]
 },
 {
-  title: 'Shop',
+  title: 'Content',
   items: [{
-    name: 'Piramyd Store',
-    desc: 'Official Toad Merch',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-Piramyd.svg')
+    name: 'TOAD Academy',
+    desc: 'Learn about crypto in a fun way',
+    href: 'https://toad.academy/',
+    icon: 'mdi-school-outline'
   },
   {
-    name: 'Amazon Store',
-    desc: 'Official Toad Merch',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-Amazon.svg')
+    name: 'Games',
+    desc: 'Play our TOAD-themed games',
+    href: 'https://toad.academy/games',
+    icon: 'mdi-gamepad-variant-outline'
+  },
+  {
+    name: 'YouTube',
+    desc: 'Watch our series of educational animated videos',
+    href: 'https://www.youtube.com/channel/UCI_vUc-HrJWtKXj-Re-hTSw',
+    icon: 'mdi-youtube'
+  },
+  {
+    name: 'Pyramid Store',
+    desc: 'Official TOAD merch',
+    href: 'https://piramyd.me/toad-network-x-piramyd/',
+    icon: 'mdi-tshirt-crew-outline'
   }]
 },
 {
-  title: 'Games',
-  items: []
+  title: 'Socials',
+  items: [{
+    name: 'Telegram',
+    desc: 'Come chat with us on Telegram',
+    href: 'https://t.me/toadnetwork',
+    icon: 'mdi-send'
+  },
+  {
+    name: 'Reddit',
+    desc: 'Partake in discussions about Toad.Network on our subreddit',
+    href: 'https://reddit.com/r/toadnetwork',
+    icon: 'mdi-reddit'
+  },
+  {
+    name: 'Twitter',
+    desc: 'Stay up to date with our latest news',
+    href: 'https://twitter.com/toadnetwork',
+    icon: 'mdi-twitter'
+  }]
 },
 {
   title: 'About',
   items: [{
-    name: 'TOAD Wiki',
-    desc: 'Learn more about TOAD and PAD',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-Wiki.svg')
+    name: 'TOAD Docs',
+    desc: 'Learn all about TOAD on our Wiki',
+    href: 'https://docs.toad.network/',
+    icon: 'mdi-clipboard-text-search-outline'
   },
   {
-    name: 'Toad Academy',
-    desc: 'Learn more about crypto',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-Academy.svg')
+    name: 'Audit Report',
+    desc: 'PadSwap contracts audit report by SpadeAudits',
+    href: 'https://dapps.padswap.exchange/pad_audit_report.pdf',
+    icon: 'mdi-text-box-check'
   },
   {
-    name: 'Toad Network Audit Report',
-    desc: 'Contracts audit report by Spade Audits',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-Audit.svg')
-  },
-  {
-    name: 'PadSwap Audit Report',
-    desc: 'Contracts audit report by Spade Audits',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-Audit.svg')
-  },
-  {
-    name: 'Toad Network White Paper',
-    desc: 'Toad Network\'s White Paper',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-Paper.svg')
-  },
-  {
-    name: 'PadSwap White Paper',
-    desc: 'PadSwap\'s White Paper',
-    href: '',
-    iconSrc: require('./assets/icons/Icon-Paper.svg')
+    name: 'White Paper',
+    desc: 'PadSwap white paper',
+    href: 'https://www.dropbox.com/s/bng5e1bq2u03bk6/PAD%20WHITEPAPER.PDF',
+    icon: 'mdi-file-outline'
   }]
 }]
 
@@ -260,7 +258,7 @@ export default Vue.extend({
   components: { NavMenu },
   data() {
     return {
-      navSections,
+      navSections: navSections,
       isNavigationDrawerOpen: false
     }
   },
