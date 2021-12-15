@@ -341,6 +341,8 @@ function initializeFarms(farms: FarmData[], type: FarmType): FarmData[] {
   }))
 }
 
+const MIN_VISIBLE_STAKE = 1e-8
+
 function initializeFarmSet(farmSet: FarmSet) {
   const copy: FarmSet = JSON.parse(JSON.stringify(farmSet))
   copy.regularFarms.farms = initializeFarms(copy.regularFarms.farms, FarmType.Regular)
@@ -419,9 +421,9 @@ export default Vue.extend({
       }
 
       if (this.stakedOnly) {
-        visibleFarms.regularFarms = visibleFarms.regularFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance > 0)
-        visibleFarms.lpFarms = visibleFarms.lpFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance > 0)
-        visibleFarms.partnerFarms = visibleFarms.partnerFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance > 0)
+        visibleFarms.regularFarms = visibleFarms.regularFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance > MIN_VISIBLE_STAKE)
+        visibleFarms.lpFarms = visibleFarms.lpFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance > MIN_VISIBLE_STAKE)
+        visibleFarms.partnerFarms = visibleFarms.partnerFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance > MIN_VISIBLE_STAKE)
       }
 
       let sortfn = (_1: FarmData, _2: FarmData) => 1
