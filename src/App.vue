@@ -204,7 +204,7 @@ const navSections: NavSection[] = [{
     icon: 'mdi-youtube'
   },
   {
-    name: 'Pyramid Store',
+    name: 'Piramyd Store',
     desc: 'Official TOAD merch',
     href: 'https://piramyd.me/toad-network-x-piramyd/',
     icon: 'mdi-tshirt-crew-outline'
