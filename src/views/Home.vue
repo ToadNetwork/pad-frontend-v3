@@ -35,7 +35,10 @@
       <div style="font-size: 36px; margin-top: 20px;">Pad Farms</div>
       <div style="font-size: 14px; color: #B3B8C1; margin-top: 10px;">Stake tokens to earn PAD, LP and partner tokens.</div>
     </div>
-    <v-sheet style="margin-top: 70px;">
+    <v-sheet
+      class="padswap-content-sheet"
+      style="margin-top: 70px;"
+    >
       <div class="padswap-widgets">
         <v-card
           class="d-flex align-center flex-wrap flex-md-nowrap justify-space-between px-0 justify-md-start"
@@ -631,10 +634,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.v-sheet {
-  width: 100%;
-  background: transparent;
-}
 .v-card {
   background: #181D26;
   border-radius: 15px !important;
@@ -649,7 +648,16 @@ export default Vue.extend({
 .v-text-field {
   border-radius: 8px;
 }
+.v-select-list.v-sheet {
+  background: #000000;
+  font-family: Roboto;
+  border-radius: 8px;
+}
 
+.padswap-content-sheet {
+  width: 100%;
+  background: transparent;
+}
 .padswap-ecosystem-subheader {
   font-size: 14px;
   color: #B3B8C1;
