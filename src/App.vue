@@ -53,7 +53,7 @@
         <div
           style="color: #00FC4C;"
         >
-          ${{ padPrice | formatPrice }}
+          ${{ padPrice | formatNumber(7) }}
         </div>
         <div
           class="d-sm-flex d-none"
@@ -130,6 +130,7 @@ import { mapGetters, mapState } from 'vuex'
 import web3Modal from '@/wallet'
 
 import NavMenu from '@/components/NavMenu.vue'
+import { formatMixin } from '@/format'
 import { delay } from '@/utils'
 
 type NavItem = {
@@ -255,6 +256,7 @@ const navSections: NavSection[] = [{
 
 export default Vue.extend({
   name: 'App',
+  mixins: [formatMixin],
   components: { NavMenu },
   data() {
     return {
@@ -284,10 +286,6 @@ export default Vue.extend({
   filters: {
     formatAddress(val: string) {
       return val.substring(0, 3) + '...' + val.substring(val.length - 3)
-    },
-    formatPrice(val: number | null) {
-      val = val ?? 0
-      return val.toLocaleString(undefined, { maximumFractionDigits: 7 })
     }
   }
 })
