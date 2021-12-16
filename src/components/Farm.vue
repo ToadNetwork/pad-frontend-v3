@@ -23,14 +23,14 @@
               <div class="d-flex">
                 <v-img
                   :src="IMAGE_OVERRIDES[token0] || require(`../assets/tokens/${chain.toLowerCase()}/${token0}.svg`)"
-                  class="padswap-token-img"
                   height="30"
+                  width="30"
                   contain
                 />
                 <v-img
                   :src="require(`../assets/tokens/${chain.toLowerCase()}/${token1 ? token1 : token0}.svg`)"
-                  class="padswap-token-img"
                   height="30"
+                  width="30"
                   contain
                   style="margin-left: -5px"
                 />
@@ -520,9 +520,6 @@ export default Vue.extend({
   color: #FB53EF;
   font-size: 16px;
   white-space: nowrap;
-}
-.padswap-token-img {
-  max-width: 30px;
 }
 .padswap-farm-btn {
   border-radius: 100px;

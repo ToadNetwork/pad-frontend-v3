@@ -17,6 +17,7 @@
           :src="$padswapTheme.theme.headerLogoSrc"
           class="d-sm-flex d-none"
           width="162.42px"
+          contain
         />
       </div>
 

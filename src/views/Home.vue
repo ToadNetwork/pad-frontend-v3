@@ -7,7 +7,8 @@
       >
         <v-tab class="d-flex flex-column">
           <v-img
-            style="max-height: 30px; max-width: 30px;"
+            height="30"
+            width="30"
             contain
             src="../assets/tokens/bsc/PAD.svg"
           />
@@ -15,7 +16,8 @@
         </v-tab>
         <v-tab class="d-flex flex-column">
           <v-img
-            style="max-height: 30px; max-width: 30px;"
+            height="30"
+            width="30"
             contain
             src="../assets/tokens/moonriver/PAD.svg"
           />
@@ -28,6 +30,7 @@
         :src="$padswapTheme.theme.toadPadImageSrc"
         contain
         height="105"
+        width="100%"
       />
       <div style="font-size: 36px; margin-top: 20px;">Pad Farms</div>
       <div style="font-size: 14px; color: #B3B8C1; margin-top: 10px;">Stake tokens to earn PAD, LP and partner tokens.</div>
