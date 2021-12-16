@@ -18,7 +18,7 @@ export const formatMixin = Vue.extend({
         suffix = 'K'
       }
 
-      const formatted = val.toLocaleString(undefined, {
+      const formatted = val.toLocaleString('en-US', {
         minimumFractionDigits,
         maximumFractionDigits
       })
@@ -32,7 +32,7 @@ export const formatMixin = Vue.extend({
         val = 0
       }
 
-      const formatted = val.toLocaleString(undefined, {
+      const formatted = val.toLocaleString('en-US', {
         minimumFractionDigits,
         maximumFractionDigits
       })
@@ -43,7 +43,7 @@ export const formatMixin = Vue.extend({
         val = 0
       }
 
-      const formatted = val.toLocaleString(undefined, {
+      const formatted = val.toLocaleString('en-US', {
         style: 'percent',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
