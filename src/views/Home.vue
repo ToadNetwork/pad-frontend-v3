@@ -630,7 +630,7 @@ export default Vue.extend({
 <style scoped>
 .v-sheet {
   width: 100%;
-  background-color: #000000;
+  background: transparent;
 }
 .v-card {
   background: #181D26;
