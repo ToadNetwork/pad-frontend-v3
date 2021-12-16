@@ -288,7 +288,14 @@
                 </div>
                 <v-subheader class="d-flex align-baseline px-0 mt-3">
                   <v-icon small class="mr-2">mdi-information-outline</v-icon>
-                  <div>V2 Farms: 1% fee when staking and unstaking. This fee goes to the PadSwap vault.</div>
+                  <div>
+                    <template v-if="type == 1">
+                      DPLP Farms: 10% fee when staking and unstaking (7.5% back to the pool and 2.5% to the PadSwap vault). No fee to harvest rewards.
+                    </template>
+                    <template v-else>
+                      V2 Farms: 1% fee when staking and unstaking. This fee goes to the PadSwap vault.
+                    </template>
+                  </div>
                 </v-subheader>
               </div>
             </v-col>
