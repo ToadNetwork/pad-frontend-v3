@@ -22,15 +22,17 @@
             >
               <div class="d-flex">
                 <v-img
-                  :src="require(`../assets/tokens/${chain.toLowerCase()}/${token0}.svg`)"
+                  :src="IMAGE_OVERRIDES[token0] || require(`../assets/tokens/${chain.toLowerCase()}/${token0}.svg`)"
                   class="padswap-token-img"
+                  height="30"
                   contain
                 />
                 <v-img
                   :src="require(`../assets/tokens/${chain.toLowerCase()}/${token1 ? token1 : token0}.svg`)"
                   class="padswap-token-img"
-                  style="margin-left: -5px"
+                  height="30"
                   contain
+                  style="margin-left: -5px"
                 />
               </div>
             </div>
@@ -313,6 +315,10 @@ type ValidationStatus = {
 
 const APPROVE_AMOUNT = '115792089237316195423570985008687907853269984665640564039457584007913129639935'
 
+const IMAGE_OVERRIDES = {
+  RDOGE: require('@/assets/tokens/moonriver/RDOGE.png')
+}
+
 export default Vue.extend({
   name: 'Farm',
   mixins: [formatMixin],
@@ -346,7 +352,8 @@ export default Vue.extend({
       dwAction: <'deposit' | 'withdraw'> 'deposit',
       dwActionAmount: <number | null> null,
       token0,
-      token1
+      token1,
+      IMAGE_OVERRIDES
     }
   },
   computed: {
