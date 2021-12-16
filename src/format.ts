@@ -36,7 +36,7 @@ export const formatMixin = Vue.extend({
         minimumFractionDigits,
         maximumFractionDigits
       })
-      return formatted?.replaceAll(',', '')
+      return formatted.replaceAll(',', '')
     },
     formatPercent(val: number | null) {
       if (!val) {
