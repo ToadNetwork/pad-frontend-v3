@@ -299,6 +299,11 @@ export default Vue.extend({
   src: url(assets/font/RobotoMono-VariableFont_wght.ttf);
 }
 
+@font-face {
+  font-family: Roboto;
+  src: url(assets/font/Roboto-Regular.ttf);
+}
+
 .v-application {
   font-family: Roboto Mono;
   letter-spacing: 0.25px;
