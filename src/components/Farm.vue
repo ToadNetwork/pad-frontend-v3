@@ -231,10 +231,19 @@
                     >
                       Withdraw
                     </div>
+                    <div
+                      v-if="farmContract.functions.reinvest != null"
+                      @click="dwAction = 'reinvest'"
+                      :class="{ 'padswap-selected-action': dwAction == 'reinvest' }"
+                      class="padswap-action ml-7"
+                    >
+                      Reinvest
+                    </div>
                   </div>
                   <div class="d-flex mb-1">
                     <v-text-field
                       v-model.number="dwActionAmount"
+                      :disabled="dwAction == 'reinvest'"
                       type="number"
                       min="0.0"
                       solo
@@ -248,6 +257,7 @@
                       :error-messages="validationStatus.message"
                       append-icon
                       class="mr-3"
+                      :class="{ 'padswap-disabled-control': dwAction == 'reinvest' }"
                       height="40px"
                     >
                       <template v-slot:append>
@@ -261,27 +271,31 @@
                       </template>
                     </v-text-field>
                     <v-btn
-                      @click="dwAction == 'deposit' ? deposit() : withdraw()"
+                      @click="dwAction == 'deposit' ? deposit() : dwAction == 'withdraw' ? withdraw() : reinvest()"
                       class="padswap-farm-btn padswap-dw-btn pa-5"
                       :class="{ 'padswap-shake': isAnimating }"
                       :ripple="validationStatus.status"
+                      style="text-transform: capitalize"
                     >
-                      {{ dwAction == 'deposit' ? 'Deposit' : 'Withdraw' }}
+                      {{ dwAction }}
                     </v-btn>
                   </div>
-                  <div class="padswap-dw-balance">
-                    <template v-if="dwAction == 'deposit'">
-                      {{ name }} BALANCE:
-                    </template>
-                    <template v-else>
+                  <div
+                    class="padswap-dw-balance"
+                    :class="{ 'padswap-disabled-control': dwAction == 'reinvest' }"
+                  >
+                    <template v-if="dwAction == 'withdraw'">
                       {{ name }} STAKED:
                     </template>
+                    <template v-else>
+                      {{ name }} BALANCE:
+                    </template>
                     <span class="padswap-dw-balance-amount">
-                      <template v-if="dwAction == 'deposit'">
-                        {{ userLpBalance | formatNumber(4) }}
+                      <template v-if="dwAction == 'withdraw'">
+                        {{ userStakedBalance | formatNumber(4) }}
                       </template>
                       <template v-else>
-                        {{ userStakedBalance | formatNumber(4) }}
+                        {{ userLpBalance | formatNumber(4) }}
                       </template>
                     </span>
                   </div>
@@ -312,7 +326,12 @@ import { mapActions, mapState } from 'vuex'
 import { ethers } from 'ethers'
 
 import { delay } from '@/utils'
-import { ERC20_ABI, FARM_REQUIRED_ALLOWANCE, PADSWAP_FARM_ABI } from '@/constants'
+import {
+  ERC20_ABI,
+  FARM_REQUIRED_ALLOWANCE,
+  PADSWAP_FARM_ABI,
+  PADSWAP_SINGLE_STAKE_FARM_ABI,
+  PADSWAP_LP_FARM_ABI } from '@/constants'
 import { formatMixin } from '@/format'
 
 type ValidationStatus = {
@@ -356,7 +375,7 @@ export default Vue.extend({
       expand: false,
       isDetailsVisible: false,
       isAnimating: false,
-      dwAction: <'deposit' | 'withdraw'> 'deposit',
+      dwAction: <'deposit' | 'withdraw' | 'reinvest'> 'deposit',
       dwActionAmount: <number | null> null,
       token0,
       token1,
@@ -420,7 +439,13 @@ export default Vue.extend({
       }
     },
     farmContract(): ethers.Contract {
-      return new ethers.Contract(this.contract, PADSWAP_FARM_ABI, this.web3)
+      if (this.type == 1) {
+        return new ethers.Contract(this.contract, PADSWAP_LP_FARM_ABI, this.web3)
+      } else if (this.token1Address == this.token2Address) {
+        return new ethers.Contract(this.contract, PADSWAP_SINGLE_STAKE_FARM_ABI, this.web3)
+      } else {
+        return new ethers.Contract(this.contract, PADSWAP_FARM_ABI, this.web3)
+      }
     },
     tokenContract(): ethers.Contract {
       return new ethers.Contract(this.acceptedToken, ERC20_ABI, this.web3)
@@ -464,6 +489,10 @@ export default Vue.extend({
 
       const amount = ethers.utils.parseEther(this.dwActionAmount!.toString())
       const tx = await this.farmContract.populateTransaction.remove(amount)
+      await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+    },
+    async reinvest() {
+      const tx = await this.farmContract.populateTransaction.reinvest()
       await this.safeSendTransaction({ tx, targetChainId: this.chainId })
     },
     async rejectAction() {
@@ -594,6 +623,9 @@ export default Vue.extend({
   text-transform: none;
   font-size: 12px;
   font-weight: bold;
+}
+.padswap-disabled-control {
+  filter: blur(0.6px) opacity(0.2);
 }
 
 .padswap-shake {
