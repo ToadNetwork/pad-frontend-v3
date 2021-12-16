@@ -5,7 +5,8 @@
     <v-app-bar
       app
       dark
-      :elevation="isNavigationDrawerOpen ? 24 : 0"
+      :elevation="navBarElevation"
+      :class="{ 'padswap-scrolled-nav-bar': windowScroll > DESKTOP_SCROLL_THRESHOLD }"
       clipped-left
     >
       <v-app-bar-nav-icon
@@ -255,6 +256,8 @@ const navSections: NavSection[] = [{
   }]
 }]
 
+const DESKTOP_SCROLL_THRESHOLD = 430
+
 export default Vue.extend({
   name: 'App',
   mixins: [formatMixin],
@@ -262,18 +265,39 @@ export default Vue.extend({
   data() {
     return {
       navSections: navSections,
-      isNavigationDrawerOpen: false
+      isNavigationDrawerOpen: false,
+      windowScroll: 0,
+      DESKTOP_SCROLL_THRESHOLD
     }
   },
   computed: {
+    navBarElevation() {
+      if (this.isNavigationDrawerOpen) {
+        return 24
+      }
+
+      // elevate when scrolling past header box, but not on mobile
+      if (this.windowScroll > DESKTOP_SCROLL_THRESHOLD &&
+          this.$vuetify.breakpoint.mdAndUp) {
+        return 24
+      }
+
+      return 0
+    },
     ...mapGetters(['isConnected']),
-    ...mapState(['padPrice'])
+    ...mapState(['padPrice']),
+  },
+  created() {
+    window.addEventListener('scroll', this.updateScroll)
   },
   async mounted() {
     await delay(0)
     if (web3Modal.cachedProvider) {
       await this.connectWallet()
     }
+  },
+  destroyed() {
+    window.removeEventListener('scroll', this.updateScroll)
   },
   methods: {
     async connectWallet() {
@@ -282,6 +306,9 @@ export default Vue.extend({
       }
 
       this.$store.dispatch('requestConnect')
+    },
+    updateScroll() {
+      this.windowScroll = window.scrollY
     }
   },
   filters: {
@@ -311,6 +338,16 @@ export default Vue.extend({
   background-repeat: no-repeat !important;
   padding: 0px 35px;
 }
+
+.v-sheet.v-toolbar.v-app-bar {
+  padding-left: 120px;
+  padding-right: 120px;
+  background-color: transparent !important;
+}
+.v-sheet.v-toolbar.v-app-bar.padswap-scrolled-nav-bar {
+  background-color: rgba(0, 0, 0, 0.85) !important;
+}
+
 @media all and (max-width: 700px) {
   .v-application {
     padding: 0px;
@@ -329,12 +366,10 @@ export default Vue.extend({
     padding-left: 0px !important;
     padding-right: 0px !important;
   }
-}
 
-.v-sheet.v-toolbar.v-app-bar {
-  padding-left: 120px;
-  padding-right: 120px;
-  background-color: transparent !important;
+  .v-sheet.v-toolbar.v-app-bar.padswap-scrolled-nav-bar {
+    background-color: unset !important;
+  }
 }
 
 .padswap-navbar div {
