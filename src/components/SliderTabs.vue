@@ -1,5 +1,9 @@
 <template>
-  <v-tabs v-model="tabIndex">
+  <v-tabs
+    v-model="tabIndex"
+    :show-arrows="false"
+    optional
+  >
     <v-tabs-slider></v-tabs-slider>
     <slot></slot>
   </v-tabs>
@@ -17,6 +21,9 @@ export default Vue.extend({
     }
   },
   watch: {
+    value(val) {
+      this.tabIndex = val
+    },
     tabIndex(val) {
       this.$emit('input', val)
     }

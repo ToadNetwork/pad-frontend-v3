@@ -48,13 +48,17 @@
             v-model="farmViewOption"
             class="padswap-farm-type-tabs mr-0"
           >
-            <v-tab>V2&nbsp;Farms</v-tab>
-            <v-tab>Retiring</v-tab>
+            <v-tab @click="toggleFarmViewOption(0)">Regular</v-tab>
+            <v-tab @click="toggleFarmViewOption(1)">DPLP</v-tab>
+            <v-tab @click="toggleFarmViewOption(2)">Partner</v-tab>
           </slider-tabs>
-          <div class="d-flex align-center px-sm-5 mr-md-auto">
+          <div class="d-flex align-center px-sm-5">
             <v-switch v-model="stakedOnly" /> Staked
           </div>
-          <div class="d-flex align-center mr-md-5 py-2">
+          <div class="d-flex align-center mr-md-auto">
+            <v-switch v-model="includeRetired" /> Retired
+          </div>
+          <div class="d-flex align-center ml-md-2 mr-md-5 py-2">
             Sort&nbsp;by:
             <v-select
               solo
@@ -299,8 +303,9 @@ type FarmSet = {
 }
 
 enum FarmViewOption {
-  Default = 0,
-  IncludeRetired = 1
+  Regular = 0,
+  DPLP = 1,
+  Partner = 2
 }
 
 enum Ecosystem {
@@ -371,8 +376,9 @@ export default Vue.extend({
       },
       active: true,
       ecosystem: Ecosystem.BSC,
-      farmViewOption: FarmViewOption.Default,
+      farmViewOption: null,
       stakedOnly: false,
+      includeRetired: false,
       sortBy: 'Earned',
       searchText: '',
       syncLocks: {
@@ -416,8 +422,19 @@ export default Vue.extend({
         partnerFarms: Array.from<FarmData>(this.currentFarmSet.partnerFarms.farms)
       }
 
-      if (this.farmViewOption == FarmViewOption.IncludeRetired) {
+      if (this.includeRetired) {
         visibleFarms.regularFarms.push(...this.currentFarmSet.regularFarms.retiredFarms)
+      }
+
+      if (this.farmViewOption === FarmViewOption.Regular) {
+        visibleFarms.lpFarms = []
+        visibleFarms.partnerFarms = []
+      } else if (this.farmViewOption === FarmViewOption.DPLP) {
+        visibleFarms.regularFarms = []
+        visibleFarms.partnerFarms = []
+      } else if (this.farmViewOption === FarmViewOption.Partner) {
+        visibleFarms.regularFarms = []
+        visibleFarms.lpFarms = []
       }
 
       if (this.searchText) {
@@ -522,6 +539,7 @@ export default Vue.extend({
       }
 
       this.$padswapTheme.theme = theme
+      this.farmViewOption = null
       setTimeout(() => this.sync())
     },
     lastChainTransactionBlock() {
@@ -628,6 +646,11 @@ export default Vue.extend({
         roi -= roi * decay
       }
       return Math.round(100 * (initial - 100)) / 10000
+    },
+    toggleFarmViewOption(option: FarmViewOption) {
+      if (this.farmViewOption === option) {
+        setTimeout(() => this.farmViewOption = null)
+      }
     }
   }
 })
@@ -682,8 +705,8 @@ export default Vue.extend({
 }
 
 .padswap-farm-type-tabs {
-  width: 180px;
-  max-width: 180px;
+  width: 270px;
+  max-width: 270px;
 }
 .padswap-farm-type-tabs /deep/ .v-tabs-bar {
   background: #292D38;
