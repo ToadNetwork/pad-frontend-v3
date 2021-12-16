@@ -114,6 +114,7 @@
           <v-btn
             @click.stop="isEnabled ? harvest() : enable()"
             class="padswap-farm-btn"
+            :class="{ 'padswap-shake': currentAnimations['enableButton'] }"
           >
             <template v-if="isEnabled">
               Harvest
@@ -215,7 +216,10 @@
               style="max-width: 600px"
             >
               <div class="d-flex flex-column">
-                <div class="d-flex flex-column padswap-deposit-withdraw-box">
+                <v-card
+                  class="d-flex flex-column padswap-deposit-withdraw-box"
+                  :class="{ 'padswap-deposit-withdraw-box-disabled': !isEnabled}"
+                >
                   <div class="d-flex mb-2">
                     <div
                       @click="dwAction = 'deposit'"
@@ -273,7 +277,7 @@
                     <v-btn
                       @click="dwAction == 'deposit' ? deposit() : dwAction == 'withdraw' ? withdraw() : reinvest()"
                       class="padswap-farm-btn padswap-dw-btn pa-5"
-                      :class="{ 'padswap-shake': isAnimating }"
+                      :class="{ 'padswap-shake': currentAnimations['dwButton'] }"
                       :ripple="validationStatus.status"
                       style="text-transform: capitalize"
                     >
@@ -299,7 +303,15 @@
                       </template>
                     </span>
                   </div>
-                </div>
+
+                  <v-overlay
+                    v-if="!isEnabled"
+                    color="transparent"
+                    absolute
+                    @click="shakeButton('enableButton')"
+                  >
+                  </v-overlay>
+                </v-card>
                 <v-subheader class="d-flex align-baseline px-0 mt-3">
                   <v-icon small class="mr-2">mdi-information-outline</v-icon>
                   <div>
@@ -374,7 +386,10 @@ export default Vue.extend({
     return {
       expand: false,
       isDetailsVisible: false,
-      isAnimating: false,
+      currentAnimations: {
+        'dwButton': false,
+        'enableButton': false
+      },
       dwAction: <'deposit' | 'withdraw' | 'reinvest'> 'deposit',
       dwActionAmount: <number | null> null,
       token0,
@@ -473,7 +488,7 @@ export default Vue.extend({
     },
     async deposit() {
       if (!this.validationStatus.status) {
-        this.rejectAction()
+        this.shakeButton('dwButton')
         return
       }
 
@@ -483,7 +498,7 @@ export default Vue.extend({
     },
     async withdraw() {
       if (!this.validationStatus.status) {
-        this.rejectAction()
+        this.shakeButton('dwButton')
         return
       }
 
@@ -495,13 +510,13 @@ export default Vue.extend({
       const tx = await this.farmContract.populateTransaction.reinvest()
       await this.safeSendTransaction({ tx, targetChainId: this.chainId })
     },
-    async rejectAction() {
-      if (this.isAnimating) {
+    async shakeButton(name: 'dwButton' | 'enableButton') {
+      if (this.currentAnimations[name]) {
         return
       }
-      this.isAnimating = true
-      await delay(300)
-      this.isAnimating = false
+      this.currentAnimations[name] = true
+      await delay(290)
+      this.currentAnimations[name] = false
     },
     ...mapActions(['safeSendTransaction'])
   }
@@ -589,10 +604,14 @@ export default Vue.extend({
 .padswap-farm-note-value {
   color: #FB53EF;
 }
-.padswap-deposit-withdraw-box {
+.v-card.padswap-deposit-withdraw-box {
   border: 1px solid #595E67;
   border-radius: 15px;
   padding: 10px 20px;
+  background: none;
+}
+.v-card.padswap-deposit-withdraw-box-disabled {
+  filter: opacity(0.8) brightness(0.8);
 }
 .padswap-action {
   color: #979CA5;
