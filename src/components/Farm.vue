@@ -22,17 +22,18 @@
             >
               <div class="d-flex">
                 <v-img
-                  :src="IMAGE_OVERRIDES[token0] || require(`../assets/tokens/${chain.toLowerCase()}/${token0}.svg`)"
+                  :src="tokenImages[0]"
                   height="30"
                   width="30"
+                  style="border-radius: 30px"
                   contain
                 />
                 <v-img
-                  :src="require(`../assets/tokens/${chain.toLowerCase()}/${token1 ? token1 : token0}.svg`)"
+                  :src="tokenImages[1]"
                   height="30"
                   width="30"
                   contain
-                  style="margin-left: -5px"
+                  style="margin-left: -5px; border-radius: 30px"
                 />
               </div>
             </div>
@@ -354,6 +355,13 @@ type ValidationStatus = {
 const APPROVE_AMOUNT = '115792089237316195423570985008687907853269984665640564039457584007913129639935'
 
 const IMAGE_OVERRIDES = {
+  CZATS: require('@/assets/tokens/bsc/CZATS.png'),
+  DAI: require('@/assets/tokens/moonriver/DAI.png'),
+  DOT: require('@/assets/tokens/bsc/DOT.png'),
+  FUK: require('@/assets/tokens/bsc/FUK.png'),
+  KISH: require('@/assets/tokens/bsc/KISH.png'),
+  MOVR: require('@/assets/tokens/moonriver/MOVR.png'),
+  MRBTC: require('@/assets/tokens/bsc/MRBTC.png'),
   RDOGE: require('@/assets/tokens/moonriver/RDOGE.png')
 }
 
@@ -393,8 +401,7 @@ export default Vue.extend({
       dwAction: <'deposit' | 'withdraw' | 'reinvest'> 'deposit',
       dwActionAmount: <number | null> null,
       token0,
-      token1,
-      IMAGE_OVERRIDES
+      token1
     }
   },
   computed: {
@@ -419,6 +426,14 @@ export default Vue.extend({
       } else {
         return 'PAD'
       }
+    },
+    tokenImages(): string[] {
+      const token0 = this.token0 as keyof typeof IMAGE_OVERRIDES
+      const token1 = (this.token1 ?? this.token0) as keyof typeof IMAGE_OVERRIDES
+      return [
+        IMAGE_OVERRIDES[token0] ?? require(`@/assets/tokens/${this.chain.toLowerCase()}/${token0}.svg`),
+        IMAGE_OVERRIDES[token1] ?? require(`@/assets/tokens/${this.chain.toLowerCase()}/${token1}.svg`)
+      ]
     },
     earnedValue(): number {
       if (!this.userRewardsBalance) {
