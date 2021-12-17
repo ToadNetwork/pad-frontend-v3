@@ -498,7 +498,13 @@ export default Vue.extend({
       await this.safeSendTransaction({ tx, targetChainId: this.chainId})
     },
     async harvest() {
-      const tx = await this.farmContract.populateTransaction.harvest()
+      let tx
+      if (this.type == 1) {
+        tx = await this.farmContract.populateTransaction.withdraw()
+      } else {
+        tx = await this.farmContract.populateTransaction.harvest()
+      }
+
       await this.safeSendTransaction({ tx, targetChainId: this.chainId})
     },
     async deposit() {
