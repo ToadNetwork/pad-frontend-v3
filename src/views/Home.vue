@@ -48,7 +48,7 @@
             v-model="farmViewOption"
             class="padswap-farm-type-tabs mr-0"
           >
-            <v-tab @click="toggleFarmViewOption(0)">Regular</v-tab>
+            <v-tab @click="toggleFarmViewOption(0)">PAD</v-tab>
             <v-tab @click="toggleFarmViewOption(1)">DPLP</v-tab>
             <v-tab @click="toggleFarmViewOption(2)">Partner</v-tab>
           </slider-tabs>
@@ -153,7 +153,7 @@
       </div>
 
       <v-card class="padswap-farms mt-4 pa-3">
-        <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">Regular Farms</div>
+        <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">PAD Farms</div>
         <farm
           v-for="farm in displayedFarms.regularFarms"
           :key="farm.contract"
