@@ -319,6 +319,9 @@
                     <template v-if="type == 1">
                       DPLP Farms: 10% fee when staking and unstaking (7.5% back to the pool and 2.5% to the PadSwap vault). No fee to harvest rewards.
                     </template>
+                    <template v-else-if="name == 'PAD'">
+                      V2 Farms: 1% fee is permanently burned when staking and unstaking.
+                    </template>
                     <template v-else>
                       V2 Farms: 1% fee when staking and unstaking. This fee goes to the PadSwap vault.
                     </template>
