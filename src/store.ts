@@ -42,7 +42,7 @@ export default new Vuex.Store({
   actions: {
     async requestConnect({ commit }) {
       const provider = await web3Modal.connect()
-      const ethersProvider = new ethers.providers.Web3Provider(provider)
+      const ethersProvider = new ethers.providers.Web3Provider(provider, 'any')
       const web3 = ethersProvider.getSigner()
       commit('setWeb3Connection', {
         web3, 
