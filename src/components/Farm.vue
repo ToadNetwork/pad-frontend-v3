@@ -161,7 +161,7 @@
               <v-row>
                 <v-col cols="6" class="padswap-pink">
                   <a
-                    :href="`https://padswap.exchange/#/add/${token1Address}/${token2Address}`"
+                    :href="padswapLiquidityUrl"
                     target="_blank"
                     style="color: unset; text-decoration: unset;"
                   >
@@ -439,6 +439,10 @@ export default Vue.extend({
         IMAGE_OVERRIDES[token0] ?? require(`@/assets/tokens/${this.chain.toLowerCase()}/${token0}.svg`),
         IMAGE_OVERRIDES[token1] ?? require(`@/assets/tokens/${this.chain.toLowerCase()}/${token1}.svg`)
       ]
+    },
+    padswapLiquidityUrl(): string {
+      const padswapHost = this.chainId == 1285 ? 'movr.padswap.exchange' : 'padswap.exchange'
+      return `https://${padswapHost}/#/add/${this.token1Address}/${this.token2Address}`
     },
     earnedValue(): number {
       if (!this.userRewardsBalance) {
