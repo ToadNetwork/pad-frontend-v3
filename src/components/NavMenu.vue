@@ -1,6 +1,8 @@
 <template>
   <v-menu
     offset-y
+    open-on-hover
+    nudge-right="12.5px"
     :disabled="nonExpandable"
   >
     <template v-slot:activator="{ on, attrs }">
@@ -33,7 +35,7 @@ export default Vue.extend({
 
 <style scoped>
 .padswap-navbar-item {
-  padding-right: 25px;
+  padding: 12.5px;
   white-space: nowrap;
 }
 .padswap-nav-menu {
@@ -45,9 +47,11 @@ export default Vue.extend({
   font-family: Roboto;
   margin: 0px 7px;
 }
+.padswap-navbar-item:hover,
 .padswap-nav-menu /deep/ .v-list-item:hover .v-image,
+.padswap-nav-menu /deep/ .v-list-item:hover .v-icon,
 .padswap-nav-menu /deep/ .v-list-item:hover .v-list-item__content > div:first-child {
-  filter: invert(68%) sepia(70%) saturate(3531%) hue-rotate(94deg) brightness(108%) contrast(117%);
+  filter: invert(11%) sepia(18%) saturate(5908%) hue-rotate(75deg) brightness(90%) contrast(123%);
 }
 .padswap-nav-menu /deep/ .v-list-item:hover .v-subheader {
   color: #EBEDEF;
