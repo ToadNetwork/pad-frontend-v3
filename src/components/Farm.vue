@@ -368,6 +368,8 @@ const IMAGE_OVERRIDES = {
   RDOGE: require('@/assets/tokens/moonriver/RDOGE.png')
 }
 
+const TOAD = '0x463e737d8f740395abf44f7aac2d9531d8d539e9'
+
 export default Vue.extend({
   name: 'Farm',
   mixins: [formatMixin],
@@ -474,7 +476,7 @@ export default Vue.extend({
     farmContract(): ethers.Contract {
       if (this.type == 1) {
         return new ethers.Contract(this.contract, PADSWAP_LP_FARM_ABI, this.web3)
-      } else if (this.token1Address == this.token2Address) {
+      } else if (this.token1Address == this.token2Address && this.token1Address != TOAD) {
         return new ethers.Contract(this.contract, PADSWAP_SINGLE_STAKE_FARM_ABI, this.web3)
       } else {
         return new ethers.Contract(this.contract, PADSWAP_FARM_ABI, this.web3)
