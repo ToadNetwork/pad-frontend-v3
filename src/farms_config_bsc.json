@@ -102,6 +102,19 @@
         "token1":"0xe9e7cea3dedca5984780bafc599bd69add087d56",
         "token2":"0x55d398326f99059ff775485246999027b3197955"
       },
+        "name":"BUSD-USDC",
+        "contract":"0x85Fc454FbBFB00a75724943A56065a3c7627ACC6",
+        "acceptedToken":"0x88348dffc9797b7be0a88c5e7775ca9aa29ba6eb",
+        "token1":"0xe9e7cea3dedca5984780bafc599bd69add087d56",
+        "token2":"0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+      },
+      {
+        "name":"BNB-USDC",
+        "contract":"0x48e214578Fb7F31EBaDd31416713D280a5c604C8",
+        "acceptedToken":"0xce71f919daae7a2d0708f84c657af46f57cbde2b",
+        "token1":"0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+        "token2":"0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+      },
       { 
         "single_token": true,
         "name":"TOAD",
