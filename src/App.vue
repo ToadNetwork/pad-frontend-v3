@@ -38,7 +38,12 @@
             target="_blank"
           >
             <v-list-item-icon>
-              <v-icon>{{ navItem.icon }}</v-icon>
+              <v-img
+                :src="navItem.iconSrc"
+                height="24px"
+                width="24px"
+                contain
+              />
             </v-list-item-icon>
             <v-list-item-content>
               <div>{{ navItem.name }}</div>
@@ -104,7 +109,12 @@
             link
           >
             <v-list-item-icon>
-              <v-icon>{{ navItem.icon }}</v-icon>
+              <v-img
+                :src="navItem.iconSrc"
+                height="24px"
+                width="24px"
+                contain
+              />
             </v-list-item-icon>
             <v-list-item-title>
               {{ navItem.name }}
@@ -139,7 +149,7 @@ type NavItem = {
   name: string,
   desc: string,
   href: string,
-  icon: string
+  iconSrc: string
 }
 
 type NavSection = {
@@ -153,37 +163,37 @@ const navSections: NavSection[] = [{
     name: 'Swap',
     desc: 'Buy or sell any token instantly on PadSwap',
     href: 'https://padswap.exchange/#/swap',
-    icon: 'mdi-swap-horizontal'
+    iconSrc: require('@/assets/icons/Swap Icon.svg')
   },
   {
     name: 'LaunchPad',
     desc: 'Partake in exclusive presales',
     href: 'https://dapps.padswap.exchange/launchpad',
-    icon: 'mdi-rocket-launch'
+    iconSrc: require('@/assets/icons/LaunchPAD Icon.svg')
   },
   {
     name: 'Bridge',
     desc: 'Bridge tokens between chains',
     href: 'https://dapps.padswap.exchange/bridge',
-    icon: 'mdi-bridge'
+    iconSrc: require('@/assets/icons/Bridge Icon.svg')
   },
   {
     name: 'Vault',
     desc: 'PAD\'s backing reserves',
     href: 'https://dapps.padswap.exchange/vault',
-    icon: 'mdi-safe-square-outline'
+    iconSrc: require('@/assets/icons/Vault Icon.svg')
   },
   {
     name: 'Farms',
     desc: 'Earn passive income by staking liquidity',
     href: '/',
-    icon: 'mdi-sprout'
+    iconSrc: require('@/assets/icons/Farms Icon.svg')
   },
   {
     name: 'Stats',
     desc: 'Analyze token prices and their volume',
     href: 'https://info.padswap.exchange/home',
-    icon: 'mdi-chart-bar'
+    iconSrc: require('@/assets/icons/Stats Icon.svg')
   }]
 },
 {
@@ -192,25 +202,25 @@ const navSections: NavSection[] = [{
     name: 'TOAD Academy',
     desc: 'Learn about crypto in a fun way',
     href: 'https://toad.academy/',
-    icon: 'mdi-school-outline'
+    iconSrc: require('@/assets/icons/TOADAcademy Icon.svg')
   },
   {
     name: 'Games',
     desc: 'Play our TOAD-themed games',
     href: 'https://toad.academy/games',
-    icon: 'mdi-gamepad-variant-outline'
+    iconSrc: require('@/assets/icons/Games Icon.svg')
   },
   {
     name: 'YouTube',
     desc: 'Watch our series of educational animated videos',
     href: 'https://www.youtube.com/channel/UCI_vUc-HrJWtKXj-Re-hTSw',
-    icon: 'mdi-youtube'
+    iconSrc: require('@/assets/icons/YouTube Icon.svg')
   },
   {
     name: 'Piramyd Store',
     desc: 'Official TOAD merch',
     href: 'https://piramyd.me/toad-network-x-piramyd/',
-    icon: 'mdi-tshirt-crew-outline'
+    iconSrc: require('@/assets/icons/Piramyd Store Icon.svg')
   }]
 },
 {
@@ -219,19 +229,19 @@ const navSections: NavSection[] = [{
     name: 'Telegram',
     desc: 'Come chat with us on Telegram',
     href: 'https://t.me/toadnetwork',
-    icon: 'mdi-send'
+    iconSrc: require('@/assets/icons/Telegram Icon.svg')
   },
   {
     name: 'Reddit',
     desc: 'Partake in discussions about Toad.Network on our subreddit',
     href: 'https://reddit.com/r/toadnetwork',
-    icon: 'mdi-reddit'
+    iconSrc: require('@/assets/icons/Reddit Icon.svg')
   },
   {
     name: 'Twitter',
     desc: 'Stay up to date with our latest news',
     href: 'https://twitter.com/toadnetwork',
-    icon: 'mdi-twitter'
+    iconSrc: require('@/assets/icons/Twitter Icon.svg')
   }]
 },
 {
@@ -240,19 +250,19 @@ const navSections: NavSection[] = [{
     name: 'TOAD Docs',
     desc: 'Learn all about TOAD on our Wiki',
     href: 'https://docs.toad.network/',
-    icon: 'mdi-clipboard-text-search-outline'
+    iconSrc: require('@/assets/icons/Docs Icon.svg')
   },
   {
     name: 'Audit Report',
     desc: 'PadSwap contracts audit report by SpadeAudits',
     href: 'https://dapps.padswap.exchange/pad_audit_report.pdf',
-    icon: 'mdi-text-box-check'
+    iconSrc: require('@/assets/icons/Audit Icon.svg')
   },
   {
     name: 'White Paper',
     desc: 'PadSwap white paper',
     href: 'https://www.dropbox.com/s/bng5e1bq2u03bk6/PAD%20WHITEPAPER.PDF',
-    icon: 'mdi-file-outline'
+    iconSrc: require('@/assets/icons/White Paper Icon.svg')
   }]
 }]
 
