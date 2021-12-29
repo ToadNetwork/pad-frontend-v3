@@ -106,6 +106,8 @@
           <v-list-item
             v-for="navItem of navSection.items"
             :key="navItem.name"
+            :href="navItem.href"
+            target="_blank"
             link
           >
             <v-list-item-icon>
