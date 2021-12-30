@@ -3,10 +3,9 @@ import Vuex from 'vuex'
 import { ethers } from 'ethers'
 
 import web3Modal from '@/wallet'
+import { ChainId, Ecosystem } from '@/types'
 
 Vue.use(Vuex)
-
-type ChainId = 56 | 1285
 
 type SafeSendTransactionArgs = {
   tx: ethers.PopulatedTransaction,
@@ -22,7 +21,8 @@ export default new Vuex.Store({
       [56]: <number | null> null,
       [1285]: <number | null> null
     },
-    padPrice: null
+    padPrice: null,
+    ecosystem: Ecosystem.BSC
   },
   mutations: {
     setWeb3Connection(state, { web3, address, chainId }) {
@@ -32,6 +32,9 @@ export default new Vuex.Store({
     },
     setPadPrice(state, padPrice) {
       state.padPrice = padPrice
+    },
+    setEcosystem(state, ecosystem: Ecosystem) {
+      state.ecosystem = ecosystem
     }
   },
   getters: {

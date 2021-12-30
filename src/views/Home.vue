@@ -260,6 +260,7 @@ import {
 } from '../constants'
 import { delay } from '@/utils'
 import { formatMixin } from '@/format'
+import { Ecosystem } from '@/types'
 
 // TODO: config
 const farmsToad = {
@@ -308,12 +309,6 @@ enum FarmViewOption {
   Regular = 0,
   DPLP = 1,
   Partner = 2
-}
-
-enum Ecosystem {
-  BSC = 0,
-  Moonriver = 1,
-  Toad = 2
 }
 
 const TOKENS: {[address: string]: string} = {
@@ -377,7 +372,6 @@ export default Vue.extend({
         toad: initializeFarmSet(farmsToad as any)
       },
       active: true,
-      ecosystem: Ecosystem.BSC,
       farmViewOption: null,
       stakedOnly: false,
       includeRetired: false,
@@ -408,6 +402,14 @@ export default Vue.extend({
     next()
   },
   computed: {
+    ecosystem: {
+      get(): Ecosystem {
+        return this.$store.state.ecosystem
+      },
+      set(val: Ecosystem) {
+        this.$store.commit('setEcosystem', val)
+      }
+    },
     currentFarmSet(): FarmSet {
       if (this.ecosystem == Ecosystem.Toad) {
         return this.farms.toad

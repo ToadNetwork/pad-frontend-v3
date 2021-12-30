@@ -146,6 +146,7 @@ import web3Modal from '@/wallet'
 import NavMenu from '@/components/NavMenu.vue'
 import { formatMixin } from '@/format'
 import { delay } from '@/utils'
+import { Ecosystem } from '@/types'
 
 type NavItem = {
   name: string,
@@ -159,115 +160,6 @@ type NavSection = {
   items: NavItem[]
 }
 
-const navSections: NavSection[] = [{
-  title: 'Products',
-  items: [{
-    name: 'Swap',
-    desc: 'Buy or sell any token instantly on PadSwap',
-    href: 'https://padswap.exchange/#/swap',
-    iconSrc: require('@/assets/icons/Swap Icon.svg')
-  },
-  {
-    name: 'LaunchPad',
-    desc: 'Partake in exclusive presales',
-    href: 'https://dapps.padswap.exchange/launchpad',
-    iconSrc: require('@/assets/icons/LaunchPAD Icon.svg')
-  },
-  {
-    name: 'Bridge',
-    desc: 'Bridge tokens between chains',
-    href: 'https://dapps.padswap.exchange/bridge',
-    iconSrc: require('@/assets/icons/Bridge Icon.svg')
-  },
-  {
-    name: 'Vault',
-    desc: 'PAD\'s backing reserves',
-    href: 'https://dapps.padswap.exchange/vault',
-    iconSrc: require('@/assets/icons/Vault Icon.svg')
-  },
-  {
-    name: 'Farms',
-    desc: 'Earn passive income by staking liquidity',
-    href: '/',
-    iconSrc: require('@/assets/icons/Farms Icon.svg')
-  },
-  {
-    name: 'Stats',
-    desc: 'Analyze token prices and their volume',
-    href: 'https://info.padswap.exchange/home',
-    iconSrc: require('@/assets/icons/Stats Icon.svg')
-  }]
-},
-{
-  title: 'Content',
-  items: [{
-    name: 'TOAD Academy',
-    desc: 'Learn about crypto in a fun way',
-    href: 'https://toad.academy/',
-    iconSrc: require('@/assets/icons/TOADAcademy Icon.svg')
-  },
-  {
-    name: 'Games',
-    desc: 'Play our TOAD-themed games',
-    href: 'https://toad.academy/games',
-    iconSrc: require('@/assets/icons/Games Icon.svg')
-  },
-  {
-    name: 'YouTube',
-    desc: 'Watch our series of educational animated videos',
-    href: 'https://www.youtube.com/channel/UCI_vUc-HrJWtKXj-Re-hTSw',
-    iconSrc: require('@/assets/icons/YouTube Icon.svg')
-  },
-  {
-    name: 'Piramyd Store',
-    desc: 'Official TOAD merch',
-    href: 'https://piramyd.me/toad-network-x-piramyd/',
-    iconSrc: require('@/assets/icons/Piramyd Store Icon.svg')
-  }]
-},
-{
-  title: 'Socials',
-  items: [{
-    name: 'Telegram',
-    desc: 'Come chat with us on Telegram',
-    href: 'https://t.me/toadnetwork',
-    iconSrc: require('@/assets/icons/Telegram Icon.svg')
-  },
-  {
-    name: 'Reddit',
-    desc: 'Partake in discussions about Toad.Network on our subreddit',
-    href: 'https://reddit.com/r/toadnetwork',
-    iconSrc: require('@/assets/icons/Reddit Icon.svg')
-  },
-  {
-    name: 'Twitter',
-    desc: 'Stay up to date with our latest news',
-    href: 'https://twitter.com/toadnetwork',
-    iconSrc: require('@/assets/icons/Twitter Icon.svg')
-  }]
-},
-{
-  title: 'About',
-  items: [{
-    name: 'TOAD Docs',
-    desc: 'Learn all about TOAD on our Wiki',
-    href: 'https://docs.toad.network/',
-    iconSrc: require('@/assets/icons/Docs Icon.svg')
-  },
-  {
-    name: 'Audit Report',
-    desc: 'PadSwap contracts audit report by SpadeAudits',
-    href: 'https://dapps.padswap.exchange/pad_audit_report.pdf',
-    iconSrc: require('@/assets/icons/Audit Icon.svg')
-  },
-  {
-    name: 'White Paper',
-    desc: 'PadSwap white paper',
-    href: 'https://www.dropbox.com/s/bng5e1bq2u03bk6/PAD%20WHITEPAPER.PDF',
-    iconSrc: require('@/assets/icons/White Paper Icon.svg')
-  }]
-}]
-
 const DESKTOP_SCROLL_THRESHOLD = 430
 
 export default Vue.extend({
@@ -276,7 +168,6 @@ export default Vue.extend({
   components: { NavMenu },
   data() {
     return {
-      navSections: navSections,
       isNavigationDrawerOpen: false,
       windowScroll: 0,
       DESKTOP_SCROLL_THRESHOLD
@@ -296,8 +187,119 @@ export default Vue.extend({
 
       return 0
     },
+    navSections(): NavSection[] {
+      // TODO: refactor to IEcosystem
+      return [{
+        title: 'Products',
+        items: [{
+          name: 'Swap',
+          desc: 'Buy or sell any token instantly on PadSwap',
+          href: this.ecosystem == Ecosystem.Moonriver ? 'https://movr.padswap.exchange/#/swap' : 'https://padswap.exchange/#/swap',
+          iconSrc: require('@/assets/icons/Swap Icon.svg')
+        },
+        {
+          name: 'LaunchPad',
+          desc: 'Partake in exclusive presales',
+          href: 'https://dapps.padswap.exchange/launchpad',
+          iconSrc: require('@/assets/icons/LaunchPAD Icon.svg')
+        },
+        {
+          name: 'Bridge',
+          desc: 'Bridge tokens between chains',
+          href: this.ecosystem == Ecosystem.Moonriver ? 'https://movr-dapps.padswap.exchange/bridge' : 'https://dapps.padswap.exchange/bridge',
+          iconSrc: require('@/assets/icons/Bridge Icon.svg')
+        },
+        {
+          name: 'Vault',
+          desc: 'PAD\'s backing reserves',
+          href: 'https://dapps.padswap.exchange/vault',
+          iconSrc: require('@/assets/icons/Vault Icon.svg')
+        },
+        {
+          name: 'Farms',
+          desc: 'Earn passive income by staking liquidity',
+          href: '/',
+          iconSrc: require('@/assets/icons/Farms Icon.svg')
+        },
+        {
+          name: 'Stats',
+          desc: 'Analyze token prices and their volume',
+          href: this.ecosystem == Ecosystem.Moonriver ? 'https://movr-info.padswap.exchange/home' : 'https://info.padswap.exchange/home',
+          iconSrc: require('@/assets/icons/Stats Icon.svg')
+        }]
+      },
+      {
+        title: 'Content',
+        items: [{
+          name: 'TOAD Academy',
+          desc: 'Learn about crypto in a fun way',
+          href: 'https://toad.academy/',
+          iconSrc: require('@/assets/icons/TOADAcademy Icon.svg')
+        },
+        {
+          name: 'Games',
+          desc: 'Play our TOAD-themed games',
+          href: 'https://toad.academy/games',
+          iconSrc: require('@/assets/icons/Games Icon.svg')
+        },
+        {
+          name: 'YouTube',
+          desc: 'Watch our series of educational animated videos',
+          href: 'https://www.youtube.com/channel/UCI_vUc-HrJWtKXj-Re-hTSw',
+          iconSrc: require('@/assets/icons/YouTube Icon.svg')
+        },
+        {
+          name: 'Piramyd Store',
+          desc: 'Official TOAD merch',
+          href: 'https://piramyd.me/toad-network-x-piramyd/',
+          iconSrc: require('@/assets/icons/Piramyd Store Icon.svg')
+        }]
+      },
+      {
+        title: 'Socials',
+        items: [{
+          name: 'Telegram',
+          desc: 'Come chat with us on Telegram',
+          href: 'https://t.me/toadnetwork',
+          iconSrc: require('@/assets/icons/Telegram Icon.svg')
+        },
+        {
+          name: 'Reddit',
+          desc: 'Partake in discussions about Toad.Network on our subreddit',
+          href: 'https://reddit.com/r/toadnetwork',
+          iconSrc: require('@/assets/icons/Reddit Icon.svg')
+        },
+        {
+          name: 'Twitter',
+          desc: 'Stay up to date with our latest news',
+          href: 'https://twitter.com/toadnetwork',
+          iconSrc: require('@/assets/icons/Twitter Icon.svg')
+        }]
+      },
+      {
+        title: 'About',
+        items: [{
+          name: 'TOAD Docs',
+          desc: 'Learn all about TOAD on our Wiki',
+          href: 'https://docs.toad.network/',
+          iconSrc: require('@/assets/icons/Docs Icon.svg')
+        },
+        {
+          name: 'Audit Report',
+          desc: 'PadSwap contracts audit report by SpadeAudits',
+          href: 'https://dapps.padswap.exchange/pad_audit_report.pdf',
+          iconSrc: require('@/assets/icons/Audit Icon.svg')
+        },
+        {
+          name: 'White Paper',
+          desc: 'PadSwap white paper',
+          href: 'https://www.dropbox.com/s/bng5e1bq2u03bk6/PAD%20WHITEPAPER.PDF',
+          iconSrc: require('@/assets/icons/White Paper Icon.svg')
+        }]
+      }]
+    },
     ...mapGetters(['isConnected']),
-    ...mapState(['padPrice']),
+    ...mapState(['padPrice', 'ecosystem']),
   },
   created() {
     window.addEventListener('scroll', this.updateScroll)
