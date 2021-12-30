@@ -32,7 +32,9 @@
         height="105"
         width="100%"
       />
-      <div style="font-size: 36px; margin-top: 20px;">Pad Farms</div>
+      <div style="font-size: 36px; margin-top: 20px;">
+        PadSwap Farms
+      </div>
       <div style="font-size: 14px; color: #B3B8C1; margin-top: 10px;">Stake tokens to earn PAD, LP and partner tokens.</div>
     </div>
     <v-sheet
