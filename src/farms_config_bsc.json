@@ -102,6 +102,7 @@
         "token1":"0xe9e7cea3dedca5984780bafc599bd69add087d56",
         "token2":"0x55d398326f99059ff775485246999027b3197955"
       },
+      {
         "name":"BUSD-USDC",
         "contract":"0x85Fc454FbBFB00a75724943A56065a3c7627ACC6",
         "acceptedToken":"0x88348dffc9797b7be0a88c5e7775ca9aa29ba6eb",
