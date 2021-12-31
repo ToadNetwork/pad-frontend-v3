@@ -369,6 +369,9 @@ const IMAGE_OVERRIDES = {
 }
 
 const TOAD = '0x463e737d8f740395abf44f7aac2d9531d8d539e9'
+const WBNB = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+// TODO: use 0x98878b06940ae243284ca214f92bb71a2b032b8a?
+const WMOVR = '0x663a07a2648296f1A3C02EE86A126fE1407888E5'
 
 export default Vue.extend({
   name: 'Farm',
@@ -442,7 +445,13 @@ export default Vue.extend({
     },
     padswapLiquidityUrl(): string {
       const padswapHost = this.chainId == 1285 ? 'movr.padswap.exchange' : 'padswap.exchange'
-      return `https://${padswapHost}/#/add/${this.token1Address}/${this.token2Address}`
+      const tokenAliases: any = {
+        [WBNB.toLowerCase()]: 'BNB',
+        [WMOVR.toLowerCase()]: 'MOVR'
+      }
+      const token1Address = tokenAliases[this.token1Address.toLowerCase()] ?? this.token1Address
+      const token2Address = tokenAliases[this.token2Address.toLowerCase()] ?? this.token2Address
+      return `https://${padswapHost}/#/add/${token1Address}/${token2Address}`
     },
     earnedValue(): number {
       if (!this.userRewardsBalance) {
