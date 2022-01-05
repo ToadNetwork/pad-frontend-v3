@@ -466,7 +466,7 @@ export default Vue.extend({
       } else if (this.sortBy == 'Earned') {
         sortfn = (f1, f2) => f2.userRewardsBalance! * f2.rewardTokenPrice! - f1.userRewardsBalance! * f2.rewardTokenPrice!
       } else if (this.sortBy == 'Staked') {
-        sortfn = (f1, f2) => toFloat(f2.userStakedBalance || ethers.BigNumber.from(0)) * f2.lpPrice! - toFloat(f1.userStakedBalance!) * f1.lpPrice!
+        sortfn = (f1, f2) => toFloat(f2.userStakedBalance || ethers.BigNumber.from(0)) * f2.lpPrice! - toFloat(f1.userStakedBalance || ethers.BigNumber.from(0)) * f1.lpPrice!
       }
       visibleFarms.regularFarms.sort(sortfn)
       visibleFarms.lpFarms.sort(sortfn)
