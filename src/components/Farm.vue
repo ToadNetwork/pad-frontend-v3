@@ -195,11 +195,11 @@
             >
               <v-row>
                 <v-col>{{ name }}&nbsp;BALANCE:</v-col>
-                <v-col>{{ userLpBalance | formatNumber(4) }}</v-col>
+                <v-col>{{ userLpBalanceNum | formatNumber(4) }}</v-col>
               </v-row>
               <v-row>
                 <v-col>{{ name }}&nbsp;STAKED:</v-col>
-                <v-col>{{ userStakedBalance | formatNumber(4) }}</v-col>
+                <v-col>{{ userStakedBalanceNum | formatNumber(4) }}</v-col>
               </v-row>
               <v-row>
                 <v-col>STAKED&nbsp;VALUE</v-col>
@@ -247,7 +247,7 @@
                   </div>
                   <div class="d-flex mb-1">
                     <v-text-field
-                      v-model.number="dwActionAmount"
+                      v-model="dwActionAmount"
                       :disabled="dwAction == 'reinvest'"
                       type="number"
                       min="0.0"
@@ -297,10 +297,10 @@
                     </template>
                     <span class="padswap-dw-balance-amount">
                       <template v-if="dwAction == 'withdraw'">
-                        {{ userStakedBalance | formatNumber(4) }}
+                        {{ userStakedBalanceNum | formatNumber(4) }}
                       </template>
                       <template v-else>
-                        {{ userLpBalance | formatNumber(4) }}
+                        {{ userLpBalanceNum | formatNumber(4) }}
                       </template>
                     </span>
                   </div>
@@ -392,8 +392,8 @@ export default Vue.extend({
     tvl: Number,
     lpPrice: Number,
     rewardTokenPrice: Number,
-    userLpBalance: Number,
-    userStakedBalance: Number,
+    userLpBalance: ethers.BigNumber,
+    userStakedBalance: ethers.BigNumber,
     userRewardsBalance: Number,
     userAllowance: Number
   },
@@ -407,12 +407,18 @@ export default Vue.extend({
         'enableButton': false
       },
       dwAction: <'deposit' | 'withdraw' | 'reinvest'> 'deposit',
-      dwActionAmount: <number | null> null,
+      dwActionAmount: <string | null> null,
       token0,
       token1
     }
   },
   computed: {
+    userLpBalanceNum(): number {
+      return parseFloat(ethers.utils.formatEther(this.userLpBalance ?? 0))
+    },
+    userStakedBalanceNum(): number {
+      return parseFloat(ethers.utils.formatEther(this.userStakedBalance ?? 0))
+    },
     isLoading(): boolean {
       return this.roi === undefined
     },
@@ -420,11 +426,11 @@ export default Vue.extend({
       return this.userAllowance !== undefined && this.userAllowance >= FARM_REQUIRED_ALLOWANCE
     },
     stakedLpValue(): number {
-      if (!this.userStakedBalance) {
+      if (!this.userStakedBalanceNum) {
         return 0
       }
 
-      return (this.userStakedBalance as number) * (this.lpPrice as number)
+      return this.userStakedBalanceNum * (this.lpPrice as number)
     },
     displayedRewardToken(): string {
       if (this.rewardToken) {
@@ -460,16 +466,25 @@ export default Vue.extend({
 
       return (this.userRewardsBalance as number) * (this.rewardTokenPrice as number)
     },
+    dwActionAmountBn: {
+      // TODO: token-specific decimals if ever needed
+      get(): ethers.BigNumber {
+        return ethers.utils.parseEther(this.dwActionAmount || '0')
+      },
+      set(val: ethers.BigNumber) {
+        this.dwActionAmount = ethers.utils.formatEther(val)
+      }
+    },
     validationStatus(): ValidationStatus {
-      if (this.dwActionAmount == null || this.dwActionAmount <= 0) {
+      if (this.dwActionAmount == null || this.dwActionAmountBn.lte(0)) {
         return { status: false }
       }
 
-      if (this.dwAction == 'deposit' && this.dwActionAmount > this.userLpBalance) {
+      if (this.dwAction == 'deposit' && this.dwActionAmountBn.gt(this.userLpBalance)) {
         return { status: false, message: 'Insufficient balance'}
       }
 
-      if (this.dwAction == 'withdraw' && this.dwActionAmount > this.userStakedBalance) {
+      if (this.dwAction == 'withdraw' && this.dwActionAmountBn.gt(this.userStakedBalance)) {
         return { status: false, message: 'Insufficient balance'}
       }
 
@@ -506,9 +521,9 @@ export default Vue.extend({
   methods: {
     setMax() {
       if (this.dwAction == 'deposit') {
-        this.dwActionAmount = this.userLpBalance
+        this.dwActionAmountBn = this.userLpBalance
       } else {
-        this.dwActionAmount = this.userStakedBalance
+        this.dwActionAmountBn = this.userStakedBalance
       }
     },
     async enable() {
@@ -531,8 +546,7 @@ export default Vue.extend({
         return
       }
 
-      const amount = ethers.utils.parseEther(this.dwActionAmount!.toString())
-      const tx = await this.farmContract.populateTransaction.deposit(amount)
+      const tx = await this.farmContract.populateTransaction.deposit(this.dwActionAmountBn)
       await this.safeSendTransaction({ tx, targetChainId: this.chainId })
     },
     async withdraw() {
@@ -541,8 +555,7 @@ export default Vue.extend({
         return
       }
 
-      const amount = ethers.utils.parseEther(this.dwActionAmount!.toString())
-      const tx = await this.farmContract.populateTransaction.remove(amount)
+      const tx = await this.farmContract.populateTransaction.remove(this.dwActionAmountBn)
       await this.safeSendTransaction({ tx, targetChainId: this.chainId })
     },
     async reinvest() {

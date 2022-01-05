@@ -275,6 +275,7 @@ enum FarmType {
   Partner
 }
 
+// TODO: store all numbers as ethers.BigNumber
 type FarmData = {
   name: string,
   contract: string,
@@ -293,8 +294,8 @@ type FarmData = {
   rewardTokenPrice: number | undefined,
   roi: number | undefined,
   apy: number | undefined,
-  userLpBalance: number | undefined,
-  userStakedBalance: number | undefined,
+  userLpBalance: ethers.BigNumber | undefined,
+  userStakedBalance: ethers.BigNumber | undefined,
   userRewardsBalance: number | undefined,
   userAllowance: number | undefined
 }
@@ -327,6 +328,10 @@ const MINTER = {
   [Ecosystem.Toad]: BSC_MINTER_ADDRESS
 }
 
+function toFloat(bn: ethers.BigNumber, units: number = 18) {
+  return parseFloat(ethers.utils.formatUnits(bn, units))
+}
+
 function initializeFarms(farms: FarmData[], type: FarmType): FarmData[] {
   return farms.map(f => ({
     ...f,
@@ -349,7 +354,7 @@ function initializeFarms(farms: FarmData[], type: FarmType): FarmData[] {
   }))
 }
 
-const MIN_VISIBLE_STAKE = 1e-8
+const MIN_VISIBLE_STAKE = ethers.utils.parseEther('0.00000001')
 
 function initializeFarmSet(farmSet: FarmSet) {
   const copy: FarmSet = JSON.parse(JSON.stringify(farmSet))
@@ -448,9 +453,9 @@ export default Vue.extend({
       }
 
       if (this.stakedOnly) {
-        visibleFarms.regularFarms = visibleFarms.regularFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance > MIN_VISIBLE_STAKE)
-        visibleFarms.lpFarms = visibleFarms.lpFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance > MIN_VISIBLE_STAKE)
-        visibleFarms.partnerFarms = visibleFarms.partnerFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance > MIN_VISIBLE_STAKE)
+        visibleFarms.regularFarms = visibleFarms.regularFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance.gt(MIN_VISIBLE_STAKE))
+        visibleFarms.lpFarms = visibleFarms.lpFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance.gt(MIN_VISIBLE_STAKE))
+        visibleFarms.partnerFarms = visibleFarms.partnerFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance.gt(MIN_VISIBLE_STAKE))
       }
 
       let sortfn = (_1: FarmData, _2: FarmData) => 1
@@ -461,7 +466,7 @@ export default Vue.extend({
       } else if (this.sortBy == 'Earned') {
         sortfn = (f1, f2) => f2.userRewardsBalance! * f2.rewardTokenPrice! - f1.userRewardsBalance! * f2.rewardTokenPrice!
       } else if (this.sortBy == 'Staked') {
-        sortfn = (f1, f2) => f2.userStakedBalance! * f2.lpPrice! - f1.userStakedBalance! * f1.lpPrice!
+        sortfn = (f1, f2) => toFloat(f2.userStakedBalance || ethers.BigNumber.from(0)) * f2.lpPrice! - toFloat(f1.userStakedBalance!) * f1.lpPrice!
       }
       visibleFarms.regularFarms.sort(sortfn)
       visibleFarms.lpFarms.sort(sortfn)
@@ -478,12 +483,12 @@ export default Vue.extend({
       const farmsList = new List(allFarms)
 
       const totals: any = {
-        staked: farmsList.sum(f => f.userStakedBalance! * f.lpPrice!),
+        staked: farmsList.sum(f => toFloat(f.userStakedBalance || ethers.BigNumber.from(0)) * f.lpPrice!),
         rewards: farmsList.sum(f => f.userRewardsBalance! * f.rewardTokenPrice!)
       }
 
-      const weightedTotalROI = farmsList.sum(f => f.userStakedBalance! * f.lpPrice! * f.roi!)
-      const weightedTotalAPY = farmsList.sum(f => f.userStakedBalance! * f.lpPrice! * f.apy!)
+      const weightedTotalROI = farmsList.sum(f => toFloat(f.userStakedBalance || ethers.BigNumber.from(0)) * f.lpPrice! * f.roi!)
+      const weightedTotalAPY = farmsList.sum(f => toFloat(f.userStakedBalance || ethers.BigNumber.from(0)) * f.lpPrice! * f.apy!)
       totals.averageROI = weightedTotalROI / totals.staked
       totals.averageAPY = weightedTotalAPY / totals.staked
 
@@ -595,9 +600,9 @@ export default Vue.extend({
         promises.push(p1, p2, p3, p4)
 
         if (this.isConnected) {
-          const p5 = pairContract.balanceOf(this.userAddress).then((n: ethers.BigNumber) => farm.userLpBalance = parseFloat(ethers.utils.formatEther(n)))
+          const p5 = pairContract.balanceOf(this.userAddress).then((n: ethers.BigNumber) => farm.userLpBalance = n)
           const p6 = pairContract.allowance(this.userAddress, farm.contract).then((n: ethers.BigNumber) => farm.userAllowance = parseInt(n.toString()))
-          const p7 = farmContract.sharesOf(this.userAddress).then((n: ethers.BigNumber) => farm.userStakedBalance = parseFloat(ethers.utils.formatEther(n)))
+          const p7 = farmContract.sharesOf(this.userAddress).then((n: ethers.BigNumber) => farm.userStakedBalance = n)
           const p8 = farmContract.estimateRewardsOf(this.userAddress).then((n: ethers.BigNumber) => farm.userRewardsBalance = parseFloat(ethers.utils.formatEther(n)))
           promises.push(p5, p6, p7, p8)
         }
