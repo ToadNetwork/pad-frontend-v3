@@ -13,14 +13,14 @@
         @click="isNavigationDrawerOpen = !isNavigationDrawerOpen"
         class="d-sm-none d-flex"
       />
-      <div>
+      <a href="/">
         <v-img
           :src="$padswapTheme.theme.headerLogoSrc"
           class="d-sm-flex d-none"
           width="162.42px"
           contain
         />
-      </div>
+      </a>
 
       <v-spacer></v-spacer>
 
