@@ -17,6 +17,8 @@
 				</div>
 			</div>
 
+
+
 			<!-------------------------------->
 			<!-- Get started with farming ---->
 			<!-------------------------------->
@@ -286,6 +288,9 @@
 	display: inline-block;
 	max-width: 1200px;
 	text-align: left;
+	background-image: radial-gradient(circle farthest-side at 50% -20%,rgb(17 95 13 / 35%),#101722 78%);
+	padding: 20px;
+	border-radius: 20px;
 }
 
 /*****************/
