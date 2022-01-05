@@ -38,7 +38,7 @@
 									target="_blank"
 									>
 										<v-icon class="rounded-icon">mdi-cash-multiple</v-icon>
-										<p>Buy BNB tokens<br>for fiat</p>
+										<p>Buy BNB tokens<br>with fiat</p>
 									</a>
 								</div>
 
@@ -77,7 +77,7 @@
 									target="_blank"
 									>
 										<v-icon class="rounded-icon">mdi-sprout-outline</v-icon>
-										<p>Stake LP<br> in a farm</p>
+										<p>Stake LP tokens<br> in a farm</p>
 									</a>
 								</div>
 

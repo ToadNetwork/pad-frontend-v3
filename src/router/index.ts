@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '../views/Home.vue'
+import Landing from '../views/Landing.vue'
+import Onramp from '../views/Onramp.vue'
 
 Vue.use(VueRouter)
 
@@ -21,12 +23,12 @@ const routes: Array<RouteConfig> = [
   {
     path: '/landing',
     name: 'PadSwap Overview',
-    component: () => import(/* webpackChunkName: "landing" */ '../views/Landing.vue')
+    component: Landing
   },
   {
     path: '/onramp',
     name: 'Buy crypto with fiat',
-    component: () => import(/* webpackChunkName: "onramp" */ '../views/Onramp.vue')
+    component: Onramp
   }
 ]
 
