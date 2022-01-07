@@ -13,6 +13,7 @@
 				contain
 				height="150px"
 				width="500px"
+				style="max-width: 70vw"
 				/>
 			</div>
 			<!-- <h1 style="color: rgb(200 200 200);">Buy crypto</h1> -->
@@ -28,9 +29,10 @@
 		align="center"
 		justify="center">
 			<v-col
-			cols="7">
+			cols="12"
+			md="7">
 				<div class="rounded-box">
-					<p class="text-center">Buy crypto</p>
+					<p class="text-center">Buy BNB with fiat</p>
 					<div class="onramper-container">
 						<div class="onramper">
 							<iframe
@@ -52,7 +54,7 @@
 					</div>
 				<div class="info-link">
 					Fiat onramping is provided by Onramper.<br>
-					In case of any questions, contact <a href="https://onramper.com/about/" target="_blank">Onramper support </a>
+					In case of any questions, please contact <a href="https://onramper.com/about/" target="_blank">Onramper support </a>
 					<v-icon small style="color: #9b9b9b;">mdi-open-in-new</v-icon>
 				</div>
 				</div>
@@ -63,7 +65,8 @@
 		<!------------------>
 
 			<v-col
-			cols="7">
+			cols="12"
+			md="7">
 				<div class="rounded-box">
 					<p class="text-center">What's next?</p>
 					<v-list class="inner-rounded-box">
@@ -111,13 +114,13 @@
 					href: 'https://dapps.padswap.exchange/',
 					target: '_blank'
 				},
-				{
-					title: 'LaunchPad presales',
-					icon: 'mdi-rocket-launch',
-					description: 'Buy upcoming tokens before they are launched',
-					href: 'https://dapps.padswap.exchange/launchpad',
-					target: '_blank'
-				},
+				// {
+				// 	title: 'LaunchPad presales',
+				// 	icon: 'mdi-rocket-launch',
+				// 	description: 'Buy upcoming tokens before they are launched',
+				// 	href: 'https://dapps.padswap.exchange/launchpad',
+				// 	target: '_blank'
+				// },
 				{
 					title: 'Bridge',
 					icon: 'mdi-bridge',
@@ -125,13 +128,13 @@
 					href: 'https://dapps.padswap.exchange/bridge',
 					target: '_blank'
 				},
-				{
-					title: 'Auctions',
-					icon: 'mdi-hand-coin-outline',
-					description: 'Get auctioned tokens at better prices',
-					href: '',
-					target: '_blank'
-				}
+				// {
+				// 	title: 'Auctions',
+				// 	icon: 'mdi-hand-coin-outline',
+				// 	description: 'Get auctioned tokens at better prices',
+				// 	href: '',
+				// 	target: '_blank'
+				// }
 				],
 			}
 		}
