@@ -104,8 +104,8 @@
       },
       {
         "name":"FRAX-USDC",
-        "contract":"0x772c73294d84C2C07CAB1cb5eDBb8327aB4010a5",
-        "acceptedToken":"0xef1eaaec10e79f681a93195594ef255267f2e5ca",
+        "contract":"0xc594f733F2327f5D9e678b6f836e2Dc7bC4B86e3",
+        "acceptedToken":"0xdd42fe5bdd2f7c9965e74baf8b0abf34fd42e21f",
         "token1":"0x1A93B23281CC1CDE4C4741353F3064709A16197d",
         "token2":"0x4a436073552044D5f2f49B176853ad3Ad473d9d6"
       },
