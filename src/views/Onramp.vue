@@ -50,6 +50,7 @@
 					</div>
 				<div class="info-link">
 					Fiat onramping is provided by Onramper.<br>
+					Note that Onramper takes a 1% fee.<br>
 					In case of any questions, please contact <a href="https://onramper.com/about/" target="_blank">Onramper support </a>
 					<v-icon small style="color: #9b9b9b;">mdi-open-in-new</v-icon>
 				</div>
