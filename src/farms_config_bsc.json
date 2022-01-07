@@ -185,6 +185,13 @@
         "token2":"0xc0888d80ee0abf84563168b3182650c0addeb6d5"
       },
       {
+        "name":"TOAD-BNB",
+        "contract":"0xC1B3bFaF4fA50b339F068948e9DcEC298Df84101",
+        "acceptedToken":"0xef6421325f7ed6ebeeaa2b092f9cc64ee2aa3b3b",
+        "token1":"0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+        "token2":"0x463e737d8f740395abf44f7aac2d9531d8d539e9"
+      },
+      {
         "name":"KISH-BNB",
         "contract":"0xe70e0aBDa4FE7A744cCbCd8Ee5E7336477349555",
         "acceptedToken":"0x249ae58eb4340af605cb8d6b5d3b2f0473057042",
