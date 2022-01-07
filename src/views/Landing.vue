@@ -37,10 +37,10 @@
 									<a
 									class="tutorial-item"
 									href="/onramp"
-									target="_blank"
+									target="_self"
 									>
 										<v-icon class="rounded-icon">mdi-cash-multiple</v-icon>
-										<p>Buy BNB tokens<br>with fiat</p>
+										<p>Buy BNB or BUSD<br>with fiat</p>
 									</a>
 								</div>
 
@@ -49,8 +49,8 @@
 								<div class="tutorial-item-container">
 									<a
 									class="tutorial-item"
-									href="https://padswap.exchange/#/swap"
-									target="_blank"
+									href="/swap"
+									target="_self"
 									>
 									<v-icon class="rounded-icon">mdi-swap-horizontal</v-icon>
 									<p>Swap BNB for tokens<br>of your choice</p>
@@ -62,8 +62,8 @@
 								<div class="tutorial-item-container">
 									<a
 									class="tutorial-item"
-									href="https://padswap.exchange/#/pool"
-									target="_blank"
+									href="/swap"
+									target="_self"
 									>
 										<v-icon class="rounded-icon">mdi-vector-link</v-icon>
 										<p>Create a<br>liquidity pair</p>
@@ -75,8 +75,8 @@
 								<div class="tutorial-item-container">
 									<a
 									class="tutorial-item"
-									href="https://dapps.padswap.exchange/"
-									target="_blank"
+									href="/farms"
+									target="_self"
 									>
 										<v-icon class="rounded-icon">mdi-sprout-outline</v-icon>
 										<p>Stake LP tokens<br> in a farm</p>
@@ -87,7 +87,7 @@
 						</div>
 
 						<div class="info-link">
-							Don't have a BNB wallet? Here's <a href="https://academy.binance.com/en/articles/connecting-metamask-to-binance-smart-chain" target="_blank">Binance's official guide for setting up Metamask </a>
+							Don't have a BNB wallet? Here's <a href="https://academy.binance.com/en/articles/connecting-metamask-to-binance-smart-chain" target="_self">Binance's official guide for setting up Metamask </a>
 							<v-icon small>mdi-open-in-new</v-icon>
 						</div>
 
@@ -113,7 +113,7 @@
 							<h1 class="text-center">20.43%</h1>
 						</div>
 						<div class="info-link">
-							<a href="https://dapps.padswap.exchange/vault/" target="_blank">View vault details </a>
+							<a href="https://dapps.padswap.exchange/vault/" target="_self">View vault details </a>
 							<v-icon small>mdi-open-in-new</v-icon>
 						</div>
 					</div>
@@ -137,7 +137,7 @@
 							<h1 class="text-center">$420.69B</h1>
 						</div>
 						<div class="info-link">
-							<a href="https://info.padswap.exchange/" target="_blank">View PadSwap stats </a>
+							<a href="https://info.padswap.exchange/" target="_self">View PadSwap stats </a>
 							<v-icon small>mdi-open-in-new</v-icon>
 						</div>
 					</div>
@@ -213,36 +213,36 @@
 					icon: 'mdi-swap-horizontal',
 					active: true,
 					description: 'Buy or sell any token instantly',
-					href: 'https://padswap.exchange/#/swap',
-					target: '_blank'
+					href: '/swap',
+					target: '_self'
 				},
 				{
 					title: 'Farms',
 					icon: 'mdi-sprout',
 					description: 'Earn passive income by staking liquidity',
 					href: 'https://dapps.padswap.exchange/',
-					target: '_blank'
+					target: '_self'
 				},
 				{
 					title: 'LaunchPad presales',
 					icon: 'mdi-rocket-launch',
 					description: 'Buy upcoming tokens before they are launched',
 					href: 'https://dapps.padswap.exchange/launchpad',
-					target: '_blank'
+					target: '_self'
 				},
 				{
 					title: 'Bridge',
 					icon: 'mdi-bridge',
 					description: 'Move tokens between chains',
 					href: 'https://dapps.padswap.exchange/bridge',
-					target: '_blank'
+					target: '_self'
 				},
 				{
 					title: 'Auctions',
 					icon: 'mdi-hand-coin-outline',
 					description: 'Get auctioned tokens at better prices',
 					href: '',
-					target: '_blank'
+					target: '_self'
 				}
 				],
 				productsForProjects: [
@@ -251,22 +251,22 @@
 					icon: 'mdi-swap-horizontal',
 					active: true,
 					description: 'Make your token trade-able on PadSwap, earn some of the highest LP rewards among DEXes',
-					href: 'https://padswap.exchange/#/pool',
-					target: '_blank'
+					href: '/swap',
+					target: '_self'
 				},
 				{
 					title: 'LaunchPad',
 					icon: 'mdi-rocket-launch',
 					description: 'Launch your own token in a few clicks, no coding knowledge required',
 					href: 'https://dapps.padswap.exchange/launchpad',
-					target: '_blank'
+					target: '_self'
 				},
 				{
 					title: 'Auctions',
 					icon: 'mdi-hand-coin-outline',
 					description: 'Continuously raise liquidity for your project',
 					href: '',
-					target: '_blank'
+					target: '_self'
 				}
 				]
 			}

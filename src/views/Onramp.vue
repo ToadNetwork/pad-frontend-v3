@@ -19,7 +19,6 @@
 			<!-- <h1 style="color: rgb(200 200 200);">Buy crypto</h1> -->
 		</div>
 
-
 		<!--------------------->
 		<!-- Onramper widget -->
 		<!--------------------->
@@ -29,10 +28,8 @@
 		align="center"
 		justify="center">
 			<v-col
-			cols="12"
-			md="7">
+			cols="12">
 				<div class="rounded-box">
-					<p class="text-center">Buy BNB with fiat</p>
 					<div class="onramper-container">
 						<div class="onramper">
 							<iframe
@@ -60,34 +57,9 @@
 				</div>
 			</v-col>
 
-		<!------------------>
-		<!-- What's next? -->
-		<!------------------>
-
-			<v-col
-			cols="12"
-			md="7">
-				<div class="rounded-box">
-					<p class="text-center">What's next?</p>
-					<v-list class="inner-rounded-box">
-						<v-list-item
-						v-for="item in whatsNext"
-						:href="item.href"
-						:target="item.target"
-						>
-							<v-list-item-content>
-								<div class="product-title">
-									<v-icon style="margin-right: 10px">{{ item.icon }}</v-icon>
-									{{ item.title }}
-								</div>
-								<div class="product-description">{{ item.description }}</div>
-							</v-list-item-content>
-						</v-list-item>
-					</v-list>
-				</div>
-			</v-col>
-
 		</v-row>
+
+		<BackToDashboard style="padding-bottom: 300px;"/>
 
 	</div>
 	</div>
@@ -95,7 +67,10 @@
 
 
 <script>
+	import BackToDashboard from '@/components/BackToDashboard.vue'
+
 	export default {
+  	components: { BackToDashboard },
 		data () {
 			return {
 				whatsNext: [

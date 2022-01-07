@@ -45,6 +45,8 @@
 			</div>
 		</div>
 
+    <BackToDashboard style="margin-top: 10px; margin-bottom: 300px;" />
+
   </v-container>
 </template>
 
@@ -55,7 +57,7 @@ import { providers } from '@0xsequence/multicall'
 import AwaitLock from 'await-lock'
 import { List } from 'linq-collections'
 
-import Farm from '@/components/Farm.vue'
+import BackToDashboard from '@/components/BackToDashboard.vue'
 import SliderTabs from '@/components/SliderTabs.vue'
 
 import { BscPadswapTheme, MoonriverPadswapTheme } from '@/padswap-theme'
@@ -75,7 +77,7 @@ function setSwapEcosystem(chain_id : string) {
 
 export default Vue.extend({
   name: 'Home',
-  components: { Farm, SliderTabs },
+  components: { SliderTabs, BackToDashboard },
   data() {
     return {
       active: true,
@@ -134,19 +136,21 @@ export default Vue.extend({
 #swap-iframe-container {
 	position: relative;
 	display: inline-block;
-	height: 800px;
-	width: 70vw;
+	height: 720px;
+	width: 100%;
 	max-width: 550px;
 	border: none;
 	border-radius: 10px;
+  overflow: hidden;
 }
 
 #swap-iframe {
-	height: 800px;
-	width: 70vw;
+	height: 720px;
+	width: 100%;
 	max-width: 550px;
 	border: none;
 	border-radius: 10px;
+  overflow: hidden;
 }
 
 .main-container {
