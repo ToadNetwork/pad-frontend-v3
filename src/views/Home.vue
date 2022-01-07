@@ -505,7 +505,7 @@ export default Vue.extend({
     },
     dataseed(): ethers.providers.Provider {
       if (this.ecosystem == Ecosystem.Moonriver) {
-        return new ethers.providers.StaticJsonRpcProvider('https://moonriver.api.onfinality.io/public')
+        return new ethers.providers.StaticJsonRpcProvider('https://rpc.moonriver.moonbeam.network')
       } else {
         return new ethers.providers.StaticJsonRpcProvider('https://bsc-dataseed1.defibit.io/')
       }
