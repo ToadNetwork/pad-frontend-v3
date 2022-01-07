@@ -9,7 +9,12 @@ Vue.use(VueRouter)
 const routes: Array<RouteConfig> = [
   {
     path: '/',
-    name: 'Home',
+    name: 'PadSwap Overview',
+    component: Landing
+  },
+  {
+    path: '/farms',
+    name: 'PadSwap Farms',
     component: Home
   },
   {
@@ -21,11 +26,6 @@ const routes: Array<RouteConfig> = [
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
-    path: '/landing',
-    name: 'PadSwap Overview',
-    component: Landing
-  },
-  {
     path: '/onramp',
     name: 'Buy crypto with fiat',
     component: Onramp
@@ -33,11 +33,8 @@ const routes: Array<RouteConfig> = [
   {
     path: '/swap',
     name: 'Swap',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Swap.vue')
-  },
+    component: () => import('../views/Swap.vue')
+  }
 ]
 
 const router = new VueRouter({
