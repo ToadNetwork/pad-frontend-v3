@@ -145,18 +145,18 @@ export default Vue.extend({
 #swap-iframe-container {
 	position: relative;
 	display: inline-block;
-	height: 800px;
+	height: 950px;
 	width: 100%;
-	max-width: 550px;
+	max-width: 600px;
 	border: none;
 	border-radius: 30px;
   overflow: hidden;
 }
 
 #swap-iframe {
-	height: 800px;
+	height: 950px;
 	width: 100%;
-	max-width: 550px;
+	max-width: 600px;
 	border: none;
 	border-radius: 30px;
   overflow: hidden;
