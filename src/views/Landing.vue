@@ -123,11 +123,6 @@
 			
 			</v-row>
 
-					<v-col md="8" cols="12">
-            
-          </v-col>
-
-
 			<!--------------------->
 			<!-- Stats sections --->
 			<!--------------------->
@@ -173,7 +168,6 @@
 				</v-col>
 			
 			</v-row>
-
 
 			<!-------------------------------->
 			<!-- Get started with farming ---->
@@ -841,10 +835,6 @@ export default Vue.extend({
 /****************/
 /* Product list */
 /****************/
-
-.product-title {
-
-}
 
 .product-description {
 	color: gray;
