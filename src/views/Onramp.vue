@@ -8,15 +8,14 @@
 
 		<div class="header-box">
 			<div class="header-img-container">
-				<v-img
-				:src="$padswapTheme.theme.headerLogoSrc"
-				contain
-				height="150px"
-				width="500px"
-				style="max-width: 70vw"
-				/>
+			<v-img
+        	:src="$padswapTheme.theme.toadPadImageSrc"
+        	contain
+        	height="105"
+        	width="100%"
+      		/>
 			</div>
-			<!-- <h1 style="color: rgb(200 200 200);">Buy crypto</h1> -->
+			<h1>Buy BNB/BUSD with fiat</h1>
 		</div>
 
 		<!--------------------->
@@ -118,10 +117,6 @@
 
 <style scoped>
 
-* {
-	font-family: roboto;
-}
-
 /*****************/
 /* Content boxes */
 /*****************/
@@ -162,7 +157,7 @@
 .onramper-container {
 	display: flex;
 	width: 100%;
-	height: 600px;
+	height: 700px;
 	flex-direction: column;
 	overflow: hidden;
 	border-radius: 10px;

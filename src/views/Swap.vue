@@ -26,16 +26,14 @@
       </slider-tabs>
       <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
 
+      
       <v-img
-        :src="$padswapTheme.theme.toadPadImageSrc"
+        :src="$padswapTheme.theme.headerLogoSrc"
         contain
-        height="105"
-        width="100%"
-      />
-      <div style="font-size: 36px; margin-top: 20px;">
-        Swap
-      </div>
-      <div style="font-size: 14px; color: #B3B8C1; margin-top: 10px;">Instantly exchange any tokens</div>
+        height="150px"
+        width="500px"
+        style="max-width: 70vw"
+        />
     </div>
 
     <div class="main-container">
@@ -45,7 +43,12 @@
 			</div>
 		</div>
 
-    <BackToDashboard style="margin-top: 10px; margin-bottom: 300px;" />
+    <div class="info-link" >
+        Having trouble? <a id="new-tab-link" href="https://padswap.exchange/#/swap" target="_blank">Try opening the swap in a separate tab </a>
+        <v-icon small>mdi-open-in-new</v-icon>
+    </div>
+
+    <BackToDashboard style="margin-top: 40px; margin-bottom: 300px;" />
 
   </v-container>
 </template>
@@ -66,14 +69,20 @@ import { Ecosystem } from '@/types'
 
 function setSwapEcosystem(chain_id : string) {
 	let iframe : HTMLIFrameElement
+  let link : HTMLLinkElement
 	iframe = document.getElementById("swap-iframe")! as HTMLIFrameElement
+  link = document.getElementById("new-tab-link")! as HTMLLinkElement
   		if (chain_id == "BSC") {
-  			iframe.src =  "https://padswap.exchange/#/swap"
+  			iframe.src = "https://padswap.exchange/#/swap"
+        link!.href = "https://padswap.exchange/#/swap"
   		}
   		if (chain_id == "MOVR") {
-  		iframe.src =  "https://movr.padswap.exchange/#/swap"
+  		iframe.src = "https://movr.padswap.exchange/#/swap"
+      link!.href = "https://movr.padswap.exchange/#/swap"
   		}
   	}
+
+    
 
 export default Vue.extend({
   name: 'Home',
@@ -136,20 +145,20 @@ export default Vue.extend({
 #swap-iframe-container {
 	position: relative;
 	display: inline-block;
-	height: 720px;
+	height: 800px;
 	width: 100%;
 	max-width: 550px;
 	border: none;
-	border-radius: 10px;
+	border-radius: 30px;
   overflow: hidden;
 }
 
 #swap-iframe {
-	height: 720px;
+	height: 800px;
 	width: 100%;
 	max-width: 550px;
 	border: none;
-	border-radius: 10px;
+	border-radius: 30px;
   overflow: hidden;
 }
 
@@ -165,7 +174,7 @@ export default Vue.extend({
 	height: 80px;
 	width: 80px;
 	background-color: black;
-	border-radius: 10px;
+	border-radius: 30px;
 }
 
 
@@ -272,4 +281,25 @@ export default Vue.extend({
 .v-text-field /deep/ .v-icon {
   opacity: 0.5;
 }
+
+
+/***********************/
+/* Informational links */
+/***********************/
+
+.info-link {
+  display: inline-block;
+  width: 100%;
+  padding-top: 7px;
+  text-align: center;
+  color: white;
+}
+.info-link a {
+  color: white;
+}
+.info-link a:hover {
+  color: orange;
+}
+
+
 </style>

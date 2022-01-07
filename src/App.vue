@@ -194,7 +194,7 @@ export default Vue.extend({
         items: [{
           name: 'Swap',
           desc: 'Buy or sell any token instantly on PadSwap',
-          href: this.ecosystem == Ecosystem.Moonriver ? 'https://movr.padswap.exchange/#/swap' : 'https://padswap.exchange/#/swap',
+          href: '/swap',
           iconSrc: require('@/assets/icons/Swap Icon.svg')
         },
         {
@@ -218,8 +218,14 @@ export default Vue.extend({
         {
           name: 'Farms',
           desc: 'Earn passive income by staking liquidity',
-          href: '/',
+          href: '/farms',
           iconSrc: require('@/assets/icons/Farms Icon.svg')
+        },
+        {
+          name: 'Buy crypto with fiat',
+          desc: 'The easiest way to buy BNB or BUSD',
+          href: '/onramp',
+          iconSrc: require('@/assets/icons/Stats Icon.svg')
         },
         {
           name: 'Stats',
