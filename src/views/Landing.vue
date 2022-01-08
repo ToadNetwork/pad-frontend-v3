@@ -199,8 +199,8 @@
 								<div class="tutorial-item-container">
 									<a
 									class="tutorial-item"
-									href="/swap"
-									target="_self"
+									href="https://padswap.exchange/#/swap"
+									target="_blank"
 									>
 									<v-icon large class="rounded-icon">mdi-swap-horizontal</v-icon>
 									<p>Swap BNB for tokens<br>of your choice</p>
@@ -212,8 +212,8 @@
 								<div class="tutorial-item-container">
 									<a
 									class="tutorial-item"
-									href="/swap"
-									target="_self"
+									href="https://padswap.exchange/#/pool"
+									target="_blank"
 									>
 										<v-icon large class="rounded-icon">mdi-vector-link</v-icon>
 										<p>Create a<br>liquidity pair</p>

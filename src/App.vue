@@ -194,7 +194,7 @@ export default Vue.extend({
         items: [{
           name: 'Swap',
           desc: 'Buy or sell any token instantly on PadSwap',
-          href: '/swap',
+          href: this.ecosystem == Ecosystem.Moonriver ? 'https://movr.padswap.exchange/#/swap' : 'https://padswap.exchange/#/swap',
           iconSrc: require('@/assets/icons/Swap Icon.svg')
         },
         {
