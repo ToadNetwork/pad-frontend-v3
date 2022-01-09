@@ -261,7 +261,6 @@ import { List } from 'linq-collections'
 
 import Farm from '@/components/Farm.vue'
 import SliderTabs from '@/components/SliderTabs.vue'
-import { PriceModel } from '@/price-model'
 import {
   PADSWAP_FARM_ABI,
   PADSWAP_LP_FARM_ABI,
@@ -411,9 +410,6 @@ export default Vue.extend({
         contract: MULTICALL_ADDRESS
       })
     },
-    priceModel(): PriceModel {
-      return PriceModel.getPriceModelForChain(this.ecosystem.dataseed, this.ecosystem.chainId)
-    },
     isConnected(): boolean {
       return this.$store.getters.isConnected
     },
@@ -439,17 +435,17 @@ export default Vue.extend({
     async sync() {
       const ecosystem = this.ecosystem
       const multicall = this.multicall
-      const priceModel = this.priceModel
       const mutex = this.syncLocks[this.ecosystemId]
       await mutex.acquireAsync()
 
       try {
-        await this.syncInternal(ecosystem, multicall, priceModel)
+        await this.syncInternal(ecosystem, multicall)
       } finally {
         mutex.release()
       }
     },
-    async syncInternal(ecosystem: IEcosystem, multicall: ethers.providers.Provider, priceModel: PriceModel) {
+    async syncInternal(ecosystem: IEcosystem, multicall: ethers.providers.Provider) {
+      const priceModel = ecosystem.priceModel
       const allFarms: FarmData[] = []
       allFarms.push(...this.currentFarmSet.regularFarms.farms,
                     ...this.currentFarmSet.regularFarms.retiredFarms,

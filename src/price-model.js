@@ -66,16 +66,6 @@ class PriceModel {
         this.usdDecimals = usdDecimals
     }
 
-    static getPriceModelForChain(dataseed, chainId) {
-        if (chainId == 56) {
-            return new PriceModel(dataseed, BSC_WHITELIST, WBNB_ADDRESS, WBNB_BUSD_PAIR, BSC_PADSWAP_FACTORY_ADDRESS, MINIMUM_LIQUIDITY_BNB, 18)
-        } else if (chainId == 1285) {
-            return new PriceModel(dataseed, MOVR_WHITELIST, WMOVR_ADDRESS, WMOVR_USDC_PAIR, MOVR_PADSWAP_FACTORY_ADDRESS, MINIMUM_LIQUIDITY_MOVR, 6)
-        } else {
-            throw new Error()
-        }
-    }
-
     async sync(blockNumber) {
         await this.mutex.acquireAsync()
         try {
@@ -256,5 +246,11 @@ class PriceModel {
 }
 
 export {
-    PriceModel
+    PriceModel,
+    BSC_WHITELIST,
+    MOVR_WHITELIST,
+    WBNB_BUSD_PAIR,
+    WMOVR_USDC_PAIR,
+    MINIMUM_LIQUIDITY_BNB,
+    MINIMUM_LIQUIDITY_MOVR
 }
