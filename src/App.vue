@@ -146,7 +146,7 @@ import web3Modal from '@/wallet'
 import NavMenu from '@/components/NavMenu.vue'
 import { formatMixin } from '@/format'
 import { delay } from '@/utils'
-import { Ecosystem } from '@/types'
+import { IEcosystem } from '@/ecosystem'
 
 type NavItem = {
   name: string,
@@ -174,6 +174,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    ecosystem(): IEcosystem {
+      return this.$store.getters.ecosystem
+    },
     navBarElevation() {
       if (this.isNavigationDrawerOpen) {
         return 24
@@ -194,7 +197,7 @@ export default Vue.extend({
         items: [{
           name: 'Swap',
           desc: 'Buy or sell any token instantly on PadSwap',
-          href: this.ecosystem == Ecosystem.Moonriver ? 'https://movr.padswap.exchange/#/swap' : 'https://padswap.exchange/#/swap',
+          href: this.ecosystem.swapUrl,
           iconSrc: require('@/assets/icons/Swap Icon.svg')
         },
         {
@@ -206,7 +209,7 @@ export default Vue.extend({
         {
           name: 'Bridge',
           desc: 'Bridge tokens between chains',
-          href: this.ecosystem == Ecosystem.Moonriver ? 'https://movr-dapps.padswap.exchange/bridge' : 'https://dapps.padswap.exchange/bridge',
+          href: this.ecosystem.bridgeUrl,
           iconSrc: require('@/assets/icons/Bridge Icon.svg')
         },
         {
@@ -230,7 +233,7 @@ export default Vue.extend({
         {
           name: 'Stats',
           desc: 'Analyze token prices and their volume',
-          href: this.ecosystem == Ecosystem.Moonriver ? 'https://movr-info.padswap.exchange/home' : 'https://info.padswap.exchange/home',
+          href: this.ecosystem.infoUrl,
           iconSrc: require('@/assets/icons/Stats Icon.svg')
         }]
       },
@@ -305,7 +308,7 @@ export default Vue.extend({
       }]
     },
     ...mapGetters(['isConnected']),
-    ...mapState(['padPrice', 'ecosystem']),
+    ...mapState(['padPrice']),
   },
   created() {
     window.addEventListener('scroll', this.updateScroll)

@@ -341,14 +341,15 @@ import Vue from 'vue'
 import { mapActions, mapState } from 'vuex'
 import { ethers } from 'ethers'
 
-import { delay } from '@/utils'
 import {
   ERC20_ABI,
   FARM_REQUIRED_ALLOWANCE,
   PADSWAP_FARM_ABI,
   PADSWAP_SINGLE_STAKE_FARM_ABI,
   PADSWAP_LP_FARM_ABI } from '@/constants'
+import { IEcosystem, EcosystemId, ECOSYSTEMS } from '@/ecosystem'
 import { formatMixin } from '@/format'
+import { delay, equalsInsensitive } from '@/utils'
 
 type ValidationStatus = {
   status: boolean,
@@ -384,7 +385,7 @@ export default Vue.extend({
     token2Address: String,
     rewardToken: String,
     type: Number,
-    chain: String,
+    ecosystemId: Number,
     roi: Number,
     apy: Number,
     poolSize: Number,
@@ -413,6 +414,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    ecosystem(): IEcosystem {
+      return ECOSYSTEMS[this.ecosystemId as EcosystemId]
+    },
     userLpBalanceNum(): number {
       return parseFloat(ethers.utils.formatEther(this.userLpBalance ?? 0))
     },
@@ -445,18 +449,14 @@ export default Vue.extend({
       const token0 = this.token0 as keyof typeof IMAGE_OVERRIDES
       const token1 = (this.token1 ?? this.token0) as keyof typeof IMAGE_OVERRIDES
       return [
-        IMAGE_OVERRIDES[token0] ?? require(`@/assets/tokens/${this.chain.toLowerCase()}/${token0}.svg`),
-        IMAGE_OVERRIDES[token1] ?? require(`@/assets/tokens/${this.chain.toLowerCase()}/${token1}.svg`)
+        IMAGE_OVERRIDES[token0] ?? require(`@/assets/tokens/${this.ecosystem.tokenIconsFolder}/${token0}.svg`),
+        IMAGE_OVERRIDES[token1] ?? require(`@/assets/tokens/${this.ecosystem.tokenIconsFolder}/${token1}.svg`)
       ]
     },
     padswapLiquidityUrl(): string {
-      const padswapHost = this.chainId == 1285 ? 'movr.padswap.exchange' : 'padswap.exchange'
-      const tokenAliases: any = {
-        [WBNB.toLowerCase()]: 'BNB',
-        [WMOVR.toLowerCase()]: 'MOVR'
-      }
-      const token1Address = tokenAliases[this.token1Address.toLowerCase()] ?? this.token1Address
-      const token2Address = tokenAliases[this.token2Address.toLowerCase()] ?? this.token2Address
+      const padswapHost = new URL(this.ecosystem.swapUrl).hostname
+      const token1Address = equalsInsensitive(this.token1Address, this.ecosystem.wethAddress) ? this.ecosystem.ethName : this.token1Address
+      const token2Address = equalsInsensitive(this.token2Address, this.ecosystem.wethAddress) ? this.ecosystem.ethName : this.token2Address
       return `https://${padswapHost}/#/add/${token1Address}/${token2Address}`
     },
     earnedValue(): number {
@@ -513,9 +513,6 @@ export default Vue.extend({
     tokenContract(): ethers.Contract {
       return new ethers.Contract(this.acceptedToken, ERC20_ABI, this.web3)
     },
-    chainId(): number {
-      return this.chain == 'moonriver' ? 1285 : 56
-    },
     ...mapState(['web3'])
   },
   methods: {
@@ -528,7 +525,7 @@ export default Vue.extend({
     },
     async enable() {
       const tx = await this.tokenContract.populateTransaction.approve(this.farmContract.address, APPROVE_AMOUNT)
-      await this.safeSendTransaction({ tx, targetChainId: this.chainId})
+      await this.safeSendTransaction({ tx, targetChainId: this.ecosystem.chainId})
     },
     async harvest() {
       let tx
@@ -538,7 +535,7 @@ export default Vue.extend({
         tx = await this.farmContract.populateTransaction.harvest()
       }
 
-      await this.safeSendTransaction({ tx, targetChainId: this.chainId})
+      await this.safeSendTransaction({ tx, targetChainId: this.ecosystem.chainId})
     },
     async deposit() {
       if (!this.validationStatus.status) {
@@ -547,7 +544,7 @@ export default Vue.extend({
       }
 
       const tx = await this.farmContract.populateTransaction.deposit(this.dwActionAmountBn)
-      await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+      await this.safeSendTransaction({ tx, targetChainId: this.ecosystem.chainId })
     },
     async withdraw() {
       if (!this.validationStatus.status) {
@@ -556,11 +553,11 @@ export default Vue.extend({
       }
 
       const tx = await this.farmContract.populateTransaction.remove(this.dwActionAmountBn)
-      await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+      await this.safeSendTransaction({ tx, targetChainId: this.ecosystem.chainId })
     },
     async reinvest() {
       const tx = await this.farmContract.populateTransaction.reinvest()
-      await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+      await this.safeSendTransaction({ tx, targetChainId: this.ecosystem.chainId })
     },
     async shakeButton(name: 'dwButton' | 'enableButton') {
       if (this.currentAnimations[name]) {

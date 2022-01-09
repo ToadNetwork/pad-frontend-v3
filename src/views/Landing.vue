@@ -3,7 +3,7 @@
     <div class="padswap-header-box">
       <slider-tabs
         class="padswap-ecosystem-tabs"
-        v-model="ecosystem"
+        v-model="ecosystemId"
       >
         <v-tab class="d-flex flex-column">
           <v-img
@@ -261,66 +261,18 @@ import { List } from 'linq-collections'
 
 import Farm from '@/components/Farm.vue'
 import SliderTabs from '@/components/SliderTabs.vue'
-import farmsBsc from '@/farms_config_bsc.json'
-import farmsMoonriver from '@/farms_config_movr.json'
-import { BscPadswapTheme, MoonriverPadswapTheme } from '@/padswap-theme'
 import { PriceModel } from '@/price-model'
 import {
   PADSWAP_FARM_ABI,
   PADSWAP_LP_FARM_ABI,
   MINTER_ABI,
-  BSC_MINTER_ADDRESS,
-  MOVR_MINTER_ADDRESS,
   PADSWAP_PAIR_ABI,
   MULTICALL_ADDRESS
 } from '../constants'
-import { delay } from '@/utils'
+import { EcosystemId, IEcosystem, ECOSYSTEMS } from '@/ecosystem'
 import { formatMixin } from '@/format'
-import { Ecosystem } from '@/types'
-
-// TODO: config
-const farmsToad = {
-  regularFarms: { farms: [], retiredFarms: [] },
-  lpFarms: { farms: [] },
-  partnerFarms: { farms: [] }
-}
-
-enum FarmType {
-  Regular,
-  LP,
-  Partner
-}
-
-// TODO: store all numbers as ethers.BigNumber
-type FarmData = {
-  name: string,
-  contract: string,
-  acceptedToken: string,
-  token1: string,
-  token2: string,
-  rewardToken: string | undefined,
-  type: FarmType | undefined,
-  poolSize: number | undefined,
-  poolValue: number | undefined,
-  tvl: number | undefined,
-  farmTotalSupply: number | undefined,
-  pairTotalSupply: number | undefined,
-  mintShare: number | undefined,
-  lpPrice: number | undefined, // token price for single-stake farms
-  rewardTokenPrice: number | undefined,
-  roi: number | undefined,
-  apy: number | undefined,
-  userLpBalance: ethers.BigNumber | undefined,
-  userStakedBalance: ethers.BigNumber | undefined,
-  userRewardsBalance: number | undefined,
-  userAllowance: number | undefined
-}
-
-type FarmSet = {
-  regularFarms: { farms: FarmData[], retiredFarms: FarmData[] },
-  lpFarms: { farms: FarmData[] },
-  partnerFarms: { farms: FarmData[] }
-}
+import { FarmType, FarmData, FarmSet } from '@/types'
+import { delay } from '@/utils'
 
 enum FarmViewOption {
   Regular = 0,
@@ -330,18 +282,6 @@ enum FarmViewOption {
 
 const TOKENS: {[address: string]: string} = {
   FUK: '0xa898bbb508c04be26af3d319b7775927afcb02af'
-}
-
-const PAD = {
-  [Ecosystem.BSC]: '0xC0888d80EE0AbF84563168b3182650c0AdDEb6d5',
-  [Ecosystem.Moonriver]: '0x45488C50184Ce2092756ba7CdF85731fD17e6f3d',
-  [Ecosystem.Toad]: '0xC0888d80EE0AbF84563168b3182650c0AdDEb6d5'
-}
-
-const MINTER = {
-  [Ecosystem.BSC]: BSC_MINTER_ADDRESS,
-  [Ecosystem.Moonriver]: MOVR_MINTER_ADDRESS,
-  [Ecosystem.Toad]: BSC_MINTER_ADDRESS
 }
 
 function toFloat(bn: ethers.BigNumber, units: number = 18) {
@@ -370,8 +310,6 @@ function initializeFarms(farms: FarmData[], type: FarmType): FarmData[] {
   }))
 }
 
-const MIN_VISIBLE_STAKE = ethers.utils.parseEther('0.00000001')
-
 function initializeFarmSet(farmSet: FarmSet) {
   const copy: FarmSet = JSON.parse(JSON.stringify(farmSet))
   copy.regularFarms.farms = initializeFarms(copy.regularFarms.farms, FarmType.Regular)
@@ -386,22 +324,22 @@ export default Vue.extend({
   mixins: [formatMixin],
   components: { Farm, SliderTabs },
   data() {
+    const farms = <Record<EcosystemId, FarmSet>> {}
+    const syncLocks = <Record<EcosystemId, AwaitLock>> {}
+    for (const ecosystem of Object.values(ECOSYSTEMS)) {
+      farms[ecosystem.ecosystemId] = initializeFarmSet(ecosystem.farmSet)
+      syncLocks[ecosystem.ecosystemId] = new AwaitLock()
+    }
+
     return {
-      farms: {
-        bsc: initializeFarmSet(farmsBsc as any),
-        moonriver: initializeFarmSet(farmsMoonriver as any),
-        toad: initializeFarmSet(farmsToad as any)
-      },
+      farms,
+      syncLocks,
       active: true,
       farmViewOption: null,
       stakedOnly: false,
       includeRetired: false,
       sortBy: 'Earned',
-      searchText: '',
-      syncLocks: {
-        [Ecosystem.BSC]: new AwaitLock(),
-        [Ecosystem.Moonriver]: new AwaitLock()
-      }
+      searchText: ''
     }
   },
   async mounted() {
@@ -423,22 +361,19 @@ export default Vue.extend({
     next()
   },
   computed: {
-    ecosystem: {
-      get(): Ecosystem {
-        return this.$store.state.ecosystem
+    ecosystemId: {
+      get(): EcosystemId {
+        return this.$store.state.ecosystemId
       },
-      set(val: Ecosystem) {
-        this.$store.commit('setEcosystem', val)
+      set(val: EcosystemId) {
+        this.$store.commit('setEcosystemId', val)
       }
     },
+    ecosystem(): IEcosystem {
+      return this.$store.getters.ecosystem
+    },
     currentFarmSet(): FarmSet {
-      if (this.ecosystem == Ecosystem.Toad) {
-        return this.farms.toad
-      } else if (this.ecosystem == Ecosystem.Moonriver) {
-        return this.farms.moonriver
-      } else {
-        return this.farms.bsc
-      }
+      return this.farms[this.ecosystemId]
     },
     totals(): Object {
       const allFarms: FarmData[] = []
@@ -469,26 +404,15 @@ export default Vue.extend({
       }
       return totals
     },
-    dataseed(): ethers.providers.Provider {
-      if (this.ecosystem == Ecosystem.Moonriver) {
-        return new ethers.providers.StaticJsonRpcProvider('https://rpc.moonriver.moonbeam.network')
-      } else {
-        return new ethers.providers.StaticJsonRpcProvider('https://bsc-dataseed1.defibit.io/')
-      }
-    },
     multicall(): ethers.providers.Provider {
-      return new providers.MulticallProvider(this.dataseed, {
+      return new providers.MulticallProvider(this.ecosystem.dataseed, {
         batchSize: 300,
         timeWindow: 0,
         contract: MULTICALL_ADDRESS
       })
     },
     priceModel(): PriceModel {
-      if (this.ecosystem == Ecosystem.Moonriver) {
-        return PriceModel.getPriceModelForChain(this.dataseed, 1285)
-      } else {
-        return PriceModel.getPriceModelForChain(this.dataseed, 56)
-      }
+      return PriceModel.getPriceModelForChain(this.ecosystem.dataseed, this.ecosystem.chainId)
     },
     isConnected(): boolean {
       return this.$store.getters.isConnected
@@ -498,22 +422,12 @@ export default Vue.extend({
     },
     lastChainTransactionBlock(): Object {
       // access properties explicitly to trigger reactivity
-      return {
-        [56]: this.$store.state.lastChainTransactionBlock[56],
-        [1285]: this.$store.state.lastChainTransactionBlock[1285]
-      }
+      return Object.entries(this.$store.state.lastChainTransactionBlock)
     }
   },
   watch: {
     ecosystem(val) {
-      let theme
-      if (val == Ecosystem.Moonriver) {
-        theme = MoonriverPadswapTheme
-      } else {
-        theme = BscPadswapTheme
-      }
-
-      this.$padswapTheme.theme = theme
+      this.$padswapTheme.theme = this.ecosystem.theme
       this.farmViewOption = null
       setTimeout(() => this.sync())
     },
@@ -523,41 +437,36 @@ export default Vue.extend({
   },
   methods: {
     async sync() {
-      if (this.ecosystem == Ecosystem.Toad) {
-        // TODO
-        return
-      }
-
       const ecosystem = this.ecosystem
-      const mutex = this.syncLocks[ecosystem]
+      const multicall = this.multicall
+      const priceModel = this.priceModel
+      const mutex = this.syncLocks[this.ecosystemId]
       await mutex.acquireAsync()
 
       try {
-        await this.syncInternal(ecosystem)
+        await this.syncInternal(ecosystem, multicall, priceModel)
       } finally {
         mutex.release()
       }
     },
-    async syncInternal(ecosystem: Ecosystem) {
+    async syncInternal(ecosystem: IEcosystem, multicall: ethers.providers.Provider, priceModel: PriceModel) {
       const allFarms: FarmData[] = []
       allFarms.push(...this.currentFarmSet.regularFarms.farms,
                     ...this.currentFarmSet.regularFarms.retiredFarms,
                     ...this.currentFarmSet.lpFarms.farms,
                     ...this.currentFarmSet.partnerFarms.farms)
-      const priceModel = this.priceModel
 
       let mintSupply: number
-      const minterAddress = MINTER[ecosystem]
-      const minterContract = new ethers.Contract(minterAddress, MINTER_ABI, this.multicall)
-      const blockNumber = await this.multicall.getBlockNumber()
+      const minterContract = new ethers.Contract(ecosystem.minterAddress, MINTER_ABI, multicall)
+      const blockNumber = await multicall.getBlockNumber()
       const promises = [
         priceModel.syncWithin(blockNumber, 12),
         minterContract.totalSupply().then((n: ethers.BigNumber) => mintSupply = parseFloat(ethers.utils.formatEther(n)))
       ]
 
       for (const farm of allFarms) {
-        const farmContract = new ethers.Contract(farm.contract, farm.type == FarmType.LP ? PADSWAP_LP_FARM_ABI : PADSWAP_FARM_ABI, this.multicall)
-        const pairContract = new ethers.Contract(farm.acceptedToken, PADSWAP_PAIR_ABI, this.multicall)
+        const farmContract = new ethers.Contract(farm.contract, farm.type == FarmType.LP ? PADSWAP_LP_FARM_ABI : PADSWAP_FARM_ABI, multicall)
+        const pairContract = new ethers.Contract(farm.acceptedToken, PADSWAP_PAIR_ABI, multicall)
         const p1 = farm.type == FarmType.LP ? farmContract.dividendPool().then((n: ethers.BigNumber) => farm.poolSize = parseFloat(ethers.utils.formatEther(n)))
                                             : farmContract.farmPool().then((n: ethers.BigNumber) => farm.poolSize = parseFloat(ethers.utils.formatEther(n)))
         const p2 = farmContract.totalSupply().then((n: ethers.BigNumber) => farm.farmTotalSupply = parseFloat(ethers.utils.formatEther(n)))
@@ -575,8 +484,7 @@ export default Vue.extend({
       }
 
       await Promise.all(promises)
-      const padAddress = PAD[ecosystem]
-      const padPrice = priceModel.getPriceUsd(padAddress)
+      const padPrice = priceModel.getPriceUsd(ecosystem.padAddress)
       this.$store.commit('setPadPrice', padPrice)
 
       for (const farm of allFarms) {

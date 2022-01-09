@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import { ethers } from 'ethers'
 
 import web3Modal from '@/wallet'
-import { ChainId, Ecosystem } from '@/types'
+import { IEcosystem, EcosystemId, ChainId, ECOSYSTEMS } from '@/ecosystem'
 
 Vue.use(Vuex)
 
@@ -22,7 +22,7 @@ export default new Vuex.Store({
       [1285]: <number | null> null
     },
     padPrice: null,
-    ecosystem: Ecosystem.BSC
+    ecosystemId: EcosystemId.BSC
   },
   mutations: {
     setWeb3Connection(state, { web3, address, chainId }) {
@@ -33,13 +33,16 @@ export default new Vuex.Store({
     setPadPrice(state, padPrice) {
       state.padPrice = padPrice
     },
-    setEcosystem(state, ecosystem: Ecosystem) {
-      state.ecosystem = ecosystem
+    setEcosystemId(state, ecosystemId: EcosystemId) {
+      state.ecosystemId = ecosystemId
     }
   },
   getters: {
     isConnected(state): boolean {
       return state.address != null
+    },
+    ecosystem(state): IEcosystem {
+      return ECOSYSTEMS[state.ecosystemId]
     }
   },
   actions: {

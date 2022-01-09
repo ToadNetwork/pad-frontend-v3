@@ -3,7 +3,7 @@
     <div class="padswap-header-box">
       <slider-tabs
         class="padswap-ecosystem-tabs"
-        v-model="ecosystem"
+        v-model="ecosystemId"
       >
         <v-tab class="d-flex flex-column">
           <v-img
@@ -55,16 +55,10 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { ethers } from 'ethers'
-import { providers } from '@0xsequence/multicall'
-import AwaitLock from 'await-lock'
-import { List } from 'linq-collections'
 
 import BackToDashboard from '@/components/BackToDashboard.vue'
 import SliderTabs from '@/components/SliderTabs.vue'
-
-import { BscPadswapTheme, MoonriverPadswapTheme } from '@/padswap-theme'
-import { Ecosystem } from '@/types'
+import { EcosystemId } from '@/ecosystem'
 
 
 function setSwapEcosystem(chain_id : string) {
@@ -85,7 +79,7 @@ function setSwapEcosystem(chain_id : string) {
     
 
 export default Vue.extend({
-  name: 'Home',
+  name: 'Swap',
   components: { SliderTabs, BackToDashboard },
   data() {
     return {
@@ -94,11 +88,7 @@ export default Vue.extend({
       stakedOnly: false,
       includeRetired: false,
       sortBy: 'Earned',
-      searchText: '',
-      syncLocks: {
-        [Ecosystem.BSC]: new AwaitLock(),
-        [Ecosystem.Moonriver]: new AwaitLock()
-      }
+      searchText: ''
     }
   },
   beforeDestroy() {
@@ -109,12 +99,12 @@ export default Vue.extend({
     next()
   },
   computed: {
-    ecosystem: {
-      get(): Ecosystem {
-        return this.$store.state.ecosystem
+    ecosystemId: {
+      get(): EcosystemId {
+        return this.$store.state.ecosystemId
       },
-      set(val: Ecosystem) {
-        this.$store.commit('setEcosystem', val)
+      set(val: EcosystemId) {
+        this.$store.commit('setEcosystemId', val)
         if (val == 0) {
         	setSwapEcosystem("BSC")
         }
@@ -125,15 +115,8 @@ export default Vue.extend({
     },
   },
   watch: {
-    ecosystem(val) {
-      let theme
-      if (val == Ecosystem.Moonriver) {
-        theme = MoonriverPadswapTheme
-      } else {
-        theme = BscPadswapTheme
-      }
-
-      this.$padswapTheme.theme = theme
+    ecosystemId() {
+      this.$padswapTheme.theme = this.$store.getters.ecosystem.theme
       this.farmViewOption = null
     },
   }
