@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 import { MULTICALL_ADDRESS, BSC_MINTER_ADDRESS, MOVR_MINTER_ADDRESS } from '@/constants'
 import farmsBsc from '@/farms_config_bsc.json'
 import farmsMoonriver from '@/farms_config_movr.json'
-import { IPadswapTheme, BscPadswapTheme, MoonriverPadswapTheme } from '@/padswap-theme'
+import { IPadswapTheme, BscPadswapTheme, MoonriverPadswapTheme, MoonbeamPadswapTheme } from '@/padswap-theme'
 import {
     PriceModel,
     BSC_WHITELIST,
@@ -15,11 +15,12 @@ import {
 } from '@/price-model'
 import { FarmSet } from '@/types'
 
-type ChainId = 56 | 1285
+type ChainId = 56 | 1285 | 0
 
 enum EcosystemId {
     BSC = 0,
-    Moonriver = 1
+    Moonriver = 1,
+    Moonbeam = 2
 }
 
 interface IEcosystem {
@@ -85,9 +86,40 @@ const MoonriverEcosystem: IEcosystem = {
     tokenIconsFolder: 'moonriver'
 }
 
+const MoonbeamEcosystem: IEcosystem = {
+    ecosystemId: EcosystemId.Moonbeam,
+    chainId: 0, // TODO
+    ethName: 'GLMR',
+    wethAddress: '0x0000000000000000000000000000000000000000', // TODO
+    dataseed: new ethers.providers.StaticJsonRpcProvider('https://rpc.moonriver.moonbeam.network'), // TODO
+    multicallAddress: MULTICALL_ADDRESS, // TODO
+    farmSet: { // TODO
+        regularFarms: {
+            farms: [],
+            retiredFarms: []
+        },
+        lpFarms: {
+            farms: []
+        },
+        partnerFarms: {
+            farms: []
+        }
+    },
+    factoryAddress: '0x0000000000000000000000000000000000000000', // TODO
+    padAddress: '0x0000000000000000000000000000000000000000', // TODO
+    minterAddress: '0x0000000000000000000000000000000000000000', // TODO
+    priceModel: MoonriverEcosystem.priceModel, // TODO
+    theme: MoonbeamPadswapTheme,
+    swapUrl: '', // TODO
+    bridgeUrl: '', // TODO
+    infoUrl: '', // TODO
+    tokenIconsFolder: 'moonbeam'
+}
+
 const ECOSYSTEMS: Record<EcosystemId, IEcosystem> = {
     [EcosystemId.BSC]: BscEcosystem,
-    [EcosystemId.Moonriver]: MoonriverEcosystem
+    [EcosystemId.Moonriver]: MoonriverEcosystem,
+    [EcosystemId.Moonbeam]: MoonbeamEcosystem
 }
 
 export {
