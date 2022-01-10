@@ -7,6 +7,8 @@
       dark
       :elevation="navBarElevation"
       :class="{ 'padswap-scrolled-nav-bar': windowScroll > DESKTOP_SCROLL_THRESHOLD }"
+      :style="{ 'padding-left': $vuetify.breakpoint.lgAndUp ? '120px' : '10px',
+                'padding-right': $vuetify.breakpoint.lgAndUp ? '120px' : '10px' }"
       clipped-left
     >
       <v-app-bar-nav-icon
@@ -363,8 +365,6 @@ export default Vue.extend({
 }
 
 .v-sheet.v-toolbar.v-app-bar {
-  padding-left: 120px;
-  padding-right: 120px;
   background-color: transparent !important;
 }
 .v-sheet.v-toolbar.v-app-bar.padswap-scrolled-nav-bar {
