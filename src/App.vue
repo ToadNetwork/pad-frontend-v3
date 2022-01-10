@@ -228,7 +228,7 @@ export default Vue.extend({
           name: 'Buy crypto with fiat',
           desc: 'The easiest way to buy BNB or BUSD',
           href: '/onramp',
-          iconSrc: require('@/assets/icons/Stats Icon.svg')
+          iconSrc: require('@/assets/icons/On Ramp Icon.svg')
         },
         {
           name: 'Stats',
