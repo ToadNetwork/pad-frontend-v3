@@ -34,6 +34,21 @@ const routes: Array<RouteConfig> = [
     path: '/swap',
     name: 'Swap',
     component: () => import('../views/Swap.vue')
+  },
+  {
+    path: '/vault',
+    name: 'Vault',
+    component: () => import('../views/Vault.vue')
+  },
+  {
+    path: '/bridge',
+    name: 'Bridge',
+    component: () => import('../views/Bridge.vue')
+  },
+  {
+    path: '/launchpad',
+    name: 'LaunchPAD',
+    component: () => import('../views/Launchpad.vue')
   }
 ]
 
