@@ -13,12 +13,12 @@
     >
       <v-app-bar-nav-icon
         @click="isNavigationDrawerOpen = !isNavigationDrawerOpen"
-        class="d-sm-none d-flex"
+        class="d-md-none d-flex"
       />
       <a href="/">
         <v-img
           :src="$padswapTheme.theme.headerLogoSrc"
-          class="d-sm-flex d-none"
+          class="d-md-flex d-none"
           width="162.42px"
           contain
         />
@@ -26,7 +26,7 @@
 
       <v-spacer></v-spacer>
 
-      <div class="d-sm-flex d-none align-center padswap-navbar">
+      <div class="d-md-flex d-none align-center padswap-navbar">
         <nav-menu
           v-for="navSection in this.navSections"
           :key="navSection.title"
@@ -371,7 +371,7 @@ export default Vue.extend({
   background-color: rgba(0, 0, 0, 0.85) !important;
 }
 
-@media all and (max-width: 700px) {
+@media all and (max-width: 970px) {
   .v-application {
     padding: 0px;
   }
