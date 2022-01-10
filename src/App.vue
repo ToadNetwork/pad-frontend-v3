@@ -203,7 +203,7 @@ export default Vue.extend({
         {
           name: 'LaunchPad',
           desc: 'Partake in exclusive presales',
-          href: 'https://dapps.padswap.exchange/launchpad',
+          href: 'https://v2.padswap.exchange/launchpad',
           iconSrc: require('@/assets/icons/LaunchPAD Icon.svg')
         },
         {
@@ -215,7 +215,7 @@ export default Vue.extend({
         {
           name: 'Vault',
           desc: 'PAD\'s backing reserves',
-          href: 'https://dapps.padswap.exchange/vault',
+          href: 'https://v2.padswap.exchange/vault',
           iconSrc: require('@/assets/icons/Vault Icon.svg')
         },
         {
