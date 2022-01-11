@@ -19,8 +19,8 @@ export default new Vuex.Store({
     chainId: <number | null> null,
     lastChainTransactionBlock: {
       [56]: <number | null> null,
+      [1284]: <number | null> null,
       [1285]: <number | null> null,
-      [0]: <number | null> null
     },
     padPrice: null,
     ecosystemId: EcosystemId.BSC
