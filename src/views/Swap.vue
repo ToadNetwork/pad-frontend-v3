@@ -55,7 +55,7 @@
     </div>
     	<div id="swap-iframe-container">
     		<div class="menu-mask"></div>
-				<iframe id="swap-iframe" class="swap-ui" src="https://padswap.exchange/#/swap"></iframe>
+				<iframe id="swap-iframe" class="swap-ui" src="./bsc/index.html"></iframe>
 			</div>
 		</div>
 
@@ -77,19 +77,25 @@ function setSwapEcosystem(chain_id : string) {
   let link : HTMLLinkElement
 	iframe = document.getElementById("swap-iframe")! as HTMLIFrameElement
   link = document.getElementById("new-tab-link")! as HTMLLinkElement
-  		if (chain_id == "BSC") {
-  			iframe.src = "https://padswap.exchange/#/swap"
-        link!.href = "https://padswap.exchange/#/swap"
-  		}
-  		if (chain_id == "MOVR") {
-  		  iframe.src = "https://movr.padswap.exchange/#/swap"
-        link!.href = "https://movr.padswap.exchange/#/swap"
-  		}
-      if (chain_id == "GLMR") {
-        iframe.src = "https://glmr.padswap.exchange/#/swap"
-        link!.href = "https://glmr.padswap.exchange/#/swap"
-      }
-  	}
+
+  iframe.addEventListener("load", function() {
+    this.contentWindow!.document.querySelector('body')!.style.background = 'transparent'
+    this.contentWindow!.document.querySelector<HTMLElement>('#root > div.sc-hlWvWH.dgxEoC > div > nav')!.style.visibility = 'hidden'
+  })
+
+  if (chain_id == "BSC") {
+    iframe.src = "./bsc/index.html"
+    link!.href = "./bsc/index.html"
+  }
+  if (chain_id == "MOVR") {
+    iframe.src = "./movr/index.html"
+    link!.href = "./movr/index.html"
+  }
+  if (chain_id == "GLMR") {
+    iframe.src = "./glmr/index.html"
+    link!.href = "./glmr/index.html"
+  }
+}
 
     
 
@@ -105,6 +111,13 @@ export default Vue.extend({
       sortBy: 'Earned',
       searchText: ''
     }
+  },
+  mounted () {
+    const iframe = document.getElementById('swap-iframe') as HTMLIFrameElement
+    iframe.addEventListener("load", function() {
+      this.contentWindow!.document.querySelector('body')!.style.background = 'transparent'
+      this.contentWindow!.document.querySelector<HTMLElement>('#root > div.sc-hlWvWH.dgxEoC > div > nav')!.style.visibility = 'hidden'
+    })
   },
   beforeDestroy() {
     this.active = false
@@ -166,18 +179,6 @@ export default Vue.extend({
 .main-container {
 	text-align: center;
 }
-
-.menu-mask {
-	position: absolute;
-	left: 0;
-	top: 0;
-	height: 80px;
-	width: 80px;
-	background-color: black;
-	border-radius: 30px;
-}
-
-
 
 .content-container {
 	display: inline-block;
