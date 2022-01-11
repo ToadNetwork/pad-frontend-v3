@@ -50,6 +50,10 @@ export default new Vuex.Store({
       const provider = await web3Modal.connect()
       const ethersProvider = new ethers.providers.Web3Provider(provider, 'any')
       const web3 = ethersProvider.getSigner()
+      if (!provider.selectedAddress) {
+        // required for trust wallet
+        provider.selectedAddress = await web3.getAddress()
+      }
       commit('setWeb3Connection', {
         web3, 
         address: provider.selectedAddress,
