@@ -7,16 +7,18 @@
       dark
       :elevation="navBarElevation"
       :class="{ 'padswap-scrolled-nav-bar': windowScroll > DESKTOP_SCROLL_THRESHOLD }"
+      :style="{ 'padding-left': $vuetify.breakpoint.lgAndUp ? '120px' : '10px',
+                'padding-right': $vuetify.breakpoint.lgAndUp ? '120px' : '10px' }"
       clipped-left
     >
       <v-app-bar-nav-icon
         @click="isNavigationDrawerOpen = !isNavigationDrawerOpen"
-        class="d-sm-none d-flex"
+        class="d-md-none d-flex"
       />
       <a href="/">
         <v-img
           :src="$padswapTheme.theme.headerLogoSrc"
-          class="d-sm-flex d-none"
+          class="d-md-flex d-none"
           width="162.42px"
           contain
         />
@@ -24,7 +26,7 @@
 
       <v-spacer></v-spacer>
 
-      <div class="d-sm-flex d-none align-center padswap-navbar">
+      <div class="d-md-flex d-none align-center padswap-navbar">
         <nav-menu
           v-for="navSection in this.navSections"
           :key="navSection.title"
@@ -203,7 +205,7 @@ export default Vue.extend({
         {
           name: 'LaunchPad',
           desc: 'Partake in exclusive presales',
-          href: 'https://dapps.padswap.exchange/launchpad',
+          href: 'https://v2.padswap.exchange/launchpad',
           iconSrc: require('@/assets/icons/LaunchPAD Icon.svg')
         },
         {
@@ -215,7 +217,7 @@ export default Vue.extend({
         {
           name: 'Vault',
           desc: 'PAD\'s backing reserves',
-          href: 'https://dapps.padswap.exchange/vault',
+          href: 'https://v2.padswap.exchange/vault',
           iconSrc: require('@/assets/icons/Vault Icon.svg')
         },
         {
@@ -228,7 +230,7 @@ export default Vue.extend({
           name: 'Buy crypto with fiat',
           desc: 'The easiest way to buy BNB or BUSD',
           href: '/onramp',
-          iconSrc: require('@/assets/icons/Stats Icon.svg')
+          iconSrc: require('@/assets/icons/On Ramp Icon.svg')
         },
         {
           name: 'Stats',
@@ -363,15 +365,13 @@ export default Vue.extend({
 }
 
 .v-sheet.v-toolbar.v-app-bar {
-  padding-left: 120px;
-  padding-right: 120px;
   background-color: transparent !important;
 }
 .v-sheet.v-toolbar.v-app-bar.padswap-scrolled-nav-bar {
   background-color: rgba(0, 0, 0, 0.85) !important;
 }
 
-@media all and (max-width: 700px) {
+@media all and (max-width: 970px) {
   .v-application {
     padding: 0px;
   }

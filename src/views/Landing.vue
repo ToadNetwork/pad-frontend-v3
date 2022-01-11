@@ -664,15 +664,25 @@ export default Vue.extend({
 	text-align: center;
 	margin-top: 50px;
 	margin-bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: center;
 }
 
 .header-img-container {
 	display: inline-block;
+  width: 100%;
+  text-align:;
 	padding-left: 40px;
 	padding-right: 30px;
 	/*background-color: #84848466;*/
 	/*border-radius: 20px;*/
 	/*border: 1px solid #ffffff2e;*/
+}
+
+.header-img-container div {
+  display: inline-block;
 }
 
 .rounded-box {

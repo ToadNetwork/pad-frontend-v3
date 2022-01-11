@@ -59,7 +59,7 @@ const BscEcosystem: IEcosystem = {
     priceModel: new PriceModel(bscDataseed, BSC_WHITELIST, wbnbAddress, WBNB_BUSD_PAIR, bscFactoryAddress, MINIMUM_LIQUIDITY_BNB, 18),
     theme: BscPadswapTheme,
     swapUrl: 'https://padswap.exchange/#/swap',
-    bridgeUrl: 'https://dapps.padswap.exchange/bridge',
+    bridgeUrl: 'https://v2.padswap.exchange/bridge',
     infoUrl: 'https://info.padswap.exchange/home',
     tokenIconsFolder: 'bsc'
 }
@@ -81,7 +81,7 @@ const MoonriverEcosystem: IEcosystem = {
     priceModel: new PriceModel(moonriverDataseed, MOVR_WHITELIST, wmovrAddress, WMOVR_USDC_PAIR, moonriverFactoryAddress, MINIMUM_LIQUIDITY_MOVR, 6),
     theme: MoonriverPadswapTheme,
     swapUrl: 'https://movr.padswap.exchange/#/swap',
-    bridgeUrl: 'https://movr-dapps.padswap.exchange/bridge',
+    bridgeUrl: 'https://v2.padswap.exchange/bridge',
     infoUrl: 'https://movr-info.padswap.exchange/home',
     tokenIconsFolder: 'moonriver'
 }
