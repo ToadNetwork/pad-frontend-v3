@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 import { MULTICALL_ADDRESS, BSC_MINTER_ADDRESS, MOVR_MINTER_ADDRESS } from '@/constants'
 import farmsBsc from '@/farms_config_bsc.json'
 import farmsMoonriver from '@/farms_config_movr.json'
-import { IPadswapTheme, BscPadswapTheme, MoonriverPadswapTheme } from '@/padswap-theme'
+import { IPadswapTheme, BscPadswapTheme, MoonriverPadswapTheme, MoonbeamPadswapTheme } from '@/padswap-theme'
 import {
     PriceModel,
     BSC_WHITELIST,
@@ -15,11 +15,12 @@ import {
 } from '@/price-model'
 import { FarmSet } from '@/types'
 
-type ChainId = 56 | 1285
+type ChainId = 56 | 1284 | 1285
 
 enum EcosystemId {
     BSC = 0,
-    Moonriver = 1
+    Moonriver = 1,
+    Moonbeam = 2
 }
 
 interface IEcosystem {
@@ -85,9 +86,46 @@ const MoonriverEcosystem: IEcosystem = {
     tokenIconsFolder: 'moonriver'
 }
 
+const moonbeamDataseed = new ethers.providers.StaticJsonRpcProvider('https://rpc.api.moonbeam.network')
+const wglmrAddress = '0xAcc15dC74880C9944775448304B263D191c6077F'
+const moonbeamFactoryAddress = '0x663a07a2648296f1A3C02EE86A126fE1407888E5'
+const MoonbeamEcosystem: IEcosystem = {
+    ecosystemId: EcosystemId.Moonbeam,
+    chainId: 1284,
+    ethName: 'GLMR',
+    wethAddress: wglmrAddress,
+    dataseed: moonbeamDataseed,
+    multicallAddress: MULTICALL_ADDRESS, // TODO
+    farmSet: { // TODO
+        regularFarms: {
+            farms: [],
+            retiredFarms: []
+        },
+        lpFarms: {
+            farms: []
+        },
+        partnerFarms: {
+            farms: []
+        }
+    },
+    factoryAddress: moonbeamFactoryAddress,
+    padAddress: '0x59193512877E2EC3bB27C178A8888Cfac62FB32D',
+    minterAddress: '0x70790550d5F01EDd5B2Ed1dFf05eDC52cD4F1Eda',
+    priceModel: <PriceModel> { // TODO
+        async syncWithin() {},
+        getPriceUsd(token: string) { return 0 }
+    },
+    theme: MoonbeamPadswapTheme,
+    swapUrl: 'https://glmr.padswap.exchange/#/swap',
+    bridgeUrl: 'https://v2.padswap.exchange/bridge',
+    infoUrl: 'https://glmr-info.padswap.exchange/home',
+    tokenIconsFolder: 'moonbeam'
+}
+
 const ECOSYSTEMS: Record<EcosystemId, IEcosystem> = {
     [EcosystemId.BSC]: BscEcosystem,
-    [EcosystemId.Moonriver]: MoonriverEcosystem
+    [EcosystemId.Moonriver]: MoonriverEcosystem,
+    [EcosystemId.Moonbeam]: MoonbeamEcosystem
 }
 
 export {

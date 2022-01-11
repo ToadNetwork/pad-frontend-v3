@@ -23,6 +23,15 @@
           />
           <div>Moonriver</div>
         </v-tab>
+        <v-tab class="d-flex flex-column">
+          <v-img
+            height="30"
+            width="30"
+            contain
+            src="../assets/tokens/moonbeam/PAD.svg"
+          />
+          <div>Moonbeam</div>
+        </v-tab>
       </slider-tabs>
       <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
 
@@ -613,7 +622,7 @@ export default Vue.extend({
   padding: 10px 0px;
   font-weight: bold;
   color: #FFFFFF;
-  min-width: 120px;
+  min-width: 110px;
 }
 .padswap-ecosystem-tabs .v-tab--active {
   color: #66015e !important;

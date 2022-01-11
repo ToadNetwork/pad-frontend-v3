@@ -27,6 +27,13 @@ const MoonriverPadswapTheme = {
   toadPadImageSrc: require('./assets/themes/moonriver/toad-pad.svg')
 }
 
+const MoonbeamPadswapTheme = {
+  headerLogoSrc: require('./assets/themes/moonbeam/logo.png'),
+  padLogoSrc: require('./assets/tokens/moonbeam/PAD.svg'),
+  backgroundImageSrc: require('./assets/themes/moonbeam/BG.svg'),
+  toadPadImageSrc: require('./assets/themes/moonbeam/toad-pad.svg')
+}
+
 const PadswapThemePlugin = {
   install(vue: typeof Vue, options?: Object) {
     vue.prototype.$padswapTheme = Vue.observable({
@@ -40,5 +47,6 @@ Vue.use(PadswapThemePlugin)
 export {
   IPadswapTheme,
   BscPadswapTheme,
-  MoonriverPadswapTheme
+  MoonriverPadswapTheme,
+  MoonbeamPadswapTheme
 }

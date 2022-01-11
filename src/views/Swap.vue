@@ -1,6 +1,6 @@
 <template>
   <v-container class="padswap-farms-home">
-    <div class="padswap-header-box">
+        <div class="padswap-header-box">
       <slider-tabs
         class="padswap-ecosystem-tabs"
         v-model="ecosystemId"
@@ -23,30 +23,41 @@
           />
           <div>Moonriver</div>
         </v-tab>
+        <v-tab class="d-flex flex-column">
+          <v-img
+            height="30"
+            width="30"
+            contain
+            src="../assets/tokens/moonbeam/PAD.svg"
+          />
+          <div>Moonbeam</div>
+        </v-tab>
       </slider-tabs>
       <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
 
-      
+    </div>
+
+    <div class="text-center">
       <v-img
         :src="$padswapTheme.theme.headerLogoSrc"
         contain
         height="150px"
         width="500px"
-        style="max-width: 70vw"
+        style="max-width: 70vw; display: inline-block"
         />
     </div>
 
     <div class="main-container">
+
+    <div class="info-link" >
+        Having issues? <a id="new-tab-link" href="https://padswap.exchange/#/swap" target="_blank">Try opening the swap in a separate tab </a>
+        <v-icon small>mdi-open-in-new</v-icon>
+    </div>
     	<div id="swap-iframe-container">
     		<div class="menu-mask"></div>
 				<iframe id="swap-iframe" class="swap-ui" src="https://padswap.exchange/#/swap"></iframe>
 			</div>
 		</div>
-
-    <div class="info-link" >
-        Having trouble? <a id="new-tab-link" href="https://padswap.exchange/#/swap" target="_blank">Try opening the swap in a separate tab </a>
-        <v-icon small>mdi-open-in-new</v-icon>
-    </div>
 
     <BackToDashboard style="margin-top: 40px; margin-bottom: 300px;" />
 
@@ -71,9 +82,13 @@ function setSwapEcosystem(chain_id : string) {
         link!.href = "https://padswap.exchange/#/swap"
   		}
   		if (chain_id == "MOVR") {
-  		iframe.src = "https://movr.padswap.exchange/#/swap"
-      link!.href = "https://movr.padswap.exchange/#/swap"
+  		  iframe.src = "https://movr.padswap.exchange/#/swap"
+        link!.href = "https://movr.padswap.exchange/#/swap"
   		}
+      if (chain_id == "GLMR") {
+        iframe.src = "https://glmr.padswap.exchange/#/swap"
+        link!.href = "https://glmr.padswap.exchange/#/swap"
+      }
   	}
 
     
@@ -108,8 +123,11 @@ export default Vue.extend({
         if (val == 0) {
         	setSwapEcosystem("BSC")
         }
-        else {
+        else if (val == 1) {
         	setSwapEcosystem("MOVR")
+        }
+        else if (val == 2) {
+          setSwapEcosystem("GLMR")
         }
       }
     },
