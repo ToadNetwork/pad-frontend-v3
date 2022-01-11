@@ -199,7 +199,7 @@ export default Vue.extend({
         items: [{
           name: 'Swap',
           desc: 'Buy or sell any token instantly on PadSwap',
-          href: this.ecosystem.swapUrl,
+          href: '/swap',
           iconSrc: require('@/assets/icons/Swap Icon.svg')
         },
         {
