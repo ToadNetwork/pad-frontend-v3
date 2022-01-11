@@ -15,7 +15,7 @@ import {
 } from '@/price-model'
 import { FarmSet } from '@/types'
 
-type ChainId = 56 | 1285 | 0
+type ChainId = 56 | 1284 | 1285
 
 enum EcosystemId {
     BSC = 0,
@@ -86,12 +86,15 @@ const MoonriverEcosystem: IEcosystem = {
     tokenIconsFolder: 'moonriver'
 }
 
+const moonbeamDataseed = new ethers.providers.StaticJsonRpcProvider('https://rpc.api.moonbeam.network')
+const wglmrAddress = '0xAcc15dC74880C9944775448304B263D191c6077F'
+const moonbeamFactoryAddress = '0x663a07a2648296f1A3C02EE86A126fE1407888E5'
 const MoonbeamEcosystem: IEcosystem = {
     ecosystemId: EcosystemId.Moonbeam,
-    chainId: 0, // TODO
+    chainId: 1284,
     ethName: 'GLMR',
-    wethAddress: '0x0000000000000000000000000000000000000000', // TODO
-    dataseed: new ethers.providers.StaticJsonRpcProvider('https://rpc.moonriver.moonbeam.network'), // TODO
+    wethAddress: wglmrAddress,
+    dataseed: moonbeamDataseed,
     multicallAddress: MULTICALL_ADDRESS, // TODO
     farmSet: { // TODO
         regularFarms: {
@@ -105,14 +108,17 @@ const MoonbeamEcosystem: IEcosystem = {
             farms: []
         }
     },
-    factoryAddress: '0x0000000000000000000000000000000000000000', // TODO
-    padAddress: '0x0000000000000000000000000000000000000000', // TODO
-    minterAddress: '0x0000000000000000000000000000000000000000', // TODO
-    priceModel: MoonriverEcosystem.priceModel, // TODO
+    factoryAddress: moonbeamFactoryAddress,
+    padAddress: '0x59193512877E2EC3bB27C178A8888Cfac62FB32D',
+    minterAddress: '0x70790550d5F01EDd5B2Ed1dFf05eDC52cD4F1Eda',
+    priceModel: <PriceModel> { // TODO
+        async syncWithin() {},
+        getPriceUsd(token: string) { return 0 }
+    },
     theme: MoonbeamPadswapTheme,
-    swapUrl: '', // TODO
-    bridgeUrl: '', // TODO
-    infoUrl: '', // TODO
+    swapUrl: 'https://glmr.padswap.exchange/#/swap',
+    bridgeUrl: 'https://v2.padswap.exchange/bridge',
+    infoUrl: 'https://glmr-info.padswap.exchange/home',
     tokenIconsFolder: 'moonbeam'
 }
 
