@@ -33,10 +33,11 @@
           :title="navSection.title"
           :non-expandable="navSection.items.length == 0"
         >
+          <router-link 
+          v-for="navItem in navSection.items" 
+          :to="navItem.href">
           <v-list-item
-            v-for="navItem in navSection.items"
             :key="navItem.name"
-            :href="navItem.href"
             :target="navItem.target"
           >
             <v-list-item-icon>
@@ -47,11 +48,13 @@
                 contain
               />
             </v-list-item-icon>
+
             <v-list-item-content>
               <div>{{ navItem.name }}</div>
               <v-subheader>{{ navItem.desc }}</v-subheader>
             </v-list-item-content>
           </v-list-item>
+          </router-link>
         </nav-menu>
       </div>
       <div class="d-flex align-center padswap-navbar ml-4">
@@ -450,4 +453,5 @@ export default Vue.extend({
   color: #FFFFFF;
   filter: invert(68%) sepia(70%) saturate(3531%) hue-rotate(94deg) brightness(108%) contrast(117%);
 }
+a { text-decoration: none; }
 </style>

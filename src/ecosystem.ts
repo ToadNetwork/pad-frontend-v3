@@ -62,7 +62,7 @@ const BscEcosystem: IEcosystem = {
     minterAddress: BSC_MINTER_ADDRESS,
     priceModel: new PriceModel(bscDataseed, BSC_WHITELIST, wbnbAddress, WBNB_BUSD_PAIR, bscFactoryAddress, MINIMUM_LIQUIDITY_BNB, 18),
     theme: BscPadswapTheme,
-    swapUrl: 'https://padswap.exchange/#/swap',
+    swapUrl: 'https://dapps.padswap.exchange/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
     infoUrl: 'https://info.padswap.exchange/home',
     tokenIconsFolder: 'bsc'
@@ -84,7 +84,7 @@ const MoonriverEcosystem: IEcosystem = {
     minterAddress: MOVR_MINTER_ADDRESS,
     priceModel: new PriceModel(moonriverDataseed, MOVR_WHITELIST, wmovrAddress, WMOVR_USDC_PAIR, moonriverFactoryAddress, MINIMUM_LIQUIDITY_MOVR, 6),
     theme: MoonriverPadswapTheme,
-    swapUrl: 'https://movr.padswap.exchange/#/swap',
+    swapUrl: 'https://dapps.padswap.exchange/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
     infoUrl: 'https://movr-info.padswap.exchange/home',
     tokenIconsFolder: 'moonriver'
@@ -106,7 +106,7 @@ const MoonbeamEcosystem: IEcosystem = {
     minterAddress: '0x70790550d5F01EDd5B2Ed1dFf05eDC52cD4F1Eda',
     priceModel: new PriceModel(moonbeamDataseed, GLMR_WHITELIST, wglmrAddress, WGLMR_USDC_PAIR, moonbeamFactoryAddress, MINIMUM_LIQUIDITY_GLMR, 6),
     theme: MoonbeamPadswapTheme,
-    swapUrl: 'https://glmr.padswap.exchange/#/swap',
+    swapUrl: 'https://dapps.padswap.exchange/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
     infoUrl: 'https://glmr-info.padswap.exchange/home',
     tokenIconsFolder: 'moonbeam'

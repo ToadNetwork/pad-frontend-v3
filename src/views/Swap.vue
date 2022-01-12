@@ -50,7 +50,7 @@
     <div class="main-container">
 
     <div class="info-link" >
-        Having issues? <a id="new-tab-link" href="https://padswap.exchange/#/swap" target="_blank">Try opening the swap in a separate tab </a>
+        Having issues? <a id="new-tab-link" href="" target="_blank">Try opening the swap in a separate tab </a>
         <v-icon small>mdi-open-in-new</v-icon>
     </div>
     	<div id="swap-iframe-container">
@@ -73,6 +73,12 @@ import { EcosystemId } from '@/ecosystem'
 
 
 function setSwapEcosystem(chain_id : string) {
+  const urlParams = new URLSearchParams(window.location.search)
+  const [action, token1, token2] = [urlParams.get('action'), urlParams.get('token1'), urlParams.get('token2')]
+  let appendParameters = ''
+  if(action) {
+    appendParameters = `#/${action}/${token1}/${token2}`
+  }
 	let iframe : HTMLIFrameElement
   let link : HTMLLinkElement
 	iframe = document.getElementById("swap-iframe")! as HTMLIFrameElement
@@ -84,15 +90,15 @@ function setSwapEcosystem(chain_id : string) {
   })
 
   if (chain_id == "BSC") {
-    iframe.src = "/bsc/index.html"
+    iframe.src = "/bsc/index.html" + appendParameters
     link!.href = "/bsc/index.html"
   }
   if (chain_id == "MOVR") {
-    iframe.src = "/movr/index.html"
+    iframe.src = "/movr/index.html" + appendParameters
     link!.href = "/movr/index.html"
   }
   if (chain_id == "GLMR") {
-    iframe.src = "/glmr/index.html"
+    iframe.src = "/glmr/index.html" + appendParameters
     link!.href = "/glmr/index.html"
   }
 }
@@ -113,6 +119,7 @@ export default Vue.extend({
     }
   },
   mounted () {
+    this.ecosystemId = this.$store.state.ecosystemId
     const iframe = document.getElementById('swap-iframe') as HTMLIFrameElement
     iframe.addEventListener("load", function() {
       this.contentWindow!.document.querySelector('body')!.style.background = 'transparent'

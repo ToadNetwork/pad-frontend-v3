@@ -458,7 +458,7 @@ export default Vue.extend({
       const padswapHost = new URL(this.ecosystem.swapUrl).hostname
       const token1Address = equalsInsensitive(this.token1Address, this.ecosystem.wethAddress) ? this.ecosystem.ethName : this.token1Address
       const token2Address = equalsInsensitive(this.token2Address, this.ecosystem.wethAddress) ? this.ecosystem.ethName : this.token2Address
-      return `https://${padswapHost}/#/add/${token1Address}/${token2Address}`
+      return `https://${padswapHost}/swap?action=add&token1=${token1Address}&token2=${token2Address}`
     },
     earnedValue(): number {
       if (!this.userRewardsBalance) {
