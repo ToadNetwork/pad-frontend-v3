@@ -43,6 +43,11 @@ export const formatMixin = Vue.extend({
         val = 0
       }
 
+      // show extremely long percents as infinity
+      if (val >= 1e9) {
+        val = Infinity
+      }
+
       const formatted = val.toLocaleString('en-US', {
         style: 'percent',
         minimumFractionDigits: 2,
