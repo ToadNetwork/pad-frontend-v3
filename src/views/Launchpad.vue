@@ -148,7 +148,7 @@ import Vue from 'vue'
 import { mapActions } from 'vuex'
 
 import { ERC20_ABI } from '@/constants'
-import { EcosystemId } from '@/ecosystem'
+import { EcosystemId, ECOSYSTEMS } from '@/ecosystem'
 import { delay, toFloat } from '@/utils'
 
 export default Vue.extend({
@@ -445,7 +445,7 @@ export default Vue.extend({
       tokenAddress: '0x001Ef4385D199454b76527fd91Af3Da8C0a51537',
       tokenInstance: null,
       contractInstance: null,
-      presale_img: this.$padswapTheme.theme.padLogoSrc,
+      presale_img: ECOSYSTEMS[EcosystemId.Moonbeam].theme.padLogoSrc,
       active: true,
       amount: null,
       expected: null,
