@@ -119,13 +119,16 @@
             </v-card>
 
 						<div class="text-center" style="margin-top: 20px;">
-							<a
-            	class="padswap-farm-btn"
-            	style="padding: 10px; text-decoration: none;"
-            	href="/farms"
+							<router-link
+            	to="/farms"
+              style="display: inline-block;"
           		>
-          	 		Go to farms
-          		</a>
+                <div
+                class="padswap-farm-btn"
+                style="padding: 10px; text-decoration: none;">
+          	 		  Go to farms
+                </div>
+          		</router-link>
 						</div>
 					</div>
 				</v-col>
@@ -768,11 +771,14 @@ export default Vue.extend({
   border-radius: 100px;
   background: linear-gradient(180deg, #00FC4c 0%, #00D741 100%);
   color: #00310F;
-  width: 120px;
+  width: 220px;
   text-transform: none;
   font-size: 16px;
   font-weight: bold;
   font-family: Roboto Mono;
+}
+.padswap-farm-btn:hover {
+  background: linear-gradient(180deg, #76ae88 0%, #1e843d 100%);
 }
 
 </style>
