@@ -19,8 +19,11 @@ const WBNB_ADDRESS = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
 const WMOVR_USDC_PAIR = '0x38185BF42E4D6d0b51Db5F6C2B83064008549087'
 const WMOVR_ADDRESS = '0x663a07a2648296f1A3C02EE86A126fE1407888E5'
 
+const WGLMR_USDC_PAIR = '0x506E063a607E66795167fd86b9a036e1D2abb069'
+
 const MINIMUM_LIQUIDITY_BNB = ethers.utils.parseEther('1')
 const MINIMUM_LIQUIDITY_MOVR = ethers.utils.parseEther('0.5')
+const MINIMUM_LIQUIDITY_GLMR = ethers.utils.parseEther('0.5')
 
 const BSC_WHITELIST = [
     '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c', // WBNB
@@ -38,7 +41,7 @@ const BSC_WHITELIST = [
 ]
 
 const MOVR_WHITELIST = [
-    '0x663a07a2648296f1a3c02ee86a126fe1407888e5', // MOVR
+    '0x663a07a2648296f1a3c02ee86a126fe1407888e5', // WMOVR
     '0xe3f5a90f9cb311505cd691a46596599aa1a0ad7d', // USDC
     '0x5d9ab5522c64e1f6ef5e3627eccc093f56167818', // BUSD
     '0xb44a9b6905af7c801311e8f4e76932ee959c663c', // USDT
@@ -46,6 +49,15 @@ const MOVR_WHITELIST = [
     '0x2bf9b864cdc97b08b6d79ad4663e71b8ab65c45c', // BNB
     '0x45488c50184ce2092756ba7cdf85731fd17e6f3d', // PAD
     '0x165dbb08de0476271714952c3c1f068693bd60d7', // TOAD
+]
+
+const GLMR_WHITELIST = [
+    '0xe3db50049c74de2f7d7269823af3178cf22fd5e3', // WGLMR
+    '0x8f552a71efe5eefc207bf75485b356a0b3f01ec9', // USDC
+    '0x8e70cd5b4ff3f62659049e74b6649c6603a0e594', // USDT
+    '0xc234a67a4f840e61ade794be47de455361b52413', // DAI
+    '0x30d2a9f5fdf90ace8c17952cbb4ee48a55d916a7', // WETH
+    '0x59193512877e2ec3bb27c178a8888cfac62fb32d', // PAD
 ]
 
 class PriceModel {
@@ -154,15 +166,19 @@ class PriceModel {
     }
 
     getPriceUsd(token) {
+        console.log(token)
         const tokenBnbPrice = this.getPrice(token)
         const bnbPrice = this.getBnbPrice()
         return tokenBnbPrice * bnbPrice
     }
 
     getBnbPrice() {
-        const { reserve0, reserve1 } = this._getPairInfo(this.reserveUsdPair)
-        const reserve1Normalized = reserve1.mul((10 ** (18 - this.usdDecimals)).toString())
-        const bnbPriceExpanded = reserve1Normalized.mul(1e4).div(reserve0)
+        const { reserve0, reserve1, token0 } = this._getPairInfo(this.reserveUsdPair)
+        const isBnbFirst = token0.toLowerCase() == this.reserveCurrency.toLowerCase()
+        const reserveBnb = isBnbFirst ? reserve0 : reserve1
+        const reserveUsd = isBnbFirst ? reserve1 : reserve0
+        const reserveUsdNormalized = reserveUsd.mul((10 ** (18 - this.usdDecimals)).toString())
+        const bnbPriceExpanded = reserveUsdNormalized.mul(1e4).div(reserveBnb)
         return bnbPriceExpanded.toNumber() / 1e4
     }
 
@@ -249,8 +265,11 @@ export {
     PriceModel,
     BSC_WHITELIST,
     MOVR_WHITELIST,
+    GLMR_WHITELIST,
     WBNB_BUSD_PAIR,
     WMOVR_USDC_PAIR,
+    WGLMR_USDC_PAIR,
     MINIMUM_LIQUIDITY_BNB,
-    MINIMUM_LIQUIDITY_MOVR
+    MINIMUM_LIQUIDITY_MOVR,
+    MINIMUM_LIQUIDITY_GLMR
 }

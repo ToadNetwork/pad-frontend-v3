@@ -7,32 +7,44 @@
       {
         "name":"USDC-USDT",
         "contract":"0x45488C50184Ce2092756ba7CdF85731fD17e6f3d",
-        "acceptedToken":"0x2ab109CA2BfAEdE0b167dFeAE089294486b68d6d"
+        "acceptedToken":"0x2ab109CA2BfAEdE0b167dFeAE089294486b68d6d",
+        "token1": "0x8e70cD5B4Ff3f62659049e74b6649c6603A0E594",
+        "token2": "0x8f552a71EFE5eeFc207Bf75485b356A0b3f01eC9"
       },
       {
         "name":"PAD-USDT",
         "contract":"0x7a06dbaE8666e7DbdCf26A37be020dfedC782176",
-        "acceptedToken":"0x991EAB9AAe9C6743B507d00b6C897B05DEF29a46"
+        "acceptedToken":"0x991EAB9AAe9C6743B507d00b6C897B05DEF29a46",
+        "token1": "0x59193512877E2EC3bB27C178A8888Cfac62FB32D",
+        "token2": "0x8e70cD5B4Ff3f62659049e74b6649c6603A0E594"
       },
       {
         "name":"PAD-USDC",
         "contract":"0x4d86dae4E6b2cce94c1C2Cb371529B4B98443c7e",
-        "acceptedToken":"0x8eBeF3aa6961b9b584eD651211cF0962bc04fc52"
+        "acceptedToken":"0x8eBeF3aa6961b9b584eD651211cF0962bc04fc52",
+        "token1": "0x59193512877E2EC3bB27C178A8888Cfac62FB32D",
+        "token2": "0x8f552a71EFE5eeFc207Bf75485b356A0b3f01eC9"
       },
       {
         "name":"GLMR-PAD",
         "contract":"0xb54229144504FC3FC916820eBd69Efc5BB897188",
-        "acceptedToken":"0x7C33896Ce19831dc170d99330878688a5f6DF614"
+        "acceptedToken":"0x7C33896Ce19831dc170d99330878688a5f6DF614",
+        "token1": "0x59193512877E2EC3bB27C178A8888Cfac62FB32D",
+        "token2": "0xe3DB50049C74De2F7d7269823af3178Cf22fd5E3"
       },
       {
         "name":"GLMR-USDT",
         "contract":"0x603b8a9E84e7E2c715f423CBd488125647C8022b",
-        "acceptedToken":"0x5f8a5b70959D0f6E07086214Dd40a336d7df3514"
+        "acceptedToken":"0x5f8a5b70959D0f6E07086214Dd40a336d7df3514",
+        "token1": "0x8e70cD5B4Ff3f62659049e74b6649c6603A0E594",
+        "token2": "0xe3DB50049C74De2F7d7269823af3178Cf22fd5E3"
       },
       {
         "name":"GLMR-USDC",
         "contract":"0xc2092b6dF7fc766D6A4C7bBFaEE14695B2e0fbDa",
-        "acceptedToken":"0x506E063a607E66795167fd86b9a036e1D2abb069"
+        "acceptedToken":"0x506E063a607E66795167fd86b9a036e1D2abb069",
+        "token1": "0x8f552a71EFE5eeFc207Bf75485b356A0b3f01eC9",
+        "token2": "0xe3DB50049C74De2F7d7269823af3178Cf22fd5E3"
       },
       {
         "pad_only_farm": true,

@@ -9,10 +9,13 @@ import {
     PriceModel,
     BSC_WHITELIST,
     MOVR_WHITELIST,
+    GLMR_WHITELIST,
     WBNB_BUSD_PAIR,
     WMOVR_USDC_PAIR,
+    WGLMR_USDC_PAIR,
     MINIMUM_LIQUIDITY_BNB,
-    MINIMUM_LIQUIDITY_MOVR
+    MINIMUM_LIQUIDITY_MOVR,
+    MINIMUM_LIQUIDITY_GLMR
 } from '@/price-model'
 import { FarmSet } from '@/types'
 
@@ -88,7 +91,7 @@ const MoonriverEcosystem: IEcosystem = {
 }
 
 const moonbeamDataseed = new ethers.providers.StaticJsonRpcProvider('https://rpc.api.moonbeam.network')
-const wglmrAddress = '0xAcc15dC74880C9944775448304B263D191c6077F'
+const wglmrAddress = '0xe3DB50049C74De2F7d7269823af3178Cf22fd5E3'
 const moonbeamFactoryAddress = '0x663a07a2648296f1A3C02EE86A126fE1407888E5'
 const MoonbeamEcosystem: IEcosystem = {
     ecosystemId: EcosystemId.Moonbeam,
@@ -101,10 +104,7 @@ const MoonbeamEcosystem: IEcosystem = {
     factoryAddress: moonbeamFactoryAddress,
     padAddress: '0x59193512877E2EC3bB27C178A8888Cfac62FB32D',
     minterAddress: '0x70790550d5F01EDd5B2Ed1dFf05eDC52cD4F1Eda',
-    priceModel: <PriceModel> { // TODO
-        async syncWithin() {},
-        getPriceUsd(token: string) { return 0 }
-    },
+    priceModel: new PriceModel(moonbeamDataseed, GLMR_WHITELIST, wglmrAddress, WGLMR_USDC_PAIR, moonbeamFactoryAddress, MINIMUM_LIQUIDITY_GLMR, 6),
     theme: MoonbeamPadswapTheme,
     swapUrl: 'https://glmr.padswap.exchange/#/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
