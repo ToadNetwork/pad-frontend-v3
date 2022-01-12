@@ -576,11 +576,11 @@ export default Vue.extend({
 
     async buy() {
       const amount = ethers.utils.parseEther(this.amount.replace(',','.'))
-      const tx = await myContract.populateTransaction.buy({ value: amount })
+      const tx = await this.myContract.populateTransaction.buy({ value: amount })
       await this.safeSendTransaction({ tx, targetChainId: this.ecosystem.chainId })
     },
     async redeem() {
-      const tx = await myContract.populateTransaction.claimTokens()
+      const tx = await this.myContract.populateTransaction.claimTokens()
       await this.safeSendTransaction({ tx, targetChainId: this.ecosystem.chainId })
     },
     ...mapActions(['safeSendTransaction'])
