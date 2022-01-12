@@ -436,15 +436,13 @@ export default Vue.extend({
 	}
 ],
       contractAddress: '0xE497d1564eFA546b4B2b65756E0B7CeE46e71646',
-      tokenAddress: '0x001Ef4385D199454b76527fd91Af3Da8C0a51537',
-      tokenInstance: null,
-      contractInstance: null,
+      tokenAddress: '0x59193512877E2EC3bB27C178A8888Cfac62FB32D',
       presale_img: ECOSYSTEMS[EcosystemId.Moonbeam].theme.padLogoSrc,
       active: true,
       amount: null,
       expected: null,
       price: 0.0000012,
-      raisedAmount: '0.000',
+      raisedAmount: '0',
       bnbPrice: 1,
       percentage: 0,
       allTokens: 5000000000,
@@ -481,10 +479,10 @@ export default Vue.extend({
       return this.ecosystem.dataseed
     },
     contractInstance() {
-      return new ethers.Contract(this.tokenAddress, ERC20_ABI, this.dataseed)
+      return new ethers.Contract(this.contractAddress, this.contractABI, this.dataseed)
     },
     tokenInstance() {
-      return new ethers.Contract(this.contractAddress, this.contractABI, this.dataseed)
+      return new ethers.Contract(this.tokenAddress, ERC20_ABI, this.dataseed)
     },
     myAddress() {
       return this.$store.state.address
@@ -540,7 +538,6 @@ export default Vue.extend({
           await Promise.all([
             this.getRaiseAmount(),
             this.getRemainingTokens(),
-            this.checkActive(),
             this.myTokens()
           ])
         } catch (e) {
@@ -567,11 +564,6 @@ export default Vue.extend({
       this.remainingTokens = this.biOrMiOrK(this.allTokens - (333333333*balance))
       const soldTokens = 333333333*balance
       this.percentage = this.round((soldTokens/this.allTokens*100))
-    },
-
-    async checkActive() {
-      const closed  = await this.contractInstance.isClosed()
-      this.active = !closed
     },
 
     async buy() {
