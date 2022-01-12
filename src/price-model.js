@@ -166,7 +166,6 @@ class PriceModel {
     }
 
     getPriceUsd(token) {
-        console.log(token)
         const tokenBnbPrice = this.getPrice(token)
         const bnbPrice = this.getBnbPrice()
         return tokenBnbPrice * bnbPrice
