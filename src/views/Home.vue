@@ -264,7 +264,7 @@ import {
 import { IEcosystem, EcosystemId, ECOSYSTEMS } from '@/ecosystem'
 import { formatMixin } from '@/format'
 import { FarmType, FarmData, FarmSet } from '@/types'
-import { delay } from '@/utils'
+import { delay, toFloat } from '@/utils'
 
 enum FarmViewOption {
   Regular = 0,
@@ -274,10 +274,6 @@ enum FarmViewOption {
 
 const TOKENS: {[address: string]: string} = {
   FUK: '0xa898bbb508c04be26af3d319b7775927afcb02af'
-}
-
-function toFloat(bn: ethers.BigNumber, units: number = 18) {
-  return parseFloat(ethers.utils.formatUnits(bn, units))
 }
 
 function initializeFarms(farms: FarmData[], type: FarmType): FarmData[] {
