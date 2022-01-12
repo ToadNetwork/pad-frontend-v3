@@ -366,7 +366,8 @@ const IMAGE_OVERRIDES = {
   KISH: require('@/assets/tokens/bsc/KISH.png'),
   MOVR: require('@/assets/tokens/moonriver/MOVR.png'),
   MRBTC: require('@/assets/tokens/bsc/MRBTC.png'),
-  RDOGE: require('@/assets/tokens/moonriver/RDOGE.png')
+  RDOGE: require('@/assets/tokens/moonriver/RDOGE.png'),
+  GLMR: require('@/assets/tokens/moonbeam/GLMR.png')
 }
 
 const TOAD = '0x463e737d8f740395abf44f7aac2d9531d8d539e9'
