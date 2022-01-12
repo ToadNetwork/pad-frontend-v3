@@ -58,4 +58,15 @@ const router = new VueRouter({
   routes
 })
 
+//checks if its an external or internal link and redirects the external ones
+router.beforeEach((to, from, next) => {
+  let url;
+  try {
+    url = new URL(to.fullPath.replace('/',''));
+    location.href=url.href
+  } catch (_) {
+    next()
+  }
+})
+
 export default router
