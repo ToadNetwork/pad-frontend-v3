@@ -16,7 +16,7 @@
             <div class="text-center">
               <img class="launchpad-img" :src="$padswapTheme.theme.padLogoSrc" href="https://grandpa-doge.com/">
               <div class="text-h4 launchpad" style="padding-top:40px; margin-bottom:20px">
-              LaunchPad<font style="font-size:15px; vertical-align: super;"> alpha</font>
+              LaunchPad
               </div>
               <br>
               <img height="60px" :src="presale_img" style="border-radius:20px; height: 70px">
