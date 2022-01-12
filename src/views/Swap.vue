@@ -84,16 +84,16 @@ function setSwapEcosystem(chain_id : string) {
   })
 
   if (chain_id == "BSC") {
-    iframe.src = "./bsc/index.html"
-    link!.href = "./bsc/index.html"
+    iframe.src = "/bsc/index.html"
+    link!.href = "/bsc/index.html"
   }
   if (chain_id == "MOVR") {
-    iframe.src = "./movr/index.html"
-    link!.href = "./movr/index.html"
+    iframe.src = "/movr/index.html"
+    link!.href = "/movr/index.html"
   }
   if (chain_id == "GLMR") {
-    iframe.src = "./glmr/index.html"
-    link!.href = "./glmr/index.html"
+    iframe.src = "/glmr/index.html"
+    link!.href = "/glmr/index.html"
   }
 }
 
