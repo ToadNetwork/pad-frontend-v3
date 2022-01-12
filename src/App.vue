@@ -207,8 +207,8 @@ export default Vue.extend({
         {
           name: 'LaunchPad',
           desc: 'Partake in exclusive presales',
-          href: 'https://v2.padswap.exchange/launchpad',
-          target: '_blank',
+          href: '/launchpad',
+          target: '_self',
           iconSrc: require('@/assets/icons/LaunchPAD Icon.svg')
         },
         {
