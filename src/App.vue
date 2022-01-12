@@ -35,10 +35,11 @@
         >
           <router-link 
           v-for="navItem in navSection.items" 
-          :to="navItem.href">
+          :to="navItem.href"
+          :target="navItem.target"
+          >
           <v-list-item
             :key="navItem.name"
-            :target="navItem.target"
           >
             <v-list-item-icon>
               <v-img
