@@ -21,11 +21,11 @@
               <br>
               <img height="60px" :src="presale_img" style="border-radius:20px; height: 70px">
               <div class="text-h5">PAD</div>
-              <div class="farm-description" style="margin-bottom: 40px; margin-top:10px">Earn Bitcoin Every Hour, GranPaDoge is the ORIGINAL OG <br> of crypto Meme with real fundamentals</div>
+              <div class="farm-description" style="margin-bottom: 40px; margin-top:10px">Instantly buy PAD, proceeds will be directed to DPLP</div>
               <h5 class="stats-line">
                 <img height="20" width="20" :src="$padswapTheme.theme.padLogoSrc" />
                 Website
-                <span class="stats-line-info"><a href="https://grandpa-doge.com/" target="_blank" style="color: #59a6ff;border: none;text-transform: uppercase;text-decoration: none;">grandpa-doge.com</a></span>
+                <span class="stats-line-info"><a href="https://toad.network/" target="_blank" style="color: #59a6ff;border: none;text-transform: uppercase;text-decoration: none;">toad.network</a></span>
               </h5>
               <v-divider style="margin-left: 2%; width: 96%;"></v-divider>
               <h5 class="stats-line">
@@ -37,31 +37,25 @@
               <h5 class="stats-line">
                 <img height="20" width="20" :src="$padswapTheme.theme.padLogoSrc" />
                 Hard Cap:
-                <span class="stats-line-info">750 BNB</span>
-              </h5>
-              <v-divider style="margin-left: 2%; width: 96%;"></v-divider>
-              <h5 class="stats-line">
-                <img height="20" width="20" :src="$padswapTheme.theme.padLogoSrc" />
-                Soft Cap:
-                <span class="stats-line-info">200 BNB</span>
+                <span class="stats-line-info">6000 GLMR</span>
               </h5>
               <v-divider style="margin-left: 2%; width: 96%;"></v-divider>
               <h5 class="stats-line">
                 <img height="20" width="20" :src="$padswapTheme.theme.padLogoSrc" />
                 Presale Price:
-                <span class="stats-line-info">333M per BNB</span>
+                <span class="stats-line-info">833K per GLMR</span>
               </h5>
               <v-divider style="margin-left: 2%; width: 96%;"></v-divider>
               <h5 class="stats-line">
                 <img height="20" width="20" :src="$padswapTheme.theme.padLogoSrc" />
-                BNB Raised:
-                <span class="stats-line-info">244 BNB</span>
+                GLMR Raised:
+                <span class="stats-line-info">{{ raisedAmount }} GLMR</span>
               </h5>
               <v-divider style="margin-left: 2%; width: 96%;"></v-divider>
               <h5 class="stats-line">
                 <img height="20" width="20" :src="$padswapTheme.theme.padLogoSrc" />
                 Remaining Tokens:
-                <span class="stats-line-info">0</span>
+                <span class="stats-line-info">{{ remainingTokens }}</span>
               </h5>
               <v-divider style="margin-left: 2%; width: 96%;"></v-divider>
               <v-divider style="margin-left: 2%; width: 96%;"></v-divider>
@@ -83,7 +77,7 @@
                 <v-text-field
                   style="min-height:36px"
                   class="vault-input"
-                  label="BNB amount"
+                  label="GLMR amount"
                   solo
                   v-model="amount"
                 ></v-text-field>
@@ -449,11 +443,11 @@ export default Vue.extend({
       active: true,
       amount: null,
       expected: null,
-      price: 3e-9,
+      price: 0.0000012,
       raisedAmount: '0.000',
       bnbPrice: 1,
       percentage: 0,
-      allTokens: 250000000000,
+      allTokens: 5000000000,
       remainingTokens: '0.000',
       myTokenss: '0.000',
       hours: '00',
@@ -564,7 +558,7 @@ export default Vue.extend({
     },
     async getRaiseAmount() {
       const balance = await this.dataseed.getBalance(this.contractAddress)
-      this.raisedAmount = toFloat(balance)
+      this.raisedAmount = toFloat(balance).toString()
     },
 
     async getRemainingTokens() {
