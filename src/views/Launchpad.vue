@@ -561,8 +561,8 @@ export default Vue.extend({
     async getRemainingTokens() {
       const balanceBn = await this.dataseed.getBalance(this.contractAddress)
       const balance = toFloat(balanceBn)
-      this.remainingTokens = this.biOrMiOrK(this.allTokens - (333333333*balance))
-      const soldTokens = 333333333*balance
+      this.remainingTokens = this.biOrMiOrK(this.allTokens - (833333*balance))
+      const soldTokens = 833333*balance
       this.percentage = this.round((soldTokens/this.allTokens*100))
     },
 
