@@ -199,7 +199,7 @@
 									target="_self"
 									>
 										<v-icon large class="rounded-icon">mdi-cash-multiple</v-icon>
-										<p>Buy BNB or BUSD<br>with fiat</p>
+										<p>Buy BNB<br>with fiat</p>
 									</a>
 								</div>
 
@@ -208,7 +208,7 @@
 								<div class="tutorial-item-container">
 									<a
 									class="tutorial-item"
-									href="https://padswap.exchange/#/swap"
+									href="/swap"
 									target="_blank"
 									>
 									<v-icon large class="rounded-icon">mdi-swap-horizontal</v-icon>
@@ -221,7 +221,7 @@
 								<div class="tutorial-item-container">
 									<a
 									class="tutorial-item"
-									href="https://padswap.exchange/#/pool"
+									href="/swap"
 									target="_blank"
 									>
 										<v-icon large class="rounded-icon">mdi-vector-link</v-icon>

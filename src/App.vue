@@ -37,7 +37,7 @@
             v-for="navItem in navSection.items"
             :key="navItem.name"
             :href="navItem.href"
-            target="_blank"
+            :target="navItem.target"
           >
             <v-list-item-icon>
               <v-img
@@ -154,7 +154,8 @@ type NavItem = {
   name: string,
   desc: string,
   href: string,
-  iconSrc: string
+  iconSrc: string,
+  target: string
 }
 
 type NavSection = {
@@ -199,43 +200,50 @@ export default Vue.extend({
         items: [{
           name: 'Swap',
           desc: 'Buy or sell any token instantly on PadSwap',
-          href: this.ecosystem.swapUrl,
+          href: '/swap',
+          target: '_self',
           iconSrc: require('@/assets/icons/Swap Icon.svg')
         },
         {
           name: 'LaunchPad',
           desc: 'Partake in exclusive presales',
           href: 'https://v2.padswap.exchange/launchpad',
+          target: '_blank',
           iconSrc: require('@/assets/icons/LaunchPAD Icon.svg')
         },
         {
           name: 'Bridge',
           desc: 'Bridge tokens between chains',
           href: this.ecosystem.bridgeUrl,
+          target: '_blank',
           iconSrc: require('@/assets/icons/Bridge Icon.svg')
         },
         {
           name: 'Vault',
           desc: 'PAD\'s backing reserves',
           href: 'https://v2.padswap.exchange/vault',
+          target: '_blank',
           iconSrc: require('@/assets/icons/Vault Icon.svg')
         },
         {
           name: 'Farms',
           desc: 'Earn passive income by staking liquidity',
           href: '/farms',
+          target: '_self',
           iconSrc: require('@/assets/icons/Farms Icon.svg')
         },
         {
           name: 'Buy crypto with fiat',
           desc: 'The easiest way to buy BNB or BUSD',
           href: '/onramp',
+          target: '_self',
           iconSrc: require('@/assets/icons/On Ramp Icon.svg')
         },
         {
           name: 'Stats',
           desc: 'Analyze token prices and their volume',
           href: this.ecosystem.infoUrl,
+          target: '_blank',
           iconSrc: require('@/assets/icons/Stats Icon.svg')
         }]
       },
@@ -245,24 +253,28 @@ export default Vue.extend({
           name: 'TOAD Academy',
           desc: 'Learn about crypto in a fun way',
           href: 'https://toad.academy/',
+          target: '_blank',
           iconSrc: require('@/assets/icons/TOADAcademy Icon.svg')
         },
         {
           name: 'Games',
           desc: 'Play our TOAD-themed games',
           href: 'https://toad.academy/games',
+          target: '_blank',
           iconSrc: require('@/assets/icons/Games Icon.svg')
         },
         {
           name: 'YouTube',
           desc: 'Watch our series of educational animated videos',
           href: 'https://www.youtube.com/channel/UCI_vUc-HrJWtKXj-Re-hTSw',
+          target: '_blank',
           iconSrc: require('@/assets/icons/YouTube Icon.svg')
         },
         {
           name: 'Piramyd Store',
           desc: 'Official TOAD merch',
           href: 'https://piramyd.me/toad-network-x-piramyd/',
+          target: '_blank',
           iconSrc: require('@/assets/icons/Piramyd Store Icon.svg')
         }]
       },
@@ -272,18 +284,21 @@ export default Vue.extend({
           name: 'Telegram',
           desc: 'Come chat with us on Telegram',
           href: 'https://t.me/toadnetwork',
+          target: '_blank',
           iconSrc: require('@/assets/icons/Telegram Icon.svg')
         },
         {
           name: 'Reddit',
           desc: 'Partake in discussions about Toad.Network on our subreddit',
           href: 'https://reddit.com/r/toadnetwork',
+          target: '_blank',
           iconSrc: require('@/assets/icons/Reddit Icon.svg')
         },
         {
           name: 'Twitter',
           desc: 'Stay up to date with our latest news',
           href: 'https://twitter.com/toadnetwork',
+          target: '_blank',
           iconSrc: require('@/assets/icons/Twitter Icon.svg')
         }]
       },
@@ -293,18 +308,21 @@ export default Vue.extend({
           name: 'TOAD Docs',
           desc: 'Learn all about TOAD on our Wiki',
           href: 'https://docs.toad.network/',
+          target: '_blank',
           iconSrc: require('@/assets/icons/Docs Icon.svg')
         },
         {
           name: 'Audit Report',
           desc: 'PadSwap contracts audit report by SpadeAudits',
           href: 'https://dapps.padswap.exchange/pad_audit_report.pdf',
+          target: '_blank',
           iconSrc: require('@/assets/icons/Audit Icon.svg')
         },
         {
           name: 'White Paper',
           desc: 'PadSwap white paper',
           href: 'https://www.dropbox.com/s/bng5e1bq2u03bk6/PAD%20WHITEPAPER.PDF',
+          target: '_blank',
           iconSrc: require('@/assets/icons/White Paper Icon.svg')
         }]
       }]
