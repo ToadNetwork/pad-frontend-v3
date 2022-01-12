@@ -3,7 +3,6 @@ import { ethers } from 'ethers'
 import { MULTICALL_ADDRESS, BSC_MINTER_ADDRESS, MOVR_MINTER_ADDRESS } from '@/constants'
 import farmsBsc from '@/farms_config_bsc.json'
 import farmsMoonriver from '@/farms_config_movr.json'
-import farmsMoonbeam from '@/farms_config_glmr.json'
 import { IPadswapTheme, BscPadswapTheme, MoonriverPadswapTheme, MoonbeamPadswapTheme } from '@/padswap-theme'
 import {
     PriceModel,
@@ -97,7 +96,18 @@ const MoonbeamEcosystem: IEcosystem = {
     wethAddress: wglmrAddress,
     dataseed: moonbeamDataseed,
     multicallAddress: MULTICALL_ADDRESS, // TODO
-    farmSet: farmsMoonbeam as any,
+    farmSet: { // TODO
+        regularFarms: {
+            farms: [],
+            retiredFarms: []
+        },
+        lpFarms: {
+            farms: []
+        },
+        partnerFarms: {
+            farms: []
+        }
+    },
     factoryAddress: moonbeamFactoryAddress,
     padAddress: '0x59193512877E2EC3bB27C178A8888Cfac62FB32D',
     minterAddress: '0x70790550d5F01EDd5B2Ed1dFf05eDC52cD4F1Eda',
