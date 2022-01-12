@@ -10,6 +10,15 @@
       <div class="text-center text-h5" style="margin-top:35px; margin-bottom:10px">
       Take care of building your community and let LaunchPad take care of the rest for you.
       </div> -->
+
+      <v-card
+      class="auction-banner"
+      >
+      <h2>GLMR PAD presale is sold out!</h2>
+      <p>PAD auctions will be launched shortly.</p>
+      <p>Stay tuned!</p>
+      </v-card>
+
       <v-card
             class="farm-card flip-card-front"
             elevation="8">
@@ -588,6 +597,27 @@ export default Vue.extend({
 })
 </script>
 <style scoped>
+
+  /* Auctions banner */
+  .farm-card {
+    display: none;
+  }
+  .auction-banner {
+    width: 100%;
+    background-color: #353e3abf !important;
+    border-radius: 10px;
+    min-height: 200px;
+  }
+  .auction-banner h2 {
+    padding-top: 10px;
+    padding-bottom: 20px;
+  }
+  .auction-banner p, .auction-banner h2 {
+    width: 100%;
+    text-align: center;
+  }
+
+
   .farm-title {
     font-size: 30px;
     padding-top: 25px;
