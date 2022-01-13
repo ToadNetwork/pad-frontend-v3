@@ -23,7 +23,7 @@ export default new Vuex.Store({
       [1285]: <number | null> null,
     },
     padPrice: null,
-    ecosystemId: EcosystemId.BSC
+    ecosystemId: EcosystemId.Moonbeam
   },
   mutations: {
     setWeb3Connection(state, { web3, address, chainId }) {
