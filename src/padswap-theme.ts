@@ -37,7 +37,7 @@ const MoonbeamPadswapTheme = {
 const PadswapThemePlugin = {
   install(vue: typeof Vue, options?: Object) {
     vue.prototype.$padswapTheme = Vue.observable({
-      theme: BscPadswapTheme
+      theme: MoonbeamPadswapTheme
     })
   }
 }
