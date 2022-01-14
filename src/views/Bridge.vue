@@ -25,12 +25,12 @@
       <template v-slot:activator="{}">
         <v-card elevation="2" class="bridge-panel">
           <v-card-text class="px-5">
-            <v-form>
+            <v-form class="no-background">
               <v-dialog
                 v-model="showNetworkDialog"
                 width="500">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-sheet class="d-flex justify-center px-3">
+                  <v-sheet class="d-flex justify-center px-3 no-background">
                     <v-hover
                       v-slot="{ hover }">
                       <v-card
@@ -886,10 +886,13 @@ export default Vue.extend({
 
 <style scoped>
 
-/* Overrides the default v-card style */
-.theme--dark.v-sheet, .theme--dark.v-card {
+.no-background, .no-background > .v-sheet {
   background-color: none;
   background: none;
+}
+
+.primary--text {
+  color: gray !important;
 }
 
 .bridge-panel {
