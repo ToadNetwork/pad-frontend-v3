@@ -886,10 +886,18 @@ export default Vue.extend({
 
 <style scoped>
 
+/* Overrides the default v-card style */
+.theme--dark.v-sheet, .theme--dark.v-card {
+  background-color: none;
+  background: none;
+}
+
 .bridge-panel {
-  background: rgba(24, 29, 38, 0.7);
+  background: rgba(24, 29, 38, 0.7) !important;
   border-radius: 20px;
 }
+
+
 
 .stats-caption {
   color: rgb(155 107 254);
