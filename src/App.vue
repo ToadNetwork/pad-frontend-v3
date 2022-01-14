@@ -348,7 +348,7 @@ export default Vue.extend({
         {
           name: 'Audit Report',
           desc: 'PadSwap contracts audit report by SpadeAudits',
-          href: 'https://dapps.padswap.exchange/pad_audit_report.pdf',
+          href: 'https://spadetech.io/wp-content/uploads/2021/06/toad_Padswap_audit_report.pdf',
           target: '_blank',
           iconSrc: require('@/assets/icons/Audit Icon.svg')
         },
