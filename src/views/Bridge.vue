@@ -39,7 +39,7 @@
                         @click="networkSlot = 'sourceNetwork'"
                         tabindex=""
                         :class="{ 'on-hover': hover }"
-                        class="px-7 pt-5 justify-center flex-grow-1"
+                        class="px-7 pt-5 justify-center flex-grow-1 network-card"
                         style="border:none !important">
                         <v-sheet
                           class="d-flex justify-center"
@@ -54,7 +54,7 @@
                         </v-card-title>
                       </v-card>
                     </v-hover>
-                    <v-sheet class="d-flex align-center justify-center mx-5 network-arrow">
+                    <v-sheet class="d-flex align-center justify-center mx-1 network-arrow">
                       <v-icon>mdi-arrow-right</v-icon>
                     </v-sheet>
                     <v-hover
@@ -65,7 +65,7 @@
                         @click="networkSlot = 'destNetwork'"
                         tabindex=""
                         :class="{ 'on-hover': hover }"
-                        class="px-7 pt-5 justify-center flex-grow-1"
+                        class="px-7 pt-5 justify-center flex-grow-1 network-card"
                         style="border:none !important">
                         <v-sheet
                           class="d-flex justify-center"
@@ -900,7 +900,10 @@ export default Vue.extend({
 .v-card__title, .v-card__subtitle {
   word-break: normal;
 }
-@media all and (max-width: 450px) {
+.network-card {
+  width: 35%;
+}
+@media all and (max-width: 700px) {
   .network-icon {
     height: 50px;
   }
@@ -912,7 +915,7 @@ export default Vue.extend({
     display: none;
   }
   .network-name {
-    max-width: 75px;
+    width: 100%;
     word-break: normal;
     overflow-wrap: normal;
     text-align: center;
@@ -1233,7 +1236,4 @@ export default Vue.extend({
       font-size: 11px
     }
   }
-</style>
-<style>
-
 </style>
