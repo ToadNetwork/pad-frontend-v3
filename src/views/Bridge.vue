@@ -205,11 +205,11 @@
               </v-sheet>
               <v-card class="mt-0">
                 <v-card-text>
-                  Minimum Bridge Amount: {{ anyswapLimits.MinimumSwap | formatNumber }} {{ currentSymbol }}<br />
-                  Maximum Bridge Amount: {{ anyswapLimits.MaximumSwap | formatNumber }} {{ currentSymbol }}<br />
-                  Fee: {{ anyswapLimits.SwapFeeRate | formatPercent }}<br />
-                  Minimum Fee: {{ anyswapLimits.MinimumSwapFee | formatNumber }} {{ currentSymbol }}<br />
-                  Amounts greater than {{ anyswapLimits.BigValueThreshold | formatNumber }} {{ currentSymbol }} could take up to 12 hours
+                  Minimum Bridge Amount: {{ displayedAnyswapLimits.MinimumSwap | formatNumber }} {{ currentSymbol }}<br />
+                  Maximum Bridge Amount: {{ displayedAnyswapLimits.MaximumSwap | formatNumber }} {{ currentSymbol }}<br />
+                  Fee: {{ displayedAnyswapLimits.SwapFeeRate | formatPercent }}<br />
+                  Minimum Fee: {{ displayedAnyswapLimits.MinimumSwapFee | formatNumber }} {{ currentSymbol }}<br />
+                  Amounts greater than {{ displayedAnyswapLimits.BigValueThreshold | formatNumber }} {{ currentSymbol }} could take up to 12 hours
                 </v-card-text>
               </v-card>
             </v-form>
@@ -608,6 +608,15 @@ export default Vue.extend({
           ...this.anyswapTokenConfig.DestToken
         }
       }
+    },
+    displayedAnyswapLimits(): any {
+      if (this.selectedToken && this.selectedToken.symbol == 'TOAD') {
+        return {
+          ...this.anyswapLimits,
+          MaximumSwap: Math.min(this.anyswapLimits.MaximumSwap, 195000)
+        }
+      }
+      return this.anyswapLimits
     },
     currentSymbol(): string | null {
       if (this.selectedToken == null) {
