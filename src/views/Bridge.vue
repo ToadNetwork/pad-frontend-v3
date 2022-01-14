@@ -23,7 +23,7 @@
       :persistent="operationInProgress"
       width="500">
       <template v-slot:activator="{}">
-        <v-card elevation="2">
+        <v-card elevation="2" class="bridge-panel">
           <v-card-text class="px-5">
             <v-form>
               <v-dialog
@@ -876,6 +876,12 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+
+.bridge-panel {
+  background: rgba(24, 29, 38, 0.7);
+  border-radius: 20px;
+}
+
 .stats-caption {
   color: rgb(155 107 254);
   font-weight: 400;
@@ -922,7 +928,7 @@ export default Vue.extend({
   }
 }
 .v-card.on-hover.theme--dark {
-  background-color: rgba(65, 65, 65, 0.8);
+  background-color: rgb(79 99 102 / 23%);
   cursor: pointer;
 }
 .v-input /deep/ input[type="number"]::-webkit-outer-spin-button,
