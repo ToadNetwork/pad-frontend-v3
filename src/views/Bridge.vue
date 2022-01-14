@@ -54,7 +54,7 @@
                         </v-card-title>
                       </v-card>
                     </v-hover>
-                    <v-sheet class="d-flex align-center justify-center mx-1 network-arrow">
+                    <v-sheet class="d-flex align-center justify-center mx-3 network-arrow">
                       <v-icon>mdi-arrow-right</v-icon>
                     </v-sheet>
                     <v-hover
