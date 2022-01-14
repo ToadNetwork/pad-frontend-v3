@@ -346,7 +346,8 @@ import {
   FARM_REQUIRED_ALLOWANCE,
   PADSWAP_FARM_ABI,
   PADSWAP_SINGLE_STAKE_FARM_ABI,
-  PADSWAP_LP_FARM_ABI } from '@/constants'
+  PADSWAP_LP_FARM_ABI,
+  APPROVE_AMOUNT } from '@/constants'
 import { IEcosystem, EcosystemId, ECOSYSTEMS } from '@/ecosystem'
 import { formatMixin } from '@/format'
 import { delay, equalsInsensitive } from '@/utils'
@@ -355,8 +356,6 @@ type ValidationStatus = {
   status: boolean,
   message?: string
 }
-
-const APPROVE_AMOUNT = '115792089237316195423570985008687907853269984665640564039457584007913129639935'
 
 const IMAGE_OVERRIDES = {
   CZATS: require('@/assets/tokens/bsc/CZATS.png'),

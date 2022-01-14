@@ -117,12 +117,24 @@
                       filled
                       outlined>
                       <template v-slot:item="{ item }">
-                        <img class="coin-icon" :src="item.iconSrc" />
-                        {{ item.symbol }}
+                        <div class="d-flex align-center">
+                          <v-img
+                            class="coin-icon"
+                            :src="item.iconSrc"
+                            contain
+                          />
+                          {{ item.symbol }}
+                        </div>
                       </template>
                       <template v-slot:selection="{ item }">
-                        <img class="coin-icon" :src="item.iconSrc" />
-                        {{ item.symbol }}
+                        <div class="d-flex align-center">
+                          <v-img
+                            class="coin-icon"
+                            :src="item.iconSrc"
+                            contain
+                          />
+                          {{ item.symbol }}
+                        </div>
                       </template>
                     </v-select>
                   </v-col>
@@ -151,13 +163,23 @@
                   <v-col cols="12">
                     <v-btn
                       v-if="!web3"
-                      @click="$parent.$parent.$parent.$parent.connect()"
+                      @click="$store.dispatch('requestConnect')"
                       x-large
                       :ripple="true"
                       color="primary"
                       width="100%"
                       class="my-3">
                       Connect Wallet
+                    </v-btn>
+                    <v-btn
+                      v-else-if="needsApproval"
+                      @click="approve"
+                      x-large
+                      :ripple="true"
+                      color="primary"
+                      width="100%"
+                      class="my-3">
+                      Approve {{ currentSymbol }}
                     </v-btn>
                     <v-btn
                       v-else
@@ -257,8 +279,8 @@
 import Vue from 'vue'
 import { ethers } from 'ethers'
 
-import { AnyswapV5ERC20ABI } from '@/anyswap_config.json'
-import { ERC20_ABI } from '@/constants'
+import { AnyswapV5ERC20ABI, AnyswapV4RouterABI } from '@/anyswap_config.json'
+import { ERC20_ABI, FARM_REQUIRED_ALLOWANCE, APPROVE_AMOUNT } from '@/constants'
 import { EcosystemId, ECOSYSTEMS, ChainId } from '@/ecosystem'
 
 type BridgeToken = {
@@ -273,6 +295,7 @@ type BridgeToken = {
     chainId: ChainId
   },
   anyswapId: string,
+  anyswapVersion: 'v2' | 'v3'
   iconSrc: string
 }
 
@@ -293,6 +316,7 @@ type OperationStep = {
 }
 
 const bridgeTokens: BridgeToken[] = [{
+// moonriver
   symbol: 'TOAD',
   isEther: false,
   src: {
@@ -304,6 +328,7 @@ const bridgeTokens: BridgeToken[] = [{
     chainId: 1285
   },
   anyswapId: 'toadv5',
+  anyswapVersion: 'v2',
   iconSrc: require('@/assets/tokens/bsc/TOAD.svg')
 },
 {
@@ -318,6 +343,7 @@ const bridgeTokens: BridgeToken[] = [{
     chainId: 1285
   },
   anyswapId: 'busdv5',
+  anyswapVersion: 'v2',
   iconSrc: require('@/assets/tokens/bsc/BUSD.svg')
 },
 {
@@ -332,11 +358,59 @@ const bridgeTokens: BridgeToken[] = [{
     chainId: 1285
   },
   anyswapId: 'bnbv5',
+  anyswapVersion: 'v2',
   iconSrc: require('@/assets/tokens/bsc/BNB.svg')
-}]
+},
+// moonbeam
+{
+  symbol: 'TOAD',
+  isEther: false,
+  src: {
+    address: '0x463e737d8f740395abf44f7aac2d9531d8d539e9',
+    chainId: 56
+  },
+  dst: {
+    address: '0xF480f38C366dAaC4305dC484b2Ad7a496FF00CeA',
+    chainId: 1284
+  },
+  anyswapId: '',
+  anyswapVersion: 'v3',
+  iconSrc: require('@/assets/tokens/bsc/TOAD.svg')
+},
+{
+  symbol: 'BUSD',
+  isEther: false,
+  src: {
+    address: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+    chainId: 56
+  },
+  dst: {
+    address: '0xa649325aa7c5093d12d6f98eb4378deae68ce23f',
+    chainId: 1284
+  },
+  anyswapId: 'busdv5',
+  anyswapVersion: 'v2',
+  iconSrc: require('@/assets/tokens/bsc/BUSD.svg')
+},
+{
+  symbol: 'BNB',
+  isEther: true,
+  src: {
+    address: null,
+    chainId: 56
+  },
+  dst: {
+    address: '0xc9baa8cfdde8e328787e29b4b078abf2dadc2055',
+    chainId: 1284
+  },
+  anyswapId: 'bnbv5',
+  anyswapVersion: 'v2',
+  iconSrc: require('@/assets/tokens/bsc/BNB.svg')
+},]
 
 const bscEcosystem = ECOSYSTEMS[EcosystemId.BSC]
 const moonriverEcosystem = ECOSYSTEMS[EcosystemId.Moonriver]
+const moonbeamEcosystem = ECOSYSTEMS[EcosystemId.Moonbeam]
 
 const bridgeNetworks: Network[] = [{
   title: 'BSC',
@@ -351,6 +425,13 @@ const bridgeNetworks: Network[] = [{
   iconSrc: require('@/assets/tokens/moonriver/MOVR.png'),
   explorer: 'https://moonriver.moonscan.io',
   dataseed: moonriverEcosystem.dataseed
+},
+{
+  title: 'Moonbeam',
+  chainId: moonbeamEcosystem.chainId,
+  iconSrc: require('@/assets/tokens/moonbeam/GLMR.png'),
+  explorer: 'https://blockscout.moonbeam.network',
+  dataseed: moonbeamEcosystem.dataseed
 }]
 
 async function delay(ms: number) {
@@ -373,7 +454,8 @@ export default Vue.extend({
     return {
       bridgeTokens: bridgeTokens,
       bridgeNetworks: bridgeNetworks,
-      anyswapConfig: <any> null,
+      anyswapV2Config: <any> null,
+      anyswapV3Config: <any> null,
       selectedToken: <BridgeToken | null> null,
       sourceNetwork: bridgeNetworks[0],
       destNetwork: bridgeNetworks[1],
@@ -383,6 +465,7 @@ export default Vue.extend({
       operationInProgress: false,
       tokenDecimals: <number | null> null,
       tokenBalanceWei: <ethers.BigNumber | null> null,
+      tokenAllowance: <ethers.BigNumber | null> null,
       bridgeAmount: <string | null> null,
       operationSteps: <OperationStep[]> [],
       snackbar: false,
@@ -455,16 +538,50 @@ export default Vue.extend({
 
       return null
     },
-    currentChainTokens(): BridgeToken[] {
-      return bridgeTokens.filter(t => t.src.chainId == this.sourceNetwork.chainId ||
-                                      t.dst.chainId == this.sourceNetwork.chainId)
+    needsApproval(): boolean {
+      if (!this.anyswapTokenConfig || !this.anyswapTokenConfig.router) {
+        return false
+      }
+      const tokenAllowance = parseInt((this.tokenAllowance ?? ethers.BigNumber.from(0)).toString())
+      return tokenAllowance < FARM_REQUIRED_ALLOWANCE
     },
+    currentChainTokens(): BridgeToken[] {
+      return bridgeTokens.filter(t =>
+        (t.src.chainId == this.sourceNetwork.chainId && t.dst.chainId == this.destNetwork.chainId) ||
+        (t.dst.chainId == this.sourceNetwork.chainId && t.src.chainId == this.destNetwork.chainId))
+    },
+    // TODO: types
     anyswapTokenConfig(): any {
-      if (this.selectedToken == null || this.anyswapConfig == null) {
+      if (this.selectedToken == null || this.anyswapV2Config == null || this.anyswapV3Config == null) {
         return null
       }
 
-      return this.anyswapConfig[this.selectedToken.dst.chainId][this.selectedToken.anyswapId]
+      if (this.selectedToken.anyswapVersion == 'v2') {
+        return this.anyswapV2Config[this.selectedToken.dst.chainId][this.selectedToken.anyswapId]
+      } else {
+        // TODO: v3 ether tokens
+        const configEntry = this.anyswapV3Config.UNDERLYINGV2[this.selectedToken.src.chainId][this.selectedToken.src.address!.toLowerCase()]
+        const destConfig = configEntry.destChains[this.selectedToken.dst.chainId]
+        const anyswapConfig = {
+          MinimumSwap: destConfig.MinimumSwap,
+          MaximumSwap: destConfig.MaximumSwap,
+          SwapFeeRate: destConfig.SwapFeeRatePerMillion * 1e-2,
+          MinimumSwapFee: destConfig.MinimumSwapFee,
+          BigValueThreshold: destConfig.BigValueThreshold
+        }
+        return {
+          SrcToken: {
+            ...anyswapConfig,
+            anyToken: configEntry.anyToken
+          },
+          DestToken: {
+            ...anyswapConfig,
+            anyToken: destConfig.anyToken
+          },
+          router: configEntry.router,
+          srcChainID: this.selectedToken.src.chainId
+        }
+      }
     },
     swapType(): SwapType | null {
       if (this.anyswapTokenConfig == null) {
@@ -507,36 +624,44 @@ export default Vue.extend({
       } else if (this.selectedToken == null) {
         this.selectedToken = val[0]
       } else {
-        this.selectedToken = val.find(t => t.anyswapId == this.selectedToken!.anyswapId) ?? null
+        this.selectedToken = val.find(t => t.symbol == this.selectedToken!.symbol) ?? null
       }
 
       this.tokenDecimals = null
       this.tokenBalanceWei = null
+      this.tokenAllowance = null
       setTimeout(() => this.refreshData())
     },
     selectedToken(val) {
       this.tokenDecimals = null
       this.tokenBalanceWei = null
+      this.tokenAllowance = null
       setTimeout(() => this.refreshData())
     }
   },
   async created() {
-    const response = await fetch('https://bridgeapi.anyswap.exchange/v2/serverInfo/chainid')
-    this.anyswapConfig = await response.json()
+    const [response1, response2] = await Promise.all([
+      fetch('https://bridgeapi.anyswap.exchange/v2/serverInfo/chainid'),
+      fetch('https://bridgeapi.anyswap.exchange/v3/serverinfoV3?chainId=all')
+    ])
+    this.anyswapV2Config = await response1.json()
+    this.anyswapV3Config = await response2.json()
     this.isLoading = false
   },
   async mounted() {
     this.active = true
+    // wait for wallet connection
+    await delay(100) // TODO: use events
 
-    let sourceNetwork = this.bridgeNetworks.find((n: Network) => n.chainId == this.chainId)
+    let sourceNetwork = this.bridgeNetworks.find(n => n.chainId == this.chainId)
     if (!sourceNetwork) {
-      sourceNetwork = this.bridgeNetworks.find((n: Network) => n.chainId == this.$store.getters.ecosystem.chainId)
+      sourceNetwork = this.bridgeNetworks.find(n => n.chainId == this.$store.getters.ecosystem.chainId)
     }
     if (!sourceNetwork) {
       sourceNetwork = this.bridgeNetworks[0]
     }
 
-    const otherNetwork = this.bridgeNetworks.find((n: Network) => n != sourceNetwork)
+    const otherNetwork = this.bridgeNetworks.find(n => n != sourceNetwork)
     this.sourceNetwork = sourceNetwork
     this.destNetwork = otherNetwork!
     this.selectedToken = this.currentChainTokens.find(() => true) ?? null
@@ -561,12 +686,16 @@ export default Vue.extend({
   methods: {
     selectBridgeNetwork(network: Network) {
       try {
+        const previousNetwork = this[this.networkSlot]
         this[this.networkSlot] = network
         const otherSlot = this.networkSlot == 'sourceNetwork' ? 'destNetwork' : 'sourceNetwork'
-        const otherNetwork = this.bridgeNetworks.filter((n: Network) => n != network)[0]
-        this[otherSlot] = otherNetwork
+        if (this[otherSlot] === network) {
+          this[otherSlot] = previousNetwork
+        }
 
-        if (this.chainId !== null && network.chainId !== this.chainId) {
+        if (this.chainId !== null &&
+            network.chainId !== this.chainId &&
+            this.networkSlot == 'sourceNetwork') {
           // TODO: add ethereum network to metamask if missing
           this.$store.dispatch('requestNetworkChange', network.chainId)
         }
@@ -576,6 +705,15 @@ export default Vue.extend({
     },
     setMaxTokens() {
       this.bridgeAmount = this.tokenBalance?.toString() ?? null
+    },
+    async approve() {
+      const sourceNetwork = this.sourceNetwork
+      const tokenContract = sourceNetwork.chainId == this.selectedToken!.src.chainId
+        ? this.tokenContractSrc!
+        : this.tokenContractDst!
+      const tx = await tokenContract.populateTransaction.approve(this.anyswapTokenConfig.router, APPROVE_AMOUNT)
+      await this.$store.dispatch('safeSendTransaction', { tx, targetChainId: sourceNetwork.chainId })
+      setTimeout(() => this.refreshData())
     },
     async startBridgeOperation() {
       const tokenConfig = this.anyswapTokenConfig
@@ -597,7 +735,7 @@ export default Vue.extend({
 
       try {
         let tx: ethers.providers.TransactionResponse
-        if (swapType == 'DEPOSIT') {
+        if (swapType == 'DEPOSIT' && selectedToken.anyswapVersion == 'v2') {
           if (selectedToken.isEther && sourceNetwork.chainId == selectedToken.src.chainId) {
             tx = await this.web3!.sendTransaction({
               value: bridgeAmountWei,
@@ -606,9 +744,29 @@ export default Vue.extend({
           } else {
             tx = await this.tokenContractSigner!.transfer(tokenConfig.SrcToken.DepositAddress, bridgeAmountWei)
           }
-        } else {
+        } else if (swapType == 'WITHDRAW' && selectedToken.anyswapVersion == 'v2') {
           const anyswapERC20Contract = new ethers.Contract(tokenConfig.DestToken.ContractAddress, AnyswapV5ERC20ABI, this.web3!)
           tx = await anyswapERC20Contract.Swapout(bridgeAmountWei, this.myAddress)
+        } else if (swapType == 'DEPOSIT' && selectedToken.anyswapVersion == 'v3') {
+          const anyswapRouterContract = new ethers.Contract(tokenConfig.router, AnyswapV4RouterABI, this.web3!)
+          const destChainId = ethers.BigNumber.from(destNetwork.chainId)
+          tx = await anyswapRouterContract.anySwapOutUnderlying(
+            tokenConfig.SrcToken.anyToken.address,
+            this.myAddress,
+            bridgeAmountWei,
+            destChainId
+          )
+        } else if (swapType == 'WITHDRAW' && selectedToken.anyswapVersion == 'v3') {
+          const anyswapRouterContract = new ethers.Contract(tokenConfig.router, AnyswapV4RouterABI, this.web3!)
+          const destChainId = ethers.BigNumber.from(destNetwork.chainId)
+          tx = await anyswapRouterContract['anySwapOut(address,address,uint256,uint256)'](
+            tokenConfig.DestToken.anyToken.address,
+            this.myAddress,
+            bridgeAmountWei,
+            destChainId
+          )
+        } else {
+          throw new Error()
         }
 
         const depositHref = `${sourceNetwork.explorer}/tx/${tx.hash}`
@@ -671,8 +829,9 @@ export default Vue.extend({
         return
       }
 
-      if (this.selectedToken) {
+      if (this.selectedToken && this.anyswapTokenConfig) {
         const selectedToken = this.selectedToken
+        const tokenConfig = this.anyswapTokenConfig
         const sourceNetwork = this.sourceNetwork
         const tokenContract = sourceNetwork.chainId == selectedToken.src.chainId
           ? this.tokenContractSrc!
@@ -681,12 +840,16 @@ export default Vue.extend({
 
         let tokenDecimals
         let tokenBalanceWei
+        let tokenAllowance = null
         if (selectedToken.isEther && sourceNetwork.chainId == selectedToken.src.chainId) {
           tokenDecimals = 18
           tokenBalanceWei = await sourceNetwork.dataseed.getBalance(myAddress)
         } else {
           tokenDecimals = await tokenContract.decimals()
           tokenBalanceWei = await tokenContract.balanceOf(myAddress)
+          if (tokenConfig.router) {
+            tokenAllowance = await tokenContract.allowance(myAddress, tokenConfig.router)
+          }
         }
 
         if (selectedToken === this.selectedToken &&
@@ -694,6 +857,7 @@ export default Vue.extend({
             myAddress === this.myAddress) {
           this.tokenDecimals = tokenDecimals
           this.tokenBalanceWei = tokenBalanceWei
+          this.tokenAllowance = tokenAllowance
         }
       }
     }
@@ -724,9 +888,10 @@ export default Vue.extend({
 }
 .coin-icon {
   border-radius: 30px;
-  background: white;
-  border: solid #00000061 1px;
+  background: transparent;
+  border: none;
   height: 27px;
+  width: 27px;
   margin-right: 10px;
 }
 .network-icon {
