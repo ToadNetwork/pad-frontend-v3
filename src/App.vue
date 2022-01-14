@@ -249,7 +249,7 @@ export default Vue.extend({
           name: 'Bridge',
           desc: 'Bridge tokens between chains',
           href: '/bridge',
-          target: '_blank',
+          target: '_self',
           iconSrc: require('@/assets/icons/Bridge Icon.svg')
         },
         {
