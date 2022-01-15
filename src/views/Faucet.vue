@@ -22,12 +22,9 @@
           <span v-if="selected == 'Redeem code'">Redeem a code to get GLMR</span>
           <span v-if="selected == 'Create code'">Create a code to share with others or use later</span>
         </div>
-
       </div>
 
-
       <div class="content">
-
         <div v-if="selected == 'Send GLMR for BNB'">
           <span>BNB to deposit (min 0.001, max 0.1):</span>
           <v-text-field

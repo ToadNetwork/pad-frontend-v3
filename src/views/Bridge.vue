@@ -662,15 +662,24 @@ export default Vue.extend({
     // wait for wallet connection
     await delay(100) // TODO: use events
 
-    let sourceNetwork = this.bridgeNetworks.find(n => n.chainId == this.chainId)
-    if (!sourceNetwork) {
-      sourceNetwork = this.bridgeNetworks.find(n => n.chainId == this.$store.getters.ecosystem.chainId)
-    }
-    if (!sourceNetwork) {
-      sourceNetwork = this.bridgeNetworks[0]
-    }
+    // let sourceNetwork = this.bridgeNetworks.find(n => n.chainId == this.chainId)
 
-    const otherNetwork = this.bridgeNetworks.find(n => n != sourceNetwork)
+    // if (!sourceNetwork) {
+    //   sourceNetwork = this.bridgeNetworks.find(n => n.chainId == this.$store.getters.ecosystem.chainId)
+    // }
+    // if (!sourceNetwork) {
+    //   sourceNetwork = this.bridgeNetworks[0]
+    // }
+
+    // const otherNetwork = this.bridgeNetworks.find(n => n != sourceNetwork)
+
+
+    // Defaults to BSC->GLMR, remove this and uncomment the code above to return to previous implementation
+    let sourceNetwork = this.bridgeNetworks[0]
+    let otherNetwork = this.bridgeNetworks[2]
+    //
+
+
     this.sourceNetwork = sourceNetwork
     this.destNetwork = otherNetwork!
     this.selectedToken = this.currentChainTokens.find(() => true) ?? null
