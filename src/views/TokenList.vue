@@ -60,7 +60,27 @@
 
         <template v-slot:item.address="{ item }">
            <span style="word-break: break-all; word-wrap: break-word;">{{ item.address }}</span>
-         <v-btn style="min-width: 0;" @click="copyAddress(item.ticker, item.address)"><v-icon small>mdi-clipboard-multiple</v-icon></v-btn>
+
+         <v-tooltip
+          :open-on-hover="false"
+          right
+        >
+          <template #activator="{ on }">
+            <v-btn
+              style="min-width: 0;"
+              @click="on.click"
+              v-on:click="copyAddress(item.ticker, item.address)"
+              icon
+              retain-focus-on-click
+              v-bind="attrs"
+              v-on="on"
+            >
+            <v-icon small>mdi-clipboard-multiple</v-icon>
+            </v-btn>
+          </template>
+          <span>Copied!</span>
+        </v-tooltip>
+
         </template>
 
 
@@ -103,9 +123,6 @@ export default Vue.extend({
       textArea.select()
 
       let successful = document.execCommand('copy')
-      if (successful) {
-        alert(token + ' address copied!')
-      }
 
 
       document.body.removeChild(textArea)
