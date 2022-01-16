@@ -54,6 +54,11 @@ const routes: Array<RouteConfig> = [
     path: '/token-list',
     name: 'Token List',
     component: () => import('../views/TokenList.vue')
+  },
+  {
+    path: '/faucet',
+    name: 'Faucet',
+    component: () => import('../views/Faucet.vue')
   }
 ]
 
