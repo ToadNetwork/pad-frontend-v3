@@ -1,6 +1,41 @@
 <template>
   <v-container class="padswap-farms-home">
-        <div class="padswap-header-box">
+    <div class="info-section">
+     <v-row
+    align="center"
+    justify="center"
+    class="info-row">
+      <v-col
+      cols="12"
+      sm="6"
+      style="max-width: 350px;">
+        <div class="info-block">
+          <div class="info-link" >
+            Having issues?
+            <hr>
+            <a id="fullscreen-swap-link" class="new-tab-link" href="" target="_blank">Open swap UI in fullscreen <v-icon small>mdi-open-in-new</v-icon></a>
+           
+          </div>
+        </div>
+      </v-col>
+      <v-col
+      cols="12"
+      sm="6"
+      style="max-width: 350px;">
+        <div class="info-block">
+          <div class="info-link" >
+            Looking for more tokens?
+            <hr>
+            <a class="new-tab-link" href="/token-list" target="_blank">List of third-party tokens <v-icon small>mdi-open-in-new</v-icon></a>
+          </div>
+        </div>
+      </v-col>
+    </v-row>
+  </div>
+
+
+
+    <div class="padswap-header-box">
       <slider-tabs
         class="padswap-ecosystem-tabs"
         v-model="ecosystemId"
@@ -47,12 +82,16 @@
         />
     </div>
 
+
+     
+
+
+
     <div class="main-container">
 
-    <div class="info-link" >
-        Having issues? <a id="new-tab-link" href="" target="_blank">Try opening the swap in a separate tab </a>
-        <v-icon small>mdi-open-in-new</v-icon>
-    </div>
+
+
+
     	<div id="swap-iframe-container">
     		<div class="menu-mask"></div>
 				<iframe id="swap-iframe" class="swap-ui" src="./bsc/index.html"></iframe>
@@ -82,7 +121,7 @@ function setSwapEcosystem(chain_id : string) {
 	let iframe : HTMLIFrameElement
   let link : HTMLLinkElement
 	iframe = document.getElementById("swap-iframe")! as HTMLIFrameElement
-  link = document.getElementById("new-tab-link")! as HTMLLinkElement
+  link = document.getElementById("fullscreen-swap-link")! as HTMLLinkElement
 
   iframe.addEventListener("load", function() {
     this.contentWindow!.document.querySelector('body')!.style.background = 'transparent'
@@ -102,8 +141,6 @@ function setSwapEcosystem(chain_id : string) {
     link!.href = "/glmr/index.html"
   }
 }
-
-    
 
 export default Vue.extend({
   name: 'Swap',
@@ -291,9 +328,31 @@ export default Vue.extend({
 }
 
 
-/***********************/
-/* Informational links */
-/***********************/
+/***********************************/
+/* Informational banner at the top */
+/***********************************/
+
+.info-section {
+  margin-bottom: 70px;
+}
+
+.info-row {
+  background: #434e5461 !important;
+  border-radius: 20px;
+}
+
+.info-block {
+  padding-bottom: 10px;
+  height: 100%;
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
+.info-block hr {
+  opacity: 0.3;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
 
 .info-link {
   display: inline-block;
@@ -305,9 +364,19 @@ export default Vue.extend({
 .info-link a {
   color: white;
 }
-.info-link a:hover {
-  color: orange;
-}
 
+.new-tab-link {
+  display: inline-block;
+  padding: 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  background: linear-gradient(159deg, rgb(110 255 185 / 61%) -14.78%, rgb(120 63 236 / 47%) 110.05%) 0% 0% repeat scroll rgba(0, 0, 0, 0);
+}
+.new-tab-link:hover {
+  padding: 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  background: linear-gradient(159deg, rgb(110 255 185) -14.78%, rgb(120 63 236) 110.05%) 0% 0% repeat scroll rgba(0, 0, 0, 0);
+}
 
 </style>

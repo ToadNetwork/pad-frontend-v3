@@ -49,6 +49,11 @@ const routes: Array<RouteConfig> = [
     path: '/launchpad',
     name: 'LaunchPAD',
     component: () => import('../views/Launchpad.vue')
+  },
+  {
+    path: '/token-list',
+    name: 'Token List',
+    component: () => import('../views/TokenList.vue')
   }
 ]
 
