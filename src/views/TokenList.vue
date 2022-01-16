@@ -217,6 +217,13 @@ export default Vue.extend({
         address: '0xde93d50804c0ceeacb5ec5cad2db0ac71b13e44e',
         telegram: 'https://t.me/MoonbeamShiba'
       },
+      {
+        logo: require('@/assets/custom-tokens/moonbeam/meth.png'),
+        name: 'MoreETH',
+        ticker: 'METH',
+        address: '0x86b8b53d0096d917b153bc506038e5db0264a553',
+        telegram: 'https://t.me/METHCrosschain'
+      },
       ]
     }
     }
