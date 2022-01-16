@@ -7,110 +7,90 @@
 
       <div class="tab-container">
         <div class="tabs">
-          <button
-          v-for="tab in tabs"
-          :key="tab"
-          @click="selected = tab;"
-          :class="['tab-btn', { 'tab-active': selected === tab }]"
+          <v-tooltip
+            v-for="tab in tabs"
+            :key="tab.title"
+            :disabled="!tab.disabled"
+            open-on-hover
+            bottom
           >
-          {{ tab }}
-          </button>
+            <template v-slot:activator="{ on, attrs }">
+              <button
+                v-on="on"
+                v-bind="attrs"
+                :class="['tab-btn', { 'tab-active': selected === tab.title }]"
+              >
+                {{ tab.title }}
+              </button>
+            </template>
+
+            Coming soon!
+          </v-tooltip>
         </div>
 
         <div class="tab-description" style="display:block; padding-top: 20px;">
-          <span v-if="selected == 'Send GLMR for BNB'">Directly send GLMR by depositing BNB</span>
           <span v-if="selected == 'Redeem code'">Redeem a code to get GLMR</span>
-          <span v-if="selected == 'Create code'">Create a code to share with others or use later</span>
         </div>
       </div>
 
       <div class="content">
-        <div v-if="selected == 'Send GLMR for BNB'">
-          <span>BNB to deposit (min 0.001, max 0.1):</span>
-          <v-text-field
-            v-model="bridgeAmount"
-            filled
-            outlined
-            clearable
-            :messages="balanceMessage"
-            placeholder="0.0"
-            type="number"
-            min="0.0">
-            <template v-slot:prepend-inner>
-              <v-btn
-                v-show="tokenBalance !== null"
-                x-small
-                @click="setMaxTokens">
-                Max
-              </v-btn>
-            </template>
-          </v-text-field>
-
-
-          <span>Your GLMR wallet:</span>
-          <v-text-field
-              class="text-field"
-              filled
-              outlined
-              placeholder="0x..."
-              type="string"
-              style="margin-bottom: 0;"
-              hide-details>
-          </v-text-field>
-          <br>
-<!--            <v-btn
-            @click=""
-            small
-            :ripple="true"
-            color="gray"
-            class="my-3"
-            style="margin:0;">
-            Same as BSC address?
-          </v-btn> -->
-
-          <br><br>
-          <v-btn
-            @click=""
-            x-large
-            :ripple="true"
-            color="primary"
-            class="my-3">
-            Send GLMR
-          </v-btn>
-
-        </div>
 
         <div v-if="selected == 'Redeem code'">
           
-
           <span>Enter code:</span>
           <v-text-field
-              class="text-field"
-              filled
-              outlined
-              clearable
-              placeholder="XXXXX-XXXXX-XXXXX"
-              type="string">
+            v-model="code"
+            class="text-field"
+            filled
+            outlined
+            clearable
+            placeholder="XXXX-XXXX-XXXX-XXXX"
+            :error="Boolean(code) && !validationStatus"
+            type="string">
           </v-text-field>
 
           <span>Your GLMR wallet:</span>
           <v-text-field
-              class="text-field"
-              filled
-              outlined
-              clearable
-              placeholder="0x..."
-              type="string">
+            class="text-field"
+            disabled
+            :value="displayedAddress"
+            filled
+            outlined
+            clearable
+            placeholder="0x..."
+            type="string">
           </v-text-field>
 
           <br>
+          <div class="d-flex justify-center flex-column">
+            <span v-if="errorPrompt" style="color: red">
+              {{ errorPrompt }}
+            </span>
+            <template v-if="redeemTx">
+              Success!
+              <a
+                :href="`https://blockscout.moonbeam.network/tx/${redeemTx}`"
+                target="_blank"
+              >
+                View on explorer
+              </a>
+            </template>
+          </div>
           <v-btn
-            @click=""
+            @click="address ? redeemCoupon() : $store.dispatch('requestConnect')"
             x-large
-            :ripple="true"
+            :ripple="validationStatus"
+            :disabled="address && Boolean(code) && !validationStatus"
+            :loading="isRedeemingCode"
             color="primary"
             class="my-3">
-            Redeem GLMR
+            <template v-if="address">
+              Redeem GLMR
+            </template>
+            <template v-else>
+              Connect Wallet
+            </template>
+
           </v-btn>
 
         </div>
@@ -152,7 +132,6 @@
 
           <br>
           <v-btn
-            @click=""
             x-large
             :ripple="true"
             color="primary"
@@ -169,14 +148,84 @@
 </template>
 
 <script lang="ts">
-
 import Vue from 'vue'
+import { ethers } from 'ethers'
+
 export default Vue.extend({
   data () {
     return {
-      tabs: ["Send GLMR for BNB", "Redeem code", "Create code"],
-      selected: "Send GLMR for BNB",
-      createdCode: '28MCD-9KDJ2-0HK1O'
+      tabs: [{
+        title: "Create code",
+        disabled: true
+      },
+      {
+        title: "Redeem code",
+        disabled: false
+      }],
+      selected: "Redeem code",
+      createdCode: '28MCD-9KDJ2-0HK1O',
+      code: <string | null> null,
+      isRedeemingCode: false,
+      errorPrompt: <string | null> null,
+      redeemTx: <string | null> null
+    }
+  },
+  computed: {
+    address(): string | null {
+      return this.$store.state.address
+    },
+    dataseed(): ethers.providers.Provider {
+      return this.$store.getters.ecosystem.dataseed
+    },
+    displayedAddress(): string | null {
+      if (!this.address) {
+        return null
+      }
+      return this.address.substring(0, 12) + '...' + this.address.substring(this.address.length - 12)
+    },
+    validationStatus(): boolean {
+      if (!this.code) {
+        return false
+      }
+
+      return this.code.replaceAll('-', '').length == 16
+    }
+  },
+  methods: {
+    async redeemCoupon() {
+      if (!this.code) {
+        return
+      }
+
+      this.isRedeemingCode = true
+      this.errorPrompt = null
+      this.redeemTx = null
+      try {
+        const codeNoDashes = this.code.replaceAll('-', '')
+        const response = await fetch('https://subgraph.toadlytics.com:6100/coupon/redeem', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            code: codeNoDashes,
+            to: this.address
+          })
+        })
+        if (response.status == 404) {
+          this.errorPrompt = 'Code not valid. It may already be redeemed.'
+          return
+        }
+        if (response.status != 200) {
+          console.error(response)
+          throw new Error()
+        }
+        const data = await response.json()
+        this.redeemTx = data.tx
+      } catch (e) {
+        console.error(e)
+        this.errorPrompt = 'Unexpected error. Please try again later.'
+      } finally {
+        this.isRedeemingCode = false
+      }
     }
   }
 })
@@ -213,20 +262,20 @@ export default Vue.extend({
   }
 
   .tab-btn {
-  margin-left: 1px;
-  margin-right: 1px;
-  padding: 10px 20px;
-  background: rgb(183 206 229 / 40%);
-  cursor: pointer;
-  border: none;
-  outline: none;
-  color: black;
+    margin-left: 1px;
+    margin-right: 1px;
+    padding: 10px 20px;
+    background: rgb(183 206 229 / 40%);
+    border: none;
+    outline: none;
+    color: black;
+    cursor: unset;
   }
 
   .tab-active {
-  background: rgb(183 206 229 / 100%);
+    background: rgb(183 206 229 / 100%);
+    cursor: pointer;
   }
-
 
   .content span {
     display: block;
@@ -239,6 +288,7 @@ export default Vue.extend({
 
   .text-field {
     max-width: 600px;
+    width: 360px;
   }
 
 </style>
