@@ -59,7 +59,7 @@
         </template>
 
         <template v-slot:item.address="{ item }">
-           <span>{{ item.address }}</span>
+           <span style="word-break: break-all; word-wrap: break-word;">{{ item.address }}</span>
          <v-btn style="min-width: 0;" @click="copyAddress(item.ticker, item.address)"><v-icon small>mdi-clipboard-multiple</v-icon></v-btn>
         </template>
 
