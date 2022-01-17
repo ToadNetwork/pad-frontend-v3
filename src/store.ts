@@ -60,6 +60,22 @@ export default new Vuex.Store({
         address: provider.selectedAddress,
         chainId: parseInt(provider.chainId)
       })
+
+      // the outer frame and the iframe use different keys for storing cached
+      // provider. We need to keep them in sync as well as signal the iframe when
+      // to initiate connect, which we do for now by reloading
+      const cachedProvider = localStorage.getItem('WEB3_CONNECT_CACHED_PROVIDER')
+      if (cachedProvider) {
+        const cachedProviderValue = JSON.parse(cachedProvider).toString() // strip quotes
+        localStorage.setItem('connectorId', cachedProviderValue)
+
+        // TODO: connect iframe without reload
+        // TODO: move iframe updating logic to Swap.vue
+        const iframe = document.getElementById('swap-iframe') as HTMLIFrameElement | null
+        if (iframe && iframe.contentDocument) {
+          iframe.contentDocument.location.reload()
+        }
+      }
     
       provider.on('accountsChanged', (accounts: string[]) => {
         const web3Args: any = {
