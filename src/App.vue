@@ -33,59 +33,36 @@
           :title="navSection.title"
           :non-expandable="navSection.items.length == 0"
         >
-
-          <!-- Links within the V3 website -->
-          <router-link 
-          v-if="navItem.target == '_self'"
-          v-for="navItem in navSection.items" 
-          :to="navItem.href"
-          :target="navItem.target"
+          <template
+            v-for="navItem in navSection.items" 
           >
-          <v-list-item
-            :key="navItem.name"
-          >
-            <v-list-item-icon>
-              <v-img
-                :src="navItem.iconSrc"
-                height="24px"
-                width="24px"
-                contain
-              />
-            </v-list-item-icon>
+            <!-- TODO: null out unneeded attrs for each tag type -->
+            <component
+              :is="navItem.target == '_self' ? 'router-link' : 'a'"
+              :key="navItem.name"
+              :to="navItem.href"
+              :href="navItem.href"
+              :target="navItem.target"
+            >
+              <v-list-item
+                :key="navItem.name"
+              >
+                <v-list-item-icon>
+                  <v-img
+                    :src="navItem.iconSrc"
+                    height="24px"
+                    width="24px"
+                    contain
+                  />
+                </v-list-item-icon>
 
-            <v-list-item-content>
-              <div>{{ navItem.name }}</div>
-              <v-subheader>{{ navItem.desc }}</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-          </router-link>
-
-          <!-- External links -->
-          <a
-          v-if="navItem.target != '_self'"
-          v-for="navItem in navSection.items" 
-          :href="navItem.href"
-          :target="navItem.target"
-          >
-          <v-list-item
-            :key="navItem.name"
-          >
-            <v-list-item-icon>
-              <v-img
-                :src="navItem.iconSrc"
-                height="24px"
-                width="24px"
-                contain
-              />
-            </v-list-item-icon>
-
-            <v-list-item-content>
-              <div>{{ navItem.name }}</div>
-              <v-subheader>{{ navItem.desc }}</v-subheader>
-            </v-list-item-content>
-          </v-list-item>
-          </a>
-
+                <v-list-item-content>
+                  <div>{{ navItem.name }}</div>
+                  <v-subheader>{{ navItem.desc }}</v-subheader>
+                </v-list-item-content>
+              </v-list-item>
+            </component>
+          </template>
         </nav-menu>
       </div>
       <div class="d-flex align-center padswap-navbar ml-4">
