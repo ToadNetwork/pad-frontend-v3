@@ -129,14 +129,14 @@
 
           <div class="form-line">
             <v-text-field
-            v-model="presaleAmount"
+            v-model="presaleTokenAmount"
             :counter="13"
-            :rules="presaleAmountRules"
+            :rules="presaleTokenAmountRules"
             label="Number of tokens in presale"
             pattern="[0-9]"
             required
             type="number"
-            :suffix="tokenName"
+            :suffix="tokenSymbol"
             ></v-text-field>
           </div>
 
@@ -147,7 +147,7 @@
             label="Presale price (calculated automatically)"
             disabled
             readonly
-            :suffix=" tokenName + ' per GLMR'"
+            :suffix=" tokenSymbol + ' per GLMR'"
             ></v-text-field>
           </div>
 
@@ -189,8 +189,9 @@
       presaleHardCap: 0,
       presaleSoftCap: 0,
       presaleDuration: 0,
-      presaleAmount: 0,
+      presaleTokenAmount: 0,
       presalePrice: 0,
+      presaleEndTime: 0,
       nameRules: [
       v => !!v || 'Token name is required',
       v => (v && v.length <= 20) || 'Token name cannot be longer than 20 characters',
@@ -216,30 +217,32 @@
       v => (v && v.length <= 3 && parseFloat(v) <= 168 && parseFloat(v) >= 12) || 'Choose a value between 12 and 168 hours',
       v => (parseFloat(v) % 1 == 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
       ],
-      presaleAmountRules: [
+      presaleTokenAmountRules: [
       v => !!v || 'Specify the number of tokens allocated to the presale',
       v => (parseFloat(v) % 1 == 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
       ],
       cargoCheckbox: false,
     }),
-
     methods: {
       submit () {
-        this.$refs.form.validate()
+        if (this.$refs.form.validate()) {
+          this.presaleEndTime = Date.now() + this.presaleDuration * 60 * 60 * 1000
+        }
       }
     },
     watch: {
       tokenSymbol: function(newSymbol) {
         this.tokenSymbol = newSymbol.toUpperCase()
       },
-      presaleAmount: function(newAmount) {
-        this.presalePrice = parseFloat(this.presaleAmount) / parseFloat(this.presaleHardCap)
+      presaleTokenAmount: function(newAmount) {
+        this.presalePrice = parseFloat(this.presaleTokenAmount) / parseFloat(this.presaleHardCap)
       },
       tokenSupply: function(newSupply) {
-        this.presalePrice = parseFloat(this.presaleAmount) / parseFloat(this.presaleHardCap)
+        this.presalePrice = parseFloat(this.presaleTokenAmount) / parseFloat(this.presaleHardCap)
       },
       presaleHardCap: function(newSupply) {
         this.presaleSoftCap = parseFloat(this.presaleHardCap) * 0.25
+        this.presalePrice = parseFloat(this.presaleTokenAmount) / parseFloat(this.presaleHardCap)
       }
     }
   })
