@@ -274,6 +274,13 @@ export default Vue.extend({
           iconSrc: require('@/assets/icons/On Ramp Icon.svg')
         },
         {
+          name: 'Faucet',
+          desc: 'Get some gas',
+          href: '/faucet',
+          target: '_self',
+          iconSrc: require('@/assets/icons/Faucet Icon.svg')
+        },
+        {
           name: 'Stats',
           desc: 'Analyze token prices and their volume',
           href: this.ecosystem.infoUrl,
@@ -310,6 +317,13 @@ export default Vue.extend({
           href: 'https://piramyd.me/toad-network-x-piramyd/',
           target: '_blank',
           iconSrc: require('@/assets/icons/Piramyd Store Icon.svg')
+        },
+        {
+          name: 'Token List',
+          desc: 'Catalog of tokens listed on PadSwap',
+          href: '/token-list',
+          target: '_self',
+          iconSrc: require('@/assets/icons/Token List Icon.svg')
         }]
       },
       {
