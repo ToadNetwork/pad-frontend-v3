@@ -3,6 +3,8 @@ import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '../views/Home.vue'
 import Landing from '../views/Landing.vue'
 import Onramp from '../views/Onramp.vue'
+import { ECOSYSTEMS } from '@/ecosystem'
+import store from '@/store'
 
 Vue.use(VueRouter)
 
@@ -59,6 +61,26 @@ const routes: Array<RouteConfig> = [
     path: '/faucet',
     name: 'Faucet',
     component: () => import('../views/Faucet.vue')
+  },
+  {
+    path: '/:ecosystem/swap',
+    name: 'EcosystemSwap',
+    component: () => import ('../views/Swap.vue'),
+    beforeEnter: (to, from, next) => {
+      if (to.params.ecosystem.toLowerCase() != to.params.ecosystem) {
+        next(`/${to.params.ecosystem.toLowerCase()}/swap`)
+        return
+      }
+
+      const ecosystem = Object.values(ECOSYSTEMS).find(e => to.params.ecosystem == e.routeName)
+      if (!ecosystem) {
+        next('/moonbeam/swap')
+        return
+      }
+
+      store.commit('setEcosystemId', ecosystem.ecosystemId)
+      next()
+    }
   }
 ]
 

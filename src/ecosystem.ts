@@ -43,7 +43,8 @@ interface IEcosystem {
     swapUrl: string
     bridgeUrl: string
     infoUrl: string
-    tokenIconsFolder: string
+    tokenIconsFolder: string,
+    routeName: string
 }
 
 const bscDataseed = new ethers.providers.StaticJsonRpcProvider('https://bsc-dataseed1.defibit.io/')
@@ -62,10 +63,11 @@ const BscEcosystem: IEcosystem = {
     minterAddress: BSC_MINTER_ADDRESS,
     priceModel: new PriceModel(bscDataseed, BSC_WHITELIST, wbnbAddress, WBNB_BUSD_PAIR, bscFactoryAddress, MINIMUM_LIQUIDITY_BNB, 18),
     theme: BscPadswapTheme,
-    swapUrl: 'https://dapps.padswap.exchange/swap',
+    swapUrl: 'https://padswap.exchange/bsc/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
     infoUrl: 'https://info.padswap.exchange/home',
-    tokenIconsFolder: 'bsc'
+    tokenIconsFolder: 'bsc',
+    routeName: 'bsc'
 }
 
 const moonriverDataseed = new ethers.providers.StaticJsonRpcProvider('https://rpc.moonriver.moonbeam.network')
@@ -84,10 +86,11 @@ const MoonriverEcosystem: IEcosystem = {
     minterAddress: MOVR_MINTER_ADDRESS,
     priceModel: new PriceModel(moonriverDataseed, MOVR_WHITELIST, wmovrAddress, WMOVR_USDC_PAIR, moonriverFactoryAddress, MINIMUM_LIQUIDITY_MOVR, 6),
     theme: MoonriverPadswapTheme,
-    swapUrl: 'https://dapps.padswap.exchange/swap',
+    swapUrl: 'https://padswap.exchange/moonriver/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
     infoUrl: 'https://movr-info.padswap.exchange/home',
-    tokenIconsFolder: 'moonriver'
+    tokenIconsFolder: 'moonriver',
+    routeName: 'moonriver'
 }
 
 const moonbeamDataseed = new ethers.providers.StaticJsonRpcProvider('https://rpc.api.moonbeam.network')
@@ -106,10 +109,11 @@ const MoonbeamEcosystem: IEcosystem = {
     minterAddress: '0x70790550d5F01EDd5B2Ed1dFf05eDC52cD4F1Eda',
     priceModel: new PriceModel(moonbeamDataseed, GLMR_WHITELIST, wglmrAddress, WGLMR_USDC_PAIR, moonbeamFactoryAddress, MINIMUM_LIQUIDITY_GLMR, 6),
     theme: MoonbeamPadswapTheme,
-    swapUrl: 'https://dapps.padswap.exchange/swap',
+    swapUrl: 'https://padswap.exchange/moonbeam/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
     infoUrl: 'https://dexscreener.com/moonbeam/padswap',
-    tokenIconsFolder: 'moonbeam'
+    tokenIconsFolder: 'moonbeam',
+    routeName: 'moonbeam'
 }
 
 const ECOSYSTEMS: Record<EcosystemId, IEcosystem> = {

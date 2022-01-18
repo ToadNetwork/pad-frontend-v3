@@ -35,18 +35,27 @@ const MoonbeamPadswapTheme = {
 }
 
 const PadswapThemePlugin = {
-  install(vue: typeof Vue, options?: Object) {
+  install(vue: typeof Vue, options: { store: any }) {
     vue.prototype.$padswapTheme = Vue.observable({
       theme: MoonbeamPadswapTheme
     })
+
+    // auto-update theme whenever ecosystem changes
+    // TODO: return theme from computed property and remove setters
+    new Vue({
+      created() {
+        this.$watch(() => options.store.getters.ecosystem.theme, val => {
+          vue.prototype.$padswapTheme.theme = val
+        })
+      }
+    })
   }
 }
-
-Vue.use(PadswapThemePlugin)
 
 export {
   IPadswapTheme,
   BscPadswapTheme,
   MoonriverPadswapTheme,
-  MoonbeamPadswapTheme
+  MoonbeamPadswapTheme,
+  PadswapThemePlugin
 }

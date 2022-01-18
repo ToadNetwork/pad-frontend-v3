@@ -3,9 +3,10 @@ import App from './App.vue'
 import router from './router'
 import vuetify from './plugins/vuetify'
 
-import './padswap-theme'
+import { PadswapThemePlugin } from './padswap-theme'
 import store from './store'
 
+Vue.use(PadswapThemePlugin, { store })
 Vue.config.productionTip = false
 
 new Vue({
