@@ -1,15 +1,67 @@
 <template>
   <v-container>
 
-
-    <div class="title-banner form-container">
-      <div class="screen">
-        <h2>LaunchPAD</h2>
-        <v-divider color="green" style="margin: 20px 0"></v-divider>
-        <p>Describe your token and launch it in a single click.</p>
-        <p>TOAD Space Program will take care of the rest.</p>
-      </div>
+    <v-sheet class="launchpad-title-bar">
+    <div class="launchpad-title">
+      <img class="launchpad-image" src="@/assets/icons/LaunchPAD Icon.svg">
+      <h1 style="margin-bottom: 0">LaunchPAD</h1>
+      <v-btn
+      medium
+      color="primary"
+      href="/launchpad"
+      >
+        Back
+      </v-btn>
     </div>
+
+    <div class="launchpad-intro">
+      <p>
+        LaunchPAD allows users to launch a token in a single click, without coding knowledge or complicated steps.
+      </p>
+      <p class="please-read">
+        Before launching a token, make sure to read the <b>Launchpad FAQ</b> below.
+      </p>
+    </div>
+
+    <div class="launchpad-faq">
+      <v-expansion-panels
+      inset>
+      <v-expansion-panel>
+      <v-expansion-panel-header style="text-align:center !important; display: block">
+        Click here to read
+      </v-expansion-panel-header>
+      <v-expansion-panel-content>
+
+        <v-divider></v-divider>
+
+        <h1>- Are there any perks of using the launchPAD?</h1>
+        <p>Yes!<br>
+        All tokens launched via the launchPAD are automatically eligible for:</p>
+        <ul>
+          <li>DPLP farms, adding extra utility to your project and ensuring that it has liquidity forever</li>
+          <li>BogTools bot</li>
+          <li>// other stuff, I guess?</li>
+        </ul>
+        <br>
+
+        <v-divider></v-divider>
+
+        <h1>What happens if the project doesn't reach its soft cap?</h1>
+        <p>The presale will be canceled and the deposited funds will be returned to the users.</p>
+
+        <v-divider></v-divider>
+
+        <h1>- What will happen to the funds raised during the presale?</h1>
+        <p>// no info yet</p>
+
+
+      </v-expansion-panel-content>
+      </v-expansion-panel>
+      </v-expansion-panels>
+    </div>
+    </v-sheet> 
+
+
 
 
     <v-form
@@ -249,7 +301,84 @@
 </script>
 <style>
 
+/* Title bar */
+.launchpad-title-bar {
+  text-align: center;
+  padding: 50px;
+  background: rgba(24, 29, 38, 0.7) !important;
+  border-radius: 20px;
+  margin-bottom: 30px;
+}
+.launchpad-title-bar h1 {
+  margin-bottom: 25px;
+}
 
+.launchpad-title-bar-section {
+  text-align: center;
+  font-size: 0.7rem;
+}
+
+.launchpad-title-bar-section {
+  text-align: center;
+  padding: 20px;
+}
+
+.launch-token-btn {
+  margin-top: 20px;
+}
+
+/* Title */
+.launchpad-title {
+  width: 100%;
+}
+.launchpad-title img {
+  max-width: 100px;
+}
+.launchpad-title h1 {
+  color: white;
+  text-shadow: #000 2px 2px 2px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/********/
+/* FAQ */
+/********/
+
+.launchpad-intro {
+  margin-top: 25px;
+}
+
+.v-expansion-panels {
+  background: none !important;
+  border: none !important;
+}
+
+.v-expansion-panel {
+  background-color: #ffffff05 !important;
+}
+
+.v-expansion-panel-header:hover {
+  background-color: #d2f3f21a !important;
+}
+
+.launchpad-faq {
+  border-radius: 20px;
+  overflow: hidden;
+  text-align: left;
+}
+
+.launchpad-faq h1 {
+  background-color: #80808012;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 15px;
+  font-size: 1rem;
+}
+
+.launchpad-faq h1, .launchpad-faq p {
+  margin-left: 20px;
+  margin-right: 20px;
+}
 
 
 /********/

@@ -1,6 +1,20 @@
 <template>
   <v-container>
-    <v-row class="data-bar">
+    <v-sheet class="launchpad-title-bar">
+    <div class="launchpad-title">
+      <img class="launchpad-image" src="@/assets/icons/LaunchPAD Icon.svg">
+      <h1 style="padding-bottom: 0">${{tokenSymbol}} ({{tokenName}}) presale</h1>
+      <v-btn
+      medium
+      color="primary"
+      href="/launchpad"
+      >
+        Back
+      </v-btn>
+    </div>
+    <v-row
+    align="center"
+    justify="center">
       <v-col
       cols="12"
       sm="6"
@@ -59,7 +73,9 @@
           </tbody>
         </v-simple-table>
       </v-col>
-    </v-row>
+      
+      </v-row>
+    </v-sheet>
 
     <div class="presale-form-container">
       <div class="presale-form-box">
@@ -101,12 +117,6 @@
           height="25"
           >{{presaleRaised}} {{presaleCurrency}} / {{presaleHardCap}} {{presaleCurrency}}</v-progress-linear>
         </div>
-
-        <v-form
-        ref="form"
-        v-model="valid"
-        lazy-validation
-        >
 
           <div class="form-line">
             <v-text-field
@@ -206,6 +216,36 @@
   })
 </script>
 <style>
+
+/* Title bar */
+.launchpad-title-bar {
+  text-align: center;
+  padding: 20px;
+  background: rgba(24, 29, 38, 0.7) !important;
+  border-radius: 20px;
+}
+.launchpad-title-bar h1 {
+  margin-bottom: 25px;
+}
+
+.launchpad-title-bar-section {
+  text-align: center;
+  font-size: 0.7rem;
+  padding: 20px;
+}
+
+/* Title */
+.launchpad-title {
+  width: 100%;
+}
+.launchpad-title img {
+  max-width: 100px;
+}
+.launchpad-title h1 {
+  color: white;
+  text-shadow: #000 2px 2px 2px;
+  -webkit-font-smoothing: antialiased;
+}
 
 /**************/
 /* Token info */

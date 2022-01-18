@@ -59,6 +59,21 @@ const routes: Array<RouteConfig> = [
     path: '/faucet',
     name: 'Faucet',
     component: () => import('../views/Faucet.vue')
+  },
+  {
+    path: '/launch-token',
+    name: 'Launch Token',
+    component: () => import('../views/LaunchToken.vue')
+  },
+  {
+    path: '/presale',
+    name: 'Launchpad Presale',
+    component: () => import('../views/LaunchpadPresale.vue')
+  },
+  {
+    path: '/old',
+    name: 'Launchpad Presale',
+    component: () => import('../views/LaunchpadOld.vue')
   }
 ]
 
