@@ -49,6 +49,12 @@
         <h1>What happens if the project doesn't reach its soft cap?</h1>
         <p>The presale will be canceled and the deposited funds will be returned to the users.</p>
 
+
+        <v-divider></v-divider>
+
+        <h1>- Can I cancel the presale if anything goes wrong?</h1>
+        <p>Yes! Until the presale is over, you can cancel it and return all deposited funds to the users.</p>
+
         <v-divider></v-divider>
 
         <h1>- What will happen to the funds raised during the presale?</h1>
@@ -112,18 +118,34 @@
               required
               type="number"
               step="1"
-              min="20"
               ></v-text-field>
             </div>
 
+            <div class="form-line">
+              <v-text-field
+              v-model="logoUrl"
+              :rules="logoUrlRules"
+              label="Token logo URL (leave empty if you don't have one)"
+              required
+              ></v-text-field>
+            </div>
 
             <div class="form-line">
-              <v-checkbox
-              v-model="cargoCheckbox"
-              :rules="[v => !!v || 'Confirm that the data you entered is correct']"
-              label="Confirm cargo"
+              <v-text-field
+              v-model="telegramUrl"
+              :rules="telegramUrlRules"
+              label="Telegram link (leave empty if you don't have one)"
               required
-              ></v-checkbox>
+              ></v-text-field>
+            </div>
+
+            <div class="form-line">
+              <v-text-field
+              v-model="websiteUrl"
+              :rules="websiteUrlRules"
+              label="Website (leave empty if you don't have one)"
+              required
+              ></v-text-field>
             </div>
 
           </div>
@@ -149,7 +171,6 @@
             required
             type="number"
             step="1"
-            min="20"
             suffix="GLMR"
             ></v-text-field>
 
@@ -207,6 +228,20 @@
       </v-col>
 
     </v-row>
+
+
+
+    <div class="form-line text-center">
+      <div style="display: inline-block;">
+        <v-checkbox
+        v-model="cargoCheckbox"
+        :rules="[v => !!v || 'Confirm that the data you entered is correct']"
+        label="Confirm cargo"
+        required
+        ></v-checkbox>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -244,6 +279,12 @@
       presaleTokenAmount: 0,
       presalePrice: 0,
       presaleEndTime: 0,
+
+      // Custom data to be stored in a json string
+      logoUrl: '',
+      telegramUrl: '',
+      websiteUrl: '',
+
       nameRules: [
       v => !!v || 'Token name is required',
       v => (v && v.length <= 20) || 'Token name cannot be longer than 20 characters',

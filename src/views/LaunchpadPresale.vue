@@ -2,7 +2,7 @@
   <v-container>
     <v-sheet class="launchpad-title-bar">
     <div class="launchpad-title">
-      <img class="launchpad-image" src="@/assets/icons/LaunchPAD Icon.svg">
+      <img class="launchpad-image" :src=logoUrl>
       <h1 style="padding-bottom: 0">${{tokenSymbol}} ({{tokenName}}) presale</h1>
       <v-btn
       medium
@@ -34,6 +34,14 @@
             <tr>
               <td>Max supply</td>
               <td>{{ tokenSupply }}</td>
+            </tr>
+            <tr>
+              <td>Website</td>
+              <td><a :href="websiteUrl" target="_blank">{{websiteUrl}}</a></td>
+            </tr>
+            <tr>
+              <td>Telegram</td>
+              <td><a :href="telegramUrl" target="_blank">{{telegramUrl}}</a></td>
             </tr>
           </tbody>
         </v-simple-table>
@@ -69,6 +77,10 @@
             <tr>
               <td>Price</td>
               <td>{{trimNumber(presaleTokenAmount/presaleHardCap)}} {{tokenSymbol}} per {{presaleCurrency}}</td>
+            </tr>
+            <tr>
+              <td>Maximum contribution</td>
+              <td>{{maxContribution}} {{presaleCurrency}}</td>
             </tr>
           </tbody>
         </v-simple-table>
@@ -159,7 +171,7 @@
     data: () => ({
       valid: true,
 
-      // All of this will be pulled from the presale database, I guess?
+      // Data pulled from the contract
       tokenName: 'GLMR Pad',
       tokenSymbol: 'PAD',
       tokenSupply: 100000,
@@ -168,6 +180,12 @@
       presaleTokenAmount: 9523,
       presaleCurrency: 'GLMR',
       presaleEndTime: 1642780658504, // Stored as a UNIX timestamp in miliseconds
+      maxContribution: 2,
+
+      // User-entered data (from the .json string in the contract)
+      logoUrl: 'https://padswap.exchange/glmr/images/pad/pad-moonbeam.png',
+      telegramUrl: 'https://t.me/toadnetwork',
+      websiteUrl: 'https://toad.network',
 
       // Updated in real time
       presaleRaised: 43,
@@ -196,6 +214,9 @@
       },
       hoursLeft: function () {
         return (Math.trunc((this.timeLeftInSeconds / 60) / 60))
+      },
+      tokenLogo: function() {
+          return '@/assets/icons/LaunchPAD Icon.svg'
       }
     },
     methods: {
@@ -205,7 +226,7 @@
       trimNumber (nbr) {
         let str_nbr = nbr.toString();
         return Number(str_nbr.slice(0, 3))
-      }
+      },
     },
     watch: {
       amountToDeposit: function(newAmount) {
