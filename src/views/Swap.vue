@@ -117,6 +117,12 @@ function setSwapEcosystem(chain_id : string) {
   let appendParameters = ''
   if(action) {
     appendParameters = `#/${action}/${token1}/${token2}`
+  } else {
+    const inputCurrency = urlParams.get('inputCurrency')
+    const outputCurrency = urlParams.get('outputCurrency')
+    if (inputCurrency || outputCurrency) {
+      appendParameters = `#/?inputCurrency=${inputCurrency}&outputCurrency=${outputCurrency}`
+    }
   }
 	let iframe : HTMLIFrameElement
   let link : HTMLLinkElement
