@@ -167,7 +167,7 @@
         <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">PAD Farms</div>
         <farm
           v-for="farm in displayedFarms.regularFarms"
-          :key="farm.contract"
+          :key="`${ecosystemId}-${farm.contract}`"
           :name="farm.name"
           :contract="farm.contract"
           :acceptedToken="farm.acceptedToken"
@@ -193,7 +193,7 @@
         <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">DPLP Farms</div>
         <farm
           v-for="farm in displayedFarms.lpFarms"
-          :key="farm.contract"
+          :key="`${ecosystemId}-${farm.contract}`"
           :name="farm.name"
           :contract="farm.contract"
           :acceptedToken="farm.acceptedToken"
@@ -219,7 +219,7 @@
         <div class="mx-5 padswap-farm-title padswap-farm-title-shadow mb-4">Partner Farms</div>
         <farm
           v-for="farm in displayedFarms.partnerFarms"
-          :key="farm.contract"
+          :key="`${ecosystemId}-${farm.contract}`"
           :name="farm.name"
           :contract="farm.contract"
           :acceptedToken="farm.acceptedToken"
