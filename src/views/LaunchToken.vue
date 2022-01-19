@@ -766,27 +766,27 @@
 
 .launch-button {
   position: relative;
-  background: #ec0000;
-  background: -webkit-radial-gradient( hsl(0deg 100% 50%), hsl(0deg 100% 40%) );
-  background: -o-radial-gradient( hsl(0deg 100% 50%), hsl(0deg 100% 40%) );
-  background: -moz-radial-gradient( hsl(0deg 100% 50%), hsl(0deg 100% 40%) );
-  background: radial-gradient( hsl(0deg 100% 50%), hsl(0deg 100% 40%) );
+  background: #00ec07;
+  background: -webkit-radial-gradient( hsl(122deg 100% 44%), hsl(122deg 100% 20%) );
+  background: -o-radial-gradient( hsl(122deg 100% 44%), hsl(122deg 100% 20%) );
+  background: -moz-radial-gradient( hsl(122deg 100% 44%), hsl(122deg 100% 20%) );
+  background: radial-gradient( hsl(122deg 100% 44%), hsl(122deg 100% 20%) );
   font-size: 2rem;
-  text-shadow: 0 -1px 0 #c30707;
+  text-shadow: 0 -1px 0 #000000;
   color: #3b5441;
-  border: solid 1px hsl(0deg 100% 20%);
+  border: solid 1px #096706;
   border-radius: 100%;
   height: 160px;
   width: 160px;
   z-index: 4;
   outline: none;
-  box-shadow: inset 0 1px 0 hsl(0deg 100% 50%), 0 2px 0 hsl(0deg 100% 20%), 0 3px 0 hsl(0deg 100% 18%), 0 4px 0 hsl(0deg 100% 16%), 0 5px 0 hsl(0deg 100% 14%), 0 6px 0 hsl(0deg 100% 12%), 0 7px 0 hsl(0deg 100% 10%), 0 8px 0 hsl(0deg 100% 8%), 0 9px 0 hsl(0deg 100% 6%)
+  box-shadow: inset 0 1px 0 hsl(120deg 100% 50%), 0 2px 0 hsl(121deg 100% 20%), 0 3px 0 hsl(127deg 100% 18%), 0 4px 0 hsl(132deg 100% 16%), 0 5px 0 hsl(125deg 100% 14%), 0 6px 0 hsl(132deg 100% 12%), 0 7px 0 hsl(109deg 100% 10%), 0 8px 0 hsl(118deg 100% 8%), 0 9px 0 hsl(122deg 100% 6%);
 }
 .launch-button:hover {
-  background: -webkit-radial-gradient( hsl(0deg 100% 45%), hsl(0deg 100% 35%) );
-  background: -o-radial-gradient( hsl(0deg 100% 45%), hsl(0deg 100% 35%) );
-  background: -moz-radial-gradient( hsl(0deg 100% 45%), hsl(0deg 100% 35%) );
-  background: radial-gradient( hsl(0deg 100% 45%), hsl(0deg 100% 35%) );
+  background: -webkit-radial-gradient( hsl(128deg 100% 45%), #b38c00 );
+  background: -o-radial-gradient( hsl(128deg 100% 45%), #b38c00 );
+  background: -moz-radial-gradient( hsl(128deg 100% 45%), #b38c00 );
+  background: radial-gradient( hsl(128deg 100% 45%), #b38c00 );
 }
 .launch-button:active {
   background: webkit-radial-gradient( hsl(54, 100%, 43%), hsl(54, 100%, 33%) );
