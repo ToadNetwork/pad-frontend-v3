@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { ethers } from 'ethers'
+import { providers } from '@0xsequence/multicall'
 
 import web3Modal from '@/wallet'
 import { IEcosystem, EcosystemId, ChainId, ECOSYSTEMS } from '@/ecosystem'
@@ -44,6 +45,13 @@ export default new Vuex.Store({
     },
     ecosystem(state): IEcosystem {
       return ECOSYSTEMS[state.ecosystemId]
+    },
+    multicall(state, getters): ethers.providers.Provider {
+      return new providers.MulticallProvider(getters.ecosystem.dataseed, {
+        batchSize: 300,
+        timeWindow: 0,
+        contract: getters.ecosystem.multicallAddress
+      })
     }
   },
   actions: {

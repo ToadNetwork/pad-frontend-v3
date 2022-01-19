@@ -125,16 +125,23 @@
 
             <div class="form-line">
               <v-text-field
-              v-model="tokenContract"
+              v-model="tokenContractAddress"
               :rules="contractAddressRules"
               label="Your token's contract address"
               required
               ></v-text-field>
             </div>
 
-            <div class="form-line" v-if="tokenName.length > 0">
+            <div class="form-line" v-if="tokenName && tokenName.length > 0">
               <p>{{tokenSymbol}} ({{tokenName}})</p>
-              <p>Max supply: {{tokenSupply}} {{tokenSymbol}}</p>
+              <p>Max supply: {{displayedTokenSupply}} {{tokenSymbol}}</p>
+              <p>Presale contract address (after deploy): {{ presaleContractAddress }}</p>
+            </div>
+            <div v-else-if="tokenContractError">
+              <p style="color: red">{{ tokenContractError }}</p>
+            </div>
+            <div v-else-if="isTokenContractLoading">
+              <v-progress-circular indeterminate />
             </div>
 
             <div class="form-line">
@@ -265,62 +272,32 @@
 
     <div class="form-line text-center">
       <div style="display: inline-block;">
-
-      <v-expansion-panels
-      inset>
-      <v-expansion-panel>
-      <v-expansion-panel-header expand-icon="" style="text-align:center !important; display: block; border: 1px solid #0fcf0f; color: #0fcf0f;">
-        Deposit tokens and launch presale
-      </v-expansion-panel-header>
-      <v-expansion-panel-content style="text-align: center;">
-        <br>
-      <p style="color: #0fcf0f">Before launching the presale, you need to deposit {{presaleTokenAmount}} {{tokenSymbol}} to the presale contract:</p>
-      <div class="presale-contract-address">
-        <div class="address-box">
-          <span style="word-break: break-all; word-wrap: break-word;">{{ presaleContractAddress }}</span>
-
-          <v-tooltip
-          :open-on-hover="false"
-          right
-          >
-          <template #activator="{ on }">
-            <v-btn
-              style="min-width: 0;"
-              @click="on.click"
-              v-on:click="copyAddress(presaleContractAddress)"
-              icon
-              retain-focus-on-click
-              v-bind="attrs"
-              v-on="on"
-            >
-            <v-icon small>mdi-clipboard-multiple</v-icon>
-            </v-btn>
-          </template>
-          <span>Copied!</span>
-        </v-tooltip>
-        </div>
-      </div>
-
-
-        <v-btn
-        color="green">
-        I have deposited the tokens to the presale contract
-        </v-btn>
-        <br>
-        <div style="display:inline-block;">
-          <v-checkbox
-          v-model="validationCheckbox"
-          :rules="[v => !!v || '']"
-          :label="validationCheckbox == true ? 'Token deposit confirmed' : 'Token deposit not confirmed, please confirm via the button above'"
-          readonly
-          required
-          ></v-checkbox>
-        </div>
-
-      </v-expansion-panel-content>
-      </v-expansion-panel>
-      </v-expansion-panels>
-
+      <v-btn
+        v-if="!address"
+        x-large
+        outlined
+        width="300"
+        style="color: #0fcf0f; text-transform: none"
+        @click="requestConnect"
+      >
+        Connect Wallet
+      </v-btn>
+      <v-btn
+        v-else
+        x-large
+        outlined
+        width="300"
+        style="color: #0fcf0f; text-transform: none"
+        :disabled="tokenContract == null || isTokenContractLoading || isApproveComplete"
+        @click="approve"
+      >
+        <template v-if="isApproveComplete">
+          Approve Complete
+        </template>
+        <template v-else>
+          Approve {{ tokenSymbol }}
+        </template>
+      </v-btn>
         
       </div>
     </div>
@@ -346,31 +323,41 @@
 </template>
 
 <script lang="ts">
-  // These token symbols will not be allowed
-  let symbolBlacklist = ['TOAD', 'PAD', 'USDC', 'USDT', 'DAI', 'BNB', 'BUSD', 'ETH', 'BTC', 'GLMR', 'MOVR', 'XRP', 'XMR', 'DOT', 'ADA', 'SOLAR']
-
   import Vue from 'vue'
+  import { mapActions } from 'vuex'
+  import AwaitLock from 'await-lock'
+  import { ethers } from 'ethers'
+
+  import { ERC20_ABI,
+           LAUNCHPAD_FACTORY_ADDRESS,
+           LAUNCHPAD_FACTORY_ABI,
+           APPROVE_AMOUNT } from '@/constants'
+  import { ChainId } from '@/ecosystem'
+  import { delay } from '@/utils'
+
+  // These token symbols will not be allowed
+  const symbolBlacklist = ['TOAD', 'PAD', 'USDC', 'USDT', 'DAI', 'BNB', 'BUSD', 'ETH', 'BTC', 'GLMR', 'MOVR', 'XRP', 'XMR', 'DOT', 'ADA', 'SOLAR']
+
   export default Vue.extend ({
     data: () => ({
       valid: true,
 
-      // The address that the user will need to deposit their tokens to
-      presaleContractAddress: '0xPRESALECONTRACTADDRESS',
+      presaleContractAddress: <string | null> null,
+      tokenName: <string | null> null,
+      tokenSymbol: <string | null> null,
+      tokenSupply: <ethers.BigNumber | null> null,
+      tokenDecimals: <number | null> null,
+      userTokenAllowance: <ethers.BigNumber | null> null,
+      userTokenBalance: <ethers.BigNumber | null> null,
 
-
-      // Automatically read from the contract?
-      tokenName: '',
-      tokenSymbol: '',
-      tokenSupply: 0,
-
-      tokenContract: '',
+      tokenContractAddress: '',
+      tokenContractError: <string | null> null,
 
       presaleHardCap: <string> '0',
       presaleSoftCap: 0,
       presaleDuration: 0,
       presaleTokenAmount: 0,
       presalePrice: <string> '0',
-      presaleEndTime: 0,
       presaleMaxContribution: 0,
 
       // Custom data to be stored in a json string
@@ -379,50 +366,152 @@
       websiteUrl: '',
 
       nameRules: [
-      (v: any) => !!v || 'Token name is required',
-      (v: any) => (v && v.length <= 20) || 'Token name cannot be longer than 20 characters',
+        (v: any) => !!v || 'Token name is required',
+        (v: any) => (v && v.length <= 20) || 'Token name cannot be longer than 20 characters',
       ],
       symbolRules: [
-      (v: any) => !!v || 'Token symbol is required',
-      (v: any) => (v && v.length <= 8) || 'Token symbol cannot be longer than 8 characters',
-      (v: any) => (!symbolBlacklist.includes(v)) || 'Please don\'t create tokens that falsely represent other projects'
+        (v: any) => !!v || 'Token symbol is required',
+        (v: any) => (v && v.length <= 8) || 'Token symbol cannot be longer than 8 characters',
+        (v: any) => (!symbolBlacklist.includes(v)) || 'Please don\'t create tokens that falsely represent other projects'
       ],
       supplyRules: [
-      (v: any) => !!v || 'Choose the max supply of your token',
-      (v: any) => (v && v.length <= 13 && parseFloat(v) <= 1000000000000) || 'Let\'s be reasonable, you don\'t need more than a trillion tokens',
-      (v: any) => (v && parseInt(v) != 0) || '0 tokens is not enough',
-      (v: any) => (parseFloat(v) % 1 == 0 && parseFloat(v) > 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
+        (v: any) => !!v || 'Choose the max supply of your token',
+        (v: any) => (v && v.length <= 13 && parseFloat(v) <= 1000000000000) || 'Let\'s be reasonable, you don\'t need more than a trillion tokens',
+        (v: any) => (v && parseInt(v) != 0) || '0 tokens is not enough',
+        (v: any) => (parseFloat(v) % 1 == 0 && parseFloat(v) > 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
       ],
       hardCapRules: [
-      (v: any) => !!v || 'Choose the hard cap of the presale',
-      (v: any) => (v && v.length <= 10 && parseFloat(v) <= 1000000000) || 'That\'s unreasonably high',
-      (v: any) => (parseFloat(v) > 0 && /[0-9]/.test(v)) || 'Input a positive number'
+        (v: any) => !!v || 'Choose the hard cap of the presale',
+        (v: any) => (v && v.length <= 10 && parseFloat(v) <= 1000000000) || 'That\'s unreasonably high',
+        (v: any) => (parseFloat(v) > 0 && /[0-9]/.test(v)) || 'Input a positive number'
       ],
       durationRules: [
-      (v: any) => !!v || 'You need to specify the presale duration',
-      (v: any) => (v && v.length <= 3 && parseFloat(v) <= 168 && parseFloat(v) >= 12) || 'Choose a value between 12 and 168 hours',
-      (v: any) => (parseFloat(v) % 1 == 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
+        (v: any) => !!v || 'You need to specify the presale duration',
+        (v: any) => (v && v.length <= 3 && parseFloat(v) <= 168 && parseFloat(v) >= 12) || 'Choose a value between 12 and 168 hours',
+        (v: any) => (parseFloat(v) % 1 == 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
       ],
       presalePriceRules: [
-      (v: any) => !!v || 'Specify the price of your tokens during presale',
-      (v: any) => (parseFloat(v) > 0) || 'Input a positive number'
+        (v: any) => !!v || 'Specify the price of your tokens during presale',
+        (v: any) => (parseFloat(v) > 0) || 'Input a positive number'
       ],
       contractAddressRules: [
-      (v: any) => !!v || 'Specify your token\'s contract address',
-      (v: any) => (v.length == 42 && v.slice(0, 2) == '0x') || 'Not a valid contract address'
+        (v: any) => !!v || 'Specify your token\'s contract address',
+        (v: any) => (v.length == 42 && v.slice(0, 2) == '0x') || 'Not a valid contract address'
       ],
       maxContributionRules: [
-      (v: any) => !!v || 'Specify the maximum contribution per user (0 for infinite)',
-      (v: any) => (parseFloat(v) > 0) || 'Input a positive number'
+        (v: any) => !!v || 'Specify the maximum contribution per user (0 for infinite)',
+        (v: any) => (parseFloat(v) > 0) || 'Input a positive number'
       ],
+      websiteUrlRules: [],
+      logoUrlRules: [],
+      telegramUrlRules: [],
       validationCheckbox: false,
+      active: true,
+      syncLock: new AwaitLock()
     }),
-    methods: {
-      submit () {
-        const form = this.$refs.form as any
-        if (form.validate()) {
-          this.presaleEndTime = Date.now() + this.presaleDuration * 60 * 60 * 1000
+    computed: {
+      address(): string {
+        return this.$store.state.address
+      },
+      web3(): ethers.Signer | null {
+        return this.$store.state.web3
+      },
+      chainId(): ChainId {
+        return this.$store.getters.ecosystem.chainId
+      },
+      multicall(): ethers.providers.Provider {
+        return this.$store.getters.multicall
+      },
+      tokenContract(): ethers.Contract | null {
+        if (!ethers.utils.isAddress(this.tokenContractAddress)) {
+          return null
         }
+
+        return new ethers.Contract(this.tokenContractAddress, ERC20_ABI, this.multicall)
+      },
+      factoryContract(): ethers.Contract {
+        return new ethers.Contract(LAUNCHPAD_FACTORY_ADDRESS, LAUNCHPAD_FACTORY_ABI, this.multicall)
+      },
+      factoryContractSigner(): ethers.Contract | null {
+        if (!this.web3) {
+          return null
+        }
+
+        return this.factoryContract.connect(this.web3)
+      },
+      isTokenContractLoading(): boolean {
+        return ethers.utils.isAddress(this.tokenContractAddress) && this.tokenName === null
+      },
+      isApproveComplete(): boolean {
+        if (this.userTokenAllowance === null) {
+          return false
+        }
+
+        const maxApprove = ethers.BigNumber.from(APPROVE_AMOUNT)
+        return this.userTokenAllowance.eq(maxApprove)
+      },
+      displayedTokenSupply(): string | null {
+        if (!this.tokenSupply || !this.tokenDecimals) {
+          return null
+        }
+
+        return ethers.utils.formatUnits(this.tokenSupply, this.tokenDecimals)
+      }
+    },
+    async mounted() {
+      while (this.active) {
+        try {
+          await this.sync()
+        } catch (e) {
+          console.error(e)
+        }
+
+        await delay(3000)
+      }
+    },
+    beforeRouteLeave(to, from, next) {
+      this.active = false
+      next()
+    },
+    beforeDestroy() {
+      this.active = false
+    },
+    methods: {
+      async approve() {
+        const tokenContract = this.tokenContract!.connect(this.web3!)
+        const tx = await tokenContract.populateTransaction.approve(this.presaleContractAddress, APPROVE_AMOUNT)
+        await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+      },
+      async submit() {
+        if (!this.factoryContractSigner) {
+          this.requestConnect()
+          return
+        }
+
+        const form = this.$refs.form as any
+        if (!form.validate()) {
+          return
+        }
+
+        const buyLimit = ethers.utils.parseEther(this.presaleMaxContribution.toString())
+        const hardCap = ethers.utils.parseEther(this.presaleHardCap)
+        const tokensPerEth = ethers.utils.parseUnits(this.presalePrice, this.tokenDecimals!)
+        const durationTime = parseFloat(this.presaleDuration.toString()) * 60 * 60
+        const presaleInfo = JSON.stringify({
+          tokenLogoUrl: this.logoUrl,
+          telegramUrl: this.telegramUrl,
+          websiteUrl: this.websiteUrl
+        })
+
+        const tx = await this.factoryContractSigner.populateTransaction.createPresale(
+          this.tokenContract!.address,
+          buyLimit,
+          hardCap,
+          tokensPerEth,
+          durationTime,
+          presaleInfo
+        )
+        await this.safeSendTransaction({ tx, targetChainId: this.chainId })
       },
       copyAddress (address : string) {
         let textArea = document.createElement("textarea")
@@ -437,8 +526,60 @@
         let successful = document.execCommand('copy')
 
         document.body.removeChild(textArea)
-      }
+      },
+      async sync() {
+        await this.syncLock.acquireAsync()
+        try {
+          await this.syncInternal()
+        } finally {
+          this.syncLock.release()
+        }
+      },
+      async syncInternal() {
+        const tokenContract = this.tokenContract
+        if (!tokenContract) {
+          return
+        }
 
+        const contractCode = await this.multicall.getCode(tokenContract.address)
+        if (contractCode == '0x') {
+          this.tokenContractError = 'Address is not a valid ERC20 contract'
+          return
+        }
+
+        const contractData = {
+          presaleContractAddress: <string | null> null,
+          tokenName: <string | null> null,
+          tokenSymbol: <string | null> null,
+          tokenSupply: <ethers.BigNumber | null> null,
+          tokenDecimals: <number | null> null,
+          userTokenAllowance: <ethers.BigNumber | null> null,
+          userTokenBalance: <ethers.BigNumber | null> null
+        }
+
+        // TODO: check if address is a valid ERC20
+        const promises = [
+          // this.factoryContract.getPresaleAddress(tokenContract.address).then((a: string) => contractData.presaleContractAddress = a),
+          tokenContract.name().then((n: string) => contractData.tokenName = n),
+          tokenContract.symbol().then((s: string) => contractData.tokenSymbol = s),
+          tokenContract.totalSupply().then((s: ethers.BigNumber) => contractData.tokenSupply = s),
+          tokenContract.decimals().then((d: number) => contractData.tokenDecimals = d)
+        ]
+        if (this.address) {
+          promises.push(
+            // tokenContract.allowance(this.address, this.presaleContractAddress).then((a: ethers.BigNumber) => contractData.userTokenAllowance = a),
+            tokenContract.balanceOf(this.address).then((b: ethers.BigNumber) => contractData.userTokenBalance = b)
+          )
+        }
+        await Promise.all(promises)
+        // TODO: remove when new launchpad contract is deployed
+        contractData.presaleContractAddress = '0x0000000000000000000000000000000000000000'
+
+        if (tokenContract.address == this.tokenContract?.address) {
+          Object.assign(this, contractData)
+        }
+      },
+      ...mapActions(['requestConnect', 'safeSendTransaction'])
     },
     watch: {
       presalePrice: function(newAmount) {
@@ -447,6 +588,21 @@
       presaleHardCap: function(newSupply) {
         this.presaleSoftCap = parseFloat(this.presaleHardCap) * 0.25
         this.presaleTokenAmount = Math.ceil(parseFloat(this.presalePrice) * parseFloat(this.presaleHardCap))
+      },
+      tokenContractAddress(val) {
+        this.tokenContractError = null
+        if (!ethers.utils.isAddress(val)) {
+          this.presaleContractAddress = null,
+          this.tokenName = null
+          this.tokenSymbol = null
+          this.tokenSupply = null
+          this.tokenDecimals = null
+          this.userTokenAllowance = null
+          this.userTokenBalance = null
+          return
+        }
+
+        setTimeout(() => this.sync())
       }
     }
   })
