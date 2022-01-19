@@ -108,6 +108,7 @@
       <v-list nav>
         <v-list-group
           v-for="navSection in navSections"
+          :value="navSection.autoExpand"
           :key="navSection.title"
           :append-icon="navSection.items.length > 0 ? 'mdi-chevron-down' : ''"
         >
@@ -171,7 +172,8 @@ type NavItem = {
 
 type NavSection = {
   title: string,
-  items: NavItem[]
+  items: NavItem[],
+  autoExpand?: boolean
 }
 
 const DESKTOP_SCROLL_THRESHOLD = 430
@@ -208,6 +210,7 @@ export default Vue.extend({
       // TODO: refactor to IEcosystem
       return [{
         title: 'Products',
+        autoExpand: true,
         items: [{
           name: 'Swap',
           desc: 'Buy or sell any token instantly on PadSwap',
