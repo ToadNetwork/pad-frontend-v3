@@ -66,7 +66,7 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/LaunchToken.vue')
   },
   {
-    path: '/presale',
+    path: '/presale/:address',
     name: 'Launchpad Presale',
     component: () => import('../views/LaunchpadPresale.vue')
   },

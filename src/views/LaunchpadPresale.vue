@@ -59,10 +59,10 @@
           <tbody>
             <tr>
               <td>Tokens in presale</td>
-              <td>{{presaleTokenAmount}} {{tokenSymbol}} 
+              <td>{{displayedPresaleTokenAmount}} {{tokenSymbol}}
                 ({{
                   trimNumber(
-                    (presaleTokenAmount / tokenSupply) * 100
+                    (displayedPresaleTokenAmount / tokenSupply) * 100
                   ) 
                 }}% of supply)</td>
             </tr>
@@ -76,7 +76,7 @@
             </tr>
             <tr>
               <td>Price</td>
-              <td>{{trimNumber(presaleTokenAmount/presaleHardCap)}} {{tokenSymbol}} per {{presaleCurrency}}</td>
+              <td>{{trimNumber(displayedPresaleTokenAmount/presaleHardCap)}} {{tokenSymbol}} per {{presaleCurrency}}</td>
             </tr>
             <tr>
               <td>Maximum contribution</td>
@@ -159,7 +159,6 @@
               </template>
             </v-btn>
           </div>
-        </v-form>
       </div>
     </div>
   </v-container>
@@ -167,20 +166,31 @@
 
 <script lang="ts">
   import Vue from 'vue'
+  import { ethers } from 'ethers'
+
+  import { ERC20_ABI, LAUNCHPAD_PRESALE_ABI } from '@/constants'
+  import { delay } from '@/utils'
+
   export default Vue.extend ({
     data: () => ({
       valid: true,
+      presaleAddress: <string> '',
 
       // Data pulled from the contract
       tokenName: 'GLMR Pad',
       tokenSymbol: 'PAD',
       tokenSupply: 100000,
+      tokenDecimals: <number | null> null,
       presaleHardCap: 100,
       presaleSoftCap: 25,
-      presaleTokenAmount: 9523,
+      presaleTokensPerEth: <ethers.BigNumber | null> null,
       presaleCurrency: 'GLMR',
       presaleEndTime: 1642780658504, // Stored as a UNIX timestamp in miliseconds
-      maxContribution: 2,
+      maxContribution: <ethers.BigNumber | null> ethers.BigNumber.from(2),
+
+      presaleIsActive: <boolean | null> null,
+      presaleIsAborted: <boolean | null> null,
+      totalBoughtTokens: <ethers.BigNumber | null> null,
 
       // User-entered data (from the .json string in the contract)
       logoUrl: 'https://padswap.exchange/glmr/images/pad/pad-moonbeam.png',
@@ -194,14 +204,33 @@
       // User-entered data
       amountToDeposit: 0,
       tokensGiven: 0,
-
+      active: true
     }),
-    mounted: function () {
-      var self = this
-      setInterval( function () {
-          self.timeLeft = self.presaleEndTime - Date.now()
-        }, 1000)
-      },
+    created() {
+      this.presaleAddress = this.$route.params.address
+    },
+    async mounted() {
+      setInterval(() => {
+        this.timeLeft = this.presaleEndTime - Date.now()
+      }, 1000)
+
+      while (this.active) {
+        try {
+          await this.sync()
+        } catch (e) {
+          console.error(e)
+        }
+
+        await delay(5000)
+      }
+    },
+    beforeDestroy() {
+      this.active = false
+    },
+    beforeRouteLeave(to, from, next) {
+      this.active = false
+      next()
+    },
     computed: {
       timeLeftInSeconds: function (): number {
         return Math.trunc(this.timeLeft / 1000)
@@ -215,8 +244,34 @@
       hoursLeft: function (): number {
         return (Math.trunc((this.timeLeftInSeconds / 60) / 60))
       },
-      tokenLogo: function() {
+      tokenLogo: function(): string {
           return '@/assets/icons/LaunchPAD Icon.svg'
+      },
+      presaleContract(): ethers.Contract | null {
+        if (!ethers.utils.isAddress(this.presaleAddress)) {
+          return null
+        }
+
+        return new ethers.Contract(this.presaleAddress, LAUNCHPAD_PRESALE_ABI, this.multicall)
+      },
+      multicall(): ethers.providers.Provider {
+        return this.$store.getters.multicall
+      },
+      presaleTokenAmount(): ethers.BigNumber {
+        if (!this.presaleTokensPerEth || !this.presaleHardCap) {
+          return ethers.BigNumber.from(0)
+        }
+
+        const presaleTokenAmountEther = this.presaleTokensPerEth.mul(this.presaleHardCap)
+        return presaleTokenAmountEther
+      },
+      displayedPresaleTokenAmount(): string {
+        if (!this.presaleTokensPerEth || !this.presaleHardCap) {
+          return '0'
+        }
+
+        const presaleTokenAmount = this.presaleTokensPerEth.toNumber() * this.presaleHardCap
+        return presaleTokenAmount.toString()
       }
     },
     methods: {
@@ -228,10 +283,63 @@
         let str_nbr = nbr.toString();
         return Number(str_nbr.slice(0, 3))
       },
+      async sync() {
+        if (!this.presaleContract) {
+          return
+        }
+
+        if (this.tokenName === null) {
+          const tokenAddress = <string> await this.presaleContract.token()
+          const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, this.multicall)
+
+          const firstLoadData = {
+            tokenName: <string | null> null,
+            tokenSymbol: <string | null> null,
+            tokenSupply: <ethers.BigNumber | null> null,
+            tokenDecimals: <number | null> null,
+            presaleSoftCap: <ethers.BigNumber | null> null,
+            presaleHardCap: <ethers.BigNumber | null> null,
+            presaleTokensPerEth: <ethers.BigNumber | null> null,
+            presaleEndTime: <number | null> null,
+            presaleInfo: <string | null> null,
+            maxContribution: <ethers.BigNumber | null> null,
+          }
+
+          const promises = [
+            tokenContract.name().then((n: string) => firstLoadData.tokenName = n),
+            tokenContract.symbol().then((s: string) => firstLoadData.tokenSymbol = s),
+            tokenContract.totalSupply().then((s: ethers.BigNumber) => firstLoadData.tokenSupply = s),
+            tokenContract.decimals().then((d: number) => firstLoadData.tokenDecimals = d),
+            this.presaleContract.softCap().then((s: ethers.BigNumber) => firstLoadData.presaleSoftCap = s),
+            this.presaleContract.hardCap().then((h: ethers.BigNumber) => firstLoadData.presaleHardCap = h),
+            this.presaleContract.tokensPerEth().then((t: ethers.BigNumber) => firstLoadData.presaleTokensPerEth = t),
+            this.presaleContract.endsAt().then((e: ethers.BigNumber) => firstLoadData.presaleEndTime = e.toNumber() * 1000),
+            this.presaleContract.presaleInfo().then((p: string) => firstLoadData.presaleInfo = p),
+            this.presaleContract.buyLimit().then((b: ethers.BigNumber) => firstLoadData.maxContribution = b)
+          ]
+          await Promise.all(promises)
+          Object.assign(firstLoadData, this)
+        }
+
+        const data: any = {
+          presaleIsActive: <boolean | null> null,
+          presaleIsAborted: <boolean | null> null,
+          totalBoughtTokens: <ethers.BigNumber | null> null
+        }
+
+        const promises = [
+          this.presaleContract.isActive().then((a: boolean) => data.presaleIsActive = a),
+          this.presaleContract.isAborted().then((a: boolean) => data.presaleIsAborted = a),
+          // this.presaleContract.totalBoughtTokens().then((t: ethers.BigNumber) => data.totalBoughtTokens = t)
+        ]
+        await Promise.all(promises)
+        Object.assign(data, this)
+      }
     },
     watch: {
       amountToDeposit: function(newAmount) {
-        let tokensPerCurrency = (this.presaleTokenAmount / this.presaleHardCap)
+        const presaleTokenAmountEther = parseFloat(ethers.utils.formatUnits(this.presaleTokenAmount, this.tokenDecimals!))
+        let tokensPerCurrency = (presaleTokenAmountEther / this.presaleHardCap)
         this.tokensGiven = parseFloat(tokensPerCurrency as any) * parseFloat(this.amountToDeposit as any)
       }
     }
