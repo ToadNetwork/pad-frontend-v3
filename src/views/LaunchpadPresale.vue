@@ -203,16 +203,16 @@
         }, 1000)
       },
     computed: {
-      timeLeftInSeconds: function () {
+      timeLeftInSeconds: function (): number {
         return Math.trunc(this.timeLeft / 1000)
       },
-      secondsLeft: function () {
+      secondsLeft: function (): number {
         return this.timeLeftInSeconds % 60
       },
-      minutesLeft: function () {
+      minutesLeft: function (): number {
         return Math.trunc(this.timeLeftInSeconds / 60) % 60
       },
-      hoursLeft: function () {
+      hoursLeft: function (): number {
         return (Math.trunc((this.timeLeftInSeconds / 60) / 60))
       },
       tokenLogo: function() {
@@ -221,9 +221,10 @@
     },
     methods: {
       submit () {
-        this.$refs.form.validate()
+        const form = this.$refs.form as any
+        form.validate()
       },
-      trimNumber (nbr) {
+      trimNumber (nbr: number) {
         let str_nbr = nbr.toString();
         return Number(str_nbr.slice(0, 3))
       },
@@ -231,7 +232,7 @@
     watch: {
       amountToDeposit: function(newAmount) {
         let tokensPerCurrency = (this.presaleTokenAmount / this.presaleHardCap)
-        this.tokensGiven = parseFloat(tokensPerCurrency) * parseFloat(this.amountToDeposit)
+        this.tokensGiven = parseFloat(tokensPerCurrency as any) * parseFloat(this.amountToDeposit as any)
       }
     }
   })

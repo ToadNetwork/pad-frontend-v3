@@ -358,11 +358,11 @@
 
       tokenContract: '',
 
-      presaleHardCap: 0,
+      presaleHardCap: <string> '0',
       presaleSoftCap: 0,
       presaleDuration: 0,
       presaleTokenAmount: 0,
-      presalePrice: 0,
+      presalePrice: <string> '0',
       presaleEndTime: 0,
       presaleMaxContribution: 0,
 
@@ -372,47 +372,48 @@
       websiteUrl: '',
 
       nameRules: [
-      v => !!v || 'Token name is required',
-      v => (v && v.length <= 20) || 'Token name cannot be longer than 20 characters',
+      (v: any) => !!v || 'Token name is required',
+      (v: any) => (v && v.length <= 20) || 'Token name cannot be longer than 20 characters',
       ],
       symbolRules: [
-      v => !!v || 'Token symbol is required',
-      v => (v && v.length <= 8) || 'Token symbol cannot be longer than 8 characters',
-      v => (!symbolBlacklist.includes(v)) || 'Please don\'t create tokens that falsely represent other projects'
+      (v: any) => !!v || 'Token symbol is required',
+      (v: any) => (v && v.length <= 8) || 'Token symbol cannot be longer than 8 characters',
+      (v: any) => (!symbolBlacklist.includes(v)) || 'Please don\'t create tokens that falsely represent other projects'
       ],
       supplyRules: [
-      v => !!v || 'Choose the max supply of your token',
-      v => (v && v.length <= 13 && parseFloat(v) <= 1000000000000) || 'Let\'s be reasonable, you don\'t need more than a trillion tokens',
-      v => (v && parseInt(v) != 0) || '0 tokens is not enough',
-      v => (parseFloat(v) % 1 == 0 && parseFloat(v) > 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
+      (v: any) => !!v || 'Choose the max supply of your token',
+      (v: any) => (v && v.length <= 13 && parseFloat(v) <= 1000000000000) || 'Let\'s be reasonable, you don\'t need more than a trillion tokens',
+      (v: any) => (v && parseInt(v) != 0) || '0 tokens is not enough',
+      (v: any) => (parseFloat(v) % 1 == 0 && parseFloat(v) > 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
       ],
       hardCapRules: [
-      v => !!v || 'Choose the hard cap of the presale',
-      v => (v && v.length <= 10 && parseFloat(v) <= 1000000000) || 'That\'s unreasonably high',
-      v => (parseFloat(v) > 0 && /[0-9]/.test(v)) || 'Input a positive number'
+      (v: any) => !!v || 'Choose the hard cap of the presale',
+      (v: any) => (v && v.length <= 10 && parseFloat(v) <= 1000000000) || 'That\'s unreasonably high',
+      (v: any) => (parseFloat(v) > 0 && /[0-9]/.test(v)) || 'Input a positive number'
       ],
       durationRules: [
-      v => !!v || 'You need to specify the presale duration',
-      v => (v && v.length <= 3 && parseFloat(v) <= 168 && parseFloat(v) >= 12) || 'Choose a value between 12 and 168 hours',
-      v => (parseFloat(v) % 1 == 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
+      (v: any) => !!v || 'You need to specify the presale duration',
+      (v: any) => (v && v.length <= 3 && parseFloat(v) <= 168 && parseFloat(v) >= 12) || 'Choose a value between 12 and 168 hours',
+      (v: any) => (parseFloat(v) % 1 == 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
       ],
       presalePriceRules: [
-      v => !!v || 'Specify the price of your tokens during presale',
-      v => (parseFloat(v) > 0) || 'Input a positive number'
+      (v: any) => !!v || 'Specify the price of your tokens during presale',
+      (v: any) => (parseFloat(v) > 0) || 'Input a positive number'
       ],
       contractAddressRules: [
-      v => !!v || 'Specify your token\'s contract address',
-      v => (v.length == 42 && v.slice(0, 2) == '0x') || 'Not a valid contract address'
+      (v: any) => !!v || 'Specify your token\'s contract address',
+      (v: any) => (v.length == 42 && v.slice(0, 2) == '0x') || 'Not a valid contract address'
       ],
       maxContributionRules: [
-      v => !!v || 'Specify the maximum contribution per user (0 for infinite)',
-      v => (parseFloat(v) > 0) || 'Input a positive number'
+      (v: any) => !!v || 'Specify the maximum contribution per user (0 for infinite)',
+      (v: any) => (parseFloat(v) > 0) || 'Input a positive number'
       ],
       validationCheckbox: false,
     }),
     methods: {
       submit () {
-        if (this.$refs.form.validate()) {
+        const form = this.$refs.form as any
+        if (form.validate()) {
           this.presaleEndTime = Date.now() + this.presaleDuration * 60 * 60 * 1000
         }
       },
