@@ -33,7 +33,7 @@
             </tr>
             <tr>
               <td>Max supply</td>
-              <td>{{ tokenSupply }}</td>
+              <td>{{ tokenSupply }} {{ tokenSymbol }}</td>
             </tr>
             <tr>
               <td>Website</td>

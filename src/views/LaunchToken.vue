@@ -228,7 +228,7 @@
           <div class="form-line">
             <v-text-field
             v-model="presaleTokenAmount"
-            :label="'Number of ' + tokenSymbol + 'tokens in presale'"
+            :label="'Number of ' + tokenSymbol + ' tokens in presale'"
             disabled
             readonly
             type="number"
