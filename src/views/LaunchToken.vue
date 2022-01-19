@@ -134,7 +134,7 @@
 
             <div class="form-line" v-if="tokenName.length > 0">
               <p>{{tokenSymbol}} ({{tokenName}})</p>
-              <p>Max supply: {{tokenSupply}}</p>
+              <p>Max supply: {{tokenSupply}} {{tokenSymbol}}</p>
             </div>
 
             <div class="form-line">
@@ -143,7 +143,14 @@
               :rules="logoUrlRules"
               label="Token logo URL (leave empty if you don't have one)"
               required
-              ></v-text-field>
+              >
+                <template v-slot:append>
+                  <img
+                  style="width: 30px"
+                  :src=logoUrl>
+                </template>
+
+              </v-text-field>
             </div>
 
             <div class="form-line">
