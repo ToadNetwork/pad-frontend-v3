@@ -87,7 +87,9 @@
             <h4>Declare your cargo</h4>
             <v-divider color="green" style="margin: 20px 0;"></v-divider>
 
-            <div class="form-line">
+
+
+            <!-- <div class="form-line">
               <v-text-field
               v-model="tokenName"
               :counter="20"
@@ -119,6 +121,20 @@
               type="number"
               step="1"
               ></v-text-field>
+            </div> -->
+
+            <div class="form-line">
+              <v-text-field
+              v-model="tokenContract"
+              :rules="contractAddressRules"
+              label="Your token's contract address"
+              required
+              ></v-text-field>
+            </div>
+
+            <div class="form-line" v-if="tokenName.length > 0">
+              <p>{{tokenSymbol}} ({{tokenName}})</p>
+              <p>Max supply: {{tokenSupply}}</p>
             </div>
 
             <div class="form-line">
@@ -199,30 +215,39 @@
             ></v-text-field>
           </div>
 
+          <div class="form-line">
+            <v-text-field
+            v-model="presalePrice"
+            label="Presale price"
+            :rules="presalePriceRules"
+            required
+            :suffix=" tokenSymbol + ' per GLMR'"
+            ></v-text-field>
+          </div>
 
           <div class="form-line">
             <v-text-field
             v-model="presaleTokenAmount"
-            :counter="13"
-            :rules="presaleTokenAmountRules"
-            label="Number of tokens in presale"
-            pattern="[0-9]"
-            required
+            :label="'Number of ' + tokenSymbol + 'tokens in presale'"
+            disabled
+            readonly
             type="number"
             :suffix="tokenSymbol"
             ></v-text-field>
           </div>
 
-
           <div class="form-line">
             <v-text-field
-            v-model="presalePrice"
-            label="Presale price (calculated automatically)"
-            disabled
-            readonly
-            :suffix=" tokenSymbol + ' per GLMR'"
+            v-model="presaleMaxContribution"
+            :label="'Maximum contribution per user (0 for infinite)'"
+            :rules="maxContributionRules"
+            required
+            type="number"
+            :suffix="'GLMR'"
             ></v-text-field>
           </div>
+
+
 
         </div>
       </v-col>
@@ -233,12 +258,63 @@
 
     <div class="form-line text-center">
       <div style="display: inline-block;">
-        <v-checkbox
-        v-model="cargoCheckbox"
-        :rules="[v => !!v || 'Confirm that the data you entered is correct']"
-        label="Confirm cargo"
-        required
-        ></v-checkbox>
+
+      <v-expansion-panels
+      inset>
+      <v-expansion-panel>
+      <v-expansion-panel-header expand-icon="" style="text-align:center !important; display: block; border: 1px solid #0fcf0f; color: #0fcf0f;">
+        Deposit tokens and launch presale
+      </v-expansion-panel-header>
+      <v-expansion-panel-content style="text-align: center;">
+        <br>
+      <p style="color: #0fcf0f">Before launching the presale, you need to deposit {{presaleTokenAmount}} {{tokenSymbol}} to the presale contract:</p>
+      <div class="presale-contract-address">
+        <div class="address-box">
+          <span style="word-break: break-all; word-wrap: break-word;">{{ presaleContractAddress }}</span>
+
+          <v-tooltip
+          :open-on-hover="false"
+          right
+          >
+          <template #activator="{ on }">
+            <v-btn
+              style="min-width: 0;"
+              @click="on.click"
+              v-on:click="copyAddress(presaleContractAddress)"
+              icon
+              retain-focus-on-click
+              v-bind="attrs"
+              v-on="on"
+            >
+            <v-icon small>mdi-clipboard-multiple</v-icon>
+            </v-btn>
+          </template>
+          <span>Copied!</span>
+        </v-tooltip>
+        </div>
+      </div>
+
+
+        <v-btn
+        color="green">
+        I have deposited the tokens to the presale contract
+        </v-btn>
+        <br>
+        <div style="display:inline-block;">
+          <v-checkbox
+          v-model="validationCheckbox"
+          :rules="[v => !!v || '']"
+          :label="validationCheckbox == true ? 'Token deposit confirmed' : 'Token deposit not confirmed, please confirm via the button above'"
+          readonly
+          required
+          ></v-checkbox>
+        </div>
+
+      </v-expansion-panel-content>
+      </v-expansion-panel>
+      </v-expansion-panels>
+
+        
       </div>
     </div>
 
@@ -262,7 +338,7 @@
 </v-container>
 </template>
 
-<script>
+<script lang="ts">
   // These token symbols will not be allowed
   let symbolBlacklist = ['TOAD', 'PAD', 'USDC', 'USDT', 'DAI', 'BNB', 'BUSD', 'ETH', 'BTC', 'GLMR', 'MOVR', 'XRP', 'XMR', 'DOT', 'ADA', 'SOLAR']
 
@@ -270,15 +346,25 @@
   export default Vue.extend ({
     data: () => ({
       valid: true,
+
+      // The address that the user will need to deposit their tokens to
+      presaleContractAddress: '0xPRESALECONTRACTADDRESS',
+
+
+      // Automatically read from the contract?
       tokenName: '',
       tokenSymbol: '',
       tokenSupply: 0,
+
+      tokenContract: '',
+
       presaleHardCap: 0,
       presaleSoftCap: 0,
       presaleDuration: 0,
       presaleTokenAmount: 0,
       presalePrice: 0,
       presaleEndTime: 0,
+      presaleMaxContribution: 0,
 
       // Custom data to be stored in a json string
       logoUrl: '',
@@ -310,32 +396,49 @@
       v => (v && v.length <= 3 && parseFloat(v) <= 168 && parseFloat(v) >= 12) || 'Choose a value between 12 and 168 hours',
       v => (parseFloat(v) % 1 == 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
       ],
-      presaleTokenAmountRules: [
-      v => !!v || 'Specify the number of tokens allocated to the presale',
-      v => (parseFloat(v) % 1 == 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
+      presalePriceRules: [
+      v => !!v || 'Specify the price of your tokens during presale',
+      v => (parseFloat(v) > 0) || 'Input a positive number'
       ],
-      cargoCheckbox: false,
+      contractAddressRules: [
+      v => !!v || 'Specify your token\'s contract address',
+      v => (v.length == 42 && v.slice(0, 2) == '0x') || 'Not a valid contract address'
+      ],
+      maxContributionRules: [
+      v => !!v || 'Specify the maximum contribution per user (0 for infinite)',
+      v => (parseFloat(v) > 0) || 'Input a positive number'
+      ],
+      validationCheckbox: false,
     }),
     methods: {
       submit () {
         if (this.$refs.form.validate()) {
           this.presaleEndTime = Date.now() + this.presaleDuration * 60 * 60 * 1000
         }
+      },
+      copyAddress (address : string) {
+        let textArea = document.createElement("textarea")
+        textArea.value = address
+        textArea.style.top = "0"
+        textArea.style.left = "0"
+        textArea.style.position = "fixed"
+        document.body.appendChild(textArea)
+        textArea.focus()
+        textArea.select()
+
+        let successful = document.execCommand('copy')
+
+        document.body.removeChild(textArea)
       }
+
     },
     watch: {
-      tokenSymbol: function(newSymbol) {
-        this.tokenSymbol = newSymbol.toUpperCase()
-      },
-      presaleTokenAmount: function(newAmount) {
-        this.presalePrice = parseFloat(this.presaleTokenAmount) / parseFloat(this.presaleHardCap)
-      },
-      tokenSupply: function(newSupply) {
-        this.presalePrice = parseFloat(this.presaleTokenAmount) / parseFloat(this.presaleHardCap)
+      presalePrice: function(newAmount) {
+        this.presaleTokenAmount = Math.ceil(parseFloat(this.presalePrice) * parseFloat(this.presaleHardCap))
       },
       presaleHardCap: function(newSupply) {
         this.presaleSoftCap = parseFloat(this.presaleHardCap) * 0.25
-        this.presalePrice = parseFloat(this.presaleTokenAmount) / parseFloat(this.presaleHardCap)
+        this.presaleTokenAmount = Math.ceil(parseFloat(this.presalePrice) * parseFloat(this.presaleHardCap))
       }
     }
   })
@@ -464,6 +567,16 @@
   margin-bottom: 10px;
 }
 
+.presale-contract-address {
+  margin-bottom: 15px;
+}
+
+.address-box {
+  display: inline-block;
+  border: 1px solid green;
+  padding-left: 10px;
+  border-radius: 10px;
+}
 
 /*****************/
 /* Launch button */
