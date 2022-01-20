@@ -153,7 +153,7 @@
             <v-btn
             x-large
             color="primary"
-            @click="submit">
+            @click="deposit">
               <template>
                 Deposit GLMR
               </template>
@@ -166,9 +166,10 @@
 
 <script lang="ts">
   import Vue from 'vue'
+  import { mapActions } from 'vuex'
   import { ethers } from 'ethers'
 
-  import { ERC20_ABI, LAUNCHPAD_PRESALE_ABI } from '@/constants'
+  import { ERC20_ABI, LAUNCHPAD_PRESALE_ABI, ZERO_ADDRESS } from '@/constants'
   import { delay } from '@/utils'
 
   export default Vue.extend ({
@@ -201,7 +202,7 @@
       timeLeft: 0,
 
       // User-entered data
-      amountToDeposit: 0,
+      amountToDeposit: '0',
       tokensGiven: 0,
       active: true
     }),
@@ -280,12 +281,26 @@
       },
       presaleCurrency(): string {
         return this.$store.getters.ecosystem.ethName
+      },
+      web3(): ethers.Signer | null {
+        return this.$store.state.web3
       }
     },
     methods: {
-      submit () {
-        const form = this.$refs.form as any
-        form.validate()
+      async deposit () {
+        if (!this.presaleContract) {
+          return
+        }
+        if (!this.web3) {
+          await this.requestConnect()
+          return
+        }
+
+        const contract = this.presaleContract.connect(this.web3)
+        const amountWei = ethers.utils.parseEther(this.amountToDeposit)
+        const tx = await contract.populateTransaction.buy(ZERO_ADDRESS) // TODO: referrals
+        tx.value = amountWei
+        await this.safeSendTransaction({ tx, targetChainId: this.$store.getters.ecosystem.chainId })
       },
       trimNumber (nbr: number) {
         let str_nbr = nbr.toString();
@@ -342,12 +357,13 @@
         ]
         await Promise.all(promises)
         Object.assign(this, data)
-      }
+      },
+      ...mapActions(['requestConnect', 'safeSendTransaction'])
     },
     watch: {
       amountToDeposit: function(newAmount) {
         const presaleTokenAmountEther = parseFloat(ethers.utils.formatUnits(this.presaleTokenAmount, this.tokenDecimals!))
-        let tokensPerCurrency = (presaleTokenAmountEther / parseFloat(ethers.utils.formatEther(this.presaleHardCap)))
+        let tokensPerCurrency = (presaleTokenAmountEther / parseFloat(ethers.utils.formatEther(this.presaleHardCap!)))
         this.tokensGiven = parseFloat(tokensPerCurrency as any) * parseFloat(this.amountToDeposit as any)
       }
     }
