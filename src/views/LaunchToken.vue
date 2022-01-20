@@ -38,6 +38,7 @@
     </div>
 
     <v-sheet class="launchpad-title-bar">
+    <img class="background" :src="backgroundImage">
     <div class="launchpad-title">
       <img class="launchpad-image" src="@/assets/icons/LaunchPAD Icon.svg">
       <h1 style="margin-bottom: 0">LaunchPAD</h1>
@@ -413,6 +414,7 @@ import { EcosystemId } from '@/ecosystem'
       // Ecosystem-specific
       currentChain: '',      
       presaleCurrency: '',
+      backgroundImage: '',
 
       nameRules: [
         (v: any) => !!v || 'Token name is required',
@@ -548,12 +550,15 @@ import { EcosystemId } from '@/ecosystem'
         this.currentChain = chain_id
         if (chain_id == "BSC") {
           this.presaleCurrency = "BNB"
+          this.backgroundImage = require('@/assets/images/launchpad-texture-bsc.jpg')
         }
         if (chain_id == "Moonriver") {
           this.presaleCurrency = "MOVR"
+          this.backgroundImage = require('@/assets/images/launchpad-texture-moonriver.jpg')
         }
         if (chain_id == "Moonbeam") {
           this.presaleCurrency = "GLMR"
+          this.backgroundImage = require('@/assets/images/launchpad-texture-moonbeam.jpg')
         }
       },
       async approve() {
@@ -688,6 +693,17 @@ import { EcosystemId } from '@/ecosystem'
 </script>
 <style scoped>
 
+.background {
+  pointer-events: none;
+  position: absolute;
+  min-width: 100%;
+  min-height: 100%;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  opacity: 0.06;
+}
+
 /********************/
 /* Ecosystem slider */
 /********************/
@@ -724,6 +740,9 @@ import { EcosystemId } from '@/ecosystem'
 
 /* Title bar */
 .launchpad-title-bar {
+  z-index: 1;
+  position: relative;
+  overflow: hidden;
   text-align: center;
   padding: 50px;
   background: rgba(24, 29, 38, 0.7) !important;

@@ -1,7 +1,7 @@
 <template>
 <v-container>
     <div class="padswap-header-box">
-      <slider-tabs
+        <slider-tabs
         class="padswap-ecosystem-tabs"
         v-model="ecosystemId"
       >
@@ -38,6 +38,8 @@
 
 
   <v-sheet class="launchpad-title-bar">
+    <img class="background" :src="backgroundImage">
+
     <div class="launchpad-title">
       <img class="launchpad-image" src="@/assets/icons/LaunchPAD Icon.svg">
       <h1>LaunchPAD</h1>
@@ -82,6 +84,7 @@
   </v-sheet>
 
     <div class="table-container">
+    <img class="background" :src="backgroundImage">
 
       <v-data-table
       class="token-table"
@@ -124,6 +127,15 @@ export default Vue.extend({
   methods: {
     setEcosystem(chain_id : string) {
      this.currentChain = chain_id
+     if (chain_id == 'BSC') {
+      this.backgroundImage = require('@/assets/images/launchpad-texture-bsc.jpg')
+     }
+     if (chain_id == 'Moonriver') {
+      this.backgroundImage = require('@/assets/images/launchpad-texture-moonriver.jpg')
+     }
+     if (chain_id == 'Moonbeam') {
+      this.backgroundImage = require('@/assets/images/launchpad-texture-moonbeam.jpg')
+     }
     },
   },
   data() {
@@ -132,6 +144,7 @@ export default Vue.extend({
       active: true,
       searchText: '',
       customPresaleAddress: '',
+      backgroundImage: '',
       headers: [
       {
         text: 'Logo',
@@ -214,8 +227,23 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+
+.background {
+  pointer-events: none;
+  position: absolute;
+  min-width: 100%;
+  min-height: 100%;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  opacity: 0.1;
+}
+
 /* Title bar */
 .launchpad-title-bar {
+  z-index: 1;
+  position: relative;
+  overflow: hidden;
   text-align: center;
   padding: 20px;
   background: rgba(24, 29, 38, 0.7) !important;
@@ -291,6 +319,9 @@ export default Vue.extend({
 /***************/
 
 .table-container {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
   margin-top: 30px;
   background: rgba(24, 29, 38, 0.7) !important;
   border-radius: 20px;
@@ -319,6 +350,5 @@ export default Vue.extend({
 .token-verification {
   width: 24px;
 }
-
 
 </style>
