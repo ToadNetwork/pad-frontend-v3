@@ -351,7 +351,7 @@
 <div class="launch-button-container">
   <div class="launch-button-box">
     <button
-    :disabled="!valid"
+    :disabled="!valid || !isApproveComplete"
     type="button"
     name="button"
     @click="submit"
@@ -909,6 +909,24 @@ import { EcosystemId } from '@/ecosystem'
   background: radial-gradient( hsl(54, 100%, 43%), hsl(54, 100%, 33%) );
   top: 2px;
   box-shadow: inset 0 1px 0 hsl(0deg 100% 50%), 0 2px 0 hsl(0deg 100% 20%), 0 3px 0 hsl(0deg 100% 18%), 0 4px 0 hsl(0deg 100% 16%), 0 5px 0 hsl(0deg 100% 14%), 0 6px 0 hsl(0deg 100% 12%), 0 7px 0 hsl(0deg 100% 10%), 0 8px 0 hsl(0deg 100% 8%), 0 9px 0 hsl(0deg 100% 6%)
+}
+
+.launch-button:disabled {
+  background: #818181;
+  background: -webkit-radial-gradient( hsl(0deg 0% 49%), hsl(0deg 0% 29%) );
+  background: -o-radial-gradient( hsl(0deg 0% 49%), hsl(0deg 0% 29%) );
+  background: -moz-radial-gradient( hsl(0deg 0% 49%), hsl(0deg 0% 29%) );
+  background: radial-gradient( hsl(0deg 0% 49%), hsl(0deg 0% 29%) );
+  font-size: 2rem;
+  text-shadow: 0 -1px 0 #000000;
+  color: #575757;
+  border: solid 1px #4e4e4e;
+  border-radius: 100%;
+  height: 160px;
+  width: 160px;
+  z-index: 4;
+  outline: none;
+  box-shadow: inset 0 1px 0 hsl(0deg 0% 29%), 0 2px 0 hsl(0deg 0% 31%), 0 3px 0 hsl(0deg 0% 34%), 0 4px 0 hsl(0deg 0% 27%), 0 5px 0 hsl(0deg 0% 36%), 0 6px 0 hsl(0deg 0% 29%), 0 7px 0 hsl(0deg 0% 19%), 0 8px 0 hsl(0deg 0% 32%), 0 9px 0 hsl(0deg 0% 23%);
 }
 
 </style>
