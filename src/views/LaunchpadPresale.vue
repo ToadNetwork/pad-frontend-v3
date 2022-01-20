@@ -416,8 +416,11 @@
           presaleTokensPerEth: this.presaleTokensPerEth?.toNumber(),
           presaleEndTime: this.presaleEndTime * 1000,
           maxContribution: this.maxContribution ? ethers.utils.formatUnits(this.maxContribution, this.tokenDecimals!) : null,
-          presaleTokenAmount: this.presaleTokensPerEth ? this.presaleTokensPerEth.toNumber() * parseFloat(ethers.utils.formatEther(this.presaleHardCap)) : null,
-          presaleRaised: this.presaleRaised ? ethers.utils.formatEther(this.presaleRaised) : null
+          presaleTokenAmount: this.presaleTokensPerEth ? this.presaleTokensPerEth.toNumber() * parseFloat(ethers.utils.formatEther(this.presaleHardCap!)) : null,
+          presaleRaised: this.presaleRaised ? ethers.utils.formatEther(this.presaleRaised) : null,
+          yourContribution: this.yourContribution ? ethers.utils.formatEther(this.yourContribution) : null,
+          boughtTokens: this.boughtTokens ? ethers.utils.formatUnits(this.boughtTokens, this.tokenDecimals!) : null,
+          referralEarned: this.referralEarned ? ethers.utils.formatEther(this.referralEarned) : null
         }
       },
       presaleCurrency(): string {
