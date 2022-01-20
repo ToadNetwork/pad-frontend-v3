@@ -493,8 +493,8 @@ import { EcosystemId } from '@/ecosystem'
       ],
       durationRules: [
         (v: any) => !!v || 'You need to specify the presale duration',
-        (v: any) => (v && v.length <= 3 && parseFloat(v) <= 168 && parseFloat(v) >= 12) || 'Choose a value between 12 and 168 hours',
-        (v: any) => (parseFloat(v) % 1 == 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
+        // (v: any) => (v && v.length <= 3 && parseFloat(v) <= 168 && parseFloat(v) >= 12) || 'Choose a value between 12 and 168 hours',
+        // (v: any) => (parseFloat(v) % 1 == 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
       ],
       presalePriceRules: [
         (v: any) => !!v || 'Specify the price of your tokens during presale',
