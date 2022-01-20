@@ -54,7 +54,7 @@
           x-large
           class="launch-token-btn"
           color="primary"
-          href="/launch-token">
+          to="/launch-token">
           Launch token
           </v-btn>
         </div>
