@@ -374,7 +374,6 @@ import { EcosystemId } from '@/ecosystem'
   import { ethers } from 'ethers'
 
   import { ERC20_ABI,
-           LAUNCHPAD_FACTORY_ADDRESS,
            LAUNCHPAD_FACTORY_ABI,
            APPROVE_AMOUNT } from '@/constants'
   import { ChainId } from '@/ecosystem'
@@ -497,7 +496,7 @@ import { EcosystemId } from '@/ecosystem'
         return new ethers.Contract(this.tokenContractAddress, ERC20_ABI, this.multicall)
       },
       factoryContract(): ethers.Contract {
-        return new ethers.Contract(LAUNCHPAD_FACTORY_ADDRESS, LAUNCHPAD_FACTORY_ABI, this.multicall)
+        return new ethers.Contract(this.$store.getters.ecosystem.launchPadFactoryAddress, LAUNCHPAD_FACTORY_ABI, this.multicall)
       },
       factoryContractSigner(): ethers.Contract | null {
         if (!this.web3) {
