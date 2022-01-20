@@ -148,7 +148,7 @@
         
           <br>
           <p>Possible reasons may include failing to reach the soft cap or being canceled by the presale owner.</p>
-          <p>If you participated in this presale, use the button below to claim your refund.</p>
+          <p>If you participated in this presale, use the button below to withdraw your deposited {{ presaleCurrency }}.</p>
 
         </div>
 
@@ -222,17 +222,74 @@
             <v-btn
             x-large
             color="primary"
-            @click="claim">
+            @click="claimTokens">
               <template>
                 Claim {{ displayedSale.tokenSymbol }}
               </template>
             </v-btn>
           </div>
+
         </div>
 
-        <!-- Your current contribution is always displayed, regardless of the state of the presale -->
+        <!-- Your current contribution will always be displayed, regardless of the state of the presale, as long as your wallet is connected -->
         <div class="form-line your-contribution">
           Your contribution: {{ yourContribution }} {{ presaleCurrency }}
+        </div>
+
+        <!-------------------------------------------->
+        <!-- Your referral link                     -->
+        <!-- Displayed while the presale is active  -->
+        <!-------------------------------------------->
+        <div v-if="referralsEnabled && presaleIsActive == true">
+          <v-divider></v-divider>
+          <div class="form-line">
+            <p style="color: gray">You can share the referral link below and earn a percentage of the raised funds for every user that uses your link.</p>
+            <div class="referral-link-container">
+            <div class="referral-link-box">
+              <span style="word-break: break-all; word-wrap: break-word;">{{ referralLink }}</span>
+
+              <v-tooltip
+              :open-on-hover="false"
+              right
+              >
+                <template #activator="{ on }">
+                  <v-btn
+                  style="min-width: 0;"
+                  @click="on.click"
+                  v-on:click="copyLink(referralLink)"
+                  icon
+                  retain-focus-on-click
+                  v-bind="attrs"
+                  v-on="on"
+                  >
+                  <v-icon small>mdi-clipboard-multiple</v-icon>
+                  </v-btn>
+                </template>
+                <span>Copied!</span>
+              </v-tooltip>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <!--------------------------------------->
+        <!-- Claiming referral rewards, if any -->
+        <!-- Appears when the presale is over  -->
+        <!--------------------------------------->
+        <div v-if="referralsEnabled && referralEarned > 0 && presaleIsActive == false && presaleIsAborted == false">
+          <v-divider></v-divider>
+          <div class="form-line">
+            <p>Some participants have used your referral link!</p>
+            <p>Use the button below to claim your referral rewards.</p>
+            <v-btn
+            medium
+            color="green"
+            @click="claimReferralEarnings">
+              <template>
+                Claim {{ referralEarned }} {{ presaleCurrency }}
+              </template>
+            </v-btn>
+          </div>
         </div>
 
       </div>
@@ -265,6 +322,9 @@
       maxContribution: <ethers.BigNumber | null> null,
 
       yourContribution: <ethers.BigNumber | null> null, // Amount already contributed by this wallet
+      referralsEnabled: <boolean | null> null,
+      referralLink: <string> '', // Referral link generated for your wallet
+      referralEarned: <ethers.BigNumber | null> null, // Amount of money earned from your referral link
 
       presaleIsActive: <boolean | null> null,
       presaleIsAborted: <boolean | null> null,
@@ -367,7 +427,10 @@
       async refund () {
         return
       },
-      async claim () {
+      async claimTokens () {
+        return
+      },
+      async claimReferralEarnings () {
         return
       },
       async deposit () {
@@ -378,7 +441,6 @@
           await this.requestConnect()
           return
         }
-
         const contract = this.presaleContract.connect(this.web3)
         const amountWei = ethers.utils.parseEther(this.amountToDeposit)
         const tx = await contract.populateTransaction.buy(ZERO_ADDRESS) // TODO: referrals
@@ -441,7 +503,21 @@
         await Promise.all(promises)
         Object.assign(this, data)
       },
-      ...mapActions(['requestConnect', 'safeSendTransaction'])
+      ...mapActions(['requestConnect', 'safeSendTransaction']),
+      copyLink (link : string) {
+        let textArea = document.createElement("textarea")
+        textArea.value = link
+        textArea.style.top = "0"
+        textArea.style.left = "0"
+        textArea.style.position = "fixed"
+        document.body.appendChild(textArea)
+        textArea.focus()
+        textArea.select()
+
+        let successful = document.execCommand('copy')
+
+        document.body.removeChild(textArea)
+      },
     },
     watch: {
       amountToDeposit: function(newAmount) {
@@ -590,6 +666,18 @@
 
 .your-contribution {
   color: gray;
+}
+
+.referral-link-container {
+  display: block;
+  text-align: center;
+}
+
+.referral-link-box {
+  display: inline-block;
+  border: 1px solid gray;
+  border-radius: 10px;
+  padding-left: 10px;
 }
 
 </style>

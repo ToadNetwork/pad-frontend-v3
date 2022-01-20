@@ -424,7 +424,7 @@ import { EcosystemId } from '@/ecosystem'
       tokenDecimals: <number | null> null,
       userTokenAllowance: <ethers.BigNumber | null> null,
       userTokenBalance: <ethers.BigNumber | null> null,
-      enableReferrals: <bool> true,
+      enableReferrals: <boolean> true,
 
       tokenContractAddress: '',
       tokenContractError: <string | null> null,
