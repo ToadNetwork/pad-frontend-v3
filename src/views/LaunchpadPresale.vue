@@ -208,7 +208,7 @@
             color="primary"
             @click="refund">
               <template>
-                Withdraw {{ yourContribution }} {{ presaleCurrency }}
+                Withdraw {{ displayedSale.yourContribution }} {{ presaleCurrency }}
               </template>
             </v-btn>
           </div>
@@ -233,7 +233,7 @@
 
         <!-- Your current contribution will always be displayed, regardless of the state of the presale, as long as your wallet is connected -->
         <div class="form-line your-contribution">
-          Your contribution: {{ yourContribution }} {{ presaleCurrency }}
+          Your contribution: {{ displayedSale.yourContribution }} {{ presaleCurrency }}
         </div>
 
         <!-------------------------------------------->
@@ -279,7 +279,7 @@
         <!-- Claiming referral rewards, if any -->
         <!-- Appears when the presale is over  -->
         <!--------------------------------------->
-        <div v-if="referralsEnabled && referralEarned > 0 && presaleIsActive == false && presaleIsAborted == false">
+        <div v-if="referralsEnabled && displayedSale.referralEarned > 0 && presaleIsActive == false && presaleIsAborted == false">
           <v-divider></v-divider>
           <div class="form-line">
             <p>Some participants have used your referral link!</p>
@@ -289,7 +289,7 @@
             color="green"
             @click="claimReferralEarnings">
               <template>
-                Claim {{ referralEarned }} {{ presaleCurrency }}
+                Claim {{ displayedSale.referralEarned }} {{ presaleCurrency }}
               </template>
             </v-btn>
           </div>
