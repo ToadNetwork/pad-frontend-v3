@@ -41,7 +41,7 @@
     <img class="background" :src="getBackgroundTexture()">
 
     <div class="launchpad-title">
-      <img class="launchpad-image" src="@/assets/icons/LaunchPAD Icon.svg">
+      <img class="launchpad-image" :src="getLaunchpadRocket()">
       <h1>LaunchPAD</h1>
     </div>
     <v-row
@@ -137,6 +137,17 @@ export default Vue.extend({
       }
       if (this.$store.getters.ecosystem.chainId == 1284) {
         return require('@/assets/images/launchpad-texture-moonbeam.jpg')
+      }
+    },
+    getLaunchpadRocket() {
+      if (this.$store.getters.ecosystem.chainId == 56) {
+        return require('@/assets/images/launchpad-rocket-bsc.svg')
+      }
+      if (this.$store.getters.ecosystem.chainId == 1285) {
+        return require('@/assets/images/launchpad-rocket-moonriver.svg')
+      }
+      if (this.$store.getters.ecosystem.chainId == 1284) {
+        return require('@/assets/images/launchpad-rocket-moonbeam.svg')
       }
     },
   },
