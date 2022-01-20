@@ -236,7 +236,10 @@
                           ?
                         </div>
                       </template>
-                      <span>Referral links will allow users to refer others to your presale and earn a percentage of the raised funds (1% of total presale funds will be allocated to referrals)</span>
+                      <span>Allows users to refer others to your presale<br>
+                      and earn a percentage of the raised funds.<br>
+                      The referral rewards are taken from PadSwap's cut,<br>
+                      so you don't lose anything by enabling referrals.</span>
                     </v-tooltip>
                   </template>
                 </v-checkbox>
