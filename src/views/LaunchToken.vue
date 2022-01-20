@@ -413,7 +413,6 @@ import { EcosystemId } from '@/ecosystem'
 
       // Ecosystem-specific
       currentChain: '',
-      presaleCurrency: '',
       backgroundImage: '',
 
       nameRules: [
