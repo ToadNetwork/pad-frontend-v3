@@ -1,6 +1,42 @@
 <template>
   <v-container>
 
+    <div class="padswap-header-box">
+      <slider-tabs
+        class="padswap-ecosystem-tabs"
+        v-model="ecosystemId"
+      >
+        <v-tab class="d-flex flex-column">
+          <v-img
+            height="30"
+            width="30"
+            contain
+            src="../assets/tokens/bsc/PAD.svg"
+          />
+          <div>BSC</div>
+        </v-tab>
+        <v-tab class="d-flex flex-column">
+          <v-img
+            height="30"
+            width="30"
+            contain
+            src="../assets/tokens/moonriver/PAD.svg"
+          />
+          <div>Moonriver</div>
+        </v-tab>
+        <v-tab class="d-flex flex-column">
+          <v-img
+            height="30"
+            width="30"
+            contain
+            src="../assets/tokens/moonbeam/PAD.svg"
+          />
+          <div>Moonbeam</div>
+        </v-tab>
+      </slider-tabs>
+      <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
+    </div>
+
     <v-sheet class="launchpad-title-bar">
     <div class="launchpad-title">
       <img class="launchpad-image" src="@/assets/icons/LaunchPAD Icon.svg">
@@ -201,7 +237,7 @@
             required
             type="number"
             step="1"
-            suffix="GLMR"
+            :suffix="presaleCurrency"
             ></v-text-field>
 
             <v-text-field
@@ -210,7 +246,7 @@
             pattern="[0-9]"
             disabled
             readonly
-            suffix="GLMR"
+            :suffix="presaleCurrency"
             ></v-text-field>
           </div>
 
@@ -235,19 +271,25 @@
             label="Presale price"
             :rules="presalePriceRules"
             required
-            :suffix=" tokenSymbol + ' per GLMR'"
-            ></v-text-field>
+            >
+              <template v-slot:append>
+              {{tokenSymbol}} per {{presaleCurrency}}
+              </template>
+            </v-text-field>
           </div>
 
           <div class="form-line">
             <v-text-field
             v-model="presaleTokenAmount"
-            :label="'Number of ' + tokenSymbol + ' tokens in presale'"
             disabled
             readonly
             type="number"
             :suffix="tokenSymbol"
-            ></v-text-field>
+            >
+              <template v-slot:prepend>
+                Number of {{tokenSymbol}} tokens in presale
+              </template>
+            </v-text-field>
           </div>
 
           <div class="form-line">
@@ -257,7 +299,7 @@
             :rules="maxContributionRules"
             required
             type="number"
-            :suffix="'GLMR'"
+            :suffix="presaleCurrency"
             ></v-text-field>
           </div>
 
@@ -323,6 +365,9 @@
 </template>
 
 <script lang="ts">
+import SliderTabs from '@/components/SliderTabs.vue'
+import { EcosystemId } from '@/ecosystem'
+
   import Vue from 'vue'
   import { mapActions } from 'vuex'
   import AwaitLock from 'await-lock'
@@ -339,6 +384,7 @@
   const symbolBlacklist = ['TOAD', 'PAD', 'USDC', 'USDT', 'DAI', 'BNB', 'BUSD', 'ETH', 'BTC', 'GLMR', 'MOVR', 'XRP', 'XMR', 'DOT', 'ADA', 'SOLAR']
 
   export default Vue.extend ({
+    components: { SliderTabs },
     data: () => ({
       valid: true,
 
@@ -364,6 +410,10 @@
       logoUrl: '',
       telegramUrl: '',
       websiteUrl: '',
+
+      // Ecosystem-specific
+      currentChain: '',      
+      presaleCurrency: '',
 
       nameRules: [
         (v: any) => !!v || 'Token name is required',
@@ -410,6 +460,23 @@
       syncLock: new AwaitLock()
     }),
     computed: {
+      ecosystemId: {
+        get(): EcosystemId {
+          return this.$store.state.ecosystemId
+        },
+        set(val: EcosystemId) {
+          this.$store.commit('setEcosystemId', val)
+          if (val == 0) {
+            this.setEcosystem("BSC")
+          }
+          else if (val == 1) {
+            this.setEcosystem("Moonriver")
+          }
+          else if (val == 2) {
+            this.setEcosystem("Moonbeam")
+          }
+        }
+      },
       address(): string {
         return this.$store.state.address
       },
@@ -459,6 +526,7 @@
       }
     },
     async mounted() {
+      this.ecosystemId = this.$store.state.ecosystemId
       while (this.active) {
         try {
           await this.sync()
@@ -477,6 +545,18 @@
       this.active = false
     },
     methods: {
+      setEcosystem(chain_id : string) {
+        this.currentChain = chain_id
+        if (chain_id == "BSC") {
+          this.presaleCurrency = "BNB"
+        }
+        if (chain_id == "Moonriver") {
+          this.presaleCurrency = "MOVR"
+        }
+        if (chain_id == "Moonbeam") {
+          this.presaleCurrency = "GLMR"
+        }
+      },
       async approve() {
         const tokenContract = this.tokenContract!.connect(this.web3!)
         const tx = await tokenContract.populateTransaction.approve(this.presaleContractAddress, APPROVE_AMOUNT)
@@ -607,7 +687,41 @@
     }
   })
 </script>
-<style>
+<style scoped>
+
+/********************/
+/* Ecosystem slider */
+/********************/
+
+.padswap-ecosystem-subheader {
+  font-size: 14px;
+  color: #B3B8C1;
+  margin-top: 4px;
+  margin-bottom: 50px;
+  height: auto;
+}
+.padswap-ecosystem-tabs /deep/ .v-tabs-bar {
+  background: rgba(24, 29, 38, 0.7);
+}
+.padswap-ecosystem-tabs /deep/ .v-tabs-slider-wrapper {
+  background: linear-gradient(180deg, #F99DF3 0%, #FA77F1 100%);
+}
+.padswap-ecosystem-tabs .v-tab {
+  padding: 10px 0px;
+  font-weight: bold;
+  color: #FFFFFF;
+  min-width: 120px;
+}
+.padswap-ecosystem-tabs .v-tab--active {
+  color: #66015e !important;
+}
+
+.padswap-header-box {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 /* Title bar */
 .launchpad-title-bar {
@@ -796,6 +910,5 @@
   top: 2px;
   box-shadow: inset 0 1px 0 hsl(0deg 100% 50%), 0 2px 0 hsl(0deg 100% 20%), 0 3px 0 hsl(0deg 100% 18%), 0 4px 0 hsl(0deg 100% 16%), 0 5px 0 hsl(0deg 100% 14%), 0 6px 0 hsl(0deg 100% 12%), 0 7px 0 hsl(0deg 100% 10%), 0 8px 0 hsl(0deg 100% 8%), 0 9px 0 hsl(0deg 100% 6%)
 }
-
 
 </style>

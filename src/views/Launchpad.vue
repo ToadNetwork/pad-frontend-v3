@@ -1,5 +1,42 @@
 <template>
 <v-container>
+    <div class="padswap-header-box">
+      <slider-tabs
+        class="padswap-ecosystem-tabs"
+        v-model="ecosystemId"
+      >
+        <v-tab class="d-flex flex-column">
+          <v-img
+            height="30"
+            width="30"
+            contain
+            src="../assets/tokens/bsc/PAD.svg"
+          />
+          <div>BSC</div>
+        </v-tab>
+        <v-tab class="d-flex flex-column">
+          <v-img
+            height="30"
+            width="30"
+            contain
+            src="../assets/tokens/moonriver/PAD.svg"
+          />
+          <div>Moonriver</div>
+        </v-tab>
+        <v-tab class="d-flex flex-column">
+          <v-img
+            height="30"
+            width="30"
+            contain
+            src="../assets/tokens/moonbeam/PAD.svg"
+          />
+          <div>Moonbeam</div>
+        </v-tab>
+      </slider-tabs>
+      <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
+    </div>
+
+
   <v-sheet class="launchpad-title-bar">
     <div class="launchpad-title">
       <img class="launchpad-image" src="@/assets/icons/LaunchPAD Icon.svg">
@@ -215,9 +252,9 @@ export default Vue.extend({
   -webkit-font-smoothing: antialiased;
 }
 
-/***************/
-/* Ecosystem slider styles, will add one in the future when the launchpad is ported to other chains */
-/***************/
+/********************/
+/* Ecosystem slider */
+/********************/
 
 .padswap-ecosystem-subheader {
   font-size: 14px;
