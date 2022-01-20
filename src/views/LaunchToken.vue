@@ -217,28 +217,30 @@
             </div>
 
             <div class="form-line">
-              <v-checkbox
-              v-model="enableReferrals"
-              color="green"
-              hide-details
-            >
-              <template v-slot:label>
-                Enable referrals
-                &nbsp;
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <div
-                    v-bind="attrs"
-                    v-on="on"
-                    class="referrals-hint"
-                    >
-                      ?
-                    </div>
+              <div class="checkbox-container">
+                <v-checkbox
+                v-model="enableReferrals"
+                color="green"
+                hide-details
+                >
+                  <template v-slot:label>
+                    Enable referrals
+                    &nbsp;
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on, attrs }">
+                        <div
+                        v-bind="attrs"
+                        v-on="on"
+                        class="referrals-hint"
+                        >
+                          ?
+                        </div>
+                      </template>
+                      <span>Referral links will allow users to refer others to your presale and earn a percentage of the raised funds (1% of total presale funds will be allocated to referrals)</span>
+                    </v-tooltip>
                   </template>
-                  <span>Referrals will allow users to refer others to swapping your token and earn a percentage of the swap fee</span>
-                </v-tooltip>
-              </template>
-            </v-checkbox>
+                </v-checkbox>
+              </div>
             </div>
 
           </div>
@@ -902,6 +904,12 @@ import { EcosystemId } from '@/ecosystem'
   border: 1px solid green;
   padding-left: 10px;
   border-radius: 10px;
+}
+
+/* Referrals checkbox */
+
+.checkbox-container {
+  display: inline-block;
 }
 
 .referrals-hint {
