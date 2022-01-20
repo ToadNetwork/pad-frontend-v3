@@ -238,7 +238,8 @@
                       </template>
                       <span>Allows users to refer others to your presale<br>
                       and earn a percentage of the raised funds.<br>
-                      The referral rewards are taken from PadSwap's cut,<br>
+                      The referral rewards are covered by PadSwap<br>
+                      (taken from platform fees),<br>
                       so you don't lose anything by enabling referrals.</span>
                     </v-tooltip>
                   </template>
