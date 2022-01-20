@@ -216,6 +216,31 @@
               ></v-text-field>
             </div>
 
+            <div class="form-line">
+              <v-checkbox
+              v-model="enableReferrals"
+              color="green"
+              hide-details
+            >
+              <template v-slot:label>
+                Enable referrals
+                &nbsp;
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <div
+                    v-bind="attrs"
+                    v-on="on"
+                    class="referrals-hint"
+                    >
+                      ?
+                    </div>
+                  </template>
+                  <span>Referrals will allow users to refer others to swapping your token and earn a percentage of the swap fee</span>
+                </v-tooltip>
+              </template>
+            </v-checkbox>
+            </div>
+
           </div>
         </v-col>
 
@@ -304,6 +329,7 @@
             :suffix="presaleCurrency"
             ></v-text-field>
           </div>
+
 
 
 
@@ -396,6 +422,7 @@ import { EcosystemId } from '@/ecosystem'
       tokenDecimals: <number | null> null,
       userTokenAllowance: <ethers.BigNumber | null> null,
       userTokenBalance: <ethers.BigNumber | null> null,
+      enableReferrals: <bool> true,
 
       tokenContractAddress: '',
       tokenContractError: <string | null> null,
@@ -875,6 +902,15 @@ import { EcosystemId } from '@/ecosystem'
   border: 1px solid green;
   padding-left: 10px;
   border-radius: 10px;
+}
+
+.referrals-hint {
+  display: inline-block;
+  border: 1px solid gray;
+  border-radius: 50%;
+  padding: 1px;
+  width: 25px;
+  text-align: center;
 }
 
 /*****************/
