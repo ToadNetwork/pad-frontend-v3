@@ -662,6 +662,9 @@ import { EcosystemId } from '@/ecosystem'
         }
 
         setTimeout(() => this.sync())
+      },
+      ecosystemId() {
+        this.tokenContractAddress = ''
       }
     }
   })
