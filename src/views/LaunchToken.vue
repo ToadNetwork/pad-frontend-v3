@@ -455,12 +455,12 @@ import { EcosystemId } from '@/ecosystem'
       tokenContractAddress: '',
       tokenContractError: <string | null> null,
 
-      presaleHardCap: <string> '0',
-      presaleSoftCap: 0,
-      presaleDuration: 0,
-      presaleTokenAmount: 0,
-      presalePrice: <string> '0',
-      presaleMaxContribution: 0,
+      presaleHardCap: <string> '',
+      presaleSoftCap: <number | null> null,
+      presaleDuration: <string> '',
+      presaleTokenAmount: <number | null> null,
+      presalePrice: <string> '',
+      presaleMaxContribution: <string> '',
 
       // Custom data to be stored in a json string
       logoUrl: '',
