@@ -501,7 +501,7 @@ import { EcosystemId } from '@/ecosystem'
       ],
       contractAddressRules: [
         (v: any) => !!v || 'Specify your token\'s contract address',
-        (v: any) => (v.length == 42 && v.slice(0, 2) == '0x') || 'Not a valid contract address'
+        (v: any) => (v.length == 42 && v.slice(0, 2) == '0x') || 'Not a valid contract address\nMake sure that you selected the correct ecosystem.'
       ],
       maxContributionRules: [
         (v: any) => !!v || 'Specify the maximum contribution per user (0 for infinite)',
