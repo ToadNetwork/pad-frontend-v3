@@ -95,7 +95,7 @@
 
         <h1>What will happen to the funds raised during the presale?</h1>
         <p><b>80%</b> of raised funds will be added to liquidity and put in a DPLP farm to be farmed out by users.</p>
-        <p><b>16%</b> will be added to liquidity and given to the presale owner.</p>
+        <p><b>16%</b> will go to the presale owner.</p>
         <p><b>4%</b> will go to PadSwap (3% if referrals are enabled).</p>
 
         <v-divider></v-divider>
