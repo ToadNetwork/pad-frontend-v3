@@ -94,7 +94,7 @@
         <v-divider></v-divider>
 
         <h1>What will happen to the funds raised during the presale?</h1>
-        <p><b>80%</b> of raised funds will be added to liquidity and put in a DPLP farm to be farmed out by users.</p>
+        <p><b>80%</b> of raised funds will be added to liquidity and donated to a <a href="https://docs.toad.network/fundamentals/dplp" target="blank" style="color: #00f000">DPLP farm</a> to incentivize users to stake even more liquidity for your token.</p>
         <p><b>16%</b> will go to the presale owner.</p>
         <p><b>4%</b> will go to PadSwap (3% if referrals are enabled).</p>
 
@@ -112,7 +112,8 @@
         <v-divider></v-divider>
 
         <h1>What happens if the presale doesn't reach its soft cap?</h1>
-        <p>In that case the presale will be canceled and the deposited funds will be returned to the users.</p>
+        <p>The presale will be canceled and the tokens you provided will be sent back to you.</p>
+        <p>Users will be able to visit the presale page and withdraw their contribution.</p>
 
         <v-divider></v-divider>
 
