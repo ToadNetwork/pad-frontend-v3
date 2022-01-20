@@ -412,7 +412,7 @@ import { EcosystemId } from '@/ecosystem'
       websiteUrl: '',
 
       // Ecosystem-specific
-      currentChain: '',      
+      currentChain: '',
       presaleCurrency: '',
       backgroundImage: '',
 
@@ -467,15 +467,6 @@ import { EcosystemId } from '@/ecosystem'
         },
         set(val: EcosystemId) {
           this.$store.commit('setEcosystemId', val)
-          if (val == 0) {
-            this.setEcosystem("BSC")
-          }
-          else if (val == 1) {
-            this.setEcosystem("Moonriver")
-          }
-          else if (val == 2) {
-            this.setEcosystem("Moonbeam")
-          }
         }
       },
       address(): string {
@@ -524,10 +515,12 @@ import { EcosystemId } from '@/ecosystem'
         }
 
         return ethers.utils.formatUnits(this.tokenSupply, this.tokenDecimals)
+      },
+      presaleCurrency(): string {
+        return this.$store.getters.ecosystem.ethName
       }
     },
     async mounted() {
-      this.ecosystemId = this.$store.state.ecosystemId
       while (this.active) {
         try {
           await this.sync()
@@ -687,6 +680,9 @@ import { EcosystemId } from '@/ecosystem'
         }
 
         setTimeout(() => this.sync())
+      },
+      ecosystemId() {
+        this.tokenContractAddress = ''
       }
     }
   })
