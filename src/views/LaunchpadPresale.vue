@@ -279,7 +279,7 @@
         <!-- Claiming referral rewards, if any -->
         <!-- Appears when the presale is over  -->
         <!--------------------------------------->
-        <div v-if="referralsEnabled && displayedSale.referralEarned > 0 && presaleIsActive == false && presaleIsAborted == false">
+        <div v-if="referralsEnabled && referralEarned && referralEarned.gt(0) && presaleIsActive == false && presaleIsAborted == false">
           <v-divider></v-divider>
           <div class="form-line">
             <p>Some participants have used your referral link!</p>
