@@ -502,11 +502,11 @@ import { EcosystemId } from '@/ecosystem'
       ],
       contractAddressRules: [
         (v: any) => !!v || 'Specify your token\'s contract address',
-        (v: any) => (v.length == 42 && v.slice(0, 2) == '0x') || 'Not a valid contract address\nMake sure that you selected the correct ecosystem.'
+        (v: any) => (v.length == 42 && v.slice(0, 2) == '0x') || 'Not a valid contract address. Make sure that you selected the correct ecosystem.'
       ],
       maxContributionRules: [
         (v: any) => !!v || 'Specify the maximum contribution per user (0 for infinite)',
-        (v: any) => (parseFloat(v) > 0) || 'Input a positive number'
+        (v: any) => (parseFloat(v) >= 0) || 'Input a positive number (or 0 for infinite)'
       ],
       websiteUrlRules: [],
       logoUrlRules: [],
@@ -684,7 +684,7 @@ import { EcosystemId } from '@/ecosystem'
 
         const contractCode = await this.multicall.getCode(tokenContract.address)
         if (contractCode == '0x') {
-          this.tokenContractError = 'Address is not a valid ERC20 contract'
+          this.tokenContractError = 'Address is not a valid ERC20 contract.\nMake sure that you selected the correct ecosystem.'
           return
         }
 
