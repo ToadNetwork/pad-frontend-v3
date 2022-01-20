@@ -126,10 +126,14 @@
         <!-- Presale finished -->
         <!---------------------->
         <div v-if="presaleIsActive == false && presaleIsAborted == false" class="form-line">
-          
+
+          <h2 class="presale-success-title">Presale finished</h2>
 
           <v-divider></v-divider>
         
+          <br>
+          <p>This presale has ended.</p>
+          <p>If you participated in this presale, use the button below to claim your {{ displayedSale.tokenSymbol }}.</p>
 
         </div>
 
@@ -188,7 +192,7 @@
             color="primary"
             @click="deposit">
               <template>
-                Deposit {{presaleCurrency}}
+                Deposit {{ presaleCurrency }}
               </template>
             </v-btn>
           </div>
@@ -198,24 +202,38 @@
         <!-- Claiming a refund -->
         <!----------------------->
         <div v-if="presaleIsAborted == true">
-
           <div class="form-line">
             <v-btn
             x-large
             color="primary"
             @click="refund">
               <template>
-                Withdraw {{yourContribution}} {{presaleCurrency}}
+                Withdraw {{ yourContribution }} {{ presaleCurrency }}
               </template>
             </v-btn>
           </div>
         </div>
 
-        <div class="form-line your-contribution">
-          Your contribution: {{yourContribution}} {{presaleCurrency}}
+        <!---------------------------------------------->
+        <!-- Claiming tokens after successful presale -->
+        <!---------------------------------------------->
+        <div v-if="presaleIsActive == false && presaleIsAborted == false">
+          <div class="form-line">
+            <v-btn
+            x-large
+            color="primary"
+            @click="claim">
+              <template>
+                Claim {{ displayedSale.tokenSymbol }}
+              </template>
+            </v-btn>
+          </div>
         </div>
 
-
+        <!-- Your current contribution is always displayed, regardless of the state of the presale -->
+        <div class="form-line your-contribution">
+          Your contribution: {{ yourContribution }} {{ presaleCurrency }}
+        </div>
 
       </div>
     </div>
