@@ -92,7 +92,10 @@
     <div class="presale-form-container">
       <div class="presale-form-box">
 
-        <div class="form-line">
+        <!---------------------------------------->
+        <!-- Countdown timer for active presale -->
+        <!---------------------------------------->
+        <div v-if="presaleIsActive == true" class="form-line">
           <div class="time-left-box">
             <p class="time-left-title">Time left:</p>
             <v-row class="time-left-counter">
@@ -106,17 +109,43 @@
               <v-col cols="4"><span class="time-description">Seconds</span></v-col>
             </v-row>
           </div>
+
+          <v-divider></v-divider>
+        
+          <div class="time-left-description">
+            <p>
+              The presale will end when the timer expires or when the hard cap is reached, whichever comes first.
+            </p>
+            <p>
+              If the presale fails to reach the soft cap, the token will <u>not</u> be launched, and user deposits will be refunded.
+            </p>
+          </div>
         </div>
 
-        <v-divider></v-divider>
+        <!---------------------->
+        <!-- Presale finished -->
+        <!---------------------->
+        <div v-if="presaleIsActive == false && presaleIsAborted == false" class="form-line">
+          
+
+          <v-divider></v-divider>
         
-        <div class="time-left-description">
-          <p>
-            The presale will end when the timer expires or when the hard cap is reached, whichever comes first.
-          </p>
-          <p>
-            If the presale fails to reach the soft cap, the token will <u>not</u> be launched, and user deposits will be refunded.
-          </p>
+
+        </div>
+
+        <!--------------------->
+        <!-- Presale aborted -->
+        <!--------------------->
+        <div v-if="presaleIsAborted == true" class="form-line">
+          
+          <h2 class="presale-aborted-title">Presale aborted</h2>
+
+          <v-divider></v-divider>
+        
+          <br>
+          <p>Possible reasons may include failing to reach the soft cap or being canceled by the presale owner.</p>
+          <p>If you participated in this presale, use the button below to claim your refund.</p>
+
         </div>
 
         <v-divider></v-divider>
@@ -130,6 +159,10 @@
           >{{ displayedSale.presaleRaised }} {{ presaleCurrency }} / {{ displayedSale.presaleHardCap }} {{ presaleCurrency }}</v-progress-linear>
         </div>
 
+        <!----------------------------------------->
+        <!-- Participating in the active presale -->
+        <!----------------------------------------->
+        <div v-if="presaleIsActive == true">
           <div class="form-line">
             <v-text-field
             v-model="amountToDeposit"
@@ -155,10 +188,35 @@
             color="primary"
             @click="deposit">
               <template>
-                Deposit GLMR
+                Deposit {{presaleCurrency}}
               </template>
             </v-btn>
           </div>
+        </div>
+
+        <!----------------------->
+        <!-- Claiming a refund -->
+        <!----------------------->
+        <div v-if="presaleIsAborted == true">
+
+          <div class="form-line">
+            <v-btn
+            x-large
+            color="primary"
+            @click="refund">
+              <template>
+                Withdraw {{yourContribution}} {{presaleCurrency}}
+              </template>
+            </v-btn>
+          </div>
+        </div>
+
+        <div class="form-line your-contribution">
+          Your contribution: {{yourContribution}} {{presaleCurrency}}
+        </div>
+
+
+
       </div>
     </div>
   </v-container>
@@ -187,6 +245,8 @@
       presaleTokensPerEth: <ethers.BigNumber | null> null,
       presaleEndTime: <number> 0, // Stored as a UNIX timestamp in miliseconds
       maxContribution: <ethers.BigNumber | null> null,
+
+      yourContribution: <ethers.BigNumber | null> null, // Amount already contributed by this wallet
 
       presaleIsActive: <boolean | null> null,
       presaleIsAborted: <boolean | null> null,
@@ -286,6 +346,12 @@
       }
     },
     methods: {
+      async refund () {
+        return
+      },
+      async claim () {
+        return
+      },
       async deposit () {
         if (!this.presaleContract) {
           return
@@ -480,6 +546,18 @@
   color: #a1a1a1;
 }
 
+/* Titles */
+
+.presale-aborted-title {
+  background-color: #f48036 !important;
+  border-radius: 5px;
+}
+
+.presale-success-title {
+  background-color: green !important;
+  border-radius: 5px;
+}
+
 /* Progress bar */
 .presale-progress-title {
   margin-top: 30px;
@@ -490,6 +568,10 @@
   margin-bottom: 30px;
   border-radius: 25px;
   overflow: hidden;
+}
+
+.your-contribution {
+  color: gray;
 }
 
 </style>
