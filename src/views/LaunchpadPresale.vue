@@ -480,7 +480,8 @@
             presaleTokensPerEth: <ethers.BigNumber | null> null,
             presaleEndTime: <number | null> null,
             presaleInfo: <string | null> null,
-            maxContribution: <ethers.BigNumber | null> null
+            maxContribution: <ethers.BigNumber | null> null,
+            referralsEnabled: <boolean | null> null
           }
 
           const promises = [
@@ -493,7 +494,8 @@
             this.presaleContract.tokensPerEth().then((t: ethers.BigNumber) => firstLoadData.presaleTokensPerEth = t),
             this.presaleContract.endsAt().then((e: ethers.BigNumber) => firstLoadData.presaleEndTime = e.toNumber() * 1000),
             this.presaleContract.presaleInfo().then((p: string) => firstLoadData.presaleInfo = p),
-            this.presaleContract.buyLimit().then((b: ethers.BigNumber) => firstLoadData.maxContribution = b)
+            this.presaleContract.buyLimit().then((b: ethers.BigNumber) => firstLoadData.maxContribution = b),
+            // this.presaleContract.referrals().then((b: boolean) => firstLoadData.referralsEnabled = b)
           ]
           await Promise.all(promises)
           Object.assign(this, firstLoadData)
