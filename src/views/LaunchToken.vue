@@ -53,9 +53,6 @@
     </div>
 
     <div class="launchpad-intro">
-      <p>
-        LaunchPAD allows users to launch a token in a single click, without coding knowledge or complicated steps.
-      </p>
       <p class="please-read">
         Before launching a token, make sure to read the <b>Launchpad FAQ</b> below.
       </p>
@@ -72,10 +69,23 @@
 
         <v-divider></v-divider>
 
+        <h1>Do I need to deploy the token contract myself?</h1>
+        <p>
+        Currently, yes - you will need to deploy your own token contract before using the launchpad.<br>
+        However, we are already working on deploying a fully automatic token factory that will allow anyone to launch a token contract in one click, without programming experience.
+        <br><br>
+
+        <v-divider></v-divider>
+
         <h1>What are the perks of using the launchPAD?</h1>
         <p>
         All tokens launched via the launchPAD are automatically launched with their own DPLP farms, adding extra utility to your project and ensuring that it has liquidity forever.
         <br><br>
+
+        <v-divider></v-divider>
+
+        <h1>Will I be able to also put my token on other exchanges?</h1>
+        <p>Of course! You can always provide liquidity on any DEXes of your choice.</p>
 
         <v-divider></v-divider>
 
