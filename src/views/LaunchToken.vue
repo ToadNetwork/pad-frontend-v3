@@ -553,7 +553,8 @@ import { EcosystemId } from '@/ecosystem'
         return this.factoryContract.connect(this.web3)
       },
       isTokenContractLoading(): boolean {
-        return ethers.utils.isAddress(this.tokenContractAddress) && this.tokenName === null
+        // userTokenAllowance is the last thing to be set during load
+        return ethers.utils.isAddress(this.tokenContractAddress) && this.userTokenAllowance === null
       },
       isApproveComplete(): boolean {
         if (this.userTokenAllowance === null) {
@@ -705,11 +706,11 @@ import { EcosystemId } from '@/ecosystem'
         ]
         if (this.address) {
           promises.push(
-            // tokenContract.allowance(this.address, this.presaleContractAddress).then((a: ethers.BigNumber) => contractData.userTokenAllowance = a),
             tokenContract.balanceOf(this.address).then((b: ethers.BigNumber) => contractData.userTokenBalance = b)
           )
         }
         await Promise.all(promises)
+        contractData.userTokenAllowance = await tokenContract.allowance(this.address, contractData.presaleContractAddress)
 
         if (tokenContract.address == this.tokenContract?.address) {
           Object.assign(this, contractData)
