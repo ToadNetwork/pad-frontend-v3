@@ -697,7 +697,7 @@ import { EcosystemId } from '@/ecosystem'
 
         // TODO: check if address is a valid ERC20
         const promises = [
-          // this.factoryContract.getPresaleAddress(tokenContract.address).then((a: string) => contractData.presaleContractAddress = a),
+          this.factoryContract.getNextPresaleAddress(tokenContract.address).then((a: string) => contractData.presaleContractAddress = a),
           tokenContract.name().then((n: string) => contractData.tokenName = n),
           tokenContract.symbol().then((s: string) => contractData.tokenSymbol = s),
           tokenContract.totalSupply().then((s: ethers.BigNumber) => contractData.tokenSupply = s),
@@ -710,8 +710,6 @@ import { EcosystemId } from '@/ecosystem'
           )
         }
         await Promise.all(promises)
-        // TODO: remove when new launchpad contract is deployed
-        contractData.presaleContractAddress = '0x0000000000000000000000000000000000000000'
 
         if (tokenContract.address == this.tokenContract?.address) {
           Object.assign(this, contractData)
