@@ -194,7 +194,8 @@ export default Vue.extend({
         logo: require('@/assets/tokens/moonbeam/PAD.svg'),
         name: 'Moonbeam PAD',
         ticker: 'PAD',
-        presaleLink: '/presale'
+        // using a moonriver token to test since that's the only chain with contracts for now
+        presaleLink: '/moonriver/presale/0x468c3bc8c5a2a7133fece7a8b1de041858c2d685'
       },
     ]
     }

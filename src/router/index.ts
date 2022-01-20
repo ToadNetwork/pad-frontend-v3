@@ -68,9 +68,24 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/LaunchToken.vue')
   },
   {
-    path: '/presale/:address',
+    path: '/:ecosystem/presale/:address',
     name: 'Launchpad Presale',
-    component: () => import('../views/LaunchpadPresale.vue')
+    component: () => import('../views/LaunchpadPresale.vue'),
+    beforeEnter: (to, from, next) => {
+      if (to.params.ecosystem.toLowerCase() != to.params.ecosystem) {
+        next(`/${to.params.ecosystem.toLowerCase()}/presale/${to.params.address}`)
+        return
+      }
+
+      const ecosystem = Object.values(ECOSYSTEMS).find(e => to.params.ecosystem == e.routeName)
+      if (!ecosystem) {
+        next('/launchpad')
+        return
+      }
+
+      store.commit('setEcosystemId', ecosystem.ecosystemId)
+      next()
+    }
   },
   {
     path: '/old',
