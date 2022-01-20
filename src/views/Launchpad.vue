@@ -38,7 +38,7 @@
 
 
   <v-sheet class="launchpad-title-bar">
-    <img class="background" :src="backgroundImage">
+    <img class="background" :src="getBackgroundTexture()">
 
     <div class="launchpad-title">
       <img class="launchpad-image" src="@/assets/icons/LaunchPAD Icon.svg">
@@ -84,7 +84,7 @@
   </v-sheet>
 
     <div class="table-container">
-    <img class="background" :src="backgroundImage">
+    <img class="background" :src="getBackgroundTexture()">
 
       <v-data-table
       class="token-table"
@@ -127,15 +127,17 @@ export default Vue.extend({
   methods: {
     setEcosystem(chain_id : string) {
      this.currentChain = chain_id
-     if (chain_id == 'BSC') {
-      this.backgroundImage = require('@/assets/images/launchpad-texture-bsc.jpg')
-     }
-     if (chain_id == 'Moonriver') {
-      this.backgroundImage = require('@/assets/images/launchpad-texture-moonriver.jpg')
-     }
-     if (chain_id == 'Moonbeam') {
-      this.backgroundImage = require('@/assets/images/launchpad-texture-moonbeam.jpg')
-     }
+    },
+    getBackgroundTexture() {
+      if (this.$store.getters.ecosystem.chainId == 56) {
+        return require('@/assets/images/launchpad-texture-bsc.jpg')
+      }
+      if (this.$store.getters.ecosystem.chainId == 1285) {
+        return require('@/assets/images/launchpad-texture-moonriver.jpg')
+      }
+      if (this.$store.getters.ecosystem.chainId == 1284) {
+        return require('@/assets/images/launchpad-texture-moonbeam.jpg')
+      }
     },
   },
   data() {
@@ -144,7 +146,6 @@ export default Vue.extend({
       active: true,
       searchText: '',
       customPresaleAddress: '',
-      backgroundImage: '',
       headers: [
       {
         text: 'Logo',

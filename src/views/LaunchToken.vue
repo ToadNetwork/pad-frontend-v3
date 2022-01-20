@@ -38,7 +38,7 @@
     </div>
 
     <v-sheet class="launchpad-title-bar">
-    <img class="background" :src="backgroundImage">
+    <img class="background" :src="getBackgroundTexture()">
     <div class="launchpad-title">
       <img class="launchpad-image" src="@/assets/icons/LaunchPAD Icon.svg">
       <h1 style="margin-bottom: 0">LaunchPAD</h1>
@@ -538,19 +538,15 @@ import { EcosystemId } from '@/ecosystem'
       this.active = false
     },
     methods: {
-      setEcosystem(chain_id : string) {
-        this.currentChain = chain_id
-        if (chain_id == "BSC") {
-          this.presaleCurrency = "BNB"
-          this.backgroundImage = require('@/assets/images/launchpad-texture-bsc.jpg')
+      getBackgroundTexture() {
+        if (this.$store.getters.ecosystem.chainId == 56) {
+          return require('@/assets/images/launchpad-texture-bsc.jpg')
         }
-        if (chain_id == "Moonriver") {
-          this.presaleCurrency = "MOVR"
-          this.backgroundImage = require('@/assets/images/launchpad-texture-moonriver.jpg')
+        if (this.$store.getters.ecosystem.chainId == 1285) {
+          return require('@/assets/images/launchpad-texture-moonriver.jpg')
         }
-        if (chain_id == "Moonbeam") {
-          this.presaleCurrency = "GLMR"
-          this.backgroundImage = require('@/assets/images/launchpad-texture-moonbeam.jpg')
+        if (this.$store.getters.ecosystem.chainId == 1284) {
+          return require('@/assets/images/launchpad-texture-moonbeam.jpg')
         }
       },
       async approve() {
