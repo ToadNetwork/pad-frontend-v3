@@ -325,6 +325,7 @@
       maxContribution: <ethers.BigNumber | null> null,
 
       yourContribution: <ethers.BigNumber | null> null, // Amount already contributed by this wallet
+      boughtTokens: <ethers.BigNumber | null> null, // Amount of tokens to be received for contribution
       referralsEnabled: <boolean | null> null,
       referralLink: <string> '', // Referral link generated for your wallet
       referralEarned: <ethers.BigNumber | null> null, // Amount of money earned from your referral link
@@ -424,6 +425,9 @@
       },
       web3(): ethers.Signer | null {
         return this.$store.state.web3
+      },
+      address(): string | null {
+        return this.$store.state.address
       }
     },
     methods: {
@@ -473,7 +477,7 @@
             presaleTokensPerEth: <ethers.BigNumber | null> null,
             presaleEndTime: <number | null> null,
             presaleInfo: <string | null> null,
-            maxContribution: <ethers.BigNumber | null> null,
+            maxContribution: <ethers.BigNumber | null> null
           }
 
           const promises = [
@@ -495,7 +499,10 @@
         const data: any = {
           presaleIsActive: <boolean | null> null,
           presaleIsAborted: <boolean | null> null,
-          presaleRaised: <ethers.BigNumber | null> null
+          presaleRaised: <ethers.BigNumber | null> null,
+          yourContribution: <ethers.BigNumber | null> null,
+          boughtTokens: <ethers.BigNumber | null> null,
+          referralEarned: <ethers.BigNumber | null> null
         }
 
         const promises = [
@@ -503,6 +510,13 @@
           this.presaleContract.isAborted().then((a: boolean) => data.presaleIsAborted = a),
           this.multicall.getBalance(this.presaleContract.address).then((b: ethers.BigNumber) => data.presaleRaised = b)
         ]
+        if (this.address) {
+          promises.push(
+            // this.presaleContract.paidAmount(this.address).then((a: ethers.BigNumber) => data.yourContribution = a),
+            // this.presaleContract.boughtTokensOf(this.address).then((t: ethers.BigNumber) => data.boughtTokens = t),
+            // this.presaleContract.referralBonuses(this.address).then((b: ethers.BigNumber) => data.referralEarned = b)
+          )
+        }
         await Promise.all(promises)
         Object.assign(this, data)
       },
