@@ -3,7 +3,7 @@
     <v-sheet class="launchpad-title-bar">
     <div class="launchpad-title">
       <img class="launchpad-image" :src=logoUrl>
-      <h1 style="padding-bottom: 0">${{tokenSymbol}} ({{tokenName}}) presale</h1>
+      <h1 style="padding-bottom: 0">${{displayedSale.tokenSymbol}} ({{displayedSale.tokenName}}) presale</h1>
       <v-btn
       medium
       color="primary"
@@ -25,15 +25,15 @@
           <tbody>
             <tr>
               <td>Token name</td>
-              <td>{{ tokenName }}</td>
+              <td>{{ displayedSale.tokenName }}</td>
             </tr>
             <tr>
               <td>Token symbol</td>
-              <td>{{ tokenSymbol }}</td>
+              <td>{{ displayedSale.tokenSymbol }}</td>
             </tr>
             <tr>
               <td>Max supply</td>
-              <td>{{ tokenSupply }} {{ tokenSymbol }}</td>
+              <td>{{ displayedSale.tokenSupply }} {{ displayedSale.tokenSymbol }}</td>
             </tr>
             <tr>
               <td>Website</td>
@@ -59,28 +59,28 @@
           <tbody>
             <tr>
               <td>Tokens in presale</td>
-              <td>{{displayedPresaleTokenAmount}} {{tokenSymbol}}
+              <td>{{ displayedSale.presaleTokenAmount }} {{ displayedSale.tokenSymbol }}
                 ({{
                   trimNumber(
-                    (displayedPresaleTokenAmount / tokenSupply) * 100
+                    (displayedSale.presaleTokenAmount / displayedSale.tokenSupply) * 100
                   ) 
                 }}% of supply)</td>
             </tr>
             <tr>
               <td>Hard cap</td>
-              <td>{{presaleHardCap}} {{presaleCurrency}}</td>
+              <td>{{ displayedSale.presaleHardCap }} {{ presaleCurrency }}</td>
             </tr>
             <tr>
               <td>Soft cap</td>
-              <td>{{presaleSoftCap}} {{presaleCurrency}}</td>
+              <td>{{ displayedSale.presaleSoftCap }} {{ presaleCurrency }}</td>
             </tr>
             <tr>
               <td>Price</td>
-              <td>{{trimNumber(displayedPresaleTokenAmount/presaleHardCap)}} {{tokenSymbol}} per {{presaleCurrency}}</td>
+              <td>{{ trimNumber(displayedSale.presaleTokenAmount/displayedSale.presaleHardCap) }} {{ displayedSale.tokenSymbol }} per {{ presaleCurrency }}</td>
             </tr>
             <tr>
               <td>Maximum contribution</td>
-              <td>{{maxContribution}} {{presaleCurrency}}</td>
+              <td>{{ displayedSale.maxContribution }} {{ presaleCurrency }}</td>
             </tr>
           </tbody>
         </v-simple-table>
@@ -124,17 +124,17 @@
         <div class="presale-progress-title">Presale progress:</div>
         <div class="presale-progress">
           <v-progress-linear
-          :value="(presaleRaised / presaleHardCap) * 100"
+          :value="(displayedSale.presaleRaised / presaleHardCap) * 100"
           color="#12a362"
           height="25"
-          >{{presaleRaised}} {{presaleCurrency}} / {{presaleHardCap}} {{presaleCurrency}}</v-progress-linear>
+          >{{ displayedSale.presaleRaised }} {{ presaleCurrency }} / {{ displayedSale.presaleHardCap }} {{ presaleCurrency }}</v-progress-linear>
         </div>
 
           <div class="form-line">
             <v-text-field
             v-model="amountToDeposit"
             label="Amount to deposit"
-            suffix="GLMR"
+            :suffix="presaleCurrency"
             ></v-text-field>
           </div>
 
@@ -177,16 +177,15 @@
       presaleAddress: <string> '',
 
       // Data pulled from the contract
-      tokenName: 'GLMR Pad',
-      tokenSymbol: 'PAD',
-      tokenSupply: 100000,
+      tokenName: null,
+      tokenSymbol: null,
+      tokenSupply: <ethers.BigNumber | null> null,
       tokenDecimals: <number | null> null,
-      presaleHardCap: 100,
-      presaleSoftCap: 25,
+      presaleHardCap: <ethers.BigNumber | null> null,
+      presaleSoftCap: <ethers.BigNumber | null> null,
       presaleTokensPerEth: <ethers.BigNumber | null> null,
-      presaleCurrency: 'GLMR',
-      presaleEndTime: 1642780658504, // Stored as a UNIX timestamp in miliseconds
-      maxContribution: <ethers.BigNumber | null> ethers.BigNumber.from(2),
+      presaleEndTime: <number> 0, // Stored as a UNIX timestamp in miliseconds
+      maxContribution: <ethers.BigNumber | null> null,
 
       presaleIsActive: <boolean | null> null,
       presaleIsAborted: <boolean | null> null,
@@ -265,13 +264,22 @@
         const presaleTokenAmountEther = this.presaleTokensPerEth.mul(this.presaleHardCap)
         return presaleTokenAmountEther
       },
-      displayedPresaleTokenAmount(): string {
-        if (!this.presaleTokensPerEth || !this.presaleHardCap) {
-          return '0'
+      displayedSale(): Object {
+        return {
+          tokenName: this.tokenName,
+          tokenSymbol: this.tokenSymbol,
+          tokenSupply: this.tokenSupply ? ethers.utils.formatUnits(this.tokenSupply, this.tokenDecimals!) : null,
+          presaleHardCap: this.presaleHardCap ? ethers.utils.formatEther(this.presaleHardCap) : null,
+          presaleSoftCap: this.presaleSoftCap ? ethers.utils.formatEther(this.presaleSoftCap) : null,
+          presaleTokensPerEth: this.presaleTokensPerEth?.toNumber(),
+          presaleEndTime: this.presaleEndTime * 1000,
+          maxContribution: this.maxContribution ? ethers.utils.formatUnits(this.maxContribution, this.tokenDecimals!) : null,
+          presaleTokenAmount: this.presaleTokensPerEth ? this.presaleTokensPerEth.toNumber() * parseFloat(ethers.utils.formatEther(this.presaleHardCap)) : null,
+          presaleRaised: this.presaleRaised ? ethers.utils.formatEther(this.presaleRaised) : null
         }
-
-        const presaleTokenAmount = this.presaleTokensPerEth.toNumber() * this.presaleHardCap
-        return presaleTokenAmount.toString()
+      },
+      presaleCurrency(): string {
+        return this.$store.getters.ecosystem.ethName
       }
     },
     methods: {
@@ -318,28 +326,28 @@
             this.presaleContract.buyLimit().then((b: ethers.BigNumber) => firstLoadData.maxContribution = b)
           ]
           await Promise.all(promises)
-          Object.assign(firstLoadData, this)
+          Object.assign(this, firstLoadData)
         }
 
         const data: any = {
           presaleIsActive: <boolean | null> null,
           presaleIsAborted: <boolean | null> null,
-          totalBoughtTokens: <ethers.BigNumber | null> null
+          presaleRaised: <ethers.BigNumber | null> null
         }
 
         const promises = [
           this.presaleContract.isActive().then((a: boolean) => data.presaleIsActive = a),
           this.presaleContract.isAborted().then((a: boolean) => data.presaleIsAborted = a),
-          // this.presaleContract.totalBoughtTokens().then((t: ethers.BigNumber) => data.totalBoughtTokens = t)
+          this.multicall.getBalance(this.presaleContract.address).then((b: ethers.BigNumber) => data.presaleRaised = b)
         ]
         await Promise.all(promises)
-        Object.assign(data, this)
+        Object.assign(this, data)
       }
     },
     watch: {
       amountToDeposit: function(newAmount) {
         const presaleTokenAmountEther = parseFloat(ethers.utils.formatUnits(this.presaleTokenAmount, this.tokenDecimals!))
-        let tokensPerCurrency = (presaleTokenAmountEther / this.presaleHardCap)
+        let tokensPerCurrency = (presaleTokenAmountEther / parseFloat(ethers.utils.formatEther(this.presaleHardCap)))
         this.tokensGiven = parseFloat(tokensPerCurrency as any) * parseFloat(this.amountToDeposit as any)
       }
     }
