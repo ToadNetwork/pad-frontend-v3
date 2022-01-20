@@ -71,15 +71,10 @@
 
         <v-divider></v-divider>
 
-        <h1>- Are there any perks of using the launchPAD?</h1>
-        <p>Yes!<br>
-        All tokens launched via the launchPAD are automatically eligible for:</p>
-        <ul>
-          <li>DPLP farms, adding extra utility to your project and ensuring that it has liquidity forever</li>
-          <li>BogTools bot</li>
-          <li>// other stuff, I guess?</li>
-        </ul>
-        <br>
+        <h1>What are the perks of using the launchPAD?</h1>
+        <p>
+        All tokens launched via the launchPAD are automatically launched with their own DPLP farms, adding extra utility to your project and ensuring that it has liquidity forever.
+        <br><br>
 
         <v-divider></v-divider>
 
@@ -89,13 +84,8 @@
 
         <v-divider></v-divider>
 
-        <h1>- Can I cancel the presale if anything goes wrong?</h1>
-        <p>Yes! Until the presale is over, you can cancel it and return all deposited funds to the users.</p>
-
-        <v-divider></v-divider>
-
-        <h1>- What will happen to the funds raised during the presale?</h1>
-        <p>// no info yet</p>
+        <h1>Can I cancel the presale if anything goes wrong?</h1>
+        <p>Yes! As long as the presale is not over, you can cancel it and return all deposited funds to the users.</p>
 
 
       </v-expansion-panel-content>
@@ -785,7 +775,7 @@ import { EcosystemId } from '@/ecosystem'
 }
 
 .v-expansion-panel {
-  background-color: #ffffff05 !important;
+  background-color: #00000085 !important;
 }
 
 .v-expansion-panel-header:hover {
