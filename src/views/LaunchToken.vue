@@ -412,7 +412,6 @@ import { EcosystemId } from '@/ecosystem'
 
       // Ecosystem-specific
       currentChain: '',      
-      presaleCurrency: '',
 
       nameRules: [
         (v: any) => !!v || 'Token name is required',
@@ -465,15 +464,6 @@ import { EcosystemId } from '@/ecosystem'
         },
         set(val: EcosystemId) {
           this.$store.commit('setEcosystemId', val)
-          if (val == 0) {
-            this.setEcosystem("BSC")
-          }
-          else if (val == 1) {
-            this.setEcosystem("Moonriver")
-          }
-          else if (val == 2) {
-            this.setEcosystem("Moonbeam")
-          }
         }
       },
       address(): string {
@@ -522,10 +512,12 @@ import { EcosystemId } from '@/ecosystem'
         }
 
         return ethers.utils.formatUnits(this.tokenSupply, this.tokenDecimals)
+      },
+      presaleCurrency(): string {
+        return this.$store.getters.ecosystem.ethName
       }
     },
     async mounted() {
-      this.ecosystemId = this.$store.state.ecosystemId
       while (this.active) {
         try {
           await this.sync()
@@ -544,18 +536,6 @@ import { EcosystemId } from '@/ecosystem'
       this.active = false
     },
     methods: {
-      setEcosystem(chain_id : string) {
-        this.currentChain = chain_id
-        if (chain_id == "BSC") {
-          this.presaleCurrency = "BNB"
-        }
-        if (chain_id == "Moonriver") {
-          this.presaleCurrency = "MOVR"
-        }
-        if (chain_id == "Moonbeam") {
-          this.presaleCurrency = "GLMR"
-        }
-      },
       async approve() {
         const tokenContract = this.tokenContract!.connect(this.web3!)
         const tx = await tokenContract.populateTransaction.approve(this.presaleContractAddress, APPROVE_AMOUNT)
