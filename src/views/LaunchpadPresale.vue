@@ -190,7 +190,6 @@
 
       presaleIsActive: <boolean | null> null,
       presaleIsAborted: <boolean | null> null,
-      totalBoughtTokens: <ethers.BigNumber | null> null,
 
       // User-entered data (from the .json string in the contract)
       logoUrl: 'https://padswap.exchange/glmr/images/pad/pad-moonbeam.png',
