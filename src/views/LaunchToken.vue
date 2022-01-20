@@ -72,26 +72,47 @@
         <h1>Do I need to deploy the token contract myself?</h1>
         <p>
         Currently, yes - you will need to deploy your own token contract before using the launchpad.<br>
-        However, we are already working on deploying a fully automatic token factory that will allow anyone to launch a token contract in one click, without programming experience.
-        <br><br>
+        However, we are already working on a fully automatic token factory that will allow anyone to launch a token contract in one click, without programming experience.
+        </p>
 
         <v-divider></v-divider>
 
-        <h1>What are the perks of using the launchPAD?</h1>
-        <p>
-        All tokens launched via the launchPAD are automatically launched with their own DPLP farms, adding extra utility to your project and ensuring that it has liquidity forever.
-        <br><br>
+        <h1>What are the perks of using the LaunchPAD?</h1>
+        <ul class="perks-list">
+          <li>
+            All tokens launched here are automatically getting their own DPLP farms, adding utility to your project and ensuring that it has liquidity forever.
+          </li>
+          <li>
+            Our referral program allows users to earn fees by referring others to your token's presale.<br>The referral bonuses are taken from PadSwap's platform fees, so you don't lose anything by enabling referrals.
+          </li>
+          <li>
+            Unlike other platforms, launching a presale on PadSwap is <b>free</b> - we don't take a flat fee to launch the presale.
+          </li>
+        </ul>
+        <br>
 
         <v-divider></v-divider>
 
-        <h1>Will I be able to also put my token on other exchanges?</h1>
-        <p>Of course! You can always provide liquidity on any DEXes of your choice.</p>
+        <h1>What will happen to the funds raised during the presale?</h1>
+        <p><b>80%</b> of raised funds will be added to liquidity and put in a DPLP farm to be farmed out by users.</p>
+        <p><b>16%</b> will be added to liquidity and given to the presale owner.</p>
+        <p><b>4%</b> will go to PadSwap (3% if referrals are enabled).</p>
 
         <v-divider></v-divider>
 
-        <h1>What happens if the project doesn't reach its soft cap?</h1>
-        <p>The presale will be canceled and the deposited funds will be returned to the users.</p>
+        <h1>Can I launch more than one presale for the same token?</h1>
+        <p>If the previous presale has failed or was cancelled, you can try again as many times as you want.</p>
+        <p>If you've already had a successful presale and want to distribute the rest of the supply, our auction system is made just for that - stay tuned for its announcement!</p>
 
+        <v-divider></v-divider>
+
+        <h1>Can I also put my token on other exchanges?</h1>
+        <p>Of course! You can always provide liquidity on any DEXes of your choice, PadSwap doesn't limit you in that regard.</p>
+
+        <v-divider></v-divider>
+
+        <h1>What happens if the presale doesn't reach its soft cap?</h1>
+        <p>In that case the presale will be canceled and the deposited funds will be returned to the users.</p>
 
         <v-divider></v-divider>
 
@@ -854,6 +875,10 @@ import { EcosystemId } from '@/ecosystem'
 .launchpad-faq h1, .launchpad-faq p {
   margin-left: 20px;
   margin-right: 20px;
+}
+
+.perks-list li {
+  margin-top: 10px;
 }
 
 

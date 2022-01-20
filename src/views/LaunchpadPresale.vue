@@ -297,6 +297,100 @@
 
       </div>
     </div>
+
+    <!------------------------>
+    <!-- Presale owner area -->
+    <!------------------------>
+    <div v-if="isPresaleOwner" class="presale-form-container">
+      <div class="presale-form-box">
+        <h3>Manage your presale</h3>
+        <br>
+
+        <v-expansion-panels class="manage-presale"
+        inset>
+          <v-expansion-panel class="rounded-expansion-panel" style="border: 1px solid #7e7e04;">
+            <v-expansion-panel-header style="text-align: center !important; display: block;" expand-icon="">
+              Edit token info
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+            <div class="form-line">
+              <v-text-field
+              v-model="logoUrl"
+              label="Token logo URL (leave empty if you don't have one)"
+              required
+              >
+                <template v-slot:append>
+                  <img
+                  style="width: 30px"
+                  :src=logoUrl>
+                </template>
+
+              </v-text-field>
+            </div>
+
+            <div class="form-line">
+              <v-text-field
+              v-model="websiteUrl"
+              label="Website (leave empty if you don't have one)"
+              required
+              ></v-text-field>
+            </div>
+
+            <div class="form-line">
+              <v-text-field
+              v-model="telegramUrl"
+              label="Telegram link (leave empty if you don't have one)"
+              required
+              ></v-text-field>
+            </div>
+
+            <v-btn
+            large
+            color="primary"
+            @click="updateTokenInfo">
+              Update
+            </v-btn>
+
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+
+          <br>
+
+          <v-expansion-panel class="rounded-expansion-panel" style="border: 1px solid #860303;">
+            <v-expansion-panel-header style="text-align: center !important; display: block;" expand-icon="">
+              Cancel presale
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <p>This will immediately abort your presale.</p>
+              <p>The raised funds will be refunded to the users, and your deposited {{ displayedSale.tokenSymbol }} will be sent back to you.</p>
+
+              <p>To cancel the presale, type CANCEL and press the button below.</p>
+
+              <v-form
+              ref="form"
+              v-model="cancelFormValid"
+              >
+              <v-text-field
+              label="Type CANCEL to confirm"
+              :rules="cancelPresaleRules">
+              </v-text-field>
+
+              <v-btn
+                :disabled="!cancelFormValid"
+                type="button"
+                name="button"
+                color="red"
+                @click="cancelPresale">CANCEL PRESALE
+              </v-btn>
+              </v-form>
+
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+
+        </v-expansion-panels>
+      </div>
+    </div>
+
   </v-container>
 </template>
 
@@ -345,7 +439,14 @@
       // User-entered data
       amountToDeposit: '0',
       tokensGiven: 0,
-      active: true
+      active: true,
+
+      // Admin area
+      isPresaleOwner: <boolean | null> null,
+      cancelFormValid: <boolean> false, 
+      cancelPresaleRules: [
+        (v: any) => (v == 'CANCEL') || 'Please type CANCEL to confirm'
+      ],
     }),
     created() {
       this.presaleAddress = this.$route.params.address
@@ -434,6 +535,12 @@
       }
     },
     methods: {
+      async cancelPresale() {
+        return
+      },
+      async updateTokenInfo() {
+        return
+      },
       async refund () {
         return
       },
@@ -700,6 +807,29 @@
   border: 1px solid gray;
   border-radius: 10px;
   padding-left: 10px;
+}
+
+/*************************/
+/* Managing your presale */
+/*************************/
+
+.v-expansion-panels {
+  background: none !important;
+  border: none !important;
+}
+
+.v-expansion-panel {
+  background-color: #00000085 !important;
+}
+
+.v-expansion-panel-header:hover {
+  background-color: #d2f3f21a !important;
+}
+
+.rounded-expansion-panel {
+  overflow: hidden;
+  border-radius: 5px;
+  margin-bottom: 15px;
 }
 
 </style>
