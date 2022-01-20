@@ -648,6 +648,7 @@ import { EcosystemId } from '@/ecosystem'
           hardCap,
           tokensPerEth,
           durationTime,
+          this.enableReferrals,
           presaleInfo
         )
         await this.safeSendTransaction({ tx, targetChainId: this.chainId })
