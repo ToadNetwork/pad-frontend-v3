@@ -280,7 +280,7 @@
               :open-on-hover="false"
               right
               >
-                <template #activator="{ on }">
+                <template #activator="{ on, attrs }">
                   <v-btn
                   style="min-width: 0;"
                   @click="on.click"
