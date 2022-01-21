@@ -157,7 +157,7 @@
         <div class="presale-progress-title">Presale progress:</div>
         <div class="presale-progress">
           <v-progress-linear
-          :value="(displayedSale.presaleRaised / presaleHardCap) * 100"
+          :value="(parseFloat(displayedSale.presaleRaised) / parseFloat(displayedSale.presaleHardCap)) * 100"
           color="#12a362"
           height="25"
           >{{ displayedSale.presaleRaised }} {{ presaleCurrency }} / {{ displayedSale.presaleHardCap }} {{ presaleCurrency }}</v-progress-linear>
