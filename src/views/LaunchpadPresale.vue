@@ -535,7 +535,7 @@
         const presaleTokenAmountEther = this.presaleTokensPerEth.mul(this.presaleHardCap)
         return presaleTokenAmountEther
       },
-      displayedSale(): Object {
+      displayedSale(): any {
         return {
           tokenName: this.tokenName,
           tokenSymbol: this.tokenSymbol,
@@ -708,10 +708,8 @@
       },
     },
     watch: {
-      amountToDeposit: function(newAmount) {
-        const presaleTokenAmountEther = parseFloat(ethers.utils.formatUnits(this.presaleTokenAmount, this.tokenDecimals!))
-        let tokensPerCurrency = (presaleTokenAmountEther / parseFloat(ethers.utils.formatEther(this.presaleHardCap!)))
-        this.tokensGiven = (parseFloat(this.displayedSale.presaleTokenAmount as any) / parseFloat(this.displayedSale.presaleHardCap as any)) * parseFloat(this.amountToDeposit as any)
+      amountToDeposit () {
+        this.tokensGiven = (parseFloat(this.displayedSale.presaleTokenAmount) / parseFloat(this.displayedSale.presaleHardCap)) * parseFloat(this.amountToDeposit)
       }
     }
   })
