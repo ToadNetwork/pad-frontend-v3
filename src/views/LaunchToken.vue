@@ -415,18 +415,6 @@
     class="launch-button">
       Launch
     </button>
-
-    <div v-if="isPresaleCreated">
-      <h3>Presale created!</h3>
-      <br>
-      <v-btn
-      x-large
-      color="primary"
-      :href="'http://' + hostname + '/' + ecosystemName + '/presale/' + presaleContractAddress"
-      >
-        Go to presale
-      </v-btn>
-    </div>
   </div>
 </div>
 
@@ -594,9 +582,6 @@ import { EcosystemId } from '@/ecosystem'
       presaleCurrency(): string {
         return this.$store.getters.ecosystem.ethName
       },
-      isPresaleCreated(): boolean {
-        return false
-      },
       ecosystemName() : string {
         if (this.$store.getters.ecosystem.chainId == 56) {
           return 'bsc'
@@ -690,7 +675,7 @@ import { EcosystemId } from '@/ecosystem'
         await this.safeSendTransaction({ tx, targetChainId: this.chainId })
 
         const chain = this.$store.getters.ecosystem.routeName
-        this.$router.push(`/${chain}/${presaleContractAddress}`)
+        this.$router.push(`/${chain}/presale/${presaleContractAddress}`)
       },
       copyAddress (address : string) {
         let textArea = document.createElement("textarea")
