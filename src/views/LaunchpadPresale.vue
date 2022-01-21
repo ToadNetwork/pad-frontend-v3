@@ -28,7 +28,7 @@
 
     <v-sheet v-if="isPresaleValid" class="launchpad-title-bar">
     <div class="launchpad-title">
-      <img class="launchpad-image" :src=logoUrl>
+      <img class="launchpad-image" :src="displayedSale.presaleInfo.tokenLogoUrl">
       <h1 style="padding-bottom: 0">${{displayedSale.tokenSymbol}} ({{displayedSale.tokenName}}) presale</h1>
       <v-btn
       medium
@@ -63,11 +63,11 @@
             </tr>
             <tr>
               <td>Website</td>
-              <td><a :href="websiteUrl" target="_blank">{{websiteUrl}}</a></td>
+              <td><a :href="displayedSale.presaleInfo.websiteUrl" target="_blank">{{displayedSale.presaleInfo.websiteUrl}}</a></td>
             </tr>
             <tr>
               <td>Telegram</td>
-              <td><a :href="telegramUrl" target="_blank">{{telegramUrl}}</a></td>
+              <td><a :href="displayedSale.presaleInfo.telegramUrl" target="_blank">{{displayedSale.presaleInfo.telegramUrl}}</a></td>
             </tr>
           </tbody>
         </v-simple-table>
@@ -458,10 +458,7 @@
       presaleIsAborted: <boolean | null> null,
 
       // User-entered data (from the .json string in the contract)
-      logoUrl: 'https://padswap.exchange/glmr/images/pad/pad-moonbeam.png',
-      telegramUrl: 'https://t.me/toadnetwork',
-      websiteUrl: 'https://toad.network',
-
+      presaleInfo: <string | null> null,
       // Updated in real time
       presaleRaised: 43,
       timeLeft: 0,
@@ -552,7 +549,8 @@
           presaleRaised: this.presaleRaised ? ethers.utils.formatEther(this.presaleRaised) : null,
           yourContribution: this.yourContribution ? ethers.utils.formatEther(this.yourContribution) : null,
           boughtTokens: this.boughtTokens ? ethers.utils.formatUnits(this.boughtTokens, this.tokenDecimals!) : null,
-          referralEarned: this.referralEarned ? ethers.utils.formatEther(this.referralEarned) : null
+          referralEarned: this.referralEarned ? ethers.utils.formatEther(this.referralEarned) : null,
+          presaleInfo: this.presaleInfo ?  this.stringToObject(this.presaleInfo) : null,
         }
       },
       presaleCurrency(): string {
@@ -598,6 +596,27 @@
       trimNumber (nbr: number) {
         let str_nbr = nbr.toString();
         return Number(str_nbr.slice(0, 3))
+      },
+      sanitizer(str: string) {
+        let element = document.createElement('div');
+        element.innerText = str;
+        return element.innerHTML;
+      },
+      stringToObject (str: string) {
+        const obj = {
+          tokenLogoUrl: "",
+          telegramUrl: "",
+          websiteUrl: ""
+        }
+        try {
+            const parsed = JSON.parse(str)
+            obj.tokenLogoUrl = this.sanitizer(parsed.tokenLogoUrl)
+            obj.telegramUrl = this.sanitizer(parsed.telegramUrl)
+            obj.websiteUrl = this.sanitizer(parsed.websiteUrl)
+        } catch (e) {
+            return obj
+        }
+        return obj
       },
       async sync() {
         if (!this.presaleContract) {
@@ -864,5 +883,8 @@
   border-radius: 5px;
   margin-bottom: 15px;
 }
-
+.launchpad-image {
+  border-radius:50px;
+  height:100px;
+}
 </style>
