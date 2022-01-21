@@ -640,7 +640,14 @@
           return
         }
         const amountWei = ethers.utils.parseEther(this.amountToDeposit)
-        const tx = await this.presaleContractSigner!.populateTransaction.buy(ZERO_ADDRESS) // TODO: referrals
+        let referrerAddress = this.referrerAddress
+        if (!referrerAddress ||
+            !ethers.utils.isAddress(referrerAddress) ||
+            equalsInsensitive(referrerAddress, this.address!)) {
+          referrerAddress = ZERO_ADDRESS
+        }
+
+        const tx = await this.presaleContractSigner!.populateTransaction.buy(referrerAddress)
         tx.value = amountWei
         await this.safeSendTransaction({ tx, targetChainId: this.chainId })
       },
