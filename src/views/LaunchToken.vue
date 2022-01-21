@@ -636,7 +636,7 @@ import { EcosystemId } from '@/ecosystem'
         const presaleContractAddress = this.presaleContractAddress
         const buyLimit = ethers.utils.parseEther(this.presaleMaxContribution.toString())
         const hardCap = ethers.utils.parseEther(this.presaleHardCap)
-        const tokensPerEth = ethers.utils.parseUnits(this.presalePrice, this.tokenDecimals!)
+        const tokensPerEth = this.presalePrice
         const durationTime = parseFloat(this.presaleDuration.toString()) * 60 * 60
         const presaleInfo = JSON.stringify({
           tokenLogoUrl: this.logoUrl,
