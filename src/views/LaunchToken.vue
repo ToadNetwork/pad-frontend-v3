@@ -690,10 +690,11 @@ import { EcosystemId } from '@/ecosystem'
           this.enableReferrals,
           presaleInfo
         )
-        await this.safeSendTransaction({ tx, targetChainId: this.chainId })
-
-        const chain = this.$store.getters.ecosystem.routeName
-        this.$router.push(`/${chain}/presale/${presaleContractAddress}`)
+        const succeeded = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+        if (succeeded) {
+          const chain = this.$store.getters.ecosystem.routeName
+          this.$router.push(`/${chain}/presale/${presaleContractAddress}`)
+        }
       },
       copyAddress (address : string) {
         let textArea = document.createElement("textarea")

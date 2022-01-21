@@ -128,12 +128,12 @@ export default new Vuex.Store({
     async safeSendTransaction({ dispatch, state, getters }, { tx, targetChainId }: SafeSendTransactionArgs) {
       if (!getters.isConnected) {
         await dispatch('requestConnect')
-        return null
+        return false
       }
 
       if (state.chainId != targetChainId) {
         await dispatch('requestNetworkChange', targetChainId)
-        return
+        return false
       }
 
       const web3 = state.web3!
@@ -141,6 +141,7 @@ export default new Vuex.Store({
       const txReceipt = await txResponse.wait()
 
       state.lastChainTransactionBlock[targetChainId] = txReceipt.blockNumber
+      return true
     }
   }
 })
