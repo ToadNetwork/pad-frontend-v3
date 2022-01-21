@@ -247,19 +247,36 @@
           <div class="form-line">
             <v-btn
             x-large
-            color="primary"
+            color="green"
             @click="claimTokens">
               <template>
                 Claim {{ displayedSale.tokenSymbol }}
               </template>
             </v-btn>
           </div>
-
         </div>
 
         <!-- Your current contribution will always be displayed, regardless of the state of the presale, as long as your wallet is connected -->
         <div class="form-line your-contribution">
           Your contribution: {{ displayedSale.yourContribution }} {{ presaleCurrency }}
+        </div>
+
+        <!-------------------------------------------->
+        <!-- Import farm and redirect to DPLP farms -->
+        <!-------------------------------------------->
+        <div v-if="presaleIsActive == false && presaleIsAborted == false">
+          <v-divider style="margin-bottom: 10px;"></v-divider>
+          <p>After claiming your {{ displayedSale.tokenSymbol }}, use the button below to import its DPLP farm and start farming!</p>
+          <div class="form-line">
+            <v-btn
+            large
+            color="blue"
+            @click="goToFarm">
+              <template>
+                Go to farms
+              </template>
+            </v-btn>
+          </div>
         </div>
 
         <!-------------------------------------------->
@@ -269,7 +286,7 @@
         <div v-if="referralsEnabled && presaleIsActive == true">
           <v-divider></v-divider>
           <div class="form-line">
-            <p style="color: gray">You can share the referral link below and earn a percentage of the raised funds for every user that uses your link.</p>
+            <p style="color: gray; margin-top: 25px;">You can share the referral link below and earn a percentage of the raised funds for every user that uses your link.</p>
             <div class="referral-link-container">
             <v-text-field
             :value="'http://' + hostname + $route.path + '?referrerAddress=' + $store.state.address"
@@ -301,6 +318,7 @@
             <p style="color: gray; margin-top: 10px;">
               The referral rewards are covered by PadSwap, so the users won't lose anything by using your referral link.
             </p>
+            <p><span style="color: gray;">Your referral earnings:</span> <span style="color: green;">{{ referralEarned }} {{ presaleCurrency }}</span></p>
           </div>
         </div>
 
@@ -593,6 +611,9 @@
       }
     },
     methods: {
+      async goToFarm() {
+        return
+      },
       async cancelPresale() {
         const tx = await this.factoryContractSigner!.populateTransaction.abortPresale(this.presaleAddress)
         await this.safeSendTransaction({ tx, targetChainId: this.chainId })
