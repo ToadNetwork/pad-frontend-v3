@@ -671,6 +671,8 @@
           Object.assign(this, firstLoadData)
         }
 
+        let canBuy: boolean = false
+        let canEnd: boolean = false
         const data: any = {
           presaleIsActive: <boolean | null> null,
           presaleIsAborted: <boolean | null> null,
@@ -681,7 +683,8 @@
         }
 
         const promises = [
-          this.presaleContract.canBuy().then((a: boolean) => data.presaleIsActive = a),
+          this.presaleContract.canBuy().then((c: boolean) => canBuy = c),
+          this.presaleContract.canEnd().then((c: boolean) => canEnd = c),
           this.presaleContract.isAborted().then((a: boolean) => data.presaleIsAborted = a),
           this.multicall.getBalance(this.presaleContract.address).then((b: ethers.BigNumber) => data.presaleRaised = b)
         ]
@@ -693,6 +696,8 @@
           )
         }
         await Promise.all(promises)
+
+        data.presaleIsActive = canBuy && !canEnd
         Object.assign(this, data)
       },
       ...mapActions(['requestConnect', 'safeSendTransaction']),
