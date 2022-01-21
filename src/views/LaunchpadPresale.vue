@@ -272,7 +272,7 @@
             <p style="color: gray">You can share the referral link below and earn a percentage of the raised funds for every user that uses your link.</p>
             <div class="referral-link-container">
             <v-text-field
-            :value="'https://padswap.exchange' + $route.path + '?referrerAddress=' + $store.state.address"
+            :value="'http://' + hostname + $route.path + '?referrerAddress=' + $store.state.address"
             readonly>
             
             <template v-slot:append>
@@ -437,6 +437,7 @@
       valid: true,
       presaleAddress: <string> '',
       isPresaleValid: <boolean> false,
+      hostname: <string> '',
 
       // Data pulled from the contract
       tokenName: null,
@@ -483,6 +484,7 @@
     created() {
       this.presaleAddress = this.$route.params.address
       this.referrerAddress = this.$route.query.referrerAddress?.toString()
+      this.hostname = window.location.host
     },
     async mounted() {
       setInterval(() => {
@@ -765,7 +767,7 @@
       ...mapActions(['requestConnect', 'safeSendTransaction']),
       copyReferralLink () {
         let textArea = document.createElement("textarea")
-        textArea.value = 'https://padswap.exchange' + this.$route.path + '?referrerAddress=' + this.$store.state.address
+        textArea.value = 'http://' + window.location.host + this.$route.path + '?referrerAddress=' + this.$store.state.address
         textArea.style.top = "0"
         textArea.style.left = "0"
         textArea.style.position = "fixed"
