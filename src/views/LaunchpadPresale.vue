@@ -516,7 +516,7 @@
           presaleSoftCap: this.presaleSoftCap ? ethers.utils.formatEther(this.presaleSoftCap) : null,
           presaleTokensPerEth: this.presaleTokensPerEth?.toNumber(),
           presaleEndTime: this.presaleEndTime * 1000,
-          maxContribution: this.maxContribution ? ethers.utils.formatUnits(this.maxContribution, this.tokenDecimals!) : null,
+          maxContribution: this.maxContribution ? ethers.utils.formatEther(this.maxContribution) : null,
           presaleTokenAmount: this.presaleTokensPerEth ? this.presaleTokensPerEth.toNumber() * parseFloat(ethers.utils.formatEther(this.presaleHardCap!)) : null,
           presaleRaised: this.presaleRaised ? ethers.utils.formatEther(this.presaleRaised) : null,
           yourContribution: this.yourContribution ? ethers.utils.formatEther(this.yourContribution) : null,
@@ -602,7 +602,7 @@
             this.presaleContract.endsAt().then((e: ethers.BigNumber) => firstLoadData.presaleEndTime = e.toNumber() * 1000),
             this.presaleContract.presaleInfo().then((p: string) => firstLoadData.presaleInfo = p),
             this.presaleContract.buyLimit().then((b: ethers.BigNumber) => firstLoadData.maxContribution = b),
-            // this.presaleContract.referrals().then((b: boolean) => firstLoadData.referralsEnabled = b)
+            this.presaleContract.referrals().then((b: boolean) => firstLoadData.referralsEnabled = b)
           ]
           await Promise.all(promises)
           Object.assign(this, firstLoadData)
@@ -624,9 +624,9 @@
         ]
         if (this.address) {
           promises.push(
-            // this.presaleContract.paidAmount(this.address).then((a: ethers.BigNumber) => data.yourContribution = a),
-            // this.presaleContract.boughtTokensOf(this.address).then((t: ethers.BigNumber) => data.boughtTokens = t),
-            // this.presaleContract.referralBonuses(this.address).then((b: ethers.BigNumber) => data.referralEarned = b)
+            this.presaleContract.paidAmount(this.address).then((a: ethers.BigNumber) => data.yourContribution = a),
+            this.presaleContract.boughtTokensOf(this.address).then((t: ethers.BigNumber) => data.boughtTokens = t),
+            this.presaleContract.referralBonuses(this.address).then((b: ethers.BigNumber) => data.referralEarned = b)
           )
         }
         await Promise.all(promises)
