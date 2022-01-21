@@ -72,7 +72,16 @@
         <h1>Do I need to deploy the token contract myself?</h1>
         <p>
         Currently, yes - you will need to deploy your own token contract before using the launchpad.<br>
-        However, we are already working on a fully automatic token factory that will allow anyone to launch a token contract in one click, without programming experience.
+        However, we are already working on a fully automatic token factory that will allow anyone to create a token contract in one click, without programming experience.
+        </p>
+
+        <v-divider></v-divider>
+
+        <h1>Are there any requirements for using the launchpad?</h1>
+        <p>
+        The only requirement is that <b>your token shouldn't have any liquidity on PadSwap until the presale is over</b>.<br>
+        Adding liquidity before the presale is over may cause your presale to fail.<br>
+        If your token is already tradeable on PadSwap, you can use our auctions instead - stay tuned for their announcement!
         </p>
 
         <v-divider></v-divider>
