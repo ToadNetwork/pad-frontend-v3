@@ -633,6 +633,7 @@ import { EcosystemId } from '@/ecosystem'
           return
         }
 
+        const presaleContractAddress = this.presaleContractAddress
         const buyLimit = ethers.utils.parseEther(this.presaleMaxContribution.toString())
         const hardCap = ethers.utils.parseEther(this.presaleHardCap)
         const tokensPerEth = ethers.utils.parseUnits(this.presalePrice, this.tokenDecimals!)
@@ -653,6 +654,9 @@ import { EcosystemId } from '@/ecosystem'
           presaleInfo
         )
         await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+
+        const chain = this.$store.getters.ecosystem.routeName
+        this.$router.push(`/${chain}/${presaleContractAddress}`)
       },
       copyAddress (address : string) {
         let textArea = document.createElement("textarea")
