@@ -550,7 +550,11 @@
           yourContribution: this.yourContribution ? ethers.utils.formatEther(this.yourContribution) : null,
           boughtTokens: this.boughtTokens ? ethers.utils.formatUnits(this.boughtTokens, this.tokenDecimals!) : null,
           referralEarned: this.referralEarned ? ethers.utils.formatEther(this.referralEarned) : null,
-          presaleInfo: this.presaleInfo ?  this.stringToObject(this.presaleInfo) : null,
+          presaleInfo: this.presaleInfo ?  this.stringToObject(this.presaleInfo) : {
+            tokenLogoUrl: '',
+            telegramUrl: '',
+            websiteUrl: ''
+          },
         }
       },
       presaleCurrency(): string {
