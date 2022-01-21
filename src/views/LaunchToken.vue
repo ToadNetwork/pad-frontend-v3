@@ -406,7 +406,6 @@
 <div class="launch-button-container">
   <div class="launch-button-box">
     <button
-    v-if="!isPresaleCreated"
     :disabled="!valid || !isApproveComplete"
     type="button"
     name="button"
