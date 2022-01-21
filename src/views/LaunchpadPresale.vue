@@ -681,7 +681,7 @@
         }
 
         const promises = [
-          this.presaleContract.isActive().then((a: boolean) => data.presaleIsActive = a),
+          this.presaleContract.canBuy().then((a: boolean) => data.presaleIsActive = a),
           this.presaleContract.isAborted().then((a: boolean) => data.presaleIsAborted = a),
           this.multicall.getBalance(this.presaleContract.address).then((b: ethers.BigNumber) => data.presaleRaised = b)
         ]
