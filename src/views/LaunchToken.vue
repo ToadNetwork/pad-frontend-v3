@@ -407,11 +407,26 @@
 <div class="launch-button-container">
   <div class="launch-button-box">
     <button
+    v-if="!isPresaleCreated"
     :disabled="!valid || !isApproveComplete"
     type="button"
     name="button"
     @click="submit"
-    class="launch-button">Launch</button>
+    class="launch-button">
+      Launch
+    </button>
+
+    <div v-if="isPresaleCreated">
+      <h3>Presale created!</h3>
+      <br>
+      <v-btn
+      x-large
+      color="primary"
+      :href="'http://' + hostname + '/' + ecosystemName + '/presale/' + presaleContractAddress"
+      >
+        Go to presale
+      </v-btn>
+    </div>
   </div>
 </div>
 
@@ -442,6 +457,7 @@ import { EcosystemId } from '@/ecosystem'
     components: { SliderTabs },
     data: () => ({
       valid: true,
+      hostname: <string> '',
 
       presaleContractAddress: <string | null> null,
       tokenName: <string | null> null,
@@ -515,6 +531,9 @@ import { EcosystemId } from '@/ecosystem'
       active: true,
       syncLock: new AwaitLock()
     }),
+    created () {
+      this.hostname = window.location.host
+    },
     computed: {
       ecosystemId: {
         get(): EcosystemId {
@@ -574,6 +593,21 @@ import { EcosystemId } from '@/ecosystem'
       },
       presaleCurrency(): string {
         return this.$store.getters.ecosystem.ethName
+      },
+      isPresaleCreated(): boolean {
+        return false
+      },
+      ecosystemName() : string {
+        if (this.$store.getters.ecosystem.chainId == 56) {
+          return 'bsc'
+        }
+        if (this.$store.getters.ecosystem.chainId == 1285) {
+          return 'moonriver'
+        }
+        if (this.$store.getters.ecosystem.chainId == 1284) {
+          return 'moonbeam'
+        }
+        return 'undefined'
       }
     },
     async mounted() {

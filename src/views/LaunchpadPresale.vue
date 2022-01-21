@@ -247,7 +247,7 @@
             <p style="color: gray">You can share the referral link below and earn a percentage of the raised funds for every user that uses your link.</p>
             <div class="referral-link-container">
             <v-text-field
-            :value="hostname + $route.path + '?referrerAddress=' + $store.state.address"
+            :value="'http://' + hostname + $route.path + '?referrerAddress=' + $store.state.address"
             readonly>
             
             <template v-slot:append>
@@ -426,7 +426,7 @@
       boughtTokens: <ethers.BigNumber | null> null, // Amount of tokens to be received for contribution
       referralsEnabled: <boolean | null> null,
       referralEarned: <ethers.BigNumber | null> null, // Amount of money earned from your referral link
-      referrerAddress: <string> '',
+      referrerAddress: <string | null> null,
 
       presaleIsActive: <boolean | null> null,
       presaleIsAborted: <boolean | null> null,
@@ -456,7 +456,7 @@
     }),
     created() {
       this.presaleAddress = this.$route.params.address
-      this.referrerAddress = this.$route.query.referrerAddress
+      this.referrerAddress = this.$route.query.referrerAddress.toString()
       this.hostname = window.location.host
     },
     async mounted() {
@@ -643,7 +643,7 @@
       ...mapActions(['requestConnect', 'safeSendTransaction']),
       copyReferralLink () {
         let textArea = document.createElement("textarea")
-        textArea.value = this.hostname + this.$route.path + '?referrerAddress=' + this.$store.state.address
+        textArea.value = 'http://' + this.hostname + this.$route.path + '?referrerAddress=' + this.$store.state.address
         textArea.style.top = "0"
         textArea.style.left = "0"
         textArea.style.position = "fixed"
