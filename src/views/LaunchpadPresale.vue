@@ -330,7 +330,7 @@
     <!------------------------>
     <!-- Presale owner area -->
     <!------------------------>
-    <div v-if="isPresaleOwner" class="presale-form-container">
+    <div v-if="isPresaleOwner && presaleIsActive && !presaleIsAborted" class="presale-form-container">
       <div class="presale-form-box">
         <h3>Manage your presale</h3>
         <br>
@@ -344,14 +344,14 @@
             <v-expansion-panel-content>
             <div class="form-line">
               <v-text-field
-              v-model="displayedSale.presaleInfo.logoUrl"
+              v-model="editLogoUrl"
               label="Token logo URL (leave empty if you don't have one)"
               required
               >
                 <template v-slot:append>
                   <img
                   style="width: 30px"
-                  :src="displayedSale.presaleInfo.logoUrl">
+                  :src="editLogoUrl">
                 </template>
 
               </v-text-field>
@@ -359,7 +359,7 @@
 
             <div class="form-line">
               <v-text-field
-              v-model="displayedSale.presaleInfo.websiteUrl"
+              v-model="editWebsiteUrl"
               label="Website (leave empty if you don't have one)"
               required
               ></v-text-field>
@@ -367,7 +367,7 @@
 
             <div class="form-line">
               <v-text-field
-              v-model="displayedSale.presaleInfo.telegramUrl"
+              v-model="editTelegramUrl"
               label="Telegram link (leave empty if you don't have one)"
               required
               ></v-text-field>
@@ -429,6 +429,7 @@
   import { ethers } from 'ethers'
 
   import { ERC20_ABI, LAUNCHPAD_FACTORY_ABI, LAUNCHPAD_PRESALE_ABI, ZERO_ADDRESS } from '@/constants'
+  import { ChainId } from '@/ecosystem'
   import { delay, equalsInsensitive } from '@/utils'
 
   export default Vue.extend ({
@@ -474,6 +475,10 @@
       cancelPresaleRules: [
         (v: any) => (v == 'CANCEL') || 'Please type CANCEL to confirm'
       ],
+
+      editLogoUrl: <string | null> null,
+      editWebsiteUrl: <string | null> null,
+      editTelegramUrl: <string | null> null
     }),
     created() {
       this.presaleAddress = this.$route.params.address
@@ -524,8 +529,20 @@
 
         return new ethers.Contract(this.presaleAddress, LAUNCHPAD_PRESALE_ABI, this.multicall)
       },
+      presaleContractSigner(): ethers.Contract | null {
+        if (!this.presaleContract || !this.web3) {
+          return null
+        }
+        return this.presaleContract.connect(this.web3)
+      },
       factoryContract(): ethers.Contract {
         return new ethers.Contract(this.$store.getters.ecosystem.launchPadFactoryAddress, LAUNCHPAD_FACTORY_ABI, this.multicall)
+      },
+      factoryContractSigner(): ethers.Contract | null {
+        if (!this.web3) {
+          return null
+        }
+        return this.factoryContract.connect(this.web3)
       },
       multicall(): ethers.providers.Provider {
         return this.$store.getters.multicall
@@ -568,23 +585,51 @@
       },
       address(): string | null {
         return this.$store.state.address
+      },
+      chainId(): ChainId {
+        return this.$store.getters.ecosystem.chainId
       }
     },
     methods: {
       async cancelPresale() {
-        return
+        const tx = await this.factoryContractSigner!.populateTransaction.abortPresale(this.presaleAddress)
+        await this.safeSendTransaction({ tx, targetChainId: this.chainId })
       },
       async updateTokenInfo() {
-        return
+        const presaleInfo = JSON.stringify({
+          tokenLogoUrl: this.editLogoUrl,
+          websiteUrl: this.editWebsiteUrl,
+          telegramUrl: this.editTelegramUrl
+        })
+        const tx = await this.factoryContractSigner!.populateTransaction.changePresaleInfo(this.presaleAddress, presaleInfo)
+        await this.safeSendTransaction({ tx, targetChainId: this.chainId })
       },
       async refund () {
-        return
+        if (!this.web3) {
+          await this.requestConnect()
+          return
+        }
+
+        const tx = await this.presaleContractSigner!.populateTransaction.claimRefund()
+        await this.safeSendTransaction({ tx, targetChainId: this.chainId })
       },
       async claimTokens () {
-        return
+        if (!this.web3) {
+          await this.requestConnect()
+          return
+        }
+
+        const tx = await this.presaleContractSigner!.populateTransaction.claimTokens()
+        await this.safeSendTransaction({ tx, targetChainId: this.chainId })
       },
       async claimReferralEarnings () {
-        return
+        if (!this.web3) {
+          await this.requestConnect()
+          return
+        }
+
+        const tx = await this.presaleContractSigner!.populateTransaction.claimReferralBonus()
+        await this.safeSendTransaction({ tx, targetChainId: this.chainId })
       },
       async deposit () {
         if (!this.presaleContract) {
@@ -594,11 +639,10 @@
           await this.requestConnect()
           return
         }
-        const contract = this.presaleContract.connect(this.web3)
         const amountWei = ethers.utils.parseEther(this.amountToDeposit)
-        const tx = await contract.populateTransaction.buy(ZERO_ADDRESS) // TODO: referrals
+        const tx = await this.presaleContractSigner!.populateTransaction.buy(ZERO_ADDRESS) // TODO: referrals
         tx.value = amountWei
-        await this.safeSendTransaction({ tx, targetChainId: this.$store.getters.ecosystem.chainId })
+        await this.safeSendTransaction({ tx, targetChainId: this.chainId })
       },
       trimNumber (nbr: number) {
         let str_nbr = nbr.toString();
@@ -673,6 +717,10 @@
           ]
           await Promise.all(promises)
           Object.assign(this, firstLoadData)
+
+          this.editLogoUrl = this.displayedSale.presaleInfo.tokenLogoUrl,
+          this.editWebsiteUrl = this.displayedSale.presaleInfo.websiteUrl,
+          this.editTelegramUrl = this.displayedSale.presaleInfo.telegramUrl
         }
 
         let canBuy: boolean = false
@@ -681,6 +729,7 @@
           presaleIsActive: <boolean | null> null,
           presaleIsAborted: <boolean | null> null,
           presaleRaised: <ethers.BigNumber | null> null,
+          presaleInfo: <string | null> null,
           yourContribution: <ethers.BigNumber | null> null,
           boughtTokens: <ethers.BigNumber | null> null,
           referralEarned: <ethers.BigNumber | null> null
@@ -690,6 +739,7 @@
           this.presaleContract.canBuy().then((c: boolean) => canBuy = c),
           this.presaleContract.canEnd().then((c: boolean) => canEnd = c),
           this.presaleContract.isAborted().then((a: boolean) => data.presaleIsAborted = a),
+          this.presaleContract.presaleInfo().then((p: string) => data.presaleInfo = p),
           this.multicall.getBalance(this.presaleContract.address).then((b: ethers.BigNumber) => data.presaleRaised = b)
         ]
         if (this.address) {
