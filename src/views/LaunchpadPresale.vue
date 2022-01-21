@@ -121,7 +121,7 @@
         <!---------------------------------------->
         <!-- Countdown timer for active presale -->
         <!---------------------------------------->
-        <div v-if="presaleIsActive == true" class="form-line">
+        <div v-if="presaleIsActive == true && presaleIsAborted == false" class="form-line">
           <div class="time-left-box">
             <p class="time-left-title">Time left:</p>
             <v-row class="time-left-counter">
@@ -180,8 +180,8 @@
 
         <v-divider></v-divider>
 
-        <div class="presale-progress-title">Presale progress:</div>
-        <div class="presale-progress">
+        <div v-if="presaleIsActive == true && presaleIsAborted == false" class="presale-progress-title">Presale progress:</div>
+        <div v-if="presaleIsActive == true && presaleIsAborted == false" class="presale-progress">
           <v-progress-linear
           :value="(parseFloat(displayedSale.presaleRaised) / parseFloat(displayedSale.presaleHardCap)) * 100"
           color="#12a362"
@@ -192,7 +192,7 @@
         <!----------------------------------------->
         <!-- Participating in the active presale -->
         <!----------------------------------------->
-        <div v-if="presaleIsActive == true">
+        <div v-if="presaleIsActive == true && presaleIsAborted == false">
           <div class="form-line">
             <v-text-field
             v-model="amountToDeposit"
