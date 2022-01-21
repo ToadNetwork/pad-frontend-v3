@@ -240,14 +240,17 @@
         <!-- Your referral link                     -->
         <!-- Displayed while the presale is active  -->
         <!-------------------------------------------->
-        <div v-if="referralsEnabled && presaleIsActive == true">
+        <!-- <div v-if="referralsEnabled && presaleIsActive == true"> -->
+          <div>
           <v-divider></v-divider>
           <div class="form-line">
             <p style="color: gray">You can share the referral link below and earn a percentage of the raised funds for every user that uses your link.</p>
             <div class="referral-link-container">
-            <div class="referral-link-box">
-              <span style="word-break: break-all; word-wrap: break-word;">{{ referralLink }}</span>
-
+            <v-text-field
+            :value="hostname + $route.path + '?referrerAddress=' + $store.state.address"
+            readonly>
+            
+            <template v-slot:append>
               <v-tooltip
               :open-on-hover="false"
               right
@@ -256,7 +259,7 @@
                   <v-btn
                   style="min-width: 0;"
                   @click="on.click"
-                  v-on:click="copyLink(referralLink)"
+                  v-on:click="copyReferralLink()"
                   icon
                   retain-focus-on-click
                   v-bind="attrs"
@@ -267,10 +270,11 @@
                 </template>
                 <span>Copied!</span>
               </v-tooltip>
-            </div>
+            </template>
+            </v-text-field>
             </div>
             <p style="color: gray; margin-top: 10px;">
-              The referral rewards are paid by PadSwap, so the users won't lose anything by using your referral link.
+              The referral rewards are covered by PadSwap, so the users won't lose anything by using your referral link.
             </p>
           </div>
         </div>
@@ -421,8 +425,8 @@
       yourContribution: <ethers.BigNumber | null> null, // Amount already contributed by this wallet
       boughtTokens: <ethers.BigNumber | null> null, // Amount of tokens to be received for contribution
       referralsEnabled: <boolean | null> null,
-      referralLink: <string> '', // Referral link generated for your wallet
       referralEarned: <ethers.BigNumber | null> null, // Amount of money earned from your referral link
+      referrerAddress: <string> '',
 
       presaleIsActive: <boolean | null> null,
       presaleIsAborted: <boolean | null> null,
@@ -443,13 +447,17 @@
 
       // Admin area
       isPresaleOwner: <boolean | null> null,
-      cancelFormValid: <boolean> false, 
+      cancelFormValid: <boolean> false,
       cancelPresaleRules: [
         (v: any) => (v == 'CANCEL') || 'Please type CANCEL to confirm'
       ],
+
+      hostname: <string> ''
     }),
     created() {
       this.presaleAddress = this.$route.params.address
+      this.referrerAddress = this.$route.query.referrerAddress
+      this.hostname = window.location.host
     },
     async mounted() {
       setInterval(() => {
@@ -633,9 +641,9 @@
         Object.assign(this, data)
       },
       ...mapActions(['requestConnect', 'safeSendTransaction']),
-      copyLink (link : string) {
+      copyReferralLink () {
         let textArea = document.createElement("textarea")
-        textArea.value = link
+        textArea.value = this.hostname + this.$route.path + '?referrerAddress=' + this.$store.state.address
         textArea.style.top = "0"
         textArea.style.left = "0"
         textArea.style.position = "fixed"
@@ -807,6 +815,7 @@
   border: 1px solid gray;
   border-radius: 10px;
   padding-left: 10px;
+  max-height: 30px;
 }
 
 /*************************/
