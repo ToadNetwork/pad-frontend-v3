@@ -102,7 +102,7 @@
             </tr>
             <tr>
               <td>Price</td>
-              <td>{{ trimNumber(displayedSale.presaleTokenAmount/displayedSale.presaleHardCap) }} {{ displayedSale.tokenSymbol }} per {{ presaleCurrency }}</td>
+              <td>{{ displayedSale.presaleTokenAmount/displayedSale.presaleHardCap }} {{ displayedSale.tokenSymbol }} per {{ presaleCurrency }}</td>
             </tr>
             <tr>
               <td>Maximum contribution</td>
@@ -711,7 +711,7 @@
       amountToDeposit: function(newAmount) {
         const presaleTokenAmountEther = parseFloat(ethers.utils.formatUnits(this.presaleTokenAmount, this.tokenDecimals!))
         let tokensPerCurrency = (presaleTokenAmountEther / parseFloat(ethers.utils.formatEther(this.presaleHardCap!)))
-        this.tokensGiven = parseFloat(tokensPerCurrency as any) * parseFloat(this.amountToDeposit as any)
+        this.tokensGiven = (parseFloat(this.displayedSale.presaleTokenAmount as any) / parseFloat(this.displayedSale.presaleHardCap as any)) * parseFloat(this.amountToDeposit as any)
       }
     }
   })
