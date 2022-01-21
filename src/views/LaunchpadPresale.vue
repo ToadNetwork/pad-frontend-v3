@@ -240,8 +240,7 @@
         <!-- Your referral link                     -->
         <!-- Displayed while the presale is active  -->
         <!-------------------------------------------->
-        <!-- <div v-if="referralsEnabled && presaleIsActive == true"> -->
-          <div>
+        <div v-if="referralsEnabled && presaleIsActive == true">
           <v-divider></v-divider>
           <div class="form-line">
             <p style="color: gray">You can share the referral link below and earn a percentage of the raised funds for every user that uses your link.</p>
