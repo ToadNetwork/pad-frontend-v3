@@ -1,6 +1,32 @@
 <template>
   <v-container>
-    <v-sheet class="launchpad-title-bar">
+    <v-sheet
+    v-if="!isPresaleValid"
+    class="launchpad-title-bar">
+    <div class="launchpad-title">
+      <img class="launchpad-image" src="@/assets/icons/LaunchPAD Icon.svg">
+      <h1 style="padding-bottom: 0; margin-bottom: 15px;">Oops!</h1>
+      <p>We couldn't find a presale with the specified address on {{$store.getters.ecosystem.routeName}} network.</p>
+
+      <div style="display:inline-block; margin-bottom: 30px; max-width: 900px;">
+      <ul>
+        <li>Make sure that you selected the right ecosystem when searching for this presale.</li>
+        <li>Double-check the address. Presale address is NOT the same as the token address.</li>
+      </ul>
+      </div> 
+      <br>
+
+      <v-btn
+      medium
+      color="primary"
+      href="/launchpad"
+      >
+        Back to launchpad
+      </v-btn>
+    </div>
+    </v-sheet>
+
+    <v-sheet v-if="isPresaleValid" class="launchpad-title-bar">
     <div class="launchpad-title">
       <img class="launchpad-image" :src=logoUrl>
       <h1 style="padding-bottom: 0">${{displayedSale.tokenSymbol}} ({{displayedSale.tokenName}}) presale</h1>
@@ -89,7 +115,7 @@
       </v-row>
     </v-sheet>
 
-    <div class="presale-form-container">
+    <div v-if="isPresaleValid" class="presale-form-container">
       <div class="presale-form-box">
 
         <!---------------------------------------->
@@ -409,6 +435,7 @@
     data: () => ({
       valid: true,
       presaleAddress: <string> '',
+      isPresaleValid: <boolean> false,
 
       // Data pulled from the contract
       tokenName: null,
@@ -578,6 +605,7 @@
         }
 
         if (this.tokenName === null) {
+          this.isPresaleValid = true
           const tokenAddress = <string> await this.presaleContract.token()
           const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, this.multicall)
 
