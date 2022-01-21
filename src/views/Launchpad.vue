@@ -156,7 +156,7 @@ export default Vue.extend({
         return require('@/assets/images/launchpad-rocket-moonbeam.svg')
       }
     },
-    goToPresale(presaleAddress) {
+    goToPresale(presaleAddress: string) {
       const chain = this.$store.getters.ecosystem.routeName
       this.$router.push(`/${chain}/presale/${presaleAddress}`)
     }
