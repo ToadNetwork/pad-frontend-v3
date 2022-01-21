@@ -344,7 +344,7 @@
             <v-expansion-panel-content>
             <div class="form-line">
               <v-text-field
-              v-model="logoUrl"
+              v-model="displayedSale.presaleInfo.logoUrl"
               label="Token logo URL (leave empty if you don't have one)"
               required
               >
@@ -359,7 +359,7 @@
 
             <div class="form-line">
               <v-text-field
-              v-model="websiteUrl"
+              v-model="displayedSale.presaleInfo.websiteUrl"
               label="Website (leave empty if you don't have one)"
               required
               ></v-text-field>
@@ -367,7 +367,7 @@
 
             <div class="form-line">
               <v-text-field
-              v-model="telegramUrl"
+              v-model="displayedSale.presaleInfo.telegramUrl"
               label="Telegram link (leave empty if you don't have one)"
               required
               ></v-text-field>
@@ -428,8 +428,8 @@
   import { mapActions } from 'vuex'
   import { ethers } from 'ethers'
 
-  import { ERC20_ABI, LAUNCHPAD_PRESALE_ABI, ZERO_ADDRESS } from '@/constants'
-  import { delay } from '@/utils'
+  import { ERC20_ABI, LAUNCHPAD_FACTORY_ABI, LAUNCHPAD_PRESALE_ABI, ZERO_ADDRESS } from '@/constants'
+  import { delay, equalsInsensitive } from '@/utils'
 
   export default Vue.extend ({
     data: () => ({
@@ -523,6 +523,9 @@
         }
 
         return new ethers.Contract(this.presaleAddress, LAUNCHPAD_PRESALE_ABI, this.multicall)
+      },
+      factoryContract(): ethers.Contract {
+        return new ethers.Contract(this.$store.getters.ecosystem.launchPadFactoryAddress, LAUNCHPAD_FACTORY_ABI, this.multicall)
       },
       multicall(): ethers.providers.Provider {
         return this.$store.getters.multicall
@@ -651,7 +654,8 @@
             presaleEndTime: <number | null> null,
             presaleInfo: <string | null> null,
             maxContribution: <ethers.BigNumber | null> null,
-            referralsEnabled: <boolean | null> null
+            referralsEnabled: <boolean | null> null,
+            isPresaleOwner: <boolean | null> null
           }
 
           const promises = [
@@ -692,7 +696,8 @@
           promises.push(
             this.presaleContract.paidAmount(this.address).then((a: ethers.BigNumber) => data.yourContribution = a),
             this.presaleContract.boughtTokensOf(this.address).then((t: ethers.BigNumber) => data.boughtTokens = t),
-            this.presaleContract.referralBonuses(this.address).then((b: ethers.BigNumber) => data.referralEarned = b)
+            this.presaleContract.referralBonuses(this.address).then((b: ethers.BigNumber) => data.referralEarned = b),
+            this.factoryContract.getPresaleOwner(this.presaleContract.address).then((o: string) => this.isPresaleOwner = equalsInsensitive(o, this.address!))
           )
         }
         await Promise.all(promises)
