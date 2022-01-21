@@ -206,7 +206,7 @@ export default Vue.extend({
         name: 'Moonbeam PAD',
         ticker: 'PAD',
         // using a moonriver token to test since that's the only chain with contracts for now
-        presaleLink: '/moonriver/presale/0x468c3bc8c5a2a7133fece7a8b1de041858c2d685'
+        presaleLink: '/moonriver/presale/0xD53A3B53D632A6dC452df8CF9dAdc25aBBFF10c0'
       },
     ]
     },
