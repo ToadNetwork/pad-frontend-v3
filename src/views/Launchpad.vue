@@ -67,17 +67,23 @@
       sm="6">
         <div class="launchpad-title-bar-section">
           <h2>Looking for a presale that isn't listed?</h2>
-          <v-text-field
+          <v-form
+          v-model="validPresaleAddress">
+            <v-text-field
             v-model="customPresaleAddress"
             label="Presale address"
+            :rules="presaleAddressRules"
             >
               <template v-slot:append>
               <v-btn
-              color="primary">
+              color="primary"
+              :disabled="!validPresaleAddress"
+              @click="goToPresale(customPresaleAddress)">
                 View
               </v-btn>
               </template>
             </v-text-field>
+          </v-form>
         </div>
       </v-col>
     </v-row>
@@ -150,13 +156,18 @@ export default Vue.extend({
         return require('@/assets/images/launchpad-rocket-moonbeam.svg')
       }
     },
+    goToPresale(presaleAddress) {
+      const chain = this.$store.getters.ecosystem.routeName
+      this.$router.push(`/${chain}/presale/${presaleAddress}`)
+    }
   },
   data() {
     return {
       currentChain: 'Moonbeam',
       active: true,
       searchText: '',
-      customPresaleAddress: '',
+      customPresaleAddress: <string> '',
+      validPresaleAddress: <boolean> false,
       headers: [
       {
         text: 'Logo',
@@ -198,7 +209,11 @@ export default Vue.extend({
         presaleLink: '/moonriver/presale/0x468c3bc8c5a2a7133fece7a8b1de041858c2d685'
       },
     ]
-    }
+    },
+    presaleAddressRules: [
+        (v: any) => !!v || 'Specify the presale address',
+        (v: any) => (v.length == 42 && v.slice(0, 2) == '0x') || 'Not a valid contract address.'
+    ]
     }
   },
   mounted () {
