@@ -286,7 +286,7 @@
             <v-text-field
             v-model="presaleHardCap"
             :counter="9"
-            :rules="hardCapRules"
+            :rules="validHardCap()"
             label="Presale hard cap"
             pattern="[0-9]"
             required
@@ -324,7 +324,7 @@
             <v-text-field
             v-model="presalePrice"
             label="Presale price"
-            :rules="presalePriceRules"
+            :rules="validPresalePrice()"
             required
             >
               <template v-slot:append>
@@ -342,7 +342,7 @@
             :suffix="tokenSymbol"
             >
               <template v-slot:prepend>
-                Number of {{tokenSymbol}} tokens in presale
+                Number of {{tokenSymbol}} tokens to provide
               </template>
             </v-text-field>
           </div>
@@ -488,19 +488,10 @@ import { EcosystemId } from '@/ecosystem'
         (v: any) => (v && parseInt(v) != 0) || '0 tokens is not enough',
         (v: any) => (parseFloat(v) % 1 == 0 && parseFloat(v) > 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
       ],
-      hardCapRules: [
-        (v: any) => !!v || 'Choose the hard cap of the presale',
-        (v: any) => (v && v.length <= 10 && parseFloat(v) <= 1000000000) || 'That\'s unreasonably high',
-        (v: any) => (parseFloat(v) > 0 && /[0-9]/.test(v)) || 'Input a positive number'
-      ],
       durationRules: [
         (v: any) => !!v || 'You need to specify the presale duration',
         // (v: any) => (v && v.length <= 3 && parseFloat(v) <= 168 && parseFloat(v) >= 12) || 'Choose a value between 12 and 168 hours',
         // (v: any) => (parseFloat(v) % 1 == 0 && /[0-9]/.test(v)) || 'Input a positive integer number'
-      ],
-      presalePriceRules: [
-        (v: any) => !!v || 'Specify the price of your tokens during presale',
-        (v: any) => (parseFloat(v) > 0) || 'Input a positive number'
       ],
       contractAddressRules: [
         (v: any) => !!v || 'Specify your token\'s contract address',
@@ -634,6 +625,35 @@ import { EcosystemId } from '@/ecosystem'
           return require('@/assets/images/launchpad-rocket-moonbeam.svg')
         }
       },
+      validHardCap() {
+        if (this.presaleHardCap == '') {
+          return ['Choose the hard cap of the presale']
+        }
+        if (this.presaleHardCap.length > 10 || this.presaleHardCap > 100000000) {
+          return ['The hard cap is unreasonably high']
+        }
+        if (this.presaleHardCap <= 0 || !(/[0-9]/.test(this.presaleHardCap)) ) {
+          return ['Input a positive number']
+        }
+        if (ethers.utils.formatUnits(this.userTokenBalance, this.tokenDecimals) < this.presaleTokenAmount) {
+          return ['You don\'t have enough ' + this.tokenSymbol + ' tokens to launch this presale']
+        }
+
+        return [true]
+      },
+      validPresalePrice() {
+        if (this.presalePrice == '') {
+          return ['Choose the price of your tokens during presale']
+        }
+        if (this.presalePrice <= 0 || !(/[0-9]/.test(this.presalePrice)) ) {
+          return ['Input a positive number']
+        }
+        if (ethers.utils.formatUnits(this.userTokenBalance, this.tokenDecimals) < this.presaleTokenAmount) {
+          return ['You don\'t have enough ' + this.tokenSymbol + ' tokens to launch this presale']
+        }
+
+        return [true]
+      },
       async approve() {
         const tokenContract = this.tokenContract!.connect(this.web3!)
         const tx = await tokenContract.populateTransaction.approve(this.presaleContractAddress, APPROVE_AMOUNT)
@@ -642,7 +662,7 @@ import { EcosystemId } from '@/ecosystem'
       async submit() {
         if (!this.factoryContractSigner) {
           this.requestConnect()
-          return
+          return 
         }
 
         const form = this.$refs.form as any
@@ -743,11 +763,11 @@ import { EcosystemId } from '@/ecosystem'
     },
     watch: {
       presalePrice: function(newAmount) {
-        this.presaleTokenAmount = Math.ceil(parseFloat(this.presalePrice) * parseFloat(this.presaleHardCap))
+        this.presaleTokenAmount = Math.ceil(parseFloat(this.presalePrice) * parseFloat(this.presaleHardCap) * 1.72)
       },
       presaleHardCap: function(newSupply) {
         this.presaleSoftCap = parseFloat(this.presaleHardCap) * 0.25
-        this.presaleTokenAmount = Math.ceil(parseFloat(this.presalePrice) * parseFloat(this.presaleHardCap))
+        this.presaleTokenAmount = Math.ceil(parseFloat(this.presalePrice) * parseFloat(this.presaleHardCap) * 1.72)
       },
       tokenContractAddress(val) {
         this.tokenContractError = null
