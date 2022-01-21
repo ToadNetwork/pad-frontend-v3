@@ -602,6 +602,12 @@
         element.innerText = str;
         return element.innerHTML;
       },
+      fixUrl(str: string) {
+        if (!str.includes('http://') && !str.includes('https://') && str.length > 0) {
+          str = 'https://' + str
+        }
+        return str
+      },
       stringToObject (str: string) {
         const obj = {
           tokenLogoUrl: "",
@@ -613,6 +619,8 @@
             obj.tokenLogoUrl = this.sanitizer(parsed.tokenLogoUrl)
             obj.telegramUrl = this.sanitizer(parsed.telegramUrl)
             obj.websiteUrl = this.sanitizer(parsed.websiteUrl)
+            obj.telegramUrl = this.fixUrl(obj.telegramUrl)
+            obj.websiteUrl = this.fixUrl(obj.websiteUrl)
         } catch (e) {
             return obj
         }
