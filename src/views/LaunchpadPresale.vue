@@ -351,7 +351,7 @@
                 <template v-slot:append>
                   <img
                   style="width: 30px"
-                  :src=logoUrl>
+                  :src="displayedSale.presaleInfo.logoUrl">
                 </template>
 
               </v-text-field>
