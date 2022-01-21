@@ -477,7 +477,7 @@
     }),
     created() {
       this.presaleAddress = this.$route.params.address
-      this.referrerAddress = this.$route.query.referrerAddress.toString()
+      this.referrerAddress = this.$route.query.referrerAddress?.toString()
     },
     async mounted() {
       setInterval(() => {
