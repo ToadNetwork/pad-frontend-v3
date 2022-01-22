@@ -625,6 +625,7 @@
         return [true]
       },
       async goToFarm() {
+        // this.$router.push({ path: '/farms', query: {'import': } })
         return
       },
       async cancelPresale() {

@@ -182,7 +182,13 @@ class PriceModel {
     }
 
     getReserveUsd(pair) {
-        const { reserve0, token0, token0Decimals } = this._getPairInfo(pair)
+        const { reserve0, reserve1, token0, token1, token0Decimals } = this._getPairInfo(pair)
+        // special case for low-liquidity pairs that are paired with ether
+        if (token1.toLowerCase() == this.reserveCurrency.toLowerCase()) {
+            const tokenPrice = this.getPriceUsd(token1)
+            return 2 * parseFloat(ethers.utils.formatEther(reserve1)) * tokenPrice
+        }
+
         const tokenPrice = this.getPriceUsd(token0)
         return 2 * parseFloat(ethers.utils.formatUnits(reserve0, token0Decimals)) * tokenPrice
     }

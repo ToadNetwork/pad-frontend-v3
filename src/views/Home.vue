@@ -201,6 +201,7 @@
           :token2Address="farm.token2"
           :rewardToken="farm.rewardToken"
           :type="farm.type"
+          :isImported="farm.isImported"
           :ecosystemId="ecosystemId"
           :roi="farm.roi"
           :apy="farm.apy"
@@ -242,6 +243,83 @@
         />
       </v-card>
     </v-sheet>
+    <v-container class="d-flex justify-center mt-2">
+      <v-card width="400" class="py-2" style="padding-left: 5px; padding-right: 5px; background: transparent">
+        <v-card-text class="d-flex flex-column" style="width: 100%">
+          <div class="d-flex text-body-1 justify-center pb-3">
+            Missing a farm? Import it:
+          </div>
+          <div class="d-flex justify-center">
+            <v-dialog
+              v-model="showImportDialog"
+            >
+              <template v-slot:activator="{}">
+                <v-text-field
+                  v-model="importFarmAddress"
+                  class="flex-grow-0"
+                  style="width: 300px"
+                  solo
+                  rounded
+                  background-color="#292D38"
+                  placeholder="DPLP address"
+                  append-icon="mdi-magnify"
+                  hide-details="auto"
+                  :error-messages="importFarmError"
+                >
+                  <template v-slot:append>
+                    <v-progress-circular
+                      v-if="importFarmLoadingCounter > 0"
+                      indeterminate
+                    />
+                    <v-icon v-else>
+                      mdi-magnify
+                    </v-icon>
+                  </template>
+                </v-text-field>
+              </template>
+
+              <v-card>
+                <v-card-title>Import Farm</v-card-title>
+                <div style="position: relative">
+                  <farm
+                    v-if="importFarmData"
+                    :name="importFarmData.name"
+                    :contract="importFarmData.contract"
+                    :acceptedToken="importFarmData.acceptedToken"
+                    :token1Address="importFarmData.token1"
+                    :token2Address="importFarmData.token2"
+                    :rewardToken="importFarmData.rewardToken"
+                    :type="importFarmData.type"
+                    :isImported="importFarmData.isImported"
+                    :ecosystemId="ecosystemId"
+                    :roi="importFarmData.roi"
+                    :apy="importFarmData.apy"
+                    :poolSize="importFarmData.poolSize"
+                    :poolValue="importFarmData.poolValue"
+                    :tvl="importFarmData.tvl"
+                    :lpPrice="importFarmData.lpPrice"
+                    :rewardTokenPrice="importFarmData.rewardTokenPrice"
+                    :userLpBalance="importFarmData.userLpBalance"
+                    :userStakedBalance="importFarmData.userStakedBalance"
+                    :userRewardsBalance="importFarmData.userRewardsBalance"
+                    :userAllowance="importFarmData.userAllowance"
+                  />
+                  <v-overlay absolute opacity="0" />
+                </div>
+                <div class="d-flex justify-center mt-8 mb-7">
+                  <v-btn
+                    class="padswap-farm-btn"
+                    @click="importFarm"
+                  >
+                    Import
+                  </v-btn>
+                </div>
+              </v-card>
+            </v-dialog>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-container>
   </v-container>
 </template>
 
@@ -259,12 +337,14 @@ import {
   PADSWAP_LP_FARM_ABI,
   MINTER_ABI,
   PADSWAP_PAIR_ABI,
-  MULTICALL_ADDRESS
+  MULTICALL_ADDRESS,
+  LAUNCHPAD_DPLP_ABI,
+  ERC20_ABI
 } from '../constants'
 import { IEcosystem, EcosystemId, ECOSYSTEMS } from '@/ecosystem'
 import { formatMixin } from '@/format'
 import { FarmType, FarmData, FarmSet } from '@/types'
-import { delay, toFloat } from '@/utils'
+import { delay, equalsInsensitive, toFloat } from '@/utils'
 
 enum FarmViewOption {
   Regular = 0,
@@ -276,11 +356,12 @@ const TOKENS: {[address: string]: string} = {
   FUK: '0xa898bbb508c04be26af3d319b7775927afcb02af'
 }
 
-function initializeFarms(farms: FarmData[], type: FarmType): FarmData[] {
+function initializeFarms(farms: FarmData[], type: FarmType, isImported: boolean = false): FarmData[] {
   return farms.map(f => ({
     ...f,
     rewardToken: f.rewardToken,
     type,
+    isImported,
     poolSize: undefined,
     poolValue: undefined,
     tvl: undefined,
@@ -329,10 +410,19 @@ export default Vue.extend({
       stakedOnly: false,
       includeRetired: false,
       sortBy: 'Earned',
-      searchText: ''
+      searchText: '',
+      importFarmAddress: '',
+      importFarmLoadingCounter: 0,
+      importFarmError: <string | null> null,
+      importFarmData: <FarmData | null> null,
+      showImportDialog: false
     }
   },
   async mounted() {
+    if (this.$route.query.import) {
+      this.importFarmAddress = <string> this.$route.query.import
+    }
+
     while (this.active) {
       try {
         await this.sync()
@@ -363,7 +453,19 @@ export default Vue.extend({
       return this.$store.getters.ecosystem
     },
     currentFarmSet(): FarmSet {
-      return this.farms[this.ecosystemId]
+      const farmSet = this.farms[this.ecosystemId]
+      const importedFarms = initializeFarms(
+        this.$store.state.userProfile.importedFarms[this.ecosystemId],
+        FarmType.LP,
+        true
+      )
+      return {
+        regularFarms: farmSet.regularFarms,
+        lpFarms: {
+          farms: farmSet.lpFarms.farms.concat(importedFarms)
+        },
+        partnerFarms: farmSet.partnerFarms
+      }
     },
     displayedFarms(): Object {
       const visibleFarms = {
@@ -463,13 +565,66 @@ export default Vue.extend({
     }
   },
   watch: {
-    ecosystem(val) {
+    ecosystem() {
       this.$padswapTheme.theme = this.ecosystem.theme
       this.farmViewOption = null
       setTimeout(() => this.sync())
+      setTimeout(() => this.importFarmAddress = '')
     },
     lastChainTransactionBlock() {
       setTimeout(() => this.sync())
+    },
+    async importFarmAddress(val) {
+      this.importFarmError = null
+      if (!ethers.utils.isAddress(val)) {
+        return
+      }
+
+      this.importFarmLoadingCounter += 1
+      try {
+        const ecosystem = this.ecosystem
+        const dplpContract = new ethers.Contract(val, LAUNCHPAD_DPLP_ABI, this.multicall)
+        const pairAddress = <string> await dplpContract.pair()
+
+        const pairContract = new ethers.Contract(pairAddress, PADSWAP_PAIR_ABI, this.multicall)
+        const [token0, token1] = <string[]> await Promise.all([pairContract.token0(), pairContract.token1()])
+
+        const token0Contract = new ethers.Contract(token0, ERC20_ABI, this.multicall)
+        const token1Contract = new ethers.Contract(token1, ERC20_ABI, this.multicall)
+        let [symbol0, symbol1] = <string[]> await Promise.all([token0Contract.symbol(), token1Contract.symbol()])
+        if (symbol0 == `W${ecosystem.ethName}`) {
+          symbol0 = this.ecosystem.ethName
+        }
+        if (symbol1 == `W${ecosystem.ethName}`) {
+          symbol1 = this.ecosystem.ethName
+        }
+
+        const farmConfig = {
+          name: `${symbol0}-${symbol1}`,
+          contract: dplpContract.address,
+          acceptedToken: pairAddress,
+          token1: token0,
+          token2: token1
+        }
+        const [farmData] = initializeFarms([farmConfig], FarmType.LP, true)
+
+        if (this.importFarmAddress == val && this.ecosystemId == ecosystem.ecosystemId) {
+          const importedFarms = this.$store.state.userProfile.importedFarms[ecosystem.ecosystemId]
+          if (importedFarms.find((f: FarmData) => equalsInsensitive(f.contract, farmData.contract))) {
+            this.importFarmError = 'Farm already imported'
+            return
+          }
+
+          this.importFarmData = farmData
+          this.showImportDialog = true
+          setTimeout(() => this.importFarmAddress = '')
+        }
+      } catch (e) {
+        console.error(e)
+        this.importFarmError = 'Not a valid farm address'
+      } finally {
+        this.importFarmLoadingCounter -= 1
+      }
     }
   },
   methods: {
@@ -492,6 +647,9 @@ export default Vue.extend({
                     ...this.currentFarmSet.regularFarms.retiredFarms,
                     ...this.currentFarmSet.lpFarms.farms,
                     ...this.currentFarmSet.partnerFarms.farms)
+      if (this.importFarmData) {
+        allFarms.push(this.importFarmData)
+      }
 
       let mintSupply: number
       const minterContract = new ethers.Contract(ecosystem.minterAddress, MINTER_ABI, multicall)
@@ -571,6 +729,20 @@ export default Vue.extend({
       if (this.farmViewOption === option) {
         setTimeout(() => this.farmViewOption = null)
       }
+    },
+    importFarm() {
+      const importFarmData = this.importFarmData!
+      const farmConfig = {
+        name: importFarmData.name,
+        contract: importFarmData.contract,
+        acceptedToken: importFarmData.acceptedToken,
+        token1: importFarmData.token1,
+        token2: importFarmData.token2
+      }
+      this.$store.state.userProfile.importedFarms[this.ecosystemId].push(farmConfig)
+      this.showImportDialog = false
+      this.importFarmData = null
+      // TODO: toast
     }
   }
 })
@@ -668,5 +840,23 @@ export default Vue.extend({
 
 .v-text-field /deep/ .v-icon {
   opacity: 0.5;
+}
+
+/* TODO: share with Farm */
+.padswap-farm-btn {
+  border-radius: 100px;
+  background: linear-gradient(180deg, #00FC4c 0%, #00D741 100%);
+  color: #00310F;
+  width: 120px;
+  text-transform: none;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: Roboto Mono;
+}
+@media all and (max-width: 970px) {
+  .padswap-farm-btn.padswap-dw-btn {
+    width: 100px;
+    font-size: 15px;
+  }
 }
 </style>

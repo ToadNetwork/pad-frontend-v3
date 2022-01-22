@@ -5,6 +5,7 @@ import { providers } from '@0xsequence/multicall'
 
 import web3Modal from '@/wallet'
 import { IEcosystem, EcosystemId, ChainId, ECOSYSTEMS } from '@/ecosystem'
+import { FarmData } from '@/types'
 
 Vue.use(Vuex)
 
@@ -13,7 +14,28 @@ type SafeSendTransactionArgs = {
   targetChainId: ChainId
 }
 
-export default new Vuex.Store({
+const USER_PROFILE_KEY = 'PADSWAP_USER_PROFILE'
+
+function getInitialUserProfile() {
+  const userProfile = {
+    importedFarms: <Record<EcosystemId, FarmData[]>> {}
+  }
+
+  for (const { ecosystemId } of Object.values(ECOSYSTEMS)) {
+    userProfile.importedFarms[ecosystemId] = []
+  }
+  return userProfile
+}
+
+const userProfile = getInitialUserProfile()
+
+const userProfileSerialized = localStorage.getItem(USER_PROFILE_KEY)
+if (userProfileSerialized) {
+  const savedUserProfile = JSON.parse(userProfileSerialized)
+  Object.assign(userProfile, savedUserProfile)
+}
+
+const store = new Vuex.Store({
   state: {
     web3: <ethers.Signer | null> null,
     address: null,
@@ -24,7 +46,8 @@ export default new Vuex.Store({
       [1285]: <number | null> null,
     },
     padPrice: null,
-    ecosystemId: EcosystemId.Moonbeam
+    ecosystemId: EcosystemId.Moonbeam,
+    userProfile: userProfile
   },
   mutations: {
     setWeb3Connection(state, { web3, address, chainId }) {
@@ -145,3 +168,12 @@ export default new Vuex.Store({
     }
   }
 })
+
+store.watch(
+  state => JSON.stringify(state.userProfile),
+  val => {
+    localStorage.setItem(USER_PROFILE_KEY, val)
+  }
+)
+
+export default store
