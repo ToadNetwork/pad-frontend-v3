@@ -638,6 +638,9 @@ import { EcosystemId } from '@/ecosystem'
         if (this.presaleHardCap == '') {
           return ['Choose the hard cap of the presale']
         }
+        if (parseFloat(this.presaleHardCap) < 0.1) {
+          return ['The hard cap is too low']
+        }
         if (this.presaleHardCap.length > 10 || parseFloat(this.presaleHardCap) > 100000000) {
           return ['The hard cap is unreasonably high']
         }
@@ -656,6 +659,9 @@ import { EcosystemId } from '@/ecosystem'
         }
         if (parseFloat(this.presalePrice) <= 0 || !(/[0-9]/.test(this.presalePrice)) ) {
           return ['Input a positive number']
+        }
+        if (parseFloat(this.presalePrice) < 10) {
+          return ['You must provide at least 10 ' + this.tokenSymbol + ' tokens per ' + this.presaleCurrency]
         }
         if (this.userTokenBalance && parseFloat(ethers.utils.formatUnits(this.userTokenBalance, this.tokenDecimals!)) < this.presaleTokenAmount!) {
           return ['You don\'t have enough ' + this.tokenSymbol + ' tokens to launch this presale']
