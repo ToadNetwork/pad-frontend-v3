@@ -831,7 +831,7 @@
         Object.assign(this, data)
       },
       ...mapActions(['requestConnect', 'safeSendTransaction']),
-      copyText (text) {
+      copyText (text : string) {
         let textArea = document.createElement("textarea")
         textArea.value = text
         textArea.style.top = "0"
