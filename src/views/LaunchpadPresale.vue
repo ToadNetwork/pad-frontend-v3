@@ -282,6 +282,36 @@
                 Go to farms
               </template>
             </v-btn>
+
+            <p style="color: gray; margin-top: 25px;">Or share the link below to let other users import the farm:</p>
+            <div class="referral-link-container">
+            <v-text-field
+            :value="farmLink"
+            readonly>
+            
+            <template v-slot:append>
+              <v-tooltip
+              :open-on-hover="false"
+              right
+              >
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                  style="min-width: 0;"
+                  @click="on.click"
+                  v-on:click="copyText(farmLink)"
+                  icon
+                  retain-focus-on-click
+                  v-bind="attrs"
+                  v-on="on"
+                  >
+                  <v-icon small>mdi-clipboard-multiple</v-icon>
+                  </v-btn>
+                </template>
+                <span>Copied!</span>
+              </v-tooltip>
+            </template>
+            </v-text-field>
+            </div>
           </div>
         </div>
 
@@ -307,7 +337,7 @@
                   <v-btn
                   style="min-width: 0;"
                   @click="on.click"
-                  v-on:click="copyReferralLink()"
+                  v-on:click="copyText('http://' + hostname + $route.path + '?referrerAddress=' + $store.state.address)"
                   icon
                   retain-focus-on-click
                   v-bind="attrs"
@@ -480,6 +510,7 @@
       referralsEnabled: <boolean | null> null,
       referralEarned: <ethers.BigNumber | null> null, // Amount of money earned from your referral link
       referrerAddress: <string | null> null,
+      farmLink: <string | null> null,
 
       presaleIsActive: <boolean | null> null,
       presaleIsAborted: <boolean | null> null,
@@ -800,9 +831,9 @@
         Object.assign(this, data)
       },
       ...mapActions(['requestConnect', 'safeSendTransaction']),
-      copyReferralLink () {
+      copyText (text) {
         let textArea = document.createElement("textarea")
-        textArea.value = 'http://' + window.location.host + this.$route.path + '?referrerAddress=' + this.$store.state.address
+        textArea.value = text
         textArea.style.top = "0"
         textArea.style.left = "0"
         textArea.style.position = "fixed"
