@@ -5,6 +5,7 @@ import Landing from '../views/Landing.vue'
 import Onramp from '../views/Onramp.vue'
 import { ECOSYSTEMS } from '@/ecosystem'
 import store from '@/store'
+import { equalsInsensitive } from '@/utils'
 
 Vue.use(VueRouter)
 
@@ -70,22 +71,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/:ecosystem/presale/:address',
     name: 'Launchpad Presale',
-    component: () => import('../views/LaunchpadPresale.vue'),
-    beforeEnter: (to, from, next) => {
-      if (to.params.ecosystem.toLowerCase() != to.params.ecosystem) {
-        next(`/${to.params.ecosystem.toLowerCase()}/presale/${to.params.address}`)
-        return
-      }
-
-      const ecosystem = Object.values(ECOSYSTEMS).find(e => to.params.ecosystem == e.routeName)
-      if (!ecosystem) {
-        next('/launchpad')
-        return
-      }
-
-      store.commit('setEcosystemId', ecosystem.ecosystemId)
-      next()
-    }
+    component: () => import('../views/LaunchpadPresale.vue')
   },
   {
     path: '/old',
@@ -95,42 +81,12 @@ const routes: Array<RouteConfig> = [
   {
     path: '/:ecosystem/swap',
     name: 'EcosystemSwap',
-    component: () => import ('../views/Swap.vue'),
-    beforeEnter: (to, from, next) => {
-      if (to.params.ecosystem.toLowerCase() != to.params.ecosystem) {
-        next(`/${to.params.ecosystem.toLowerCase()}/swap`)
-        return
-      }
-
-      const ecosystem = Object.values(ECOSYSTEMS).find(e => to.params.ecosystem == e.routeName)
-      if (!ecosystem) {
-        next('/moonbeam/swap')
-        return
-      }
-
-      store.commit('setEcosystemId', ecosystem.ecosystemId)
-      next()
-    }
+    component: () => import ('../views/Swap.vue')
   },
   {
     path: '/:ecosystem/farms',
     name: 'EcosystemFarms',
-    component: () => import ('../views/Home.vue'),
-    beforeEnter: (to, from, next) => {
-      if (to.params.ecosystem.toLowerCase() != to.params.ecosystem) {
-        next(`/${to.params.ecosystem.toLowerCase()}/swap`)
-        return
-      }
-
-      const ecosystem = Object.values(ECOSYSTEMS).find(e => to.params.ecosystem == e.routeName)
-      if (!ecosystem) {
-        // TODO: 404 page
-        return
-      }
-
-      store.commit('setEcosystemId', ecosystem.ecosystemId)
-      next()
-    }
+    component: () => import ('../views/Home.vue')
   }
 ]
 
@@ -138,6 +94,23 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (!to.params.ecosystem) {
+    next()
+    return
+  }
+
+  const ecosystem = Object.values(ECOSYSTEMS).find(e => equalsInsensitive(to.params.ecosystem, e.routeName))
+  if (!ecosystem) {
+    // TODO: 404 page
+    return
+  }
+
+  store.commit('setEcosystemId', ecosystem.ecosystemId)
+  to.params.ecosystem = to.params.ecosystem.toLowerCase()
+  next()
 })
 
 //checks if its an external or internal link and redirects the external ones
