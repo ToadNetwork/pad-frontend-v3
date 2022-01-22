@@ -111,6 +111,26 @@ const routes: Array<RouteConfig> = [
       store.commit('setEcosystemId', ecosystem.ecosystemId)
       next()
     }
+  },
+  {
+    path: '/:ecosystem/farms',
+    name: 'EcosystemFarms',
+    component: () => import ('../views/Home.vue'),
+    beforeEnter: (to, from, next) => {
+      if (to.params.ecosystem.toLowerCase() != to.params.ecosystem) {
+        next(`/${to.params.ecosystem.toLowerCase()}/swap`)
+        return
+      }
+
+      const ecosystem = Object.values(ECOSYSTEMS).find(e => to.params.ecosystem == e.routeName)
+      if (!ecosystem) {
+        // TODO: 404 page
+        return
+      }
+
+      store.commit('setEcosystemId', ecosystem.ecosystemId)
+      next()
+    }
   }
 ]
 
