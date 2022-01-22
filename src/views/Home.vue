@@ -303,6 +303,7 @@
                     :userStakedBalance="importFarmData.userStakedBalance"
                     :userRewardsBalance="importFarmData.userRewardsBalance"
                     :userAllowance="importFarmData.userAllowance"
+                    class="padswap-farm-to-import"
                   />
                   <v-overlay absolute opacity="0" />
                 </div>
@@ -840,6 +841,10 @@ export default Vue.extend({
 
 .v-text-field /deep/ .v-icon {
   opacity: 0.5;
+}
+
+.padswap-farm-to-import /deep/ .v-btn--absolute {
+  display: none;
 }
 
 /* TODO: share with Farm */
