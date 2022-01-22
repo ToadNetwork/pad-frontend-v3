@@ -318,7 +318,7 @@
             <p style="color: gray; margin-top: 10px;">
               The referral rewards are covered by PadSwap, so the users won't lose anything by using your referral link.
             </p>
-            <p><span style="color: gray;">Your referral earnings:</span> <span style="color: green;">{{ referralEarned }} {{ presaleCurrency }}</span></p>
+            <p><span style="color: gray;">Your referral earnings:</span> <span style="color: green;">{{ displayedSale.referralEarned }} {{ presaleCurrency }}</span></p>
           </div>
         </div>
 
