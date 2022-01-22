@@ -193,11 +193,15 @@
         <!-- Participating in the active presale -->
         <!----------------------------------------->
         <div v-if="presaleIsActive == true && presaleIsAborted == false">
+          <v-form
+          v-model="depositFormValid">
+
           <div class="form-line">
             <v-text-field
             v-model="amountToDeposit"
             label="Amount to deposit"
             :suffix="presaleCurrency"
+            :rules="validDepositAmount()"
             ></v-text-field>
           </div>
 
@@ -216,12 +220,14 @@
             <v-btn
             x-large
             color="primary"
+            :disabled="!depositFormValid"
             @click="deposit">
               <template>
                 Deposit {{ presaleCurrency }}
               </template>
             </v-btn>
           </div>
+          </v-form>
         </div>
 
         <!----------------------->
@@ -453,6 +459,7 @@
   export default Vue.extend ({
     data: () => ({
       valid: true,
+      depositFormValid: <boolean> false,
       presaleAddress: <string> '',
       isPresaleValid: <boolean> false,
       hostname: <string> '',
@@ -611,6 +618,12 @@
       }
     },
     methods: {
+      validDepositAmount() {
+        if (parseFloat(this.amountToDeposit) <= 0 || this.amountToDeposit == '') {
+          return ['Please enter the amount you wish to deposit']
+        }
+        return [true]
+      },
       async goToFarm() {
         return
       },
