@@ -310,7 +310,7 @@
                 <div class="d-flex justify-center mt-8 mb-7">
                   <v-btn
                     class="padswap-farm-btn"
-                    @click="importFarm"
+                    @click="confirmImportFarm"
                   >
                     Import
                   </v-btn>
@@ -619,6 +619,7 @@ export default Vue.extend({
           this.importFarmData = farmData
           this.showImportDialog = true
           setTimeout(() => this.importFarmAddress = '')
+          setTimeout(() => this.sync())
         }
       } catch (e) {
         console.error(e)
@@ -731,7 +732,7 @@ export default Vue.extend({
         setTimeout(() => this.farmViewOption = null)
       }
     },
-    importFarm() {
+    confirmImportFarm() {
       const importFarmData = this.importFarmData!
       const farmConfig = {
         name: importFarmData.name,
@@ -744,6 +745,8 @@ export default Vue.extend({
       this.showImportDialog = false
       this.importFarmData = null
       // TODO: toast
+
+      setTimeout(() => this.sync())
     }
   }
 })
