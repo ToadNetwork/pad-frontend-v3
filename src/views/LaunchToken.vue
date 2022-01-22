@@ -408,19 +408,17 @@
       </div>
     </div>
 
-  </div>
-</div>
-
-<div class="launch-button-container">
-  <div class="launch-button-box">
-    <button
-    :disabled="!valid || !isApproveComplete"
-    type="button"
-    name="button"
-    @click="submit"
-    class="launch-button">
-      Launch
-    </button>
+    <div v-if="valid && isApproveComplete" class="form-line text-center">
+      <v-btn
+      :disabled="!valid || !isApproveComplete"
+      x-large
+      outlined
+      width="300"
+      style="color: #0fcf0f; text-transform: none"
+      @click="submit">
+        Launch
+      </v-btn>
+    </div>
   </div>
 </div>
 
