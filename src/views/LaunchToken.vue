@@ -59,8 +59,7 @@
     </div>
 
     <div class="launchpad-faq">
-      <v-expansion-panels
-      inset>
+      <v-expansion-panels>
       <v-expansion-panel>
       <v-expansion-panel-header style="text-align:center !important; display: block">
         Click here to read
@@ -859,7 +858,6 @@ import { EcosystemId } from '@/ecosystem'
   position: relative;
   overflow: hidden;
   text-align: center;
-  padding: 50px;
   background: rgba(24, 29, 38, 0.7) !important;
   border-radius: 20px;
   margin-bottom: 30px;
@@ -928,11 +926,6 @@ import { EcosystemId } from '@/ecosystem'
   border-radius: 10px;
   margin-top: 15px;
   font-size: 1rem;
-}
-
-.launchpad-faq h1, .launchpad-faq p {
-  margin-left: 20px;
-  margin-right: 20px;
 }
 
 .perks-list li {
