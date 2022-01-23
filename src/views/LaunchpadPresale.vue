@@ -151,7 +151,7 @@
         <!---------------------->
         <!-- Presale finished -->
         <!---------------------->
-        <div v-if="presaleIsActive == false && presaleIsAborted == false" class="form-line">
+        <div v-if="presaleIsCompleted" class="form-line">
 
           <h2 class="presale-success-title">Presale finished</h2>
 
@@ -249,7 +249,7 @@
         <!---------------------------------------------->
         <!-- Claiming tokens after successful presale -->
         <!---------------------------------------------->
-        <div v-if="presaleIsActive == false && presaleIsAborted == false">
+        <div v-if="presaleIsCompleted">
           <div class="form-line">
             <v-btn
             x-large
@@ -270,7 +270,7 @@
         <!-------------------------------------------->
         <!-- Import farm and redirect to DPLP farms -->
         <!-------------------------------------------->
-        <div v-if="presaleIsActive == false && presaleIsAborted == false">
+        <div v-if="presaleIsCompleted">
           <v-divider style="margin-bottom: 10px;"></v-divider>
           <p>After claiming your {{ displayedSale.tokenSymbol }}, use the button below to import its DPLP farm and start farming!</p>
           <div class="form-line">
@@ -362,7 +362,7 @@
         <!-- Claiming referral rewards, if any -->
         <!-- Appears when the presale is over  -->
         <!--------------------------------------->
-        <div v-if="referralsEnabled && referralEarned && referralEarned.gt(0) && presaleIsActive == false && presaleIsAborted == false">
+        <div v-if="referralsEnabled && referralEarned && referralEarned.gt(0) && presaleIsCompleted">
           <v-divider></v-divider>
           <div class="form-line">
             <p>Some participants have used your referral link!</p>
@@ -519,6 +519,7 @@
 
       presaleIsActive: <boolean | null> null,
       presaleIsAborted: <boolean | null> null,
+      dplpFarm: <string | null> ZERO_ADDRESS,
 
       // User-entered data (from the .json string in the contract)
       presaleInfo: <string | null> null,
@@ -542,6 +543,7 @@
       editWebsiteUrl: <string | null> null,
       editTelegramUrl: <string | null> null,
 
+      ZERO_ADDRESS
     }),
     created() {
       this.presaleAddress = this.$route.params.address
@@ -643,6 +645,9 @@
       },
       presaleCurrency(): string {
         return this.$store.getters.ecosystem.ethName
+      },
+      presaleIsCompleted(): boolean {
+        return this.dplpFarm !== null && this.dplpFarm != ZERO_ADDRESS
       },
       web3(): ethers.Signer | null {
         return this.$store.state.web3
@@ -857,7 +862,8 @@
           presaleInfo: <string | null> null,
           yourContribution: <ethers.BigNumber | null> null,
           boughtTokens: <ethers.BigNumber | null> null,
-          referralEarned: <ethers.BigNumber | null> null
+          referralEarned: <ethers.BigNumber | null> null,
+          dplpFarm: <string | null> null,
         }
 
         const promises = [
@@ -872,12 +878,17 @@
             this.presaleContract.paidAmount(this.address).then((a: ethers.BigNumber) => data.yourContribution = a),
             this.presaleContract.boughtTokensOf(this.address).then((t: ethers.BigNumber) => data.boughtTokens = t),
             this.presaleContract.referralBonuses(this.address).then((b: ethers.BigNumber) => data.referralEarned = b),
+            this.presaleContract.dplpFarm().then((d: string) => data.dplpFarm = d),
             this.factoryContract.getPresaleOwner(this.presaleContract.address).then((o: string) => this.isPresaleOwner = equalsInsensitive(o, this.address!))
           )
         }
         await Promise.all(promises)
 
         data.presaleIsActive = canBuy && !canEnd
+        if (data.dplpFarm && data.dplpFarm != ZERO_ADDRESS) {
+          // workaround for contract returning isAborted = true after donating to dplp
+          data.presaleIsAborted = false
+        }
         Object.assign(this, data)
       },
       ...mapActions(['requestConnect', 'safeSendTransaction']),
