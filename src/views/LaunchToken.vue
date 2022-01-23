@@ -852,6 +852,7 @@ import { EcosystemId } from '@/ecosystem'
 
 /* Title bar */
 .launchpad-title-bar {
+  padding-top: 20px;
   z-index: 1;
   position: relative;
   overflow: hidden;
