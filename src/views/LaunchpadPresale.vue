@@ -882,6 +882,7 @@
           this.presaleContract.canEnd().then((c: boolean) => canEnd = c),
           this.presaleContract.isAborted().then((a: boolean) => data.presaleIsAborted = a),
           this.presaleContract.presaleInfo().then((p: string) => data.presaleInfo = p),
+          this.presaleContract.dplpFarm().then((d: string) => data.dplpFarm = d),
           this.multicall.getBalance(this.presaleContract.address).then((b: ethers.BigNumber) => data.presaleRaised = b)
         ]
         if (this.address) {
@@ -889,7 +890,6 @@
             this.presaleContract.paidAmount(this.address).then((a: ethers.BigNumber) => data.yourContribution = a),
             this.presaleContract.boughtTokensOf(this.address).then((t: ethers.BigNumber) => data.boughtTokens = t),
             this.presaleContract.referralBonuses(this.address).then((b: ethers.BigNumber) => data.referralEarned = b),
-            this.presaleContract.dplpFarm().then((d: string) => data.dplpFarm = d),
             this.factoryContract.getPresaleOwner(this.presaleContract.address).then((o: string) => this.isPresaleOwner = equalsInsensitive(o, this.address!))
           )
         }
