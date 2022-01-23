@@ -925,6 +925,10 @@ import { EcosystemId } from '@/ecosystem'
   border-radius: 10px;
   margin-top: 15px;
   font-size: 1rem;
+  color: #f7f7f7;
+}
+.launchpad-faq p, .launchpad-faq li {
+  color: #abc2bf;
 }
 
 .perks-list li {
