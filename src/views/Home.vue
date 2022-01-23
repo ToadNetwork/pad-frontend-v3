@@ -202,6 +202,7 @@
           :rewardToken="farm.rewardToken"
           :type="farm.type"
           :isImported="farm.isImported"
+          :tokenLogoUrls="farm.tokenLogoUrls"
           :ecosystemId="ecosystemId"
           :roi="farm.roi"
           :apy="farm.apy"
@@ -291,6 +292,7 @@
                     :rewardToken="importFarmData.rewardToken"
                     :type="importFarmData.type"
                     :isImported="importFarmData.isImported"
+                    :tokenLogoUrls="importFarmData.tokenLogoUrls"
                     :ecosystemId="ecosystemId"
                     :roi="importFarmData.roi"
                     :apy="importFarmData.apy"
@@ -340,7 +342,9 @@ import {
   PADSWAP_PAIR_ABI,
   MULTICALL_ADDRESS,
   LAUNCHPAD_DPLP_ABI,
-  ERC20_ABI
+  ERC20_ABI,
+  LAUNCHPAD_FACTORY_ABI,
+  LAUNCHPAD_PRESALE_ABI
 } from '../constants'
 import { IEcosystem, EcosystemId, ECOSYSTEMS } from '@/ecosystem'
 import { formatMixin } from '@/format'
@@ -363,6 +367,7 @@ function initializeFarms(farms: FarmData[], type: FarmType, isImported: boolean 
     rewardToken: f.rewardToken,
     type,
     isImported,
+    tokenLogoUrls: f.tokenLogoUrls,
     poolSize: undefined,
     poolValue: undefined,
     tvl: undefined,
@@ -389,6 +394,14 @@ function initializeFarmSet(farmSet: FarmSet) {
   copy.lpFarms.farms = initializeFarms(copy.lpFarms.farms, FarmType.LP)
   copy.partnerFarms.farms = initializeFarms(copy.partnerFarms.farms, FarmType.Partner)
   return copy
+}
+
+function tryParseUrl(url: string) {
+  try {
+    return new URL(url)
+  } catch {
+    return null
+  }
 }
 
 export default Vue.extend({
@@ -590,9 +603,17 @@ export default Vue.extend({
         const pairContract = new ethers.Contract(pairAddress, PADSWAP_PAIR_ABI, this.multicall)
         const [token0, token1] = <string[]> await Promise.all([pairContract.token0(), pairContract.token1()])
 
+        const launchedToken = [token0, token1].find(t => !equalsInsensitive(t, ecosystem.wethAddress))!
+        const factoryContract = new ethers.Contract(ecosystem.launchPadFactoryAddress, LAUNCHPAD_FACTORY_ABI, this.multicall)
+
         const token0Contract = new ethers.Contract(token0, ERC20_ABI, this.multicall)
         const token1Contract = new ethers.Contract(token1, ERC20_ABI, this.multicall)
-        let [symbol0, symbol1] = <string[]> await Promise.all([token0Contract.symbol(), token1Contract.symbol()])
+        let [symbol0, symbol1, nonce] = <[string, string, number]> await Promise.all([
+          token0Contract.symbol(),
+          token1Contract.symbol(),
+          factoryContract.getPresaleNonce(launchedToken)
+        ])
+
         if (symbol0 == `W${ecosystem.ethName}`) {
           symbol0 = this.ecosystem.ethName
         }
@@ -600,12 +621,24 @@ export default Vue.extend({
           symbol1 = this.ecosystem.ethName
         }
 
+        const presaleAddress = await factoryContract.calculatePresaleAddress(launchedToken, nonce - 1)
+        const presaleContract = new ethers.Contract(presaleAddress, LAUNCHPAD_PRESALE_ABI, this.multicall)
+        const presaleInfo = await presaleContract.presaleInfo()
+        const { tokenLogoUrl } = JSON.parse(presaleInfo)
+        let tokenLogoUrls = undefined
+        if (tryParseUrl(tokenLogoUrl)) {
+          tokenLogoUrls = {
+            [launchedToken]: tokenLogoUrl
+          }
+        }
+
         const farmConfig = {
           name: `${symbol0}-${symbol1}`,
           contract: dplpContract.address,
           acceptedToken: pairAddress,
           token1: token0,
-          token2: token1
+          token2: token1,
+          tokenLogoUrls: tokenLogoUrls
         }
         const [farmData] = initializeFarms([farmConfig], FarmType.LP, true)
 
@@ -739,7 +772,8 @@ export default Vue.extend({
         contract: importFarmData.contract,
         acceptedToken: importFarmData.acceptedToken,
         token1: importFarmData.token1,
-        token2: importFarmData.token2
+        token2: importFarmData.token2,
+        tokenLogoUrls: importFarmData.tokenLogoUrls
       }
       this.$store.state.userProfile.importedFarms[this.ecosystemId].push(farmConfig)
       this.showImportDialog = false

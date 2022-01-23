@@ -16,6 +16,7 @@ export type FarmData = {
     rewardToken?: string,
     type?: FarmType,
     isImported?: boolean,
+    tokenLogoUrls?: Record<string, string>,
     poolSize?: number,
     poolValue?: number,
     tvl?: number,

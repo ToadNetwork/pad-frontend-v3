@@ -413,6 +413,7 @@ export default Vue.extend({
     rewardToken: String,
     type: Number,
     isImported: Boolean,
+    tokenLogoUrls: Object,
     ecosystemId: Number,
     roi: Number,
     apy: Number,
@@ -478,9 +479,10 @@ export default Vue.extend({
       const token0 = this.token0 as keyof typeof IMAGE_OVERRIDES
       const token1 = (this.token1 ?? this.token0) as keyof typeof IMAGE_OVERRIDES
       if (this.isImported) {
+        const tokenLogoUrls = this.tokenLogoUrls ?? {}
         return [
-          IMAGE_OVERRIDES[token0] ?? this.requireOrDefault(`@/assets/tokens/${this.ecosystem.tokenIconsFolder}/${token0}.svg`),
-          IMAGE_OVERRIDES[token1] ?? this.requireOrDefault(`@/assets/tokens/${this.ecosystem.tokenIconsFolder}/${token1}.svg`)
+          tokenLogoUrls[this.token1Address] ?? IMAGE_OVERRIDES[token0] ?? this.requireOrDefault(`@/assets/tokens/${this.ecosystem.tokenIconsFolder}/${token0}.svg`),
+          tokenLogoUrls[this.token2Address] ?? IMAGE_OVERRIDES[token1] ?? this.requireOrDefault(`@/assets/tokens/${this.ecosystem.tokenIconsFolder}/${token1}.svg`)
         ]
       }
       return [
