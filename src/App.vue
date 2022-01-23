@@ -316,6 +316,13 @@ export default Vue.extend({
           iconSrc: require('@/assets/icons/Telegram Icon.svg')
         },
         {
+          name: 'Discord',
+          desc: 'Our own Discord server',
+          href: 'https://discord.gg/yChaaxyGjf',
+          target: '_blank',
+          iconSrc: require('@/assets/icons/Discord Icon.svg')
+        },
+        {
           name: 'Reddit',
           desc: 'Partake in discussions about Toad.Network on our subreddit',
           href: 'https://reddit.com/r/toadnetwork',
