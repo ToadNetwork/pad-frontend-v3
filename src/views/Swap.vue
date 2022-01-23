@@ -1,39 +1,5 @@
 <template>
   <v-container class="padswap-farms-home">
-    <div class="info-section">
-     <v-row
-    align="center"
-    justify="center"
-    class="info-row">
-      <v-col
-      cols="12"
-      sm="6"
-      style="max-width: 350px;">
-        <div class="info-block">
-          <div class="info-link" >
-            Having issues?
-            <hr>
-            <a id="fullscreen-swap-link" class="new-tab-link" href="" target="_blank">Open swap UI in fullscreen <v-icon small>mdi-open-in-new</v-icon></a>
-           
-          </div>
-        </div>
-      </v-col>
-      <v-col
-      cols="12"
-      sm="6"
-      style="max-width: 350px;">
-        <div class="info-block">
-          <div class="info-link" >
-            Looking for more tokens?
-            <hr>
-            <a class="new-tab-link" href="/token-list" target="_blank">List of third-party tokens <v-icon small>mdi-open-in-new</v-icon></a>
-          </div>
-        </div>
-      </v-col>
-    </v-row>
-  </div>
-
-
 
     <div class="padswap-header-box">
       <slider-tabs
@@ -82,20 +48,22 @@
         />
     </div>
 
-
-     
-
-
-
     <div class="main-container">
-
-
-
 
     	<div id="swap-iframe-container">
     		<div class="menu-mask"></div>
 				<iframe id="swap-iframe" class="swap-ui" src="./bsc/index.html"></iframe>
 			</div>
+
+      <div class="info-section">
+        <div class="info-block">
+          <div class="info-link">
+            Looking for more tokens to swap?
+            <br>
+            <a class="new-tab-link" href="/token-list" target="_blank" style="margin-top: 20px;">List of third-party tokens <v-icon small>mdi-open-in-new</v-icon></a>
+          </div>
+        </div>
+      </div>
 		</div>
 
     <BackToDashboard style="margin-top: 40px; margin-bottom: 300px;" />
@@ -348,6 +316,7 @@ export default Vue.extend({
 }
 
 .info-block {
+  display: block;
   padding-bottom: 10px;
   height: 100%;
   margin-left: 30px;
