@@ -515,7 +515,6 @@
       referralsEnabled: <boolean | null> null,
       referralEarned: <ethers.BigNumber | null> null, // Amount of money earned from your referral link
       referrerAddress: <string | null> null,
-      farmLink: <string | null> null,
 
       presaleIsActive: <boolean | null> null,
       presaleIsAborted: <boolean | null> null,
@@ -649,6 +648,13 @@
       presaleIsCompleted(): boolean {
         return this.dplpFarm !== null && this.dplpFarm != ZERO_ADDRESS
       },
+      farmLink(): string | null {
+        if (!this.dplpFarm) {
+          return null
+        }
+
+        return `http://${this.hostname}/${this.$store.getters.ecosystem.routeName}/farms?import=${this.dplpFarm}`
+      },
       web3(): ethers.Signer | null {
         return this.$store.state.web3
       },
@@ -711,8 +717,13 @@
         return [true]
       },
       async goToFarm() {
-        // this.$router.push({ path: '/farms', query: {'import': } })
-        return
+        if (!this.dplpFarm) {
+          return
+        }
+        this.$router.push({
+          path: `/${this.$store.getters.ecosystem.routeName}/farms`,
+          query: { import: this.dplpFarm}
+        })
       },
       async cancelPresale() {
         const tx = await this.factoryContractSigner!.populateTransaction.abortPresale(this.presaleAddress)
