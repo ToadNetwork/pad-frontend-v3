@@ -319,13 +319,14 @@
         <!-- Your referral link                     -->
         <!-- Displayed while the presale is active  -->
         <!-------------------------------------------->
-        <div v-if="referralsEnabled && presaleIsActive == true">
+        <!-- <div v-if="referralsEnabled && presaleIsActive == true"> -->
+        <div>
           <v-divider></v-divider>
           <div class="form-line">
             <p style="color: gray; margin-top: 25px;">You can share the referral link below and earn a percentage of the raised funds for every user that uses your link.</p>
             <div class="referral-link-container">
             <v-text-field
-            :value="'http://' + hostname + $route.path + '?referrerAddress=' + $store.state.address"
+            :value="getReferralLink()"
             readonly>
             
             <template v-slot:append>
@@ -337,7 +338,7 @@
                   <v-btn
                   style="min-width: 0;"
                   @click="on.click"
-                  v-on:click="copyText('http://' + hostname + $route.path + '?referrerAddress=' + $store.state.address)"
+                  v-on:click="copyText(getReferralLink())"
                   icon
                   retain-focus-on-click
                   v-bind="attrs"
@@ -482,12 +483,17 @@
   import { mapActions } from 'vuex'
   import { ethers } from 'ethers'
 
+  // @ts-ignore:disable-next-line
+  import VueCryptojs from 'vue-cryptojs';
+  Vue.use(VueCryptojs)
+
   import { ERC20_ABI, LAUNCHPAD_FACTORY_ABI, LAUNCHPAD_PRESALE_ABI, ZERO_ADDRESS } from '@/constants'
   import { ChainId } from '@/ecosystem'
   import { delay, equalsInsensitive } from '@/utils'
 
   export default Vue.extend ({
     data: () => ({
+
       valid: true,
       depositFormValid: <boolean> false,
       presaleAddress: <string> '',
@@ -535,11 +541,12 @@
 
       editLogoUrl: <string | null> null,
       editWebsiteUrl: <string | null> null,
-      editTelegramUrl: <string | null> null
+      editTelegramUrl: <string | null> null,
+
     }),
     created() {
       this.presaleAddress = this.$route.params.address
-      this.referrerAddress = this.$route.query.referrerAddress?.toString()
+      this.referrerAddress = this.decrypt(this.$route.query.r?.toString())
       this.hostname = window.location.host
     },
     async mounted() {
@@ -649,6 +656,50 @@
       }
     },
     methods: {
+      getReferralLink() {
+        return 'http://' + this.hostname + this.$route.path + '?r=' + this.encrypt(this.$store.state.address)
+      },
+      encrypt(text : string) : string {
+
+        const iv = (Vue as any).CryptoJS.enc.Utf8.parse('586E3272357538782F413F4428472B4B')
+        const key = (Vue as any).CryptoJS.enc.Utf8.parse('7336763979244226452948404D635166')
+
+        var encrypted = (Vue as any).CryptoJS.AES.encrypt(text, key, { iv: iv });
+        var encryptedText = encrypted.toString()
+
+        return this.toUrlSafe(encryptedText)
+      },
+      decrypt(text : string) : string {
+        if (!text) {
+          return ''
+        }
+
+        text = this.fromUrlSafe(text)
+
+        const iv = (Vue as any).CryptoJS.enc.Utf8.parse('586E3272357538782F413F4428472B4B')
+        const key = (Vue as any).CryptoJS.enc.Utf8.parse('7336763979244226452948404D635166')
+
+        var cipherParams = (Vue as any).CryptoJS.lib.CipherParams.create({
+          ciphertext: (Vue as any).CryptoJS.enc.Base64.parse(text)
+        });
+
+        var decrypted = (Vue as any).CryptoJS.AES.decrypt(cipherParams, key, { iv: iv});
+        var decryptedText = decrypted.toString((Vue as any).CryptoJS.enc.Utf8)
+
+        return decryptedText
+      },
+      toUrlSafe(base64text : string) {
+        base64text = base64text.replaceAll('+', '-')
+        base64text = base64text.replaceAll('/', '_')
+        base64text = base64text.replaceAll('=', '~')
+        return base64text
+      },
+      fromUrlSafe(base64text : string) {
+        base64text = base64text.replaceAll('-', '+')
+        base64text = base64text.replaceAll('_', '/')
+        base64text = base64text.replaceAll('~', '=')
+        return base64text
+      },
       validDepositAmount() {
         if (parseFloat(this.amountToDeposit) <= 0 || this.amountToDeposit == '') {
           return ['Please enter the amount you wish to deposit']
