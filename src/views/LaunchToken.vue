@@ -160,42 +160,6 @@
             <h4>Declare your cargo</h4>
             <v-divider color="green" style="margin: 20px 0;"></v-divider>
 
-
-
-            <!-- <div class="form-line">
-              <v-text-field
-              v-model="tokenName"
-              :counter="20"
-              :rules="nameRules"
-              label="Token name"
-              required
-              ></v-text-field>
-            </div>
-
-
-            <div class="form-line">
-              <v-text-field
-              v-model="tokenSymbol"
-              :counter="8"
-              :rules="symbolRules"
-              label="Token symbol"
-              required
-              ></v-text-field>
-            </div>
-
-
-            <div class="form-line">
-              <v-text-field
-              v-model="tokenSupply"
-              :counter="13"
-              :rules="supplyRules"
-              label="Max supply"
-              required
-              type="number"
-              step="1"
-              ></v-text-field>
-            </div> -->
-
             <div class="form-line">
               <v-text-field
               v-model="tokenContractAddress"
