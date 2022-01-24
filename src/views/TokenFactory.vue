@@ -170,7 +170,7 @@
     </v-stepper-items>
   </v-stepper>
 
-    <p v-if="$store.getters.ecosystem.routeName != 'moonriver'" style="color: red; margin: 20px;">Swith to Moonriver ecosystem first (use the slider at the top of the page)</p>
+    <p v-if="$store.getters.ecosystem.routeName != 'moonriver'" style="color: red; margin: 20px;">Switch to Moonriver ecosystem first (use the slider at the top of the page)</p>
 
     <div style="display: block; text-align: right; padding: 20px;">
       <button
