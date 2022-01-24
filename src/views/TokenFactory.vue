@@ -150,6 +150,14 @@
 
         <p class="win98-paragraph">After the token is created, your token's contract address will appear here.</p>
         <input style="width: 100%" class="win98-input" v-model="tokenContractAddress" readonly>
+
+        <p v-if="tokenCreated" class="win98-paragraph" style="margin-top: 20px;">
+          Success!<br>
+          Your token was created and the {{ tokenSymbol }} tokens have been sent to your wallet.<br>
+          You can now use the LaunchPAD to launch your presale.<br>
+          <a style="color: blue" href="/launch" target="_blank">Launch presale</a>
+        </p>
+
       </div>
 
       </v-stepper-content>
