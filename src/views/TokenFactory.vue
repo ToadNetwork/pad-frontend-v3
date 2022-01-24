@@ -55,6 +55,9 @@
       <p class="please-read">
         Use the form below to create your own token.
       </p>
+      <p>
+        After the token is created, you can use the LaunchPAD to <a href="/launch" target="blank" style="color: #00f000">launch your presale</a>.
+        </p>
     </div>
 
     </v-sheet> 
