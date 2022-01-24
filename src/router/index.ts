@@ -69,6 +69,11 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/LaunchToken.vue')
   },
   {
+    path: '/factory',
+    name: 'Token Factory',
+    component: () => import('../views/TokenFactory.vue')
+  },
+  {
     path: '/:ecosystem/presale/:address',
     name: 'Launchpad Presale',
     component: () => import('../views/LaunchpadPresale.vue')

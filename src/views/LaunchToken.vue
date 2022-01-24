@@ -54,7 +54,7 @@
 
     <div class="launchpad-intro">
       <p class="please-read">
-        Before launching a token, make sure to read the <b>Launchpad FAQ</b> below.
+        Before launching a presale, make sure to read the <b>Launchpad FAQ</b> below.
       </p>
     </div>
 
