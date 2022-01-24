@@ -646,7 +646,7 @@
         return this.$store.getters.ecosystem.ethName
       },
       presaleIsCompleted(): boolean {
-        return this.dplpFarm !== null && this.dplpFarm != ZERO_ADDRESS
+        return this.presaleIsActive === false && this.presaleIsAborted === false
       },
       farmLink(): string | null {
         if (!this.dplpFarm) {
