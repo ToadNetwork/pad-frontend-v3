@@ -166,7 +166,24 @@
               :rules="contractAddressRules"
               label="Your token's contract address"
               required
-              ></v-text-field>
+              >
+                <template v-slot:append>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <div
+                      v-bind="attrs"
+                      v-on="on"
+                      class="hint-icon"
+                      >
+                        ?
+                      </div>
+                      </template>
+                      <span>If you don't have a token, you can use our token factory to create it in a few clicks.</span>
+                      <br>
+                      <span>To do so, go back to the launchpad title page and select "create token".</span>
+                  </v-tooltip>
+                </template>
+              </v-text-field>
             </div>
 
             <div class="form-line" v-if="tokenName && tokenName.length > 0">
@@ -230,7 +247,7 @@
                         <div
                         v-bind="attrs"
                         v-on="on"
-                        class="referrals-hint"
+                        class="hint-icon"
                         >
                           ?
                         </div>
@@ -964,12 +981,15 @@ import { EcosystemId } from '@/ecosystem'
   display: inline-block;
 }
 
-.referrals-hint {
+.hint-icon {
   display: inline-block;
   border: 1px solid gray;
   border-radius: 50%;
   padding: 1px;
   width: 25px;
+  height: 25px;
+  color: #c3c0c0;
+  line-height: 21px;
   text-align: center;
 }
 
