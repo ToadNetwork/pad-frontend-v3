@@ -700,7 +700,6 @@
         var decrypted = (Vue as any).CryptoJS.AES.decrypt(cipherParams, key, { iv: iv});
         var decryptedText = decrypted.toString((Vue as any).CryptoJS.enc.Utf8)
         decryptedText = decryptedText.slice(0, 42)
-        alert(decryptedText)
 
         return decryptedText
       },
