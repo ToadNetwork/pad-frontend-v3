@@ -301,8 +301,8 @@ import { EcosystemId } from '@/ecosystem'
         else if (symbolBlacklist.includes(this.tokenSymbol) ) { errors += 'Please don\'t create tokens that falsely represent other projects\n' }
 
         if (!this.tokenSupply) { errors += 'Choose the max supply of your token\n' }
-        else if (parseFloat(this.tokenSupply) > 1000000000000) { errors += 'Token supply too large\n' }
-        else if (parseFloat(this.tokenSupply) < 10) { errors += 'Token supply too high\n' }
+        else if (parseFloat(this.tokenSupply) > 1000000000000) { errors += 'Token supply too high\n' }
+        else if (parseFloat(this.tokenSupply) < 10) { errors += 'Token supply too low\n' }
         else if (parseFloat(this.tokenSupply) % 1 != 0 || !(/^\d+$/.test(this.tokenSupply)) ) { errors += 'Token supply must be a whole number\n' }
 
         if (!this.tokenDecimals) { errors += 'Choose the number of decimals of your token\n' }
