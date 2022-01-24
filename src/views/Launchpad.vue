@@ -53,11 +53,19 @@
         <div class="launchpad-title-bar-section">
           <h2>Want to launch your own project?</h2>
           <v-btn
-          x-large
+          style="margin-right: 10px"
+          large
           class="launch-token-btn"
           color="primary"
-          to="/launch-token">
-          Launch token
+          to="/tokenfactory">
+          Create token
+          </v-btn>
+          <v-btn
+          large
+          class="launch-token-btn"
+          color="green"
+          to="/launch">
+          Launch presale
           </v-btn>
         </div>
       </v-col>

@@ -64,12 +64,12 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/Faucet.vue')
   },
   {
-    path: '/launch-token',
+    path: '/launch',
     name: 'Launch Token',
     component: () => import('../views/LaunchToken.vue')
   },
   {
-    path: '/factory',
+    path: '/tokenfactory',
     name: 'Token Factory',
     component: () => import('../views/TokenFactory.vue')
   },

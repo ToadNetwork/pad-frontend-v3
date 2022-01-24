@@ -68,10 +68,15 @@
 
         <v-divider></v-divider>
 
-        <h1>Do I need to deploy the token contract myself?</h1>
+        <h1>Do I need to create a token here or deploy my own token contract?</h1>
         <p>
-        Currently, yes - you will need to deploy your own token contract before using the launchpad.<br>
-        However, we are already working on a fully automatic token factory that will allow anyone to create a token contract in one click, without programming experience.
+        You can do either!
+        </p>
+        <p>
+        Our own <a href="http://localhost:8080/tokenfactory" target="blank" style="color: #00f000">token factory</a> allows users to create a token in a few clicks, with no coding experience.
+        </p>
+        <p>
+        However, you are free to launch a presale for your own token if you decide to do so.
         </p>
 
         <v-divider></v-divider>
