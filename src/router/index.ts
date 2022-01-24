@@ -79,11 +79,6 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/LaunchpadPresale.vue')
   },
   {
-    path: '/old',
-    name: 'Launchpad Presale',
-    component: () => import('../views/LaunchpadOld.vue')
-  },
-  {
     path: '/:ecosystem/swap',
     name: 'EcosystemSwap',
     component: () => import ('../views/Swap.vue')
