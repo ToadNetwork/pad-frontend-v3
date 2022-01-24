@@ -223,6 +223,7 @@ import { EcosystemId } from '@/ecosystem'
 
   import { ERC20_ABI,
            LAUNCHPAD_FACTORY_ABI,
+           LAUNCHPAD_TOKEN_FACTORY_ABI,
            APPROVE_AMOUNT } from '@/constants'
   import { ChainId } from '@/ecosystem'
   import { delay } from '@/utils'
@@ -242,8 +243,8 @@ import { EcosystemId } from '@/ecosystem'
       // Filled in the form
       tokenName: <string | null> null,
       tokenSymbol: <string | null> null,
-      tokenSupply: <ethers.BigNumber | null> null,
-      tokenDecimals: <number | null> 18,
+      tokenSupply: <string | null> null,
+      tokenDecimals: <string | null> '18',
 
       // Created token address
       tokenContractAddress: '',
@@ -312,7 +313,37 @@ import { EcosystemId } from '@/ecosystem'
         }
       },
       async submit() {
-      }
+        if (!this.web3) {
+          await this.requestConnect()
+          return
+        }
+
+        const contract = new ethers.Contract(
+          this.$store.getters.ecosystem.launchPadTokenFactoryAddress,
+          LAUNCHPAD_TOKEN_FACTORY_ABI,
+          this.web3!
+        )
+        const tx = await contract.populateTransaction.create(
+          this.tokenName,
+          this.tokenSymbol,
+          ethers.BigNumber.from(this.tokenSupply),
+          this.tokenDecimals
+        )
+        const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+        if (txReceipt) {
+          for (const log of txReceipt.logs) {
+            try {
+              const logDesc = contract.interface.parseLog(log)
+              if (logDesc.name == 'CreateToken') {
+                this.tokenContractAddress = logDesc.args.addr
+                this.tokenCreated = true
+              }
+            } catch {
+            }
+          }
+        }
+      },
+      ...mapActions(['requestConnect', 'safeSendTransaction'])
     }
   })
 </script>

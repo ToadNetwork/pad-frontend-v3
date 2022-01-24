@@ -40,6 +40,7 @@ interface IEcosystem {
     minterAddress: string,
     priceModel: PriceModel,
     launchPadFactoryAddress: string,
+    launchPadTokenFactoryAddress: string,
     theme: IPadswapTheme
     swapUrl: string
     bridgeUrl: string
@@ -64,6 +65,7 @@ const BscEcosystem: IEcosystem = {
     minterAddress: BSC_MINTER_ADDRESS,
     priceModel: new PriceModel(bscDataseed, BSC_WHITELIST, wbnbAddress, WBNB_BUSD_PAIR, bscFactoryAddress, MINIMUM_LIQUIDITY_BNB, 18),
     launchPadFactoryAddress: '', // TODO
+    launchPadTokenFactoryAddress: '', // TODO
     theme: BscPadswapTheme,
     swapUrl: 'https://padswap.exchange/bsc/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
@@ -88,6 +90,7 @@ const MoonriverEcosystem: IEcosystem = {
     minterAddress: MOVR_MINTER_ADDRESS,
     priceModel: new PriceModel(moonriverDataseed, MOVR_WHITELIST, wmovrAddress, WMOVR_USDC_PAIR, moonriverFactoryAddress, MINIMUM_LIQUIDITY_MOVR, 6),
     launchPadFactoryAddress: '0x29F6245a9c66d3552D528BCCEE10635f380ca6C6',
+    launchPadTokenFactoryAddress: '0xF8022F5DbA4aD1771Ed4B176DcDF2E8DE5710f94',
     theme: MoonriverPadswapTheme,
     swapUrl: 'https://padswap.exchange/moonriver/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
@@ -112,6 +115,7 @@ const MoonbeamEcosystem: IEcosystem = {
     minterAddress: '0x70790550d5F01EDd5B2Ed1dFf05eDC52cD4F1Eda',
     priceModel: new PriceModel(moonbeamDataseed, GLMR_WHITELIST, wglmrAddress, WGLMR_USDC_PAIR, moonbeamFactoryAddress, MINIMUM_LIQUIDITY_GLMR, 6),
     launchPadFactoryAddress: '', // TODO
+    launchPadTokenFactoryAddress: '',
     theme: MoonbeamPadswapTheme,
     swapUrl: 'https://padswap.exchange/moonbeam/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',

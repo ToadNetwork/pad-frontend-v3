@@ -164,7 +164,7 @@ const store = new Vuex.Store({
       const txReceipt = await txResponse.wait()
 
       state.lastChainTransactionBlock[targetChainId] = txReceipt.blockNumber
-      return true
+      return txReceipt
     }
   }
 })
