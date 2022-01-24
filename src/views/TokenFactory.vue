@@ -95,7 +95,8 @@
       <v-stepper-content step="1">
 
         <p class="win98-paragraph">This program will guide you through creating your token on Moonriver network.</p>
-        <p class="win98-paragraph">Press "Continue" to proceed with creating your own token..</p>
+        <p class="win98-paragraph">Make sure you are on Moonriver network, as that is the only network currently supported.</p>
+        <p class="win98-paragraph">Press "Continue" to proceed with creating your own token.</p>
 
       </v-stepper-content>
 
@@ -114,6 +115,8 @@
 
         <label for="tokenName" class="win98-label">Decimals:</label><br>
         <input id="tokenName" class="win98-input" v-model="tokenDecimals"><br><br>
+
+        <span v-if="formErrors()" style="color: red; white-space: pre;">{{ formErrors() }}</span>
 
 
       </v-stepper-content>
@@ -183,6 +186,7 @@
       class="win98-button"
       v-on:click.prevent 
       @click="advanceForm(1)"
+      :disabled="formStep == 2 && formErrors() != false"
       >
         Continue
       </button>
@@ -241,17 +245,17 @@ import { EcosystemId } from '@/ecosystem'
       valid: true,
 
       // Filled in the form
-      tokenName: <string | null> null,
-      tokenSymbol: <string | null> null,
-      tokenSupply: <string | null> null,
-      tokenDecimals: <string | null> '18',
+      tokenName: <string> '',
+      tokenSymbol: <string> '',
+      tokenSupply: <string> '',
+      tokenDecimals: <string> '18',
 
       // Created token address
       tokenContractAddress: '',
 
       tokenCreated: <boolean> false, // Set to true when the token has been created
 
-      syncLock: new AwaitLock()
+      syncLock: new AwaitLock(),
     }),
     computed: {
       ecosystemId: {
@@ -283,6 +287,31 @@ import { EcosystemId } from '@/ecosystem'
       this.active = false
     },
     methods: {
+      formErrors() {
+        var errors = ''
+
+        if (!this.tokenName) { errors += 'Token name is required\n' }
+        else if (this.tokenName.length > 20) { errors += 'Token name cannot be longer than 20 characters\n' }
+
+        if (!this.tokenSymbol) { errors += 'Token symbol is required\n' }
+        else if (this.tokenSymbol.length > 8) { errors += 'Token symbol cannot be longer than 8 characters\n' }
+        else if (this.tokenSymbol != this.tokenSymbol.toUpperCase()) { errors += 'Token symbol must consist of uppercase characters\n' }
+        else if (symbolBlacklist.includes(this.tokenSymbol) ) { errors += 'Please don\'t create tokens that falsely represent other projects\n' }
+
+        if (!this.tokenSupply) { errors += 'Choose the max supply of your token\n' }
+        else if (parseFloat(this.tokenSupply) > 1000000000000) { errors += 'Token supply too large\n' }
+        else if (parseFloat(this.tokenSupply) < 10) { errors += 'Token supply too high\n' }
+        else if (parseFloat(this.tokenSupply) % 1 != 0 || !(/^\d+$/.test(this.tokenSupply)) ) { errors += 'Token supply must be a whole number\n' }
+
+        if (!this.tokenDecimals) { errors += 'Choose the number of decimals of your token\n' }
+        else if (parseFloat(this.tokenDecimals) < 0 || parseFloat(this.tokenDecimals) > 255 ) { errors += 'Choose a number between 0 and 255\n' }
+        else if (parseFloat(this.tokenDecimals) % 1 != 0 || !(/^\d+$/.test(this.tokenDecimals)) ) { errors += 'Token decimals must be a whole number\n' }
+
+        if (errors.length == 0) {
+          return false
+        }
+        return errors
+      },
       advanceForm(delta : number) {
         this.formStep += delta
         if (this.formStep < 1) 
