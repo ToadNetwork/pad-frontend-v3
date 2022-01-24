@@ -96,7 +96,7 @@
 
         <p class="win98-paragraph">This program will guide you through creating your token on Moonriver network.</p>
         <p class="win98-paragraph">Make sure you are on Moonriver network, as that is the only network currently supported.</p>
-        <p class="win98-paragraph">Press "Continue" to proceed with creating your own token.</p>
+        <p v-if="$store.getters.ecosystem.routeName == 'moonriver'" class="win98-paragraph">Press "Continue" to proceed with creating your own token.</p>
 
       </v-stepper-content>
 
@@ -149,7 +149,7 @@
           class="win98-button"
           v-on:click.prevent 
           @click="submit()"
-          :disabled="tokenCreated">
+          :disabled="tokenCreated || ($store.getters.ecosystem.routeName != 'moonriver')">
           Create token
         </button>
         <br><br>
@@ -170,6 +170,8 @@
     </v-stepper-items>
   </v-stepper>
 
+    <p v-if="$store.getters.ecosystem.routeName != 'moonriver'" style="color: red; margin: 20px;">Swith to Moonriver ecosystem first (use the slider at the top of the page)</p>
+
     <div style="display: block; text-align: right; padding: 20px;">
       <button
       v-if="formStep > 1 && !(tokenCreated && formStep == 4)"
@@ -186,7 +188,7 @@
       class="win98-button"
       v-on:click.prevent 
       @click="advanceForm(1)"
-      :disabled="formStep == 2 && formErrors() != false"
+      :disabled="(formStep == 2 && formErrors() != false) || ($store.getters.ecosystem.routeName != 'moonriver')"
       >
         Continue
       </button>
@@ -356,7 +358,7 @@ import { EcosystemId } from '@/ecosystem'
           this.tokenName,
           this.tokenSymbol,
           ethers.BigNumber.from(this.tokenSupply),
-          this.tokenDecimals
+          parseInt(this.tokenDecimals)
         )
         const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         if (txReceipt) {
