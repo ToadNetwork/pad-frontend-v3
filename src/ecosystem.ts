@@ -89,7 +89,7 @@ const MoonriverEcosystem: IEcosystem = {
     padAddress: '0x45488C50184Ce2092756ba7CdF85731fD17e6f3d',
     minterAddress: MOVR_MINTER_ADDRESS,
     priceModel: new PriceModel(moonriverDataseed, MOVR_WHITELIST, wmovrAddress, WMOVR_USDC_PAIR, moonriverFactoryAddress, MINIMUM_LIQUIDITY_MOVR, 6),
-    launchPadFactoryAddress: '0x29F6245a9c66d3552D528BCCEE10635f380ca6C6',
+    launchPadFactoryAddress: '0xd193bFDA2CeADD6728612781EF8a51876A2a820D',
     launchPadTokenFactoryAddress: '0xF8022F5DbA4aD1771Ed4B176DcDF2E8DE5710f94',
     theme: MoonriverPadswapTheme,
     swapUrl: 'https://padswap.exchange/moonriver/swap',
