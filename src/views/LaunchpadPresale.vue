@@ -673,10 +673,9 @@
         if (!text) {
           return ''
         }
-        text = text + this.presaleAddress.slice(10, 20)
 
         const iv = (Vue as any).CryptoJS.enc.Utf8.parse('586E3272357538782F413F4428472B4B')
-        const key = (Vue as any).CryptoJS.enc.Utf8.parse('7336763979244226452948404D635166')
+        const key = (Vue as any).CryptoJS.enc.Utf8.parse('7336763979244226452948' + this.presaleAddress.slice(10, 20).toString())
 
         var encrypted = (Vue as any).CryptoJS.AES.encrypt(text, key, { iv: iv });
         var encryptedText = encrypted.toString()
@@ -691,7 +690,7 @@
         text = this.fromUrlSafe(text)
 
         const iv = (Vue as any).CryptoJS.enc.Utf8.parse('586E3272357538782F413F4428472B4B')
-        const key = (Vue as any).CryptoJS.enc.Utf8.parse('7336763979244226452948404D635166')
+        const key = (Vue as any).CryptoJS.enc.Utf8.parse('7336763979244226452948' + this.presaleAddress.slice(10, 20).toString())
 
         var cipherParams = (Vue as any).CryptoJS.lib.CipherParams.create({
           ciphertext: (Vue as any).CryptoJS.enc.Base64.parse(text)
@@ -700,6 +699,7 @@
         var decrypted = (Vue as any).CryptoJS.AES.decrypt(cipherParams, key, { iv: iv});
         var decryptedText = decrypted.toString((Vue as any).CryptoJS.enc.Utf8)
         decryptedText = decryptedText.slice(0, 42)
+        alert(decryptedText)
 
         return decryptedText
       },
