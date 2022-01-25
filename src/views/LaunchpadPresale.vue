@@ -506,6 +506,12 @@
       </div>
     </div>
 
+  <v-overlay
+    v-model="isPresaleLoading"
+    absolute
+  >
+    <v-progress-circular indeterminate />
+  </v-overlay>
   </v-container>
 </template>
 
@@ -705,6 +711,9 @@
         }
 
         return `http://${this.hostname}/${this.$store.getters.ecosystem.routeName}/farms?import=${this.dplpFarm}`
+      },
+      isPresaleLoading(): boolean {
+        return this.tokenName === null
       },
       web3(): ethers.Signer | null {
         return this.$store.state.web3
