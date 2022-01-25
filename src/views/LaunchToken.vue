@@ -192,7 +192,7 @@
               <p>Presale contract address (after deploy): {{ presaleContractAddress }}</p>
             </div>
             <div v-else-if="tokenContractError">
-              <p style="color: red">{{ tokenContractError }}</p>
+              <p style="color: red;">{{ tokenContractError }}</p>
             </div>
             <div v-else-if="isTokenContractLoading">
               <v-progress-circular indeterminate />
@@ -219,6 +219,15 @@
               v-model="telegramUrl"
               :rules="telegramUrlRules"
               label="Telegram link (leave empty if you don't have one)"
+              required
+              ></v-text-field>
+            </div>
+
+            <div class="form-line">
+              <v-text-field
+              v-model="discordUrl"
+              :rules="discordUrlRules"
+              label="Discord link (leave empty if you don't have one)"
               required
               ></v-text-field>
             </div>
@@ -565,6 +574,7 @@ import { EcosystemId } from '@/ecosystem'
       // Custom data to be stored in a json string
       logoUrl: '',
       telegramUrl: '',
+      discordUrl: '',
       websiteUrl: '',
 
       // Ecosystem-specific
@@ -599,9 +609,18 @@ import { EcosystemId } from '@/ecosystem'
         (v: any) => !!v || 'Specify the maximum contribution per user (0 for infinite)',
         (v: any) => (parseFloat(v) >= 0) || 'Input a positive number (or 0 for infinite)'
       ],
-      websiteUrlRules: [],
-      logoUrlRules: [],
-      telegramUrlRules: [],
+      websiteUrlRules: [
+          (v: any) => (!v || /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,10}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v)) || 'Enter a valid website URL, or leave empty if you don\'t have one'
+        ],
+      logoUrlRules: [
+          (v: any) => (!v || /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,10}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v)) || 'Enter a valid link to your logo, or leave empty if you don\'t have one'
+        ],
+      telegramUrlRules: [
+          (v: any) => (!v || /(https?:\/\/)?(www[.])?(telegram|t)\.me\/([a-zA-Z0-9_-]*)\/?$/.test(v)) || 'Enter a valid Telegram invite link, or leave empty if you don\'t have one'
+        ],
+      discordUrlRules: [
+          (v: any) => (!v || /(https?:\/\/)?(www[.])?discord\.(com\/invite|gg)\/([a-zA-Z0-9_-]*)\/?$/.test(v)) || 'Enter a valid Discord invite link, or leave empty if you don\'t have one'
+        ],
       validationCheckbox: false,
       active: true,
       syncLock: new AwaitLock()
@@ -782,6 +801,7 @@ import { EcosystemId } from '@/ecosystem'
         const presaleInfo = JSON.stringify({
           tokenLogoUrl: this.logoUrl,
           telegramUrl: this.telegramUrl,
+          discordUrl: this.discordUrl,
           websiteUrl: this.websiteUrl
         })
 
@@ -830,7 +850,7 @@ import { EcosystemId } from '@/ecosystem'
 
         const contractCode = await this.multicall.getCode(tokenContract.address)
         if (contractCode == '0x') {
-          this.tokenContractError = 'Address is not a valid ERC20 contract.\nMake sure that you selected the correct ecosystem.'
+          this.tokenContractError = 'Address is either not a valid ERC20 contract or not on ' + this.$store.getters.ecosystem.routeName + ' network.\nMake sure that you selected the correct ecosystem.'
           return
         }
 

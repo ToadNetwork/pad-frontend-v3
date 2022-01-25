@@ -69,6 +69,10 @@
               <td>Telegram</td>
               <td><a :href="displayedSale.presaleInfo.telegramUrl" target="_blank">{{displayedSale.presaleInfo.telegramUrl}}</a></td>
             </tr>
+            <tr>
+              <td>Discord</td>
+              <td><a :href="displayedSale.presaleInfo.discordUrl" target="_blank">{{displayedSale.presaleInfo.discordUrl}}</a></td>
+            </tr>
           </tbody>
         </v-simple-table>
       </v-col>
@@ -401,6 +405,7 @@
               v-model="editLogoUrl"
               label="Token logo URL (leave empty if you don't have one)"
               required
+              :rules="logoUrlRules"
               >
                 <template v-slot:append>
                   <img
@@ -416,6 +421,7 @@
               v-model="editWebsiteUrl"
               label="Website (leave empty if you don't have one)"
               required
+              :rules="websiteUrlRules"
               ></v-text-field>
             </div>
 
@@ -424,6 +430,16 @@
               v-model="editTelegramUrl"
               label="Telegram link (leave empty if you don't have one)"
               required
+              :rules="telegramUrlRules"
+              ></v-text-field>
+            </div>
+
+            <div class="form-line">
+              <v-text-field
+              v-model="editDiscordUrl"
+              label="Discord link (leave empty if you don't have one)"
+              required
+              :rules="discordUrlRules"
               ></v-text-field>
             </div>
 
@@ -538,9 +554,24 @@
         (v: any) => (v == 'CANCEL') || 'Please type CANCEL to confirm'
       ],
 
+      // Editing token info
       editLogoUrl: <string | null> null,
       editWebsiteUrl: <string | null> null,
       editTelegramUrl: <string | null> null,
+      editDiscordUrl: <string | null> null,
+      websiteUrlRules: [
+          (v: any) => (!v || /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/.test(v)) || 'Enter a valid website URL, or leave empty if you don\'t have one'
+        ],
+      logoUrlRules: [
+          (v: any) => (!v || /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/.test(v)) || 'Enter a valid link to your logo, or leave empty if you don\'t have one'
+        ],
+      telegramUrlRules: [
+          (v: any) => (!v || /(https?:\/\/)?(www[.])?(telegram|t)\.me\/([a-zA-Z0-9_-]*)\/?$/.test(v)) || 'Enter a valid Telegram invite link, or leave empty if you don\'t have one'
+        ],
+      discordUrlRules: [
+          (v: any) => (!v || /(https?:\/\/)?(www[.])?discord\.(com\/invite|gg)\/([a-zA-Z0-9_-]*)\/?$/.test(v)) || 'Enter a valid Discord invite link, or leave empty if you don\'t have one'
+      ],
+
 
       ZERO_ADDRESS
     }),
@@ -638,6 +669,7 @@
           presaleInfo: this.presaleInfo ?  this.stringToObject(this.presaleInfo) : {
             tokenLogoUrl: '',
             telegramUrl: '',
+            discordUrl: '',
             websiteUrl: ''
           },
         }
@@ -737,7 +769,8 @@
         const presaleInfo = JSON.stringify({
           tokenLogoUrl: this.editLogoUrl,
           websiteUrl: this.editWebsiteUrl,
-          telegramUrl: this.editTelegramUrl
+          telegramUrl: this.editTelegramUrl,
+          discordUrl: this.editDiscordUrl
         })
         const tx = await this.factoryContractSigner!.populateTransaction.changePresaleInfo(this.presaleAddress, presaleInfo)
         await this.safeSendTransaction({ tx, targetChainId: this.chainId })
@@ -808,14 +841,17 @@
         const obj = {
           tokenLogoUrl: "",
           telegramUrl: "",
-          websiteUrl: ""
+          discordUrl: "",
+          websiteUrl: "",
         }
         try {
             const parsed = JSON.parse(str)
             obj.tokenLogoUrl = this.sanitizer(parsed.tokenLogoUrl)
             obj.telegramUrl = this.sanitizer(parsed.telegramUrl)
+            obj.discordUrl = this.sanitizer(parsed.discordUrl)
             obj.websiteUrl = this.sanitizer(parsed.websiteUrl)
             obj.telegramUrl = this.fixUrl(obj.telegramUrl)
+            obj.discordUrl = this.fixUrl(obj.discordUrl)
             obj.websiteUrl = this.fixUrl(obj.websiteUrl)
         } catch (e) {
             return obj
@@ -865,7 +901,8 @@
 
           this.editLogoUrl = this.displayedSale.presaleInfo.tokenLogoUrl,
           this.editWebsiteUrl = this.displayedSale.presaleInfo.websiteUrl,
-          this.editTelegramUrl = this.displayedSale.presaleInfo.telegramUrl
+          this.editTelegramUrl = this.displayedSale.presaleInfo.telegramUrl,
+          this.editDiscordUrl = this.displayedSale.presaleInfo.discordUrl
         }
 
         let canBuy: boolean = false
