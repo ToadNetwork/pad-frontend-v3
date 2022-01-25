@@ -667,6 +667,11 @@ import { EcosystemId } from '@/ecosystem'
         return this.factoryContract.connect(this.web3)
       },
       isTokenContractLoading(): boolean {
+        if (!this.address) {
+          // complete loading early when wallet is not connected
+          return ethers.utils.isAddress(this.tokenContractAddress) && this.tokenSymbol === null
+        }
+
         // userTokenAllowance is the last thing to be set during load
         return ethers.utils.isAddress(this.tokenContractAddress) && this.userTokenAllowance === null
       },
@@ -878,7 +883,9 @@ import { EcosystemId } from '@/ecosystem'
           )
         }
         await Promise.all(promises)
-        contractData.userTokenAllowance = await tokenContract.allowance(this.address, contractData.presaleContractAddress)
+        if (this.address) {
+          contractData.userTokenAllowance = await tokenContract.allowance(this.address, contractData.presaleContractAddress)
+        }
 
         if (tokenContract.address == this.tokenContract?.address) {
           Object.assign(this, contractData)
