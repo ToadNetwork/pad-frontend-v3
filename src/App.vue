@@ -485,5 +485,5 @@ export default Vue.extend({
   color: #FFFFFF;
   filter: invert(68%) sepia(70%) saturate(3531%) hue-rotate(94deg) brightness(108%) contrast(117%);
 }
-a { text-decoration: none; }
+a { text-decoration: none !important; }
 </style>

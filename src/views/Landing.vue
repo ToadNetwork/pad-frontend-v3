@@ -780,5 +780,5 @@ export default Vue.extend({
 .padswap-farm-btn:hover {
   background: linear-gradient(180deg, #76ae88 0%, #1e843d 100%);
 }
-
+a { text-decoration: none !important; }
 </style>
