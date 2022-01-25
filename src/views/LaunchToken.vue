@@ -73,7 +73,7 @@
         You can do either!
         </p>
         <p>
-        Our own <a href="http://localhost:8080/tokenfactory" target="blank" style="color: #00f000">token factory</a> allows users to create a token in a few clicks, with no coding experience.
+        Our own <a href="tokenfactory" target="blank" style="color: #00f000">token factory</a> allows users to create a token in a few clicks, with no coding experience.
         </p>
         <p>
         However, you are free to launch a presale for your own token if you decide to do so.
