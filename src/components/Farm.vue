@@ -160,7 +160,15 @@
             >
               <v-row>
                 <v-col cols="6" class="padswap-pink">
-                  <a
+                  <a v-if="this.token1Address == this.token2Address && this.token1Address != TOAD && this.token1Address != WGLMR"
+                    :href="padswapBuyTokenUrl"
+                    target="_blank"
+                    style="color: unset; text-decoration: unset;"
+                  >
+                    GET {{ name }}
+                    <v-icon dense>mdi-arrow-top-right</v-icon>
+                  </a>
+                  <a v-else
                     :href="padswapLiquidityUrl"
                     target="_blank"
                     style="color: unset; text-decoration: unset;"
@@ -371,6 +379,7 @@ const IMAGE_OVERRIDES = {
 }
 
 const TOAD = '0x463e737d8f740395abf44f7aac2d9531d8d539e9'
+const WGLMR = '0xe3DB50049C74De2F7d7269823af3178Cf22fd5E3'
 const WBNB = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
 // TODO: use 0x98878b06940ae243284ca214f92bb71a2b032b8a?
 const WMOVR = '0x663a07a2648296f1A3C02EE86A126fE1407888E5'
@@ -459,6 +468,9 @@ export default Vue.extend({
       const token2Address = equalsInsensitive(this.token2Address, this.ecosystem.wethAddress) ? this.ecosystem.ethName : this.token2Address
       return `/${this.ecosystem.routeName}/swap?action=add&token1=${token1Address}&token2=${token2Address}`
     },
+    padswapBuyTokenUrl(): string {
+      return `/${this.ecosystem.routeName}/swap?inputCurrency=GLMR&outputCurrency=${this.token1Address}`
+    },
     earnedValue(): number {
       if (!this.userRewardsBalance) {
         return 0
@@ -504,7 +516,7 @@ export default Vue.extend({
     farmContract(): ethers.Contract {
       if (this.type == 1) {
         return new ethers.Contract(this.contract, PADSWAP_LP_FARM_ABI, this.web3)
-      } else if (this.token1Address == this.token2Address && this.token1Address != TOAD) {
+      } else if (this.token1Address == this.token2Address && this.token1Address != TOAD && this.token1Address != WGLMR) {
         return new ethers.Contract(this.contract, PADSWAP_SINGLE_STAKE_FARM_ABI, this.web3)
       } else {
         return new ethers.Contract(this.contract, PADSWAP_FARM_ABI, this.web3)
