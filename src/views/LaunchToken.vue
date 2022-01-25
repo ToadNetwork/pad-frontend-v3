@@ -109,7 +109,7 @@
         <h1>What will happen to the funds raised during the presale?</h1>
         <p><b>80%</b> of raised funds will be added to liquidity and donated to a <a href="https://docs.toad.network/fundamentals/dplp" target="blank" style="color: #00f000">DPLP farm</a> to incentivize users to stake even more liquidity for your token.</p>
         <p><b>16%</b> will go to the presale owner.</p>
-        <p><b>4%</b> will go to PadSwap (3% if referrals are enabled).</p>
+        <p><b>4% (minus referral rewards)</b> will go to PadSwap.</p>
 
         <v-divider></v-divider>
 
@@ -253,7 +253,7 @@
                         </div>
                       </template>
                       <span>Allows users to refer others to your presale<br>
-                      and earn a percentage of the raised funds.<br>
+                      and earn 1% of the funds raised via their referral link.<br>
                       The referral rewards are covered by PadSwap<br>
                       (taken from platform fees),<br>
                       so you don't lose anything by enabling referrals.</span>
@@ -430,7 +430,24 @@
             type="number"
             :suffix="presaleCurrency"
             :disabled="!tokenSymbol"
-            ></v-text-field>
+            >
+                <template v-slot:append>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+
+                      &nbsp;
+                      <div
+                      v-bind="attrs"
+                      v-on="on"
+                      class="hint-icon"
+                      >
+                        ?
+                      </div>
+                      </template>
+                      <span>You can use this to limit the amount of {{ presaleCurrency }}<br>that a single user can contribute.</span>
+                  </v-tooltip>
+                </template>
+            </v-text-field>
           </div>
 
 
