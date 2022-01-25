@@ -718,6 +718,9 @@
     },
     methods: {
       formatNumberWithCommas(nbr : any) {
+        if (!nbr) {
+          return '0.0'
+        }
         return nbr.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
       },
       getReferralLink() {
