@@ -298,9 +298,7 @@
             :counter="9"
             :rules="validHardCap()"
             label="Presale hard cap"
-            pattern="[0-9]"
             required
-            type="number"
             step="1"
             :suffix="presaleCurrency"
             :disabled="!tokenSymbol"
@@ -607,7 +605,7 @@ import { EcosystemId } from '@/ecosystem'
       ],
       maxContributionRules: [
         (v: any) => !!v || 'Specify the maximum contribution per user (0 for infinite)',
-        (v: any) => (parseFloat(v) >= 0) || 'Input a positive number (or 0 for infinite)'
+        (v: any) => ((/^(?![0.]+$)\d+(\.\d{1,10})?$/gm.test(v))) || 'Input a valid positive number (or 0 for infinite)'
       ],
       websiteUrlRules: [
           (v: any) => (!v || /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,10}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v)) || 'Enter a valid website URL, or leave empty if you don\'t have one'
@@ -757,8 +755,8 @@ import { EcosystemId } from '@/ecosystem'
         if (this.presaleHardCap.length > 10 || parseFloat(this.presaleHardCap) > 100000000) {
           return ['The hard cap is unreasonably high']
         }
-        if (parseFloat(this.presaleHardCap) <= 0 || !(/[0-9]/.test(this.presaleHardCap)) ) {
-          return ['Input a positive number']
+        if ( !(/^(?![0.]+$)\d+(\.\d{1,10})?$/gm.test(this.presaleHardCap)) ) {
+          return ['Input a valid positive number']
         }
         if (this.userTokenBalance && parseFloat(ethers.utils.formatUnits(this.userTokenBalance, this.tokenDecimals!)) < this.presaleTokenAmount!) {
           return ['You don\'t have enough ' + this.tokenSymbol + ' tokens to launch this presale']
@@ -770,8 +768,8 @@ import { EcosystemId } from '@/ecosystem'
         if (this.presalePrice == '') {
           return ['Choose the price of your tokens during presale']
         }
-        if (parseFloat(this.presalePrice) <= 0 || !(/[0-9]/.test(this.presalePrice)) ) {
-          return ['Input a positive number']
+        if (!(/^(?![0.]+$)\d+(\.\d{1,20})?$/gm.test(this.presalePrice)) ) {
+          return ['Input a valid positive number']
         }
         if (parseFloat(this.presalePrice) < 10) {
           return ['You must provide at least 10 ' + this.tokenSymbol + ' tokens per ' + this.presaleCurrency]
