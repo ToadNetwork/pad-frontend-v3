@@ -92,6 +92,11 @@ const routes: Array<RouteConfig> = [
     path: '/:ecosystem/farms',
     name: 'EcosystemFarms',
     component: () => import ('../views/Home.vue')
+  },
+  {
+    path: '/:ecosystem/launchpad',
+    name: 'EcosystemLaunchpad',
+    component: () => import ('../views/Launchpad.vue')
   }
 ]
 
