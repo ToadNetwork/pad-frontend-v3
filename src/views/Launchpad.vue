@@ -104,8 +104,6 @@
       class="token-table"
       :headers="headers"
       :items="tokens[currentChain]"
-      :total-items="tokens[currentChain].length"
-      rows-per-page-items="20"
       item-key="name">
 
         <template v-slot:item.logo="{ item }">
