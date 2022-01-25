@@ -1,256 +1,262 @@
 <template>
   <v-container>
     <div class="padswap-header-box">
-      <slider-tabs
-        class="padswap-ecosystem-tabs"
-        v-model="ecosystemId"
-      >
+      <slider-tabs class="padswap-ecosystem-tabs" v-model="ecosystemId">
         <v-tab class="d-flex flex-column">
-          <v-img
-            height="30"
-            width="30"
-            contain
-            src="../assets/tokens/bsc/PAD.svg"
-          />
+          <v-img height="30" width="30" contain src="../assets/tokens/bsc/PAD.svg" />
           <div>BSC</div>
         </v-tab>
         <v-tab class="d-flex flex-column">
-          <v-img
-            height="30"
-            width="30"
-            contain
-            src="../assets/tokens/moonriver/PAD.svg"
-          />
+          <v-img height="30" width="30" contain src="../assets/tokens/moonriver/PAD.svg" />
           <div>Moonriver</div>
         </v-tab>
         <v-tab class="d-flex flex-column">
-          <v-img
-            height="30"
-            width="30"
-            contain
-            src="../assets/tokens/moonbeam/PAD.svg"
-          />
+          <v-img height="30" width="30" contain src="../assets/tokens/moonbeam/PAD.svg" />
           <div>Moonbeam</div>
         </v-tab>
       </slider-tabs>
       <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
     </div>
-
     <v-sheet class="launchpad-title-bar">
-    <img class="background" :src="getBackgroundTexture()">
-    <div class="launchpad-title">
-      <img class="launchpad-image" :src="getLaunchpadRocket()">
-      <h1 style="margin-bottom: 0">LaunchPAD token factory</h1>
-      <v-btn
-      medium
-      color="primary"
-      href="/launchpad"
-      style="margin-top: 10px;"
-      >
-        Back
-      </v-btn>
-    </div>
-
-    <div class="launchpad-intro">
-      <p class="please-read">
-        Use the form below to create your own token.
-      </p>
-      <p>
-        After the token is created, you can use the LaunchPAD to <a href="/launch" target="blank" style="color: #00f000">launch your presale</a>.
+      <img class="background" :src="getBackgroundTexture()">
+      <div class="launchpad-title">
+        <img class="launchpad-image" :src="getLaunchpadRocket()">
+        <h1 style="margin-bottom: 0">LaunchPAD token factory</h1>
+        <v-btn medium color="primary" href="/launchpad" style="margin-top: 10px;">
+          Back
+        </v-btn>
+      </div>
+      <div class="launchpad-intro">
+        <p class="please-read">
+          Use the form below to create your own token.
         </p>
-    </div>
-
-    </v-sheet> 
-
-
-
-
-    <v-form
-    ref="form"
-    v-model="valid"
-    lazy-validation
-    >
-
-    <div class="form-container">
-      <div class="screen-glass">
-      </div>
-      <div class="screen">
-
-
-        
-  <div class="win98-window">
-  <div class="win98-title-bar">
-    <div class="win98-title-bar-text">Creating your token</div>
-    <div class="win98-title-bar-controls">
-      <button v-on:click.prevent class="win98-button" aria-label="Minimize"></button>
-      <button v-on:click.prevent class="win98-button" aria-label="Maximize"></button>
-      <button v-on:click.prevent class="win98-button" aria-label="Close"></button>
-    </div>
-  </div>
-  <div class="win98-window-body">
-    <h1 class="win98-header">TOAD Token Master</h1>
-    <v-stepper class="win98-fieldset" v-model="formStep">
-
-    <v-stepper-items>
-      <v-stepper-content step="1">
-
-        <p class="win98-paragraph">This program will guide you through creating your token on Moonriver network.</p>
-        <p class="win98-paragraph">Make sure you are on Moonriver network, as that is the only network currently supported.</p>
-        <p v-if="$store.getters.ecosystem.routeName == 'moonriver'" class="win98-paragraph">Press "Continue" to proceed with creating your own token.</p>
-
-      </v-stepper-content>
-
-      <v-stepper-content step="2">
-
-        <p class="win98-paragraph">Please enter the details of the token you wish to create.</p>
-        
-        <label for="tokenName" class="win98-label">Token name:</label><br>
-        <input id="tokenName" class="win98-input" v-model="tokenName"><br><br>
-
-        <label for="tokenName" class="win98-label">Token symbol:</label><br>
-        <input id="tokenName" class="win98-input" v-model="tokenSymbol"><br><br>
-
-        <label for="tokenName" class="win98-label">Total supply:</label><br>
-        <input id="tokenName" class="win98-input" v-model="tokenSupply"><br><br>
-
-        <label for="tokenName" class="win98-label">Decimals:</label><br>
-        <input id="tokenName" class="win98-input" v-model="tokenDecimals"><br><br>
-
-        <span v-if="formErrors()" style="color: red; white-space: pre;">{{ formErrors() }}</span>
-
-
-      </v-stepper-content>
-
-      <v-stepper-content step="3">
-
-        <p class="win98-paragraph">Please review the info below.</p>
-
-        <label for="tokenName" class="win98-label">Token name: &nbsp;</label><br>
-        <input id="tokenName" class="win98-input" v-model="tokenName" disabled><br><br>
-
-        <label for="tokenName" class="win98-label">Token symbol: &nbsp;</label><br>
-        <input id="tokenName" class="win98-input" v-model="tokenSymbol" disabled><br><br>
-
-        <label for="tokenName" class="win98-label">Total supply: &nbsp;</label><br>
-        <input id="tokenName" class="win98-input" v-model="tokenSupply" disabled><br><br>
-
-        <label for="tokenName" class="win98-label">Decimals: &nbsp;</label><br>
-        <input id="tokenName" class="win98-input" v-model="tokenDecimals" disabled><br><br>
-
-        <p class="win98-paragraph">If the info is correct, press "Continue"</p>
-
-      </v-stepper-content>
-
-      <v-stepper-content step="4">
-
-      <div>
-        <p class="win98-paragraph">Pressing the button below will create your token.</p>
-        <button
-          class="win98-button"
-          v-on:click.prevent 
-          @click="submit()"
-          :disabled="tokenCreated || ($store.getters.ecosystem.routeName != 'moonriver')">
-          Create token
-        </button>
-        <br><br>
-
-        <p class="win98-paragraph">After the token is created, your token's contract address will appear here.</p>
-        <input style="width: 100%" class="win98-input" v-model="tokenContractAddress" readonly>
-
-        <p v-if="tokenCreated" class="win98-paragraph" style="margin-top: 20px;">
-          Success!<br>
-          Your token was created and the {{ tokenSymbol }} tokens have been sent to your wallet.<br>
-          You can now use the LaunchPAD to launch your presale.<br>
-          <a style="color: blue" href="/launch" target="_blank">Launch presale</a>
+        <p>
+          After the token is created, you can use the LaunchPAD to <a href="/launch" target="blank" style="color: #00f000">launch your presale</a>.
         </p>
-
       </div>
+    </v-sheet>
+    <v-form ref="form">
+      <div class="form-container">
+        <div class="screen-glass">
+        </div>
+        <div class="screen">
+          <div class="win98-window">
+            <div class="win98-title-bar">
+              <div class="win98-title-bar-text">Creating your token</div>
+              <div class="win98-title-bar-controls">
+                <button v-on:click.prevent class="win98-button" aria-label="Minimize"></button>
+                <button v-on:click.prevent class="win98-button" aria-label="Maximize"></button>
+                <button v-on:click.prevent class="win98-button" aria-label="Close"></button>
+              </div>
+            </div>
+            <div class="win98-window-body">
+              <h1 class="win98-header">LaunchPAD Token Master</h1>
+              <v-stepper class="win98-fieldset" v-model="formStep">
+                <v-stepper-items>
 
-      </v-stepper-content>
-    </v-stepper-items>
-  </v-stepper>
+                  <v-stepper-content step="1">
+                    <p class="win98-paragraph">This program will guide you through creating your token.</p>
+                    <p class="win98-paragraph">To continue, please select the desired ecosystem.</p>
+                    <fieldset class="win98-fieldset">
+                      <legend>Select chain</legend>
+                      <div class="win98-field-row">
+                        <input id="radio1" type="radio" name="chain-select" @click="setEcosystem(0)">
+                        <label for="radio1">Binance Smart Chain</label>
+                      </div>
+                      <div class="win98-field-row">
+                        <input id="radio2" type="radio" name="chain-select" @click="setEcosystem(1)">
+                        <label for="radio2">Moonriver</label>
+                      </div>
+                      <div class="win98-field-row">
+                        <input id="radio3" type="radio" name="chain-select" @click="setEcosystem(2)">
+                        <label for="radio3">Moonbeam</label>
+                      </div>
+                    </fieldset>
 
-    <p v-if="$store.getters.ecosystem.routeName != 'moonriver'" style="color: red; margin: 20px;">Switch to Moonriver ecosystem first (use the slider at the top of the page)</p>
+                  </v-stepper-content>
 
-    <div style="display: block; text-align: right; padding: 20px;">
-      <button
-      v-if="formStep > 1 && !(tokenCreated && formStep == 4)"
-      style="margin-right: 10px;"
-      class="win98-button"
-      color="primary"
-      v-on:click.prevent 
-      @click="advanceForm(-1)">
-        Back
-      </button>
+                  <v-stepper-content step="2">
+                    <p class="win98-paragraph">
+                      Please select the type of token you'd like to create.<br>
+                      For now, two types of tokens are supported.
+                    </p>
 
-      <button
-      v-if="formStep < 4"
-      class="win98-button"
-      v-on:click.prevent 
-      @click="advanceForm(1)"
-      :disabled="(formStep == 2 && formErrors() != false) || ($store.getters.ecosystem.routeName != 'moonriver')"
-      >
-        Continue
-      </button>
-  </div>
+                    <fieldset class="win98-fieldset">
+                      <legend>Token type</legend>
 
-  <div class="form-content">
-      <div style="text-align: right; margin: 20px;">
+                      <div class="win98-field-row">
+                        <input
+                        id="token-type-1"
+                        type="radio"
+                        name="token-type-select"
+                        @click="setTokenType('normal')"
+                        >
+                        <label for="token-type-1">Normal token</label>
+                      </div>
+                      <ul class="win98-list">
+                        <li>No transaction fee</li>
+                      </ul>
+
+                      <div class="win98-field-row">
+                        <input
+                        id="token-type-2"
+                        type="radio"
+                        name="token-type-select"
+                        @click="setTokenType('redistribution')">
+                        <label for="token-type-2">With redistribution</label>
+                      </div>
+                      <ul class="win98-list">
+                        <li>Part of every transaction is redistributed to holders</li>
+                        <li>The fee can be adjusted before you create the token</li>
+                      </ul>
+
+                    </fieldset>
+                  </v-stepper-content>
+
+                  <v-stepper-content step="3">
+                    <p class="win98-paragraph">Please enter the details of the token you wish to create.</p>
+
+                    <label for="tokenName" class="win98-label">Token name:</label><br>
+                    <input id="tokenName" class="win98-input" v-model="tokenName"><br><br>
+
+                    <label for="tokenSymbol" class="win98-label">Token symbol:</label><br>
+                    <input id="tokenSymbol" class="win98-input" v-model="tokenSymbol"><br><br>
+
+                    <label for="tokenSupply" class="win98-label">Total supply:</label><br>
+                    <input id="tokenSupply" class="win98-input" v-model="tokenSupply"><br><br>
+
+                    <label for="tokenDecimals" class="win98-label">Decimals:</label><br>
+                    <input id="tokenDecimals" class="win98-input" v-model="tokenDecimals"><br><br>
+
+                    <div v-if="tokenType == 'redistribution'">
+                      <label for="transactionFee" class="win98-label">Transaction Fee:</label><br>
+                      <input id="transactionFee" class="win98-input" v-model="transactionFee"><br>
+                    </div>
+
+                    <br>
+                    <span v-if="formErrors()" style="color: red; white-space: pre;">{{ formErrors() }}</span>
+                  </v-stepper-content>
+
+                  <v-stepper-content step="4">
+                    <p class="win98-paragraph">Please review the info below.</p>
+
+                    <label for="tokenName" class="win98-label">Token name:</label><br>
+                    <input disabled id="tokenName" class="win98-input" v-model="tokenName"><br><br>
+
+                    <label for="tokenSymbol" class="win98-label">Token symbol:</label><br>
+                    <input disabled id="tokenSymbol" class="win98-input" v-model="tokenSymbol"><br><br>
+
+                    <label for="tokenSupply" class="win98-label">Total supply:</label><br>
+                    <input disabled id="tokenSupply" class="win98-input" v-model="tokenSupply"><br><br>
+
+                    <label for="tokenDecimals" class="win98-label">Decimals:</label><br>
+                    <input disabled id="tokenDecimals" class="win98-input" v-model="tokenDecimals"><br><br>
+
+                    <div v-if="tokenType == 'redistribution'">
+                      <label for="transactionFee" class="win98-label">Transaction Fee:</label><br>
+                      <input disabled id="transactionFee" class="win98-input" v-model="transactionFee"><br>
+                    </div>
+
+
+                    <p class="win98-paragraph">If the info is correct, press "Continue"</p>
+                  </v-stepper-content>
+
+                  <v-stepper-content step="5">
+                    <div>
+                      <p class="win98-paragraph">Pressing the button below will create your token.</p>
+                      <button class="win98-button" v-on:click.prevent @click="submit()" :disabled="tokenCreated">
+                        Create {{ tokenSymbol }} token
+                      </button>
+                      <br><br>
+                      <p class="win98-paragraph">This usually takes a few minutes.</p>
+                      <br><br>
+                      <p class="win98-paragraph">After the token is created, your token's contract address will appear here.</p>
+                      <input style="width: 100%" class="win98-input" v-model="tokenContractAddress" readonly>
+                      <p v-if="tokenCreated" class="win98-paragraph" style="margin-top: 20px;">
+                        Success!<br>
+                        Your token was created and the {{ tokenSymbol }} tokens have been sent to your wallet.<br>
+                        You can now use the LaunchPAD to launch your presale.<br>
+                        <a style="color: blue" href="/launch" target="_blank">Launch presale</a>
+                      </p>
+                    </div>
+                  </v-stepper-content>
+
+                </v-stepper-items>
+              </v-stepper>
+              <div style="display: block; text-align: right; padding: 20px;">
+                <button
+                v-if="formStep > 1 && !(tokenCreated && formStep == 4)" 
+                style="margin-right: 10px;"
+                class="win98-button"
+                color="primary"
+                v-on:click.prevent
+                @click="advanceForm(-1)">
+                  Back
+                </button>
+                <button
+                v-if="formStep < 5"
+                class="win98-button"
+                v-on:click.prevent
+                @click="advanceForm(1)"
+                :disabled="(formStep == 3 && formErrors() != false) || (formStep == 2 && !tokenType) || (!selectedEcosystemName)"
+                >
+                  Continue
+                </button>
+              </div>
+              <div class="form-content">
+                <div style="text-align: right; margin: 20px;">
+                </div>
+              </div>
+            </div>
+            <div class="win98-status-bar">
+              <p class="win98-status-bar-field">Network: {{ selectedEcosystemName }}</p>
+              <p class="win98-status-bar-field">Token type: {{ tokenType }}</p>
+            </div>
+          </div>
+        </div>
       </div>
-  </div>
-
-
-  </div>
-  <div class="win98-status-bar">
-    <p class="win98-status-bar-field">Network: Moonriver</p>
-    <p class="win98-status-bar-field">LaunchPAD</p>
-    <p class="win98-status-bar-field">TOAD Network</p>
-  </div>
-
       </div>
-    </div>
-
-  </div>
-</div>
-
-</v-form>
-
-</v-container>
+    </v-form>
+  </v-container>
 </template>
-
 <script lang="ts">
 import SliderTabs from '@/components/SliderTabs.vue'
 import { EcosystemId } from '@/ecosystem'
 
-  import Vue from 'vue'
-  import { mapActions } from 'vuex'
-  import AwaitLock from 'await-lock'
-  import { ethers } from 'ethers'
+import Vue from 'vue'
+import { mapActions } from 'vuex'
+import AwaitLock from 'await-lock'
+import { ethers } from 'ethers'
 
-  import { ERC20_ABI,
-           LAUNCHPAD_FACTORY_ABI,
-           LAUNCHPAD_TOKEN_FACTORY_ABI,
-           APPROVE_AMOUNT } from '@/constants'
-  import { ChainId } from '@/ecosystem'
-  import { delay } from '@/utils'
+import {
+  ERC20_ABI,
+  LAUNCHPAD_FACTORY_ABI,
+  LAUNCHPAD_TOKEN_FACTORY_ABI,
+  APPROVE_AMOUNT
+} from '@/constants'
+import { ChainId } from '@/ecosystem'
+import { delay } from '@/utils'
 
-  // These token symbols will not be allowed
-  const symbolBlacklist = ['TOAD', 'PAD', 'USDC', 'USDT', 'DAI', 'BNB', 'BUSD', 'ETH', 'BTC', 'GLMR', 'MOVR', 'XRP', 'XMR', 'DOT', 'ADA', 'SOLAR']
+// These token symbols will not be allowed
+const symbolBlacklist = ['TOAD', 'PAD', 'USDC', 'USDT', 'DAI', 'BNB', 'BUSD', 'ETH', 'BTC', 'GLMR', 'MOVR', 'XRP', 'XMR', 'DOT', 'ADA', 'SOLAR']
 
-  export default Vue.extend ({
-    components: { SliderTabs },
-    data: () => ({
-      active: true,
-      formStep: 1,
-      maxFormStep: 4,
+export default Vue.extend({
+      components: { SliderTabs },
+      data: () => ({
+            active: true,
 
-      valid: true,
+            // These are used to make the form work, not used anywhere else
+            formStep: 1,
+            maxFormStep: 5,
+            selectedEcosystemName: <string> '',
 
       // Filled in the form
       tokenName: <string> '',
       tokenSymbol: <string> '',
       tokenSupply: <string> '',
       tokenDecimals: <string> '18',
+      tokenType: <string> '', // Either "normal" or "redistribution"
+      transactionFee: <string> '', // Only relevant if tokenType is "redistribution"
 
       // Created token address
       tokenContractAddress: '',
@@ -289,6 +295,13 @@ import { EcosystemId } from '@/ecosystem'
       this.active = false
     },
     methods: {
+      setEcosystem(newEcosystem : any) {
+        this.$store.commit('setEcosystemId', newEcosystem)
+        this.selectedEcosystemName = this.$store.getters.ecosystem.routeName
+      },
+      setTokenType(newTokenType : any) {
+        this.tokenType = newTokenType
+      },
       formErrors() {
         var errors = ''
 
@@ -308,6 +321,12 @@ import { EcosystemId } from '@/ecosystem'
         if (!this.tokenDecimals) { errors += 'Choose the number of decimals of your token\n' }
         else if (parseFloat(this.tokenDecimals) < 0 || parseFloat(this.tokenDecimals) > 255 ) { errors += 'Choose a number between 0 and 255\n' }
         else if (parseFloat(this.tokenDecimals) % 1 != 0 || !(/^\d+$/.test(this.tokenDecimals)) ) { errors += 'Token decimals must be a whole number\n' }
+
+        if (this.tokenType == "redistribution") {
+          if (!this.transactionFee) { errors += 'Choose the transaction fee\n' }
+          else if (parseFloat(this.transactionFee) > 15 || parseFloat(this.transactionFee) < 0) { errors += 'Choose a number between 0 and 15\n' }
+          else if (!(/^(?![0.]+$)\d+(\.\d{1,10})?$/gm.test(this.transactionFee)) ) { errors += 'The number is too long or is not a valid number\n' }
+        }
 
         if (errors.length == 0) {
           return false
@@ -378,9 +397,7 @@ import { EcosystemId } from '@/ecosystem'
     }
   })
 </script>
-
 <style src="../styles/win98.css" />
-
 <style scoped>
 .background {
   pointer-events: none;
