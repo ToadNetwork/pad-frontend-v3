@@ -243,12 +243,12 @@ const symbolBlacklist = ['TOAD', 'PAD', 'USDC', 'USDT', 'DAI', 'BNB', 'BUSD', 'E
 export default Vue.extend({
       components: { SliderTabs },
       data: () => ({
-            active: true,
+      active: true,
 
-            // These are used to make the form work, not used anywhere else
-            formStep: 1,
-            maxFormStep: 5,
-            selectedEcosystemName: <string> '',
+      // These are used to make the form work, not used anywhere else
+      formStep: 1,
+      maxFormStep: 5,
+      selectedEcosystemName: <string> '',
 
       // Filled in the form
       tokenName: <string> '',
