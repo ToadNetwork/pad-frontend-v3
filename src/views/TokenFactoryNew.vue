@@ -60,15 +60,15 @@
                     <fieldset class="win98-fieldset">
                       <legend>Select chain</legend>
                       <div class="win98-field-row">
-                        <input id="radio1" type="radio" name="chain-select" @click="setEcosystem(0)">
+                        <input id="radio1" value="0" v-model="ecosystemId" type="radio" name="chain-select">
                         <label for="radio1">Binance Smart Chain</label>
                       </div>
                       <div class="win98-field-row">
-                        <input id="radio2" type="radio" name="chain-select" @click="setEcosystem(1)">
+                        <input id="radio2" value="1" v-model="ecosystemId" type="radio" name="chain-select">
                         <label for="radio2">Moonriver</label>
                       </div>
                       <div class="win98-field-row">
-                        <input id="radio3" type="radio" name="chain-select" @click="setEcosystem(2)">
+                        <input id="radio3" value="2" v-model="ecosystemId" type="radio" name="chain-select">
                         <label for="radio3">Moonbeam</label>
                       </div>
                     </fieldset>
@@ -89,7 +89,8 @@
                         id="token-type-1"
                         type="radio"
                         name="token-type-select"
-                        @click="setTokenType('normal')"
+                        value="normal"
+                        v-model="tokenType"
                         >
                         <label for="token-type-1">Normal token</label>
                       </div>
@@ -102,7 +103,8 @@
                         id="token-type-2"
                         type="radio"
                         name="token-type-select"
-                        @click="setTokenType('redistribution')">
+                        value="redistribution"
+                        v-model="tokenType">
                         <label for="token-type-2">With redistribution</label>
                       </div>
                       <ul class="win98-list">
@@ -198,7 +200,7 @@
                 class="win98-button"
                 v-on:click.prevent
                 @click="advanceForm(1)"
-                :disabled="(formStep == 3 && formErrors() != false) || (formStep == 2 && !tokenType) || (!selectedEcosystemName)"
+                :disabled="(formStep == 3 && formErrors() != false) || (formStep == 2 && !tokenType)"
                 >
                   Continue
                 </button>
@@ -209,7 +211,7 @@
               </div>
             </div>
             <div class="win98-status-bar">
-              <p class="win98-status-bar-field">Network: {{ selectedEcosystemName }}</p>
+              <p class="win98-status-bar-field">Network: {{ $store.getters.ecosystem.routeName }}</p>
               <p class="win98-status-bar-field">Token type: {{ tokenType }}</p>
             </div>
           </div>
@@ -248,7 +250,6 @@ export default Vue.extend({
       // These are used to make the form work, not used anywhere else
       formStep: 1,
       maxFormStep: 5,
-      selectedEcosystemName: <string> '',
 
       // Filled in the form
       tokenName: <string> '',
@@ -295,13 +296,6 @@ export default Vue.extend({
       this.active = false
     },
     methods: {
-      setEcosystem(newEcosystem : any) {
-        this.$store.commit('setEcosystemId', newEcosystem)
-        this.selectedEcosystemName = this.$store.getters.ecosystem.routeName
-      },
-      setTokenType(newTokenType : any) {
-        this.tokenType = newTokenType
-      },
       formErrors() {
         var errors = ''
 
