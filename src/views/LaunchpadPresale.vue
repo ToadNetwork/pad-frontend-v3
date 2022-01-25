@@ -58,8 +58,8 @@
               <td>{{ displayedSale.tokenSymbol }}</td>
             </tr>
             <tr>
-              <td>Max supply</td>
-              <td>{{ displayedSale.tokenSupply }} {{ displayedSale.tokenSymbol }}</td>
+              <td>Total supply</td>
+              <td>{{ formatNumberWithCommas(displayedSale.tokenSupply) }} {{ displayedSale.tokenSymbol }}</td>
             </tr>
             <tr>
               <td>Website</td>
@@ -89,7 +89,7 @@
           <tbody>
             <tr>
               <td>Tokens in presale</td>
-              <td>{{ displayedSale.presaleTokenAmount }} {{ displayedSale.tokenSymbol }}
+              <td>{{ formatNumberWithCommas(displayedSale.presaleTokenAmount) }} {{ displayedSale.tokenSymbol }}
                 ({{
                   trimNumber(
                     (displayedSale.presaleTokenAmount / displayedSale.tokenSupply) * 100
@@ -106,7 +106,7 @@
             </tr>
             <tr>
               <td>Price</td>
-              <td>{{ displayedSale.presaleTokenAmount/displayedSale.presaleHardCap }} {{ displayedSale.tokenSymbol }} per {{ presaleCurrency }}</td>
+              <td>{{ formatNumberWithCommas(displayedSale.presaleTokenAmount/displayedSale.presaleHardCap) }} {{ displayedSale.tokenSymbol }} per {{ presaleCurrency }}</td>
             </tr>
             <tr>
               <td>Maximum contribution</td>
@@ -698,6 +698,9 @@
       }
     },
     methods: {
+      formatNumberWithCommas(nbr) {
+        return nbr.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      },
       getReferralLink() {
         return 'http://' + this.hostname + this.$route.path + '?r=' + this.encrypt(this.$store.state.address)
       },
