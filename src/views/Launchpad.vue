@@ -128,7 +128,7 @@
         <v-btn
         small
         color="secondary">
-          Fill our the form
+          Fill out the form
         </v-btn>
       </div>
 
