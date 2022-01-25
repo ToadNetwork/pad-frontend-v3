@@ -207,15 +207,15 @@ export default Vue.extend({
     'BSC': [
       ],
     'Moonriver': [
+      {
+        logo: 'https://www.freeiconspng.com/thumbs/mark-zuckerberg-png/mark-zuckerberg-png-images-photos-7.png',
+        name: 'Zucked Inu',
+        ticker: 'ZUCK',
+        // using a moonriver token to test since that's the only chain with contracts for now
+        presaleLink: '/moonriver/presale/0x86b6cC87A427EB416B4d0Ba4Fe95d0B6Ba7b4a87'
+      },
       ],
     'Moonbeam': [
-      {
-        logo: require('@/assets/tokens/moonbeam/PAD.svg'),
-        name: 'Moonbeam PAD',
-        ticker: 'PAD',
-        // using a moonriver token to test since that's the only chain with contracts for now
-        presaleLink: '/moonriver/presale/0xD53A3B53D632A6dC452df8CF9dAdc25aBBFF10c0'
-      },
     ]
     },
     presaleAddressRules: [
