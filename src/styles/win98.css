@@ -23,6 +23,23 @@
     box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
 }
 
+.win98-hint-icon {
+  display: inline-block;
+  width: 20px;
+  margin-left: 10px;
+  color: black;
+  background-color: #aba7a7;
+  text-align: center;
+  cursor: pointer;
+}
+
+.v-tooltip__content {
+  background-color: #ffffd7 !important;
+  color: black !important;
+  border: 1px dashed gray !important;
+  z-index: 999 !important;
+}
+
 /******************************************/
 /* Status bar at the bottom of the window */
 /******************************************/

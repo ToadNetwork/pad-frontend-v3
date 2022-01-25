@@ -119,20 +119,95 @@
                     <p class="win98-paragraph">Please enter the details of the token you wish to create.</p>
 
                     <label for="tokenName" class="win98-label">Token name:</label><br>
-                    <input id="tokenName" class="win98-input" v-model="tokenName"><br><br>
+                    <input id="tokenName" class="win98-input" v-model="tokenName">
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on, attrs }">
+                        <div
+                        v-bind="attrs"
+                        v-on="on"
+                        class="win98-hint-icon"
+                        >
+                          ?
+                        </div>
+                      </template>
+                      <span>
+                      The full name of your token (e.g. Bitcoin, Ethereum, Lily Pad)
+                      </span>
+                    </v-tooltip>
+                    <br><br>
 
-                    <label for="tokenSymbol" class="win98-label">Token symbol:</label><br>
-                    <input id="tokenSymbol" class="win98-input" v-model="tokenSymbol"><br><br>
+                    <label for="tokenSymbol" class="win98-label">Token symbol:</label>
+                    <br>
+                    <input id="tokenSymbol" class="win98-input" v-model="tokenSymbol">
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on, attrs }">
+                        <div
+                        v-bind="attrs"
+                        v-on="on"
+                        class="win98-hint-icon"
+                        >
+                          ?
+                        </div>
+                      </template>
+                      <span>
+                      A short identifier for your token, usually consisting of 3 or 4 capital letters (BTC, ETH, etc.)</span>
+                    </v-tooltip>
+                    <br><br>
 
                     <label for="tokenSupply" class="win98-label">Total supply:</label><br>
-                    <input id="tokenSupply" class="win98-input" v-model="tokenSupply"><br><br>
+                    <input id="tokenSupply" class="win98-input" v-model="tokenSupply">
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on, attrs }">
+                        <div
+                        v-bind="attrs"
+                        v-on="on"
+                        class="win98-hint-icon"
+                        >
+                          ?
+                        </div>
+                      </template>
+                      <span>
+                      The total supply of your token. After your token is created, it will be impossible to create more tokens than this.
+                    </span>
+                    </v-tooltip>
+                    <br><br>
 
                     <label for="tokenDecimals" class="win98-label">Decimals:</label><br>
-                    <input id="tokenDecimals" class="win98-input" v-model="tokenDecimals"><br><br>
+                    <input id="tokenDecimals" class="win98-input" v-model="tokenDecimals">
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on, attrs }">
+                        <div
+                        v-bind="attrs"
+                        v-on="on"
+                        class="win98-hint-icon"
+                        >
+                          ?
+                        </div>
+                      </template>
+                      <span>
+                        Affects how much your token can be divided into smaller parts. 18 decimals is recommended, unless you have a good reason to use another number.
+                      </span>
+                    </v-tooltip>
+                    <br><br>
 
                     <div v-if="tokenType == 'redistribution'">
                       <label for="transactionFee" class="win98-label">Transaction Fee (%):</label><br>
-                      <input id="transactionFee" class="win98-input" v-model="transactionFee"><br>
+                      <input id="transactionFee" class="win98-input" v-model="transactionFee">
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on, attrs }">
+                          <div
+                          v-bind="attrs"
+                          v-on="on"
+                          class="win98-hint-icon"
+                          >
+                            ?
+                          </div>
+                        </template>
+                        <span>
+                        This percentage of every transaction will be distributed to all holders, proportional to the amount of tokens they hold.
+                        </span>
+                      </v-tooltip>
+                      <br>
                     </div>
 
                     <br>
