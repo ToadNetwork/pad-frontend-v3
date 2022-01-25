@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <div v-if="customTokenWarning" class="token-warning">
-      <h3>Attention!</h3>
+      <h3>DYOR!</h3>
       <br>
       <p>This token uses a custom contract, and as such, PadSwap cannot give any guarantees about its safety.</p>
       <p>Please do your own research before investing.</p>
