@@ -506,12 +506,12 @@
       </div>
     </div>
 
-  <v-overlay
-    v-model="isPresaleLoading"
-    absolute
-  >
-    <v-progress-circular indeterminate />
-  </v-overlay>
+    <v-overlay
+      v-model="isPresaleLoading"
+      absolute
+    >
+      <v-progress-circular indeterminate />
+    </v-overlay>
   </v-container>
 </template>
 
