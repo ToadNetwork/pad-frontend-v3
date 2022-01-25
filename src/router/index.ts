@@ -97,6 +97,11 @@ const routes: Array<RouteConfig> = [
     path: '/:ecosystem/launchpad',
     name: 'EcosystemLaunchpad',
     component: () => import ('../views/Launchpad.vue')
+  },
+  {
+    path: '/:ecosystem/launch',
+    name: 'EcosystemLaunchToken',
+    component: () => import ('../views/LaunchToken.vue')
   }
 ]
 

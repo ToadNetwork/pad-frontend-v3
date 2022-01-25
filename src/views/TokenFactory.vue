@@ -161,7 +161,7 @@
           Success!<br>
           Your token was created and the {{ tokenSymbol }} tokens have been sent to your wallet.<br>
           You can now use the LaunchPAD to launch your presale.<br>
-          <a style="color: blue" href="/launch" target="_blank">Launch presale</a>
+          <a style="color: blue" :href="launchLink" target="_blank">Launch presale</a>
         </p>
 
       </div>
@@ -279,6 +279,9 @@ import { EcosystemId } from '@/ecosystem'
       },
       multicall(): ethers.providers.Provider {
         return this.$store.getters.multicall
+      },
+      launchLink(): string {
+        return `/${this.$store.getters.ecosystem.routeName}/launch`
       }
     },
     beforeRouteLeave(to, from, next) {
