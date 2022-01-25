@@ -276,6 +276,13 @@
           <v-divider color="green" style="margin: 20px 0;"></v-divider>
 
 
+        <div v-if="!tokenSymbol">
+          <h1>No token specified</h1>
+          <br>
+          <h2>If you don't have a token yet, use our <a href="http://localhost:8080/tokenfactory" target="blank" style="color: #00f000">token factory</a> to create one in a few clicks.</h2>
+        </div>
+
+        <div v-if="tokenSymbol">
           <div class="form-line">
             <v-text-field
             v-model="presaleHardCap"
@@ -449,6 +456,7 @@
                 </template>
             </v-text-field>
           </div>
+        </div>
 
 
 
