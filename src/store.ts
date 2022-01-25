@@ -47,7 +47,9 @@ const store = new Vuex.Store({
     },
     padPrice: null,
     ecosystemId: EcosystemId.Moonbeam,
-    userProfile: userProfile
+    userProfile: userProfile,
+    showNotification: false,
+    notificationMessage: ''
   },
   mutations: {
     setWeb3Connection(state, { web3, address, chainId }) {
@@ -60,6 +62,11 @@ const store = new Vuex.Store({
     },
     setEcosystemId(state, ecosystemId: EcosystemId) {
       state.ecosystemId = ecosystemId
+    },
+    // TODO: support multiple notifications
+    pushNotification(state, message) {
+      state.notificationMessage = message
+      state.showNotification = true
     }
   },
   getters: {

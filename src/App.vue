@@ -97,6 +97,32 @@
       </div>
     </v-app-bar>
 
+    <!-- TODO: support multiple notifications -->
+    <v-snackbar
+      app
+      v-model="$store.state.showNotification"
+      top
+      right
+      transition="scroll-x-reverse-transition"
+      vertical
+      width="400"
+      rounded
+      timeout="7000"
+    >
+      {{ $store.state.notificationMessage }}
+
+      <template v-slot:action="{ attrs }">
+        <!-- TODO: use mutation to hide notification -->
+        <v-btn
+          text
+          v-bind="attrs"
+          @click="$store.state.showNotification = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
+
     <v-navigation-drawer
       v-model="isNavigationDrawerOpen"
       app

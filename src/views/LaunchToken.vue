@@ -914,6 +914,10 @@ import { EcosystemId } from '@/ecosystem'
           return
         }
 
+        if (this.ecosystemId != EcosystemId.Moonriver) {
+          this.$store.commit('pushNotification', 'Switch to Moonriver ecosystem to test Launchpad Beta')
+        }
+
         setTimeout(() => this.sync())
       },
       ecosystemId() {
