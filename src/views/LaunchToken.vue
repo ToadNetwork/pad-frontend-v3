@@ -287,7 +287,26 @@
             type="number"
             step="1"
             :suffix="presaleCurrency"
-            ></v-text-field>
+            >
+              <template v-slot:append>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+
+                      &nbsp;
+                      <div
+                      v-bind="attrs"
+                      v-on="on"
+                      class="hint-icon"
+                      >
+                        ?
+                      </div>
+                      </template>
+                      <span>The maximum total amount of {{ presaleCurrency }} that can be contributed during the presale.<br>
+                      When the hard cap is reached, the presale ends successfully.</span>
+                  </v-tooltip>
+                </template>
+
+            </v-text-field>
 
             <v-text-field
             v-model="presaleSoftCap"
@@ -296,7 +315,26 @@
             disabled
             readonly
             :suffix="presaleCurrency"
-            ></v-text-field>
+            >
+                <template v-slot:append>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+
+                      &nbsp;
+                      <div
+                      v-bind="attrs"
+                      v-on="on"
+                      class="hint-icon"
+                      >
+                        ?
+                      </div>
+                      </template>
+                      <span>The minimum total amount of {{ presaleCurrency }} that must be contributed.<br>
+                      If the timer expires and the soft cap is not reached, the presale will fail and the contributions will be refunded.</span>
+                  </v-tooltip>
+                </template>
+
+            </v-text-field>
           </div>
 
 
@@ -305,13 +343,32 @@
             v-model="presaleDuration"
             :counter="3"
             :rules="durationRules"
-            label="Maximum presale duration (from 12 to 168 hours)"
+            label="Maximum presale duration (from 12 to 168)"
             pattern="[0-9]"
             required
             type="number"
             step="1"
             suffix="hours"
-            ></v-text-field>
+            >
+                <template v-slot:append>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+
+                      &nbsp;
+                      <div
+                      v-bind="attrs"
+                      v-on="on"
+                      class="hint-icon"
+                      >
+                        ?
+                      </div>
+                      </template>
+                      <span>The presale will end when the timer expires or when hard cap is reached, whichever happens first.<br>
+                      If the timer expires and the soft cap is not reached, the presale will fail and the contributions will be refunded.</span>
+                  </v-tooltip>
+                </template>
+
+            </v-text-field>
           </div>
 
           <div class="form-line">
@@ -338,6 +395,25 @@
               <template v-slot:prepend>
                 Number of {{tokenSymbol}} tokens to provide
               </template>
+
+                <template v-slot:append>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+
+                      &nbsp;
+                      <div
+                      v-bind="attrs"
+                      v-on="on"
+                      class="hint-icon"
+                      >
+                        ?
+                      </div>
+                      </template>
+                      <span>You need to provide 172% of tokens sold directly during the presale.<br>
+                      (in order to cover both the presale and the liquidity added to DPLP).</span>
+                  </v-tooltip>
+                </template>
+
             </v-text-field>
           </div>
 
