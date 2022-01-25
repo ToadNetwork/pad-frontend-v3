@@ -131,7 +131,7 @@
                     <input id="tokenDecimals" class="win98-input" v-model="tokenDecimals"><br><br>
 
                     <div v-if="tokenType == 'redistribution'">
-                      <label for="transactionFee" class="win98-label">Transaction Fee:</label><br>
+                      <label for="transactionFee" class="win98-label">Transaction Fee (%):</label><br>
                       <input id="transactionFee" class="win98-input" v-model="transactionFee"><br>
                     </div>
 

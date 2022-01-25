@@ -1,5 +1,12 @@
 <template>
   <v-container>
+    <div v-if="customTokenWarning" class="token-warning">
+      <h3>Attention!</h3>
+      <br>
+      <p>This token uses a custom contract, and as such, PadSwap cannot give any guarantees about its safety.</p>
+      <p>Please do your own research before investing.</p>
+    </div>
+
     <v-sheet
     v-if="!isPresaleValid"
     class="launchpad-title-bar">
@@ -545,6 +552,9 @@
       presaleIsAborted: <boolean | null> null,
       dplpFarm: <string | null> ZERO_ADDRESS,
 
+      // Checking if any warnings should be displayed
+      customTokenWarning: <boolean> false,
+
       // User-entered data (from the .json string in the contract)
       presaleInfo: <string | null> null,
       // Updated in real time
@@ -979,6 +989,13 @@
   })
 </script>
 <style>
+/* Token warning */
+.token-warning {
+  background: #ac762269 !important;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 15px;
+}
 
 /* Title bar */
 .launchpad-title-bar {
