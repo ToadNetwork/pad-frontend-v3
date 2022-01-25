@@ -248,7 +248,28 @@
                       <p class="win98-paragraph">This usually takes a few minutes.</p>
                       <br><br>
                       <p class="win98-paragraph">After the token is created, your token's contract address will appear here.</p>
-                      <input style="width: 100%" class="win98-input" v-model="tokenContractAddress" readonly>
+                      <input style="width: calc(100% - 50px)" class="win98-input" v-model="tokenContractAddress" readonly>
+                      <v-tooltip
+                      :open-on-hover="false"
+                      right
+                      >
+                        <template #activator="{ on, attrs }">
+                          <v-btn
+                          class="win98-button"
+                          style="min-width: 10px !important; height: 20px;"
+                          @click="on.click"
+                          v-on:click="copyText(tokenContractAddress)"
+                          icon
+                          retain-focus-on-click
+                          v-bind="attrs"
+                          v-on="on"
+                          >
+                          <v-icon small>mdi-clipboard-multiple</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Copied!</span>
+                      </v-tooltip>
+
                       <p v-if="tokenCreated" class="win98-paragraph" style="margin-top: 20px;">
                         Success!<br>
                         Your token was created and the {{ tokenSymbol }} tokens have been sent to your wallet.<br>
@@ -371,6 +392,20 @@ export default Vue.extend({
       this.active = false
     },
     methods: {
+      copyText (text : string) {
+        let textArea = document.createElement("textarea")
+        textArea.value = text
+        textArea.style.top = "0"
+        textArea.style.left = "0"
+        textArea.style.position = "fixed"
+        document.body.appendChild(textArea)
+        textArea.focus()
+        textArea.select()
+
+        let successful = document.execCommand('copy')
+
+        document.body.removeChild(textArea)
+      },
       formErrors() {
         var errors = ''
 
