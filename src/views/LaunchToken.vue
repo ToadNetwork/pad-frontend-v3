@@ -109,7 +109,7 @@
         <h1>What will happen to the funds raised during the presale?</h1>
         <p><b>80%</b> of raised funds will be added to liquidity and donated to a <a href="https://docs.toad.network/fundamentals/dplp" target="blank" style="color: #00f000">DPLP farm</a> to incentivize users to stake even more liquidity for your token.</p>
         <p><b>16%</b> will go to the presale owner.</p>
-        <p><b>4% (minus referral rewards)</b> will go to PadSwap.</p>
+        <p><b>4% (minus referral rewards)</b> will go towards PadSwap's development - mainly to launch new farms and to be used as PAD backing in the Vault.</p>
 
         <v-divider></v-divider>
 
@@ -288,7 +288,7 @@
         <div v-if="!tokenSymbol">
           <h1>No token specified</h1>
           <br>
-          <h2>If you don't have a token yet, use our <a href="http://localhost:8080/tokenfactory" target="blank" style="color: #00f000">token factory</a> to create one in a few clicks.</h2>
+          <h2>If you don't have a token yet, use our <a href="/tokenfactory" target="blank" style="color: #00f000">token factory</a> to create one in a few clicks.</h2>
         </div>
 
         <div v-if="tokenSymbol">
