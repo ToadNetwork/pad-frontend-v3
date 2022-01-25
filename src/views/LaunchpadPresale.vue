@@ -97,6 +97,15 @@
                 }}% of supply)</td>
             </tr>
             <tr>
+              <td>Total tokens provided by owner (presale + DPLP)</td>
+              <td>{{ formatNumberWithCommas(parseFloat(displayedSale.presaleTokenAmount) * 1.72) }} {{ displayedSale.tokenSymbol }}
+                ({{
+                  trimNumber(
+                    ((parseFloat(displayedSale.presaleTokenAmount) * 1.72) / displayedSale.tokenSupply) * 100
+                  ) 
+                }}% of supply)</td>
+            </tr>
+            <tr>
               <td>Hard cap</td>
               <td>{{ displayedSale.presaleHardCap }} {{ presaleCurrency }}</td>
             </tr>
