@@ -395,6 +395,8 @@ export default Vue.extend({
     window.addEventListener('scroll', this.updateScroll)
   },
   async mounted() {
+    this.startSyncing()
+
     await delay(0)
     if (web3Modal.cachedProvider) {
       await this.connectWallet()
@@ -410,6 +412,28 @@ export default Vue.extend({
       }
 
       this.$store.dispatch('requestConnect')
+    },
+    async startSyncing() {
+      while (true) {
+        try {
+          this.sync()
+        } catch (e) {
+          console.error(e)
+        }
+
+        await delay(5000)
+      }
+    },
+    async sync() {
+      const ecosystem = this.ecosystem
+      const blockNumber = await ecosystem.dataseed.getBlockNumber()
+      await ecosystem.priceModel.syncWithin(blockNumber, 20)
+
+      if (this.ecosystem.ecosystemId == ecosystem.ecosystemId) {
+        const padPrice = ecosystem.priceModel.getPriceUsd(ecosystem.padAddress)
+        // TODO: remove setPadPrice calls from landing/farms and update only here
+        this.$store.commit('setPadPrice', padPrice)
+      }
     },
     updateScroll() {
       this.windowScroll = window.scrollY
