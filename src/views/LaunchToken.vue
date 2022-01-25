@@ -287,6 +287,7 @@
             type="number"
             step="1"
             :suffix="presaleCurrency"
+            :disabled="!tokenSymbol"
             >
               <template v-slot:append>
                   <v-tooltip top>
@@ -315,6 +316,7 @@
             disabled
             readonly
             :suffix="presaleCurrency"
+            :disabled="!tokenSymbol"
             >
                 <template v-slot:append>
                   <v-tooltip top>
@@ -349,6 +351,7 @@
             type="number"
             step="1"
             suffix="hours"
+            :disabled="!tokenSymbol"
             >
                 <template v-slot:append>
                   <v-tooltip top>
@@ -377,6 +380,7 @@
             label="Presale price"
             :rules="validPresalePrice()"
             required
+            :disabled="!tokenSymbol"
             >
               <template v-slot:append>
               {{tokenSymbol}} per {{presaleCurrency}}
@@ -425,6 +429,7 @@
             required
             type="number"
             :suffix="presaleCurrency"
+            :disabled="!tokenSymbol"
             ></v-text-field>
           </div>
 
