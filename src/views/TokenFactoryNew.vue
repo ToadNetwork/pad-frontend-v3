@@ -240,7 +240,7 @@
 
                   <v-stepper-content step="5">
                     <div>
-                      <p class="win98-paragraph">Pressing the button below will create your token.</p>
+                      <p class="win98-paragraph">Pressing the button below will create your token.<br><span style="color: green">The fee for creating a token is 1 TOAD.</span></p>
                       <button class="win98-button" v-on:click.prevent @click="submit()" :disabled="tokenCreated">
                         Create {{ tokenSymbol }} token
                       </button>
