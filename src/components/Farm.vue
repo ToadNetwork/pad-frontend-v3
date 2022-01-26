@@ -450,7 +450,9 @@ export default Vue.extend({
       dwActionAmount: <string | null> null,
       token0,
       token1,
-      showRemoveImportDialog: false
+      showRemoveImportDialog: false,
+      TOAD,
+      WGLMR
     }
   },
   computed: {
