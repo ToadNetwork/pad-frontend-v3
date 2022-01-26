@@ -129,7 +129,7 @@
 
         <template v-slot:item.presaleLink="{ item }">
           <v-btn
-          medium
+          small
           color="primary"
           :href="item.presaleLink"
           >
