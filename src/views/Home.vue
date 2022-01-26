@@ -432,6 +432,11 @@ export default Vue.extend({
       showImportDialog: false
     }
   },
+  created() {
+    window.onstorage = () => {
+      this.$store.commit('setUserProfile')
+    };
+  },
   async mounted() {
     if (this.$route.query.import) {
       this.importFarmAddress = <string> this.$route.query.import

@@ -627,6 +627,9 @@ import { EcosystemId, IEcosystem } from '@/ecosystem'
       syncLock: new AwaitLock()
     }),
     created () {
+      window.onstorage = () => {
+        this.$store.commit('setUserProfile')
+      };
       this.hostname = window.location.host
     },
     computed: {

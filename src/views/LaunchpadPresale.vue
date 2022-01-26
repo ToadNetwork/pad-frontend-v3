@@ -546,6 +546,7 @@
   import { delay, equalsInsensitive } from '@/utils'
   import { PresaleData } from '@/types'
 
+
   export default Vue.extend ({
     data: () => ({
 
@@ -619,6 +620,9 @@
       ZERO_ADDRESS
     }),
     created() {
+      window.onstorage = () => {
+        this.$store.commit('setUserProfile')
+      };
       this.presaleAddress = this.$route.params.address
       this.referrerAddress = this.decrypt(this.$route.query.r?.toString())
       this.hostname = window.location.host
@@ -767,6 +771,12 @@
       importPresale() {
         if (!this.displayedSale.tokenName || !this.displayedSale.tokenName) {
           return
+        }
+
+        const userProfileSerialized = localStorage.getItem(this.$store.state.USER_PROFILE_KEY)
+        if (userProfileSerialized) {
+          const savedUserProfile = JSON.parse(userProfileSerialized)
+          Object.assign(this.$store.state.userProfile, this.$store.state.savedUserProfile)
         }
 
         const presaleConfig = {

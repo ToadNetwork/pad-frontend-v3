@@ -201,12 +201,8 @@ export default Vue.extend({
         }
         if (presaleListItem.name && presaleListItem.ticker && presaleListItem.presaleLink ) {
           presaleList.push(presaleListItem)
-          // if (!((whiteList as any).find((f: any) => equalsInsensitive(f.presaleLink, presaleListItem.presaleLink)) )) {
-          //   presaleList.push(presaleListItem)
-          // }
         }
       })
-
       return presaleList
     },
     getWhitelistedPresales() {
@@ -353,6 +349,11 @@ export default Vue.extend({
   },
   mounted () {
     this.ecosystemId = this.$store.state.ecosystemId
+  },
+  created () {
+    window.onstorage = () => {
+      this.$store.commit('setUserProfile')
+    };
   },
   beforeDestroy() {
     this.active = false

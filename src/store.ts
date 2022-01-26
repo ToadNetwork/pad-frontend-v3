@@ -70,6 +70,12 @@ const store = new Vuex.Store({
     pushNotification(state, message) {
       state.notificationMessage = message
       state.showNotification = true
+    },
+    setUserProfile(state) {
+      const userProfileSerialized = localStorage.getItem(USER_PROFILE_KEY)
+      if (userProfileSerialized) {
+        state.userProfile = JSON.parse(userProfileSerialized)
+      }
     }
   },
   getters: {
