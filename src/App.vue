@@ -97,6 +97,32 @@
       </div>
     </v-app-bar>
 
+    <!-- TODO: support multiple notifications -->
+    <v-snackbar
+      app
+      v-model="$store.state.showNotification"
+      top
+      right
+      transition="scroll-x-reverse-transition"
+      vertical
+      width="400"
+      rounded
+      timeout="7000"
+    >
+      {{ $store.state.notificationMessage }}
+
+      <template v-slot:action="{ attrs }">
+        <!-- TODO: use mutation to hide notification -->
+        <v-btn
+          text
+          v-bind="attrs"
+          @click="$store.state.showNotification = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
+
     <v-navigation-drawer
       v-model="isNavigationDrawerOpen"
       app
@@ -369,6 +395,8 @@ export default Vue.extend({
     window.addEventListener('scroll', this.updateScroll)
   },
   async mounted() {
+    this.startSyncing()
+
     await delay(0)
     if (web3Modal.cachedProvider) {
       await this.connectWallet()
@@ -384,6 +412,28 @@ export default Vue.extend({
       }
 
       this.$store.dispatch('requestConnect')
+    },
+    async startSyncing() {
+      while (true) {
+        try {
+          this.sync()
+        } catch (e) {
+          console.error(e)
+        }
+
+        await delay(5000)
+      }
+    },
+    async sync() {
+      const ecosystem = this.ecosystem
+      const blockNumber = await ecosystem.dataseed.getBlockNumber()
+      await ecosystem.priceModel.syncWithin(blockNumber, 20)
+
+      if (this.ecosystem.ecosystemId == ecosystem.ecosystemId) {
+        const padPrice = ecosystem.priceModel.getPriceUsd(ecosystem.padAddress)
+        // TODO: remove setPadPrice calls from landing/farms and update only here
+        this.$store.commit('setPadPrice', padPrice)
+      }
     },
     updateScroll() {
       this.windowScroll = window.scrollY
@@ -485,5 +535,5 @@ export default Vue.extend({
   color: #FFFFFF;
   filter: invert(68%) sepia(70%) saturate(3531%) hue-rotate(94deg) brightness(108%) contrast(117%);
 }
-a { text-decoration: none; }
+a { text-decoration: none !important; }
 </style>

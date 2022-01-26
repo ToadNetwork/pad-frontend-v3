@@ -9,9 +9,18 @@ import store from './store'
 Vue.use(PadswapThemePlugin, { store })
 Vue.config.productionTip = false
 
-new Vue({
+const vm = new Vue({
   router,
   vuetify,
   store,
   render: h => h(App)
-}).$mount('#app')
+})
+vm.$watch('$store.state.ecosystemId', function (val) {
+  // auto-update browser url when ecosystem changes
+  if (this.$route.params.ecosystem) {
+    this.$router.replace({
+      params: { ecosystem: this.$store.getters.ecosystem.routeName }
+    })
+  }
+})
+vm.$mount('#app')

@@ -13,23 +13,32 @@ export type FarmData = {
     acceptedToken: string,
     token1: string,
     token2: string,
-    rewardToken: string | undefined,
-    type: FarmType | undefined,
-    poolSize: number | undefined,
-    poolValue: number | undefined,
-    tvl: number | undefined,
-    farmTotalSupply: number | undefined,
-    pairTotalSupply: number | undefined,
-    mintShare: number | undefined,
-    lpPrice: number | undefined, // token price for single-stake farms
-    rewardTokenPrice: number | undefined,
-    roi: number | undefined,
-    apy: number | undefined,
-    userLpBalance: ethers.BigNumber | undefined,
-    userStakedBalance: ethers.BigNumber | undefined,
-    userRewardsBalance: number | undefined,
-    userAllowance: number | undefined
+    rewardToken?: string,
+    type?: FarmType,
+    isImported?: boolean,
+    tokenLogoUrls?: Record<string, string>,
+    poolSize?: number,
+    poolValue?: number,
+    tvl?: number,
+    farmTotalSupply?: number,
+    pairTotalSupply?: number,
+    mintShare?: number,
+    lpPrice?: number, // token price for single-stake farms
+    rewardTokenPrice?: number,
+    roi?: number,
+    apy?: number,
+    userLpBalance?: ethers.BigNumber,
+    userStakedBalance?: ethers.BigNumber,
+    userRewardsBalance?: number,
+    userAllowance?: number
   }
+
+export type PresaleData = {
+        logo: string,
+        name: string,
+        ticker: string,
+        presaleLink: string
+}
 
 export type FarmSet = {
     regularFarms: { farms: FarmData[], retiredFarms: FarmData[] },

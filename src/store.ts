@@ -1,9 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { ethers } from 'ethers'
+import { providers } from '@0xsequence/multicall'
 
 import web3Modal from '@/wallet'
 import { IEcosystem, EcosystemId, ChainId, ECOSYSTEMS } from '@/ecosystem'
+import { FarmData } from '@/types'
+import { PresaleData } from '@/types'
 
 Vue.use(Vuex)
 
@@ -12,7 +15,30 @@ type SafeSendTransactionArgs = {
   targetChainId: ChainId
 }
 
-export default new Vuex.Store({
+const USER_PROFILE_KEY = 'PADSWAP_USER_PROFILE'
+
+function getInitialUserProfile() {
+  const userProfile = {
+    importedFarms: <Record<EcosystemId, FarmData[]>> {},
+    importedPresales: <Record<EcosystemId, PresaleData[]>> {}
+  }
+
+  for (const { ecosystemId } of Object.values(ECOSYSTEMS)) {
+    userProfile.importedFarms[ecosystemId] = []
+    userProfile.importedPresales[ecosystemId] = []
+  }
+  return userProfile
+}
+
+const userProfile = getInitialUserProfile()
+
+const userProfileSerialized = localStorage.getItem(USER_PROFILE_KEY)
+if (userProfileSerialized) {
+  const savedUserProfile = JSON.parse(userProfileSerialized)
+  Object.assign(userProfile, savedUserProfile)
+}
+
+const store = new Vuex.Store({
   state: {
     web3: <ethers.Signer | null> null,
     address: null,
@@ -23,7 +49,10 @@ export default new Vuex.Store({
       [1285]: <number | null> null,
     },
     padPrice: null,
-    ecosystemId: EcosystemId.Moonbeam
+    ecosystemId: EcosystemId.Moonbeam,
+    userProfile: userProfile,
+    showNotification: false,
+    notificationMessage: ''
   },
   mutations: {
     setWeb3Connection(state, { web3, address, chainId }) {
@@ -36,6 +65,17 @@ export default new Vuex.Store({
     },
     setEcosystemId(state, ecosystemId: EcosystemId) {
       state.ecosystemId = ecosystemId
+    },
+    // TODO: support multiple notifications
+    pushNotification(state, message) {
+      state.notificationMessage = message
+      state.showNotification = true
+    },
+    setUserProfile(state) {
+      const userProfileSerialized = localStorage.getItem(USER_PROFILE_KEY)
+      if (userProfileSerialized) {
+        state.userProfile = JSON.parse(userProfileSerialized)
+      }
     }
   },
   getters: {
@@ -44,6 +84,13 @@ export default new Vuex.Store({
     },
     ecosystem(state): IEcosystem {
       return ECOSYSTEMS[state.ecosystemId]
+    },
+    multicall(state, getters): ethers.providers.Provider {
+      return new providers.MulticallProvider(getters.ecosystem.dataseed, {
+        batchSize: 300,
+        timeWindow: 0,
+        contract: getters.ecosystem.multicallAddress
+      })
     }
   },
   actions: {
@@ -120,12 +167,12 @@ export default new Vuex.Store({
     async safeSendTransaction({ dispatch, state, getters }, { tx, targetChainId }: SafeSendTransactionArgs) {
       if (!getters.isConnected) {
         await dispatch('requestConnect')
-        return null
+        return false
       }
 
       if (state.chainId != targetChainId) {
         await dispatch('requestNetworkChange', targetChainId)
-        return
+        return false
       }
 
       const web3 = state.web3!
@@ -133,6 +180,16 @@ export default new Vuex.Store({
       const txReceipt = await txResponse.wait()
 
       state.lastChainTransactionBlock[targetChainId] = txReceipt.blockNumber
+      return txReceipt
     }
   }
 })
+
+store.watch(
+  state => JSON.stringify(state.userProfile),
+  val => {
+    localStorage.setItem(USER_PROFILE_KEY, val)
+  }
+)
+
+export default store

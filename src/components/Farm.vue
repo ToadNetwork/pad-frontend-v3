@@ -5,6 +5,32 @@
       class="padswap-farm"
       :class="isDetailsVisible ? 'padswap-farm-expanded' : ''"
     >
+      <v-dialog
+        v-if="isImported"
+        v-model="showRemoveImportDialog"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            absolute
+            top
+            right
+            fab
+            x-small
+            v-on="on"
+            v-bind="attrs"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </template>
+
+        <v-card class="pa-1" style="font-family: Roboto" rounded>
+          <v-app-bar>Remove imported farm?</v-app-bar>
+          <v-card-actions>
+            <v-btn text @click="removeImport">Confirm</v-btn>
+            <v-btn text @click="showRemoveImportDialog = false">Cancel</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <v-row justify-md="space-between" class="flex-md-nowrap">
         <v-col
           class="d-flex align-center px-3 justify-md-start justify-center pt-sm-0 pb-sm-0 pt-4 pb-8"
@@ -358,6 +384,7 @@ import {
   APPROVE_AMOUNT } from '@/constants'
 import { IEcosystem, EcosystemId, ECOSYSTEMS } from '@/ecosystem'
 import { formatMixin } from '@/format'
+import { FarmData } from '@/types'
 import { delay, equalsInsensitive } from '@/utils'
 
 type ValidationStatus = {
@@ -395,6 +422,8 @@ export default Vue.extend({
     token2Address: String,
     rewardToken: String,
     type: Number,
+    isImported: Boolean,
+    tokenLogoUrls: Object,
     ecosystemId: Number,
     roi: Number,
     apy: Number,
@@ -420,7 +449,8 @@ export default Vue.extend({
       dwAction: <'deposit' | 'withdraw' | 'reinvest'> 'deposit',
       dwActionAmount: <string | null> null,
       token0,
-      token1
+      token1,
+      showRemoveImportDialog: false
     }
   },
   computed: {
@@ -458,6 +488,13 @@ export default Vue.extend({
     tokenImages(): string[] {
       const token0 = this.token0 as keyof typeof IMAGE_OVERRIDES
       const token1 = (this.token1 ?? this.token0) as keyof typeof IMAGE_OVERRIDES
+      if (this.isImported) {
+        const tokenLogoUrls = this.tokenLogoUrls ?? {}
+        return [
+          tokenLogoUrls[this.token1Address] ?? IMAGE_OVERRIDES[token0] ?? this.requireOrDefault(`@/assets/tokens/${this.ecosystem.tokenIconsFolder}/${token0}.svg`),
+          tokenLogoUrls[this.token2Address] ?? IMAGE_OVERRIDES[token1] ?? this.requireOrDefault(`@/assets/tokens/${this.ecosystem.tokenIconsFolder}/${token1}.svg`)
+        ]
+      }
       return [
         IMAGE_OVERRIDES[token0] ?? require(`@/assets/tokens/${this.ecosystem.tokenIconsFolder}/${token0}.svg`),
         IMAGE_OVERRIDES[token1] ?? require(`@/assets/tokens/${this.ecosystem.tokenIconsFolder}/${token1}.svg`)
@@ -578,6 +615,24 @@ export default Vue.extend({
       this.currentAnimations[name] = true
       await delay(290)
       this.currentAnimations[name] = false
+    },
+    removeImport() {
+      this.$store.state.userProfile.importedFarms[this.ecosystemId] =
+        this.$store.state.userProfile.importedFarms[this.ecosystemId].filter((f: FarmData) => !equalsInsensitive(f.contract, this.contract))
+      this.showRemoveImportDialog = false
+    },
+    requireOrDefault(path: string): string {
+      try {
+        return require(path)
+      } catch (e) {
+        console.warn(e)
+        const defaultTokenName = this.ecosystem.ethName
+        // TODO: use an unknown token icon
+        if (defaultTokenName in IMAGE_OVERRIDES) {
+          return IMAGE_OVERRIDES[defaultTokenName as keyof typeof IMAGE_OVERRIDES]
+        }
+        return require(`@/assets/tokens/${this.ecosystem.tokenIconsFolder}/${defaultTokenName}.svg`)
+      }
     },
     ...mapActions(['safeSendTransaction'])
   }

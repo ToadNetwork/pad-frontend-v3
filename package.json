@@ -16,6 +16,7 @@
     "linq-collections": "^1.0.254",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
+    "vue-cryptojs": "^2.2.1",
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.2.0",
     "vuetify": "^2.4.0",

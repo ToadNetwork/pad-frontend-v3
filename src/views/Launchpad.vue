@@ -1,754 +1,522 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col cols="12" lg="6" md="8" offset-lg="3" offset-md="2">
-      <!-- <div class="text-center text-h3" style="margin-top:35px; margin-bottom:10px">Is Now Retired</div>
-      <div class="text-center text-h5" style="margin-top:35px; margin-bottom:10px">We are now on the final stages of development of the beta version.</div> -->
-      <!-- <div class="text-center text-h5" style="margin-top:35px; margin-bottom:10px">
-      LaunchPad beta will allow anyone to launch their own project without any coding experience. Out of the gate your project will start with: <div style="width: 100%;margin-left: 20px;font-size: 20px;text-align: initial !important;"> <br> AUDITED Presale Contract,<br> AUDITED BEP20 Token,<br> AUDITED Farms (TOKEN-BNB, TOKEN-BUSD, TOKEN-PAD),<br> AUDITED LP FARMS (DECENTRALIZED PERPETUAL LIQUIDITY PROTOCOL),<br> RUG-PROOF PROJECT BATCH </div>
-      </div>
-      <div class="text-center text-h5" style="margin-top:35px; margin-bottom:10px">
-      Take care of building your community and let LaunchPad take care of the rest for you.
-      </div> -->
-
-      <v-card
-      class="auction-banner"
+<v-container>
+    <div class="padswap-header-box">
+        <slider-tabs
+        class="padswap-ecosystem-tabs"
+        v-model="ecosystemId"
       >
-      <h2>GLMR PAD presale is sold out!</h2>
-      <p>PAD auctions will be launched shortly.</p>
-      <p>Stay tuned!</p>
-      </v-card>
+        <v-tab class="d-flex flex-column">
+          <v-img
+            height="30"
+            width="30"
+            contain
+            src="../assets/tokens/bsc/PAD.svg"
+          />
+          <div>BSC</div>
+        </v-tab>
+        <v-tab class="d-flex flex-column">
+          <v-img
+            height="30"
+            width="30"
+            contain
+            src="../assets/tokens/moonriver/PAD.svg"
+          />
+          <div>Moonriver</div>
+        </v-tab>
+        <v-tab class="d-flex flex-column">
+          <v-img
+            height="30"
+            width="30"
+            contain
+            src="../assets/tokens/moonbeam/PAD.svg"
+          />
+          <div>Moonbeam</div>
+        </v-tab>
+      </slider-tabs>
+      <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
+    </div>
 
-      <v-card
-            class="farm-card flip-card-front"
-            elevation="8">
-            <div class="text-center">
-              <img class="launchpad-img" :src="$padswapTheme.theme.padLogoSrc" href="https://grandpa-doge.com/">
-              <div class="text-h4 launchpad" style="padding-top:40px; margin-bottom:20px">
-              LaunchPad
-              </div>
-              <br>
-              <img height="60px" :src="presale_img" style="border-radius:20px; height: 70px">
-              <div class="text-h5">PAD</div>
-              <div class="farm-description" style="margin-bottom: 40px; margin-top:10px">Instantly buy PAD, proceeds will be directed to DPLP</div>
-              <h5 class="stats-line">
-                <img height="20" width="20" :src="$padswapTheme.theme.padLogoSrc" />
-                Website
-                <span class="stats-line-info"><a href="https://toad.network/" target="_blank" style="color: #59a6ff;border: none;text-transform: uppercase;text-decoration: none;">toad.network</a></span>
-              </h5>
-              <v-divider style="margin-left: 2%; width: 96%;"></v-divider>
-              <h5 class="stats-line">
-                <img height="20" width="20" :src="$padswapTheme.theme.padLogoSrc" />
-                Ticker:
-                <span class="stats-line-info">$PAD</span>
-              </h5>
-              <v-divider style="margin-left: 2%; width: 96%;"></v-divider>
-              <h5 class="stats-line">
-                <img height="20" width="20" :src="$padswapTheme.theme.padLogoSrc" />
-                Hard Cap:
-                <span class="stats-line-info">6000 GLMR</span>
-              </h5>
-              <v-divider style="margin-left: 2%; width: 96%;"></v-divider>
-              <h5 class="stats-line">
-                <img height="20" width="20" :src="$padswapTheme.theme.padLogoSrc" />
-                Presale Price:
-                <span class="stats-line-info">833K per GLMR</span>
-              </h5>
-              <v-divider style="margin-left: 2%; width: 96%;"></v-divider>
-              <h5 class="stats-line">
-                <img height="20" width="20" :src="$padswapTheme.theme.padLogoSrc" />
-                GLMR Raised:
-                <span class="stats-line-info">{{ raisedAmount }} GLMR</span>
-              </h5>
-              <v-divider style="margin-left: 2%; width: 96%;"></v-divider>
-              <h5 class="stats-line">
-                <img height="20" width="20" :src="$padswapTheme.theme.padLogoSrc" />
-                Remaining Tokens:
-                <span class="stats-line-info">{{ remainingTokens }}</span>
-              </h5>
-              <v-divider style="margin-left: 2%; width: 96%;"></v-divider>
-              <v-divider style="margin-left: 2%; width: 96%;"></v-divider>
-              <h5 class="stats-line">
-                <img height="20" width="20" :src="$padswapTheme.theme.padLogoSrc" />
-                Bought Tokens:
-                <span class="stats-line-info">{{round(myTokenss, 2)}}</span>
-              </h5>
-              <v-divider style="margin-left: 2%; width: 96%;"></v-divider>
-            </div>
-            <v-row
-            justify="center"
-            style="margin-top:10px; margin-bottom:10px">
-              <v-col
-              v-if="active"
-              class="tt1"
-              cols="12"
-              md="5">
-                <v-text-field
-                  style="min-height:36px"
-                  class="vault-input"
-                  label="GLMR amount"
-                  solo
-                  v-model="amount"
-                ></v-text-field>
-              </v-col>
-              <v-col
-              v-if="active"
-              class="tt2"
-              cols="12"
-              md="5">
-                <v-text-field
-                  style="min-height:36px"
-                  class="vault-input"
-                  label="You will receive"
-                  disabled
-                  solo
-                  v-model="expected"
-                ></v-text-field>
-              </v-col>
-              <v-col
-              v-if="active"
-              class="tt3"
-              cols="12"
-              md="2">
-                <div class="text-center">
-                  <v-btn
-                  @click="buy()"
-                  class="add-remove-btns cool-btn"
-                  color="primary"
-                  elevation="0">
-                    BUY
-                  </v-btn>
-                </div>
-              </v-col>
-              <v-col
-              v-else
-              cols="12"
-              md="12">
-                <div class="text-center">
-                  <v-btn
-                  @click="redeem()"
-                  class="add-remove-btns cool-btn"
-                  color="primary"
-                  elevation="0">
-                    Redeem Your Tokens
-                  </v-btn>
-                </div>
-              </v-col>
-            </v-row>
-            <!-- <v-progress-linear
-                v-model="percentage"
-                color="#876bec"
-                height="25"
-              >{{percentage}}%</v-progress-linear> -->
-          </v-card>
+
+  <v-sheet class="launchpad-title-bar">
+    <img class="background" :src="getBackgroundTexture()">
+
+    <div class="launchpad-title">
+      <img class="launchpad-image" :src="getLaunchpadRocket()">
+      <h1>LaunchPAD</h1>
+    </div>
+    <v-row
+    align="center"
+    justify="center">
+      <v-col
+      cols="12"
+      sm="6">
+        <div class="launchpad-title-bar-section">
+          <h2>Want to launch your own project?</h2>
+          <v-btn
+          style="margin-right: 10px"
+          large
+          class="launch-token-btn"
+          color="primary"
+          to="/tokenfactory">
+          Create token
+          </v-btn>
+          <v-btn
+          large
+          class="launch-token-btn"
+          color="green"
+          to="/launch">
+          Launch presale
+          </v-btn>
+        </div>
+      </v-col>
+      <v-divider vertical></v-divider>
+      <v-col
+      cols="12"
+      sm="6">
+        <div class="launchpad-title-bar-section">
+          <h2>Looking for a presale that isn't listed?</h2>
+          <v-form
+          v-model="validPresaleAddress">
+            <v-text-field
+            v-model="customPresaleAddress"
+            label="Presale address"
+            :rules="presaleAddressRules"
+            >
+              <template v-slot:append>
+              <v-btn
+              color="primary"
+              :disabled="!validPresaleAddress"
+              @click="goToPresale(customPresaleAddress)">
+                View
+              </v-btn>
+              </template>
+            </v-text-field>
+          </v-form>
+        </div>
       </v-col>
     </v-row>
-  </v-container>
-</template>
-<script>
-import { ethers } from 'ethers'
-import Vue from 'vue'
-import { mapActions } from 'vuex'
+  </v-sheet>
 
-import { ERC20_ABI } from '@/constants'
-import { EcosystemId, ECOSYSTEMS } from '@/ecosystem'
-import { delay, toFloat } from '@/utils'
+    <div class="table-container">
+    <img class="background" :src="getBackgroundTexture()">
+
+      <v-data-table
+      class="token-table"
+      :headers="headers"
+      :items="getTableContent()"
+      item-key="name">
+
+        <template v-slot:item.favorite="{ item }">
+          <v-btn
+          small
+          color="green"
+          v-if="presaleImported(item.presaleLink)"
+          @click="removePresale(item.presaleLink)">
+            <v-icon>mdi-star</v-icon>
+          </v-btn>
+          <v-btn
+          small
+          v-else
+          @click="importPresale(item.logo, item.name, item.ticker, item.presaleLink)">
+            <v-icon>mdi-star-outline</v-icon>
+          </v-btn>
+        </template>
+
+        <template v-slot:item.logo="{ item }">
+           <img v-if="item.logo" class="token-logo" :src="item.logo" :alt="item.name">
+        </template>
+
+
+        <template v-slot:item.presaleLink="{ item }">
+          <v-btn
+          small
+          color="primary"
+          :href="item.presaleLink"
+          >
+          View presale
+          </v-btn>
+        </template>
+
+      </v-data-table>
+
+      <div class="text-center" style="margin: 30px 0; color: #d6d4d4">
+        Want your presale to be listed here?
+        <v-btn
+        small
+        color="secondary">
+          Fill out the form
+        </v-btn>
+      </div>
+
+    </div>
+
+
+</v-container>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+import SliderTabs from '@/components/SliderTabs.vue'
+import { EcosystemId, IEcosystem } from '@/ecosystem'
+import { delay, equalsInsensitive } from '@/utils'
+import { PresaleData } from '@/types'
+
+
+const presales : {[unit: string] : object} = {
+  'BSC': [
+    ],
+  'Moonriver': [
+      {
+        logo: 'https://www.freeiconspng.com/thumbs/mark-zuckerberg-png/mark-zuckerberg-png-images-photos-7.png',
+         name: 'Zucked Inu',
+         ticker: 'ZUCK',
+         presaleLink: '/moonriver/presale/0x86b6cC87A427EB416B4d0Ba4Fe95d0B6Ba7b4a87'
+      },
+    ],
+  'Moonbeam': [
+    ]
+}
 
 export default Vue.extend({
-  data () {
-    return {
-      tokenABI: [],
-      contractABI: [
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "buy",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "tokens",
-				"type": "uint256"
-			}
-		],
-		"name": "Buy",
-		"type": "event"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "claimTokens",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "endPresale",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_newValue",
-				"type": "uint256"
-			}
-		],
-		"name": "setBnbPrice",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "withdrawFunds",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "withdrawTokens",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "bnbPrice",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "boughtTokens",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "buyLimit",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "calculateBuy",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "ceoAddress",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "getTokenBalance",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "isClosed",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "multiplier",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "myTokens",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "presaleSize",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "token",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "tokenPrice",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "totalBoughtTokens",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	}
-],
-      contractAddress: '0xE497d1564eFA546b4B2b65756E0B7CeE46e71646',
-      tokenAddress: '0x59193512877E2EC3bB27C178A8888Cfac62FB32D',
-      presale_img: ECOSYSTEMS[EcosystemId.Moonbeam].theme.padLogoSrc,
-      active: true,
-      amount: null,
-      expected: null,
-      price: 0.0000012,
-      raisedAmount: '0',
-      bnbPrice: 1,
-      percentage: 0,
-      allTokens: 5000000000,
-      remainingTokens: '0.000',
-      myTokenss: '0.000',
-      hours: '00',
-      minutes: '00',
-      seconds:'00',
-      tokenDecimals: 18,
-      componentActive: true
+  name: 'LaunchPAD',
+  components: { SliderTabs },
+  methods: {
+    getTableContent() {
+      var content = this.getImportedPresales().concat(this.getWhitelistedPresales())
+
+      return content
+    },
+    getImportedPresales() {
+      var presaleList : any = []
+      const whiteList = presales[this.currentChain]
+
+      const importedPresales = this.$store.state.userProfile.importedPresales[this.ecosystemId]
+      
+      importedPresales.forEach((item : any) => {
+        var presaleListItem = {
+          logo: item.logo,
+          name: item.name,
+          ticker: item.ticker,
+          presaleLink: item.presaleLink
+        }
+        if (presaleListItem.name && presaleListItem.ticker && presaleListItem.presaleLink ) {
+          presaleList.push(presaleListItem)
+        }
+      })
+      return presaleList
+    },
+    getWhitelistedPresales() {
+      var presaleList : any = []
+      var whiteList : any = presales[this.currentChain]
+      var importedPresales : any = this.$store.state.userProfile.importedPresales[this.ecosystemId]
+
+      whiteList.forEach((item: any) => {
+        var presaleListItem = {
+          logo: item.logo,
+          name: item.name,
+          ticker: item.ticker,
+          presaleLink: item.presaleLink
+        }
+        const existingEntry = importedPresales.find((f: any) => equalsInsensitive(f.presaleLink, item.presaleLink)) 
+        if (!existingEntry) {
+          presaleList.push(presaleListItem)
+        }
+      })
+      return presaleList
+      },
+      presaleImported(presaleLink : string) {
+        if (!presaleLink) {
+          return
+        }
+
+        const importedPresales = this.$store.state.userProfile.importedPresales[this.ecosystemId]
+
+        const existingEntry = importedPresales.find((f: PresaleData) => equalsInsensitive(f.presaleLink, presaleLink))
+        if (existingEntry) {
+          return true
+        }
+        return false
+      },
+      importPresale(importedLogo : string, importedName : string, importedTicker : string, importedLink : string) {
+        if (!importedName || !importedTicker || !importedLink) {
+          return
+        }
+
+        const presaleConfig = {
+          logo: importedLogo,
+          name: importedName,
+          ticker: importedTicker,
+          presaleLink: importedLink
+        }
+
+        const importedPresales = this.$store.state.userProfile.importedPresales[this.ecosystemId]
+
+        const existingEntry = importedPresales.find((f: PresaleData) => equalsInsensitive(f.presaleLink, presaleConfig.presaleLink))
+        if (existingEntry) {
+          const id = importedPresales.indexOf(existingEntry)
+          if (id > -1) {
+            importedPresales.splice(id, 1);
+           }
+        }
+
+        this.$store.state.userProfile.importedPresales[this.ecosystemId].push(presaleConfig)
+      },
+      removePresale(presaleLink : string) {
+        const importedPresales = this.$store.state.userProfile.importedPresales[this.ecosystemId]
+
+        const existingEntry = importedPresales.find((f: PresaleData) => equalsInsensitive(f.presaleLink, presaleLink))
+        if (existingEntry) {
+          const id = importedPresales.indexOf(existingEntry)
+          if (id > -1) {
+            importedPresales.splice(id, 1);
+           }
+        }
+      },
+    setEcosystem(chain_id : string) {
+     this.currentChain = chain_id
+    },
+    getBackgroundTexture() {
+      if (this.$store.getters.ecosystem.chainId == 56) {
+        return require('@/assets/images/launchpad-texture-bsc.jpg')
+      }
+      if (this.$store.getters.ecosystem.chainId == 1285) {
+        return require('@/assets/images/launchpad-texture-moonriver.jpg')
+      }
+      if (this.$store.getters.ecosystem.chainId == 1284) {
+        return require('@/assets/images/launchpad-texture-moonbeam.jpg')
+      }
+    },
+    getLaunchpadRocket() {
+      if (this.$store.getters.ecosystem.chainId == 56) {
+        return require('@/assets/images/launchpad-rocket-bsc.svg')
+      }
+      if (this.$store.getters.ecosystem.chainId == 1285) {
+        return require('@/assets/images/launchpad-rocket-moonriver.svg')
+      }
+      if (this.$store.getters.ecosystem.chainId == 1284) {
+        return require('@/assets/images/launchpad-rocket-moonbeam.svg')
+      }
+    },
+    goToPresale(presaleAddress: string) {
+      const chain = this.$store.getters.ecosystem.routeName
+      this.$router.push(`/${chain}/presale/${presaleAddress}`)
     }
+  },
+  data() {
+    return {
+      currentChain: <string> '',
+      active: true,
+      searchText: '',
+      customPresaleAddress: <string> '',
+      validPresaleAddress: <boolean> false,
+      headers: [
+      {
+        text: 'Favorite',
+        value: 'favorite',
+        align: 'center',
+        sortable: false
+      },
+      {
+        text: 'Logo',
+        value: 'logo',
+        align: 'center',
+        sortable: false
+      },
+      {
+        text: 'Ticker',
+        value: 'ticker',
+        align: 'center',
+        sortable: false
+      },
+      {
+        text: 'Token name',
+        value: 'name',
+        align: 'center',
+        sortable: false
+      },
+      {
+        text: 'Presale link',
+        value: 'presaleLink',
+        align: 'center',
+        sortable: false
+      }
+    ],
+    presaleAddressRules: [
+        (v: any) => !!v || 'Specify the presale address',
+        (v: any) => (v.length == 42 && v.slice(0, 2) == '0x') || 'Not a valid contract address.'
+      ]
+    }
+  },
+  mounted () {
+    this.ecosystemId = this.$store.state.ecosystemId
   },
   created () {
-    this.$store.commit('setEcosystemId', EcosystemId.Moonbeam)
-    this.$padswapTheme.theme = this.ecosystem.theme
-
-    setTimeout(() => {
-      this.loadInstances()
-      this.startCountDown()
-    })
+    window.onstorage = () => {
+      this.$store.commit('setUserProfile')
+    };
   },
-  beforeRouteLeave (to, from, next) {
-    this.componentActive = false
+  beforeDestroy() {
+    this.active = false
+  },
+  beforeRouteLeave(to: any, from: any, next: Function) {
+    this.active = false
     next()
   },
-  destroyed () {
-    this.componentActive = false
-  },
   computed: {
-    ecosystem() {
-      return this.$store.getters.ecosystem
-    },
-    dataseed() {
-      return this.ecosystem.dataseed
-    },
-    contractInstance() {
-      return new ethers.Contract(this.contractAddress, this.contractABI, this.dataseed)
-    },
-    tokenInstance() {
-      return new ethers.Contract(this.tokenAddress, ERC20_ABI, this.dataseed)
-    },
-    myAddress() {
-      return this.$store.state.address
-    },
-    myContract() {
-      if (!this.$store.state.web3) {
-        return null
+    ecosystemId: {
+      get(): EcosystemId {
+        return this.$store.state.ecosystemId
+      },
+      set(val: EcosystemId) {
+        this.$store.commit('setEcosystemId', val)
+        if (val == 0) {
+          this.setEcosystem("BSC")
+        }
+        else if (val == 1) {
+          this.setEcosystem("Moonriver")
+        }
+        else if (val == 2) {
+          this.setEcosystem("Moonbeam")
+        }
       }
-
-      return new ethers.Contract(this.contractAddress, this.contractABI, this.$store.state.web3)
+    },
+    ecosystem(): IEcosystem {
+      return this.$store.getters.ecosystem
     }
   },
-  methods: {
-    startCountDown() {
-      setInterval(()=>{
-        const now = new Date().getTime()
-        let total = 1637355655500 - now
-        if (total <= 0) total = 0
-        let seconds = Math.floor( (total/1000) %60 )
-        let minutes = Math.floor( (total/1000 /60) % 60 )
-        let hours = Math.floor( (total/1000/60/60) )
-        if((hours).toString().length == 1) hours = '0' + hours
-        if((minutes).toString().length == 1) minutes = '0' + minutes
-        if((seconds).toString().length == 1) seconds = '0' + seconds
-        this.hours = hours
-        this.minutes = minutes
-        this.seconds = seconds
-      }, 1000)
-    },
-    round(num, dec) {
-      num = Number(num).toFixed(20)
-      if(!Number.isFinite(Number(num))) num = '0.0'
-      num = Number(num).toFixed(20)
-      const regex = new RegExp(`^-?\\d+(?:\\.\\d{0,${dec}})?`)
-      let [int, decimals] = num.toString().replace(',', '.').split('.')
-      const rounded = num.toString().match(regex)[0]
-      return rounded
-    },
-    biOrMiOrK(num) {
-      if(!num || num <= 0) return '0.00'
-      else if(num>=1e9) return this.round(num/1e9, 4) + 'BI'
-      else if(num>=1e6) return this.round(num/1e6, 2) + 'M'
-      else if (num>=1e3) return this.round(num/1e3, 2) + 'K'
-      else if (num>= 1e2) return this.round(num, 2)
-      else if (num >= 1) return this.round(num, 4)
-      else return this.round(num, 6)
-    },
-    async loadInstances () {
-      this.tokenDecimals = await this.tokenInstance.decimals()
-
-      while (this.componentActive) {
-        try {
-          await Promise.all([
-            this.getRaiseAmount(),
-            this.getRemainingTokens(),
-            this.myTokens()
-          ])
-        } catch (e) {
-          console.error(e)
-        }
-        await delay(3000)
-      }
-    },
-    async myTokens() {
-      if (!this.myAddress) {
-        return
-      }
-      const res = await this.contractInstance.boughtTokens(this.myAddress)
-      this.myTokenss = toFloat(res, this.tokenDecimals)
-    },
-    async getRaiseAmount() {
-      const balance = await this.dataseed.getBalance(this.contractAddress)
-      this.raisedAmount = toFloat(balance).toString()
-    },
-
-    async getRemainingTokens() {
-      const balanceBn = await this.dataseed.getBalance(this.contractAddress)
-      const balance = toFloat(balanceBn)
-      this.remainingTokens = this.biOrMiOrK(this.allTokens - (833333*balance))
-      const soldTokens = 833333*balance
-      this.percentage = this.round((soldTokens/this.allTokens*100))
-    },
-
-    async buy() {
-      const amount = ethers.utils.parseEther(this.amount.replace(',','.'))
-      const tx = await this.myContract.populateTransaction.buy({ value: amount })
-      await this.safeSendTransaction({ tx, targetChainId: this.ecosystem.chainId })
-    },
-    async redeem() {
-      const tx = await this.myContract.populateTransaction.claimTokens()
-      await this.safeSendTransaction({ tx, targetChainId: this.ecosystem.chainId })
-    },
-    ...mapActions(['safeSendTransaction'])
-  },
   watch: {
-    amount () {
-      const l = this.amount
-      this[l] = !this[l]
-      this.amount = this.amount.replace(',', '.')
-      this.expected = this.round(this.amount*this.bnbPrice/this.price, 2)
+    ecosystemId() {
+      this.$padswapTheme.theme = this.$store.getters.ecosystem.theme
     },
   }
 })
+
 </script>
+
 <style scoped>
 
-  /* Auctions banner */
-  .farm-card {
-    display: none;
-  }
-  .auction-banner {
-    width: 100%;
-    background-color: #353e3abf !important;
-    border-radius: 10px;
-    min-height: 200px;
-  }
-  .auction-banner h2 {
-    padding-top: 10px;
-    padding-bottom: 20px;
-  }
-  .auction-banner p, .auction-banner h2 {
-    width: 100%;
-    text-align: center;
-  }
+.background {
+  pointer-events: none;
+  position: absolute;
+  min-width: 100%;
+  min-height: 100%;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  opacity: 0.1;
+}
 
+/* Title bar */
+.launchpad-title-bar {
+  z-index: 1;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 20px;
+  background: rgba(24, 29, 38, 0.7) !important;
+  border-radius: 20px;
+}
+.launchpad-title-bar h1 {
+  margin-bottom: 25px;
+}
 
-  .farm-title {
-    font-size: 30px;
-    padding-top: 25px;
-    margin-bottom:20px;
-    font-weight: 500;
-    letter-spacing: 2px;
-  }
-  .farm-card{
-    border-radius: 11px;
-    font-family: Roboto;
-    padding: 5px;
-  }
-  .farm-rewards{
-    font-size: 33px;
-    font-weight: 600;
-  }
-  .farm-rewards-caption{
-    margin-top: 5px;
-    display: block;
-    font-size: 15px;
-    font-weight: normal;
-    color: rgb(185, 181, 180);
-    margin-bottom:30px;
-  }
-  .stats-line{
-    margin: 7px 15px 7px;
-    font-size: 17px;
-    font-weight: 500;
-    display: block;
-    text-align: left;
-    line-height: 40px;
-  }
-  .stats-line > img {
-    margin-right: 4px;
-    line-height: 40px;
-    vertical-align: middle;
-  }
-  .stats-line-info{
-    font-weight: bold;
-    float: right;
-    padding: 0px;
-    line-height: 40px;
-  }
-  .theme--light.v-card > .text-center{
-    color: #a3a09f !important;
-  }
-  @media all and (max-width: 959px) {
-    .v-input {
-      max-width: 96% !important;
-      margin: auto;
-    }
-    .v-btn-toggle:not(.v-btn-toggle--dense) .v-btn.v-btn.v-size--default {
-      height: 48px;
-      min-height: 0;
-      max-width: 25vw;
-    }
-    .add-remove-btns{
-      width:96%;
-      margin: auto;
-    }
-  }
-  .cool-btn{
-    width: calc(100% - 20px) !important;
-    margin-left: 10px;
-    margin-right: 10px;
-    border-radius: 11px;
-    transition: all .5s ease 0s;
-    background-position: left center;
-    background-image: linear-gradient(51deg,rgb(159 68 228)0,rgb(75 205 255) 51%,rgb(159 68 228));
-    background-size: 250%;
-  }
-  .cool-btn:hover{
-    background-position: right center;
-  }
-  .theme--dark.v-card {
-    background-color:rgb(33, 36, 41);
-  }
-  .theme--dark.v-btn:hover::before {
-    opacity: 0;
-  }
-  .theme--dark.v-btn--active:hover::before, .theme--dark.v-btn--active::before {
-    opacity: 0.18;
-    border-radius: 12px;
-    padding: 9px;
-    margin: 3px;
+.launchpad-title-bar-section {
+  text-align: center;
+  font-size: 0.7rem;
 }
-.v-btn-toggle {
-    border-radius: 16px;
+
+.launchpad-title-bar-section {
+  text-align: center;
+  padding: 20px;
 }
-.v-btn-toggle > .v-btn.v-btn {border: none}
-.theme--dark.v-btn.v-btn--has-bg {
-    background-color: #212429;
-}
-.more-info{
-  width: 20px;
-  float: right;
-  margin-right: 20px;
+
+.launch-token-btn {
   margin-top: 20px;
-  margin-left: -40px;
-  cursor: pointer;
 }
-.more-info:hover{
-  opacity:0.5
+
+/* Title */
+.launchpad-title {
+  width: 100%;
 }
-.v-icon:focus::after {
-    opacity: 0
+.launchpad-title img {
+  max-width: 100px;
 }
-.theme--light.farm-card > .text-center > svg { background-color: #f7f7f7 !important}
-.v-icon.v-icon.v-icon--link {
-    z-index: 2;
+.launchpad-title h1 {
+  color: white;
+  text-shadow: #000 2px 2px 2px;
+  -webkit-font-smoothing: antialiased;
 }
-.launchpad {
-  line-height: 100px;
-  vertical-align: top;
-  display: inline;
+
+/********************/
+/* Ecosystem slider */
+/********************/
+
+.padswap-ecosystem-subheader {
+  font-size: 14px;
+  color: #B3B8C1;
+  margin-top: 4px;
+  margin-bottom: 50px;
+  height: auto;
 }
-.launchpad-img {
-  height: 50px;
+.padswap-ecosystem-tabs /deep/ .v-tabs-bar {
+  background: rgba(24, 29, 38, 0.7);
+}
+.padswap-ecosystem-tabs /deep/ .v-tabs-slider-wrapper {
+  background: linear-gradient(180deg, #F99DF3 0%, #FA77F1 100%);
+}
+.padswap-ecosystem-tabs .v-tab {
+  padding: 10px 0px;
+  font-weight: bold;
+  color: #FFFFFF;
+  min-width: 120px;
+}
+.padswap-ecosystem-tabs .v-tab--active {
+  color: #66015e !important;
+}
+
+.padswap-header-box {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/***************/
+/* Token table */
+/***************/
+
+.table-container {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
   margin-top: 30px;
-  display: inline;
-  margin-right: 5px;
+  background: rgba(24, 29, 38, 0.7) !important;
+  border-radius: 20px;
 }
-.tt1 {padding-right:0px; padding-left:20px}
-.tt2 {padding-right:10px; padding-left:10px}
-.tt3 {padding-right:30px; padding-left:0}
- @media all and (max-width: 959px) {
-  .tt1 {padding-right:20px; padding-left:20px}
-  .tt2 {padding-right:20px; padding-left:20px}
-  .tt3 {padding-right:20px; padding-left:20px}
-  .v-item-group > .v-btn.v-size--default {
-    font-size: 0.75rem;
-  }
+
+.token-table {
+  background-color: none !important;
+  background: none !important;
 }
+
+.token-table /deep/ tbody tr:hover {
+  background: #ffffff1c !important;
+}
+
+.padswap-header-box {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.token-logo {
+  height: 35px;
+  width: auto;
+}
+
+.token-verification {
+  width: 24px;
+}
+
 </style>

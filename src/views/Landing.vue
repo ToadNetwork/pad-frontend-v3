@@ -39,7 +39,8 @@
 
 
 	<div class="main-container">
-		<div class="content-container">
+		<div class="content-container"> 
+    <img class="background" :src="getBackgroundTexture()">
 
 			<!------------------->
 			<!-- PadSwap logo --->
@@ -444,6 +445,17 @@ export default Vue.extend({
     }
   },
   methods: {
+    getBackgroundTexture() {
+      if (this.$store.getters.ecosystem.chainId == 56) {
+        return require('@/assets/images/launchpad-texture-bsc.jpg')
+      }
+      if (this.$store.getters.ecosystem.chainId == 1285) {
+        return require('@/assets/images/launchpad-texture-moonriver.jpg')
+      }
+      if (this.$store.getters.ecosystem.chainId == 1284) {
+        return require('@/assets/images/launchpad-texture-moonbeam.jpg')
+      }
+    },
     async sync() {
       const ecosystem = this.ecosystem
       const multicall = this.multicall
@@ -548,6 +560,18 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+
+.background {
+  pointer-events: none;
+  position: absolute;
+  min-width: 100%;
+  min-height: 100%;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  opacity: 0.1;
+}
+
 .v-card {
   background: #181D26;
   border-radius: 15px !important;
@@ -651,6 +675,10 @@ export default Vue.extend({
 }
 
 .content-container {
+  z-index: 1;
+  position: relative;
+  overflow: hidden;
+
 	display: inline-block;
 	max-width: 1200px;
 	text-align: left;
@@ -780,5 +808,5 @@ export default Vue.extend({
 .padswap-farm-btn:hover {
   background: linear-gradient(180deg, #76ae88 0%, #1e843d 100%);
 }
-
+a { text-decoration: none !important; }
 </style>

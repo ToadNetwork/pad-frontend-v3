@@ -99,7 +99,6 @@ function setSwapEcosystem(chain_id : string) {
 
   iframe.addEventListener("load", function() {
     this.contentWindow!.document.querySelector('body')!.style.background = 'transparent'
-    this.contentWindow!.document.querySelector<HTMLElement>('#root > div.sc-hlWvWH.dgxEoC > div > nav')!.style.visibility = 'hidden'
   })
 
   if (chain_id == "BSC") {
@@ -134,7 +133,6 @@ export default Vue.extend({
     const iframe = document.getElementById('swap-iframe') as HTMLIFrameElement
     iframe.addEventListener("load", function() {
       this.contentWindow!.document.querySelector('body')!.style.background = 'transparent'
-      this.contentWindow!.document.querySelector<HTMLElement>('#root > div.sc-hlWvWH.dgxEoC > div > nav')!.style.visibility = 'hidden'
     })
   },
   beforeDestroy() {

@@ -224,7 +224,7 @@ export default Vue.extend({
         address: '0x86b8b53d0096d917b153bc506038e5db0264a553',
         telegram: 'https://t.me/METHCrosschain'
       },
-      ]
+    ]
     }
     }
   },
