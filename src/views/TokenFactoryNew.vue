@@ -218,20 +218,20 @@
                     <p class="win98-paragraph">Please review the info below.</p>
 
                     <label for="tokenName" class="win98-label">Token name:</label><br>
-                    <input disabled id="tokenName" class="win98-input" v-model="tokenName"><br><br>
+                    <input disabled id="tokenName" class="win98-input" :value="tokenName"><br><br>
 
                     <label for="tokenSymbol" class="win98-label">Token symbol:</label><br>
-                    <input disabled id="tokenSymbol" class="win98-input" v-model="tokenSymbol"><br><br>
+                    <input disabled id="tokenSymbol" class="win98-input" :value="tokenSymbol"><br><br>
 
                     <label for="tokenSupply" class="win98-label">Total supply:</label><br>
-                    <input disabled id="tokenSupply" class="win98-input" v-model="tokenSupply"><br><br>
+                    <input disabled id="tokenSupply" class="win98-input" :value="formatNumberWithCommas(tokenSupply) + ' ' + tokenSymbol"><br><br>
 
                     <label for="tokenDecimals" class="win98-label">Decimals:</label><br>
-                    <input disabled id="tokenDecimals" class="win98-input" v-model="tokenDecimals"><br><br>
+                    <input disabled id="tokenDecimals" class="win98-input" :value="tokenDecimals"><br><br>
 
                     <div v-if="tokenType == 'redistribution'">
                       <label for="transactionFee" class="win98-label">Transaction Fee:</label><br>
-                      <input disabled id="transactionFee" class="win98-input" v-model="transactionFee"><br>
+                      <input disabled id="transactionFee" class="win98-input" :value="transactionFee + '%'"><br>
                     </div>
 
 
@@ -263,8 +263,9 @@
                           retain-focus-on-click
                           v-bind="attrs"
                           v-on="on"
+                          :disabled="!tokenContractAddress"
                           >
-                          <v-icon small>mdi-clipboard-multiple</v-icon>
+                          <v-icon small color="#585555">mdi-clipboard-multiple</v-icon>
                           </v-btn>
                         </template>
                         <span>Copied!</span>
@@ -405,6 +406,12 @@ export default Vue.extend({
         let successful = document.execCommand('copy')
 
         document.body.removeChild(textArea)
+      },
+      formatNumberWithCommas(nbr : any) {
+        if (!nbr) {
+          return '0.0'
+        }
+        return nbr.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
       },
       formErrors() {
         var errors = ''
