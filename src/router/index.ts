@@ -63,6 +63,11 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/Faucet.vue')
   },
   {
+    path: '/tos',
+    name: 'Terms of Service',
+    component: () => import ('../views/ToS.vue')
+  },
+  {
     path: '/:ecosystem/swap',
     name: 'EcosystemSwap',
     component: () => import ('../views/Swap.vue'),
