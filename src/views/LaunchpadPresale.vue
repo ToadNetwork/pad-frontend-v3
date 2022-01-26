@@ -34,9 +34,25 @@
     </v-sheet>
 
     <v-sheet v-if="isPresaleValid" class="launchpad-title-bar">
+    <div class="text-right">
+
+
+      <v-btn
+      v-if="presaleImported()"
+      color="green"
+      @click="removePresale()">
+        <v-icon>mdi-star</v-icon>&nbsp;Remove from favorites
+      </v-btn>
+      <v-btn
+      v-else
+      color="#4d7ea5"
+      @click="importPresale()">
+        <v-icon>mdi-star-outline</v-icon>&nbsp;Add to favorites
+      </v-btn>
+    </div>
     <div class="launchpad-title">
       <img class="launchpad-image" :src="displayedSale.presaleInfo.tokenLogoUrl">
-      <h1 style="padding-bottom: 0">${{displayedSale.tokenSymbol}} ({{displayedSale.tokenName}}) presale</h1>
+      <h1 style="padding-bottom: 0; word-wrap: break-word;">${{displayedSale.tokenSymbol}} ({{displayedSale.tokenName}}) presale</h1>
       <v-btn
       medium
       color="primary"
@@ -518,7 +534,8 @@
 <script lang="ts">
   import Vue from 'vue'
   import { mapActions } from 'vuex'
-  import { ethers } from 'ethers'
+  import { ethers } from 'ethers' 
+  import { EcosystemId, IEcosystem } from '@/ecosystem'
 
   // @ts-ignore:disable-next-line
   import VueCryptojs from 'vue-cryptojs';
@@ -527,6 +544,7 @@
   import { ERC20_ABI, LAUNCHPAD_FACTORY_ABI, LAUNCHPAD_PRESALE_ABI, ZERO_ADDRESS } from '@/constants'
   import { ChainId } from '@/ecosystem'
   import { delay, equalsInsensitive } from '@/utils'
+  import { PresaleData } from '@/types'
 
   export default Vue.extend ({
     data: () => ({
@@ -628,6 +646,17 @@
       next()
     },
     computed: {
+      ecosystemId: {
+        get(): EcosystemId {
+          return this.$store.state.ecosystemId
+        },
+        set(val: EcosystemId) {
+          this.$store.commit('setEcosystemId', val)
+        }
+      },
+      ecosystem(): IEcosystem {
+        return this.$store.getters.ecosystem
+      },
       timeLeftInSeconds: function (): number {
         return Math.trunc(this.timeLeft / 1000)
       },
@@ -726,6 +755,54 @@
       }
     },
     methods: {
+      presaleImported() {
+        const importedPresales = this.$store.state.userProfile.importedPresales[this.ecosystemId]
+
+        const existingEntry = importedPresales.find((f: PresaleData) => equalsInsensitive(f.presaleLink, this.$route.path))
+        if (existingEntry) {
+          return true
+        }
+        return false
+      },
+      importPresale() {
+        if (!this.displayedSale.tokenName || !this.displayedSale.tokenName) {
+          return
+        }
+
+        const presaleConfig = {
+          logo: this.displayedSale.presaleInfo.tokenLogoUrl,
+          name: this.displayedSale.tokenName,
+          ticker: this.displayedSale.tokenSymbol,
+          presaleLink: this.$route.path
+        }
+
+        const importedPresales = this.$store.state.userProfile.importedPresales[this.ecosystemId]
+
+        const existingEntry = importedPresales.find((f: PresaleData) => equalsInsensitive(f.presaleLink, presaleConfig.presaleLink))
+        if (existingEntry) {
+          const id = importedPresales.indexOf(existingEntry)
+          if (id > -1) {
+            importedPresales.splice(id, 1);
+           }
+        }
+
+        this.$store.state.userProfile.importedPresales[this.ecosystemId].push(presaleConfig)
+
+        setTimeout(() => this.sync())
+      },
+      removePresale() {
+        const importedPresales = this.$store.state.userProfile.importedPresales[this.ecosystemId]
+
+        const existingEntry = importedPresales.find((f: PresaleData) => equalsInsensitive(f.presaleLink, this.$route.path))
+        if (existingEntry) {
+          const id = importedPresales.indexOf(existingEntry)
+          if (id > -1) {
+            importedPresales.splice(id, 1);
+           }
+        }
+
+        setTimeout(() => this.sync())
+      },
       formatNumberWithCommas(nbr : any) {
         if (!nbr) {
           return '0.0'
@@ -854,6 +931,7 @@
 
         const tx = await this.presaleContractSigner!.populateTransaction.buy(referrerAddress)
         tx.value = amountWei
+        this.importPresale()
         await this.safeSendTransaction({ tx, targetChainId: this.chainId })
       },
       trimNumber (nbr: number) {

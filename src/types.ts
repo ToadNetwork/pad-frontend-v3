@@ -33,6 +33,13 @@ export type FarmData = {
     userAllowance?: number
   }
 
+export type PresaleData = {
+        logo: string,
+        name: string,
+        ticker: string,
+        presaleLink: string
+}
+
 export type FarmSet = {
     regularFarms: { farms: FarmData[], retiredFarms: FarmData[] },
     lpFarms: { farms: FarmData[] },

@@ -103,11 +103,27 @@
       <v-data-table
       class="token-table"
       :headers="headers"
-      :items="tokens[currentChain]"
+      :items="getTableContent()"
       item-key="name">
 
+        <template v-slot:item.favorite="{ item }">
+          <v-btn
+          small
+          color="green"
+          v-if="presaleImported(item.presaleLink)"
+          @click="removePresale(item.presaleLink)">
+            <v-icon>mdi-star</v-icon>
+          </v-btn>
+          <v-btn
+          small
+          v-else
+          @click="importPresale(item.logo, item.name, item.ticker, item.presaleLink)">
+            <v-icon>mdi-star-outline</v-icon>
+          </v-btn>
+        </template>
+
         <template v-slot:item.logo="{ item }">
-           <img v-if="item.logo != null" class="token-logo" :src="item.logo" :alt="item.name">
+           <img v-if="item.logo" class="token-logo" :src="item.logo" :alt="item.name">
         </template>
 
 
@@ -141,12 +157,106 @@
 <script lang="ts">
 import Vue from 'vue'
 import SliderTabs from '@/components/SliderTabs.vue'
-import { EcosystemId } from '@/ecosystem'
+import { EcosystemId, IEcosystem } from '@/ecosystem'
+import { delay, equalsInsensitive } from '@/utils'
+import { PresaleData } from '@/types'
+
+
+const presales : {[unit: string] : object} = {
+  'BSC': [
+    ],
+  'Moonriver': [
+    {
+      logo: 'https://www.freeiconspng.com/thumbs/mark-zuckerberg-png/mark-zuckerberg-png-images-photos-7.png',
+       name: 'Zucked Inu',
+       ticker: 'ZUCK',
+       presaleLink: '/moonriver/presale/0x86b6cC87A427EB416B4d0Ba4Fe95d0B6Ba7b4a87'
+    },
+    ],
+  'Moonbeam': [
+    ]
+}
 
 export default Vue.extend({
   name: 'LaunchPAD',
   components: { SliderTabs },
   methods: {
+    getTableContent() {
+      var content = this.getImportedPresales().concat(presales[this.currentChain])
+
+      return content
+    },
+    getImportedPresales() {
+      var presaleList : any = []
+      const whiteList = presales[this.currentChain]
+
+      const importedPresales = this.$store.state.userProfile.importedPresales[this.ecosystemId]
+      
+      importedPresales.forEach((item : any) => {
+        var presaleListItem = {
+          logo: item.logo,
+          name: item.name,
+          ticker: item.ticker,
+          presaleLink: item.presaleLink
+        }
+        if (presaleListItem.name && presaleListItem.ticker && presaleListItem.presaleLink ) {
+          if (!((whiteList as any).find((f: any) => equalsInsensitive(f.presaleLink, presaleListItem.presaleLink)) )) {
+            presaleList.push(presaleListItem)
+          }
+        }
+      })
+
+      return presaleList
+    },
+      presaleImported(presaleLink : string) {
+        if (!presaleLink) {
+          return
+        }
+
+        const importedPresales = this.$store.state.userProfile.importedPresales[this.ecosystemId]
+
+        const existingEntry = importedPresales.find((f: PresaleData) => equalsInsensitive(f.presaleLink, presaleLink))
+        if (existingEntry) {
+          return true
+        }
+        return false
+      },
+      importPresale(importedLogo : string, importedName : string, importedTicker : string, importedLink : string) {
+        if (!importedName || !importedTicker || !importedLink) {
+          return
+        }
+
+        const presaleConfig = {
+          logo: importedLogo,
+          name: importedName,
+          ticker: importedTicker,
+          presaleLink: importedLink
+        }
+
+        const importedPresales = this.$store.state.userProfile.importedPresales[this.ecosystemId]
+        console.log(importedPresales)
+
+        const existingEntry = importedPresales.find((f: PresaleData) => equalsInsensitive(f.presaleLink, presaleConfig.presaleLink))
+        if (existingEntry) {
+          const id = importedPresales.indexOf(existingEntry)
+          if (id > -1) {
+            importedPresales.splice(id, 1);
+           }
+        }
+
+        this.$store.state.userProfile.importedPresales[this.ecosystemId].push(presaleConfig)
+      },
+      removePresale(presaleLink : string) {
+        const importedPresales = this.$store.state.userProfile.importedPresales[this.ecosystemId]
+
+        const existingEntry = importedPresales.find((f: PresaleData) => equalsInsensitive(f.presaleLink, presaleLink))
+        if (existingEntry) {
+          const id = importedPresales.indexOf(existingEntry)
+          if (id > -1) {
+            importedPresales.splice(id, 1);
+           }
+        }
+      },
     setEcosystem(chain_id : string) {
      this.currentChain = chain_id
     },
@@ -179,12 +289,18 @@ export default Vue.extend({
   },
   data() {
     return {
-      currentChain: 'Moonbeam',
+      currentChain: <string> '',
       active: true,
       searchText: '',
       customPresaleAddress: <string> '',
       validPresaleAddress: <boolean> false,
       headers: [
+      {
+        text: 'Favorite',
+        value: 'favorite',
+        align: 'center',
+        sortable: false
+      },
       {
         text: 'Logo',
         value: 'logo',
@@ -210,25 +326,10 @@ export default Vue.extend({
         sortable: false
       }
     ],
-    tokens: {
-
-    'BSC': [
-      ],
-    'Moonriver': [
-      {
-        logo: 'https://www.freeiconspng.com/thumbs/mark-zuckerberg-png/mark-zuckerberg-png-images-photos-7.png',
-        name: 'Zucked Inu',
-        ticker: 'ZUCK',
-        presaleLink: '/moonriver/presale/0x86b6cC87A427EB416B4d0Ba4Fe95d0B6Ba7b4a87'
-      },
-      ],
-    'Moonbeam': [
-    ]
-    },
     presaleAddressRules: [
         (v: any) => !!v || 'Specify the presale address',
         (v: any) => (v.length == 42 && v.slice(0, 2) == '0x') || 'Not a valid contract address.'
-    ]
+      ]
     }
   },
   mounted () {
@@ -259,6 +360,9 @@ export default Vue.extend({
         }
       }
     },
+    ecosystem(): IEcosystem {
+      return this.$store.getters.ecosystem
+    }
   },
   watch: {
     ecosystemId() {
@@ -387,7 +491,8 @@ export default Vue.extend({
 }
 
 .token-logo {
-  width: 40px;
+  height: 35px;
+  width: auto;
 }
 
 .token-verification {

@@ -6,6 +6,7 @@ import { providers } from '@0xsequence/multicall'
 import web3Modal from '@/wallet'
 import { IEcosystem, EcosystemId, ChainId, ECOSYSTEMS } from '@/ecosystem'
 import { FarmData } from '@/types'
+import { PresaleData } from '@/types'
 
 Vue.use(Vuex)
 
@@ -18,11 +19,13 @@ const USER_PROFILE_KEY = 'PADSWAP_USER_PROFILE'
 
 function getInitialUserProfile() {
   const userProfile = {
-    importedFarms: <Record<EcosystemId, FarmData[]>> {}
+    importedFarms: <Record<EcosystemId, FarmData[]>> {},
+    importedPresales: <Record<EcosystemId, PresaleData[]>> {}
   }
 
   for (const { ecosystemId } of Object.values(ECOSYSTEMS)) {
     userProfile.importedFarms[ecosystemId] = []
+    userProfile.importedPresales[ecosystemId] = []
   }
   return userProfile
 }

@@ -507,7 +507,7 @@
       </div>
     </div>
 
-    <div v-if="valid && isApproveComplete" class="form-line text-center">
+    <div v-if="isApproveComplete" class="form-line text-center">
       <v-btn
       :disabled="!valid || !isApproveComplete"
       x-large
@@ -517,6 +517,7 @@
       @click="submit">
         Launch
       </v-btn>
+      <p>After the presale is created, you will be redirected to the presale page.</p>
     </div>
   </div>
 </div>
@@ -528,7 +529,7 @@
 
 <script lang="ts">
 import SliderTabs from '@/components/SliderTabs.vue'
-import { EcosystemId } from '@/ecosystem'
+import { EcosystemId, IEcosystem } from '@/ecosystem'
 
   import Vue from 'vue'
   import { mapActions } from 'vuex'
@@ -539,7 +540,9 @@ import { EcosystemId } from '@/ecosystem'
            LAUNCHPAD_FACTORY_ABI,
            APPROVE_AMOUNT } from '@/constants'
   import { ChainId } from '@/ecosystem'
-  import { delay } from '@/utils'
+  import { equalsInsensitive, delay } from '@/utils'
+
+  import { PresaleData } from '@/types'
 
   // These token symbols will not be allowed
   const symbolBlacklist = ['TOAD', 'PAD', 'USDC', 'USDT', 'DAI', 'BNB', 'BUSD', 'ETH', 'BTC', 'GLMR', 'MOVR', 'XRP', 'XMR', 'DOT', 'ADA', 'SOLAR']
@@ -605,7 +608,7 @@ import { EcosystemId } from '@/ecosystem'
       ],
       maxContributionRules: [
         (v: any) => !!v || 'Specify the maximum contribution per user (0 for infinite)',
-        (v: any) => ((/^(?![0.]+$)\d+(\.\d{1,10})?$/gm.test(v))) || 'Input a valid positive number (or 0 for infinite)'
+        (v: any) => (parseFloat(v) >= 0 && (/[0-9]*(?:\.[0-9]*)?/.test(v))) || 'Input a valid positive number (or 0 for infinite)'
       ],
       websiteUrlRules: [
           (v: any) => (!v || /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,10}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v)) || 'Enter a valid website URL, or leave empty if you don\'t have one'
@@ -634,6 +637,9 @@ import { EcosystemId } from '@/ecosystem'
         set(val: EcosystemId) {
           this.$store.commit('setEcosystemId', val)
         }
+      },
+      ecosystem(): IEcosystem {
+        return this.$store.getters.ecosystem
       },
       address(): string {
         return this.$store.state.address
@@ -723,6 +729,32 @@ import { EcosystemId } from '@/ecosystem'
       this.active = false
     },
     methods: {
+      importPresale() {
+        const presaleContractAddress = this.presaleContractAddress
+        const chain = this.$store.getters.ecosystem.routeName
+
+        const presaleConfig = {
+          logo: this.logoUrl,
+          name: this.tokenName,
+          ticker: this.tokenSymbol,
+          presaleLink: `/${chain}/presale/${presaleContractAddress}`
+        }
+
+        const importedPresales = this.$store.state.userProfile.importedPresales[this.ecosystemId]
+
+        const existingEntry = importedPresales.find((f: PresaleData) => equalsInsensitive(f.presaleLink, presaleConfig.presaleLink))
+        if (existingEntry) {
+          const id = importedPresales.indexOf(existingEntry)
+          if (id > -1) {
+            importedPresales.splice(id, 1);
+           }
+        }
+
+        this.$store.state.userProfile.importedPresales[this.ecosystemId].push(presaleConfig)
+
+
+        setTimeout(() => this.sync())
+      },
       getBackgroundTexture() {
         if (this.$store.getters.ecosystem.chainId == 56) {
           return require('@/assets/images/launchpad-texture-bsc.jpg')
@@ -819,6 +851,7 @@ import { EcosystemId } from '@/ecosystem'
         )
         const succeeded = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         if (succeeded) {
+          this.importPresale()
           const chain = this.$store.getters.ecosystem.routeName
           this.$router.push(`/${chain}/presale/${presaleContractAddress}`)
         }
