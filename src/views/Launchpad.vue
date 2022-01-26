@@ -143,8 +143,9 @@
         Want your presale to be listed here?
         <v-btn
         small
-        color="secondary">
-          Fill out the form
+        color="secondary"
+        to="/whitelistpresale">
+          Contact us
         </v-btn>
       </div>
 
