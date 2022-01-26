@@ -166,12 +166,12 @@ const presales : {[unit: string] : object} = {
   'BSC': [
     ],
   'Moonriver': [
-    {
-      logo: 'https://www.freeiconspng.com/thumbs/mark-zuckerberg-png/mark-zuckerberg-png-images-photos-7.png',
-       name: 'Zucked Inu',
-       ticker: 'ZUCK',
-       presaleLink: '/moonriver/presale/0x86b6cC87A427EB416B4d0Ba4Fe95d0B6Ba7b4a87'
-    },
+      {
+        logo: 'https://www.freeiconspng.com/thumbs/mark-zuckerberg-png/mark-zuckerberg-png-images-photos-7.png',
+         name: 'Zucked Inu',
+         ticker: 'ZUCK',
+         presaleLink: '/moonriver/presale/0x86b6cC87A427EB416B4d0Ba4Fe95d0B6Ba7b4a87'
+      },
     ],
   'Moonbeam': [
     ]
@@ -182,7 +182,7 @@ export default Vue.extend({
   components: { SliderTabs },
   methods: {
     getTableContent() {
-      var content = this.getImportedPresales().concat(presales[this.currentChain])
+      var content = this.getImportedPresales().concat(this.getWhitelistedPresales())
 
       return content
     },
@@ -200,14 +200,34 @@ export default Vue.extend({
           presaleLink: item.presaleLink
         }
         if (presaleListItem.name && presaleListItem.ticker && presaleListItem.presaleLink ) {
-          if (!((whiteList as any).find((f: any) => equalsInsensitive(f.presaleLink, presaleListItem.presaleLink)) )) {
-            presaleList.push(presaleListItem)
-          }
+          presaleList.push(presaleListItem)
+          // if (!((whiteList as any).find((f: any) => equalsInsensitive(f.presaleLink, presaleListItem.presaleLink)) )) {
+          //   presaleList.push(presaleListItem)
+          // }
         }
       })
 
       return presaleList
     },
+    getWhitelistedPresales() {
+      var presaleList : any = []
+      var whiteList : any = presales[this.currentChain]
+      var importedPresales : any = this.$store.state.userProfile.importedPresales[this.ecosystemId]
+
+      whiteList.forEach((item: any) => {
+        var presaleListItem = {
+          logo: item.logo,
+          name: item.name,
+          ticker: item.ticker,
+          presaleLink: item.presaleLink
+        }
+        const existingEntry = importedPresales.find((f: any) => equalsInsensitive(f.presaleLink, item.presaleLink)) 
+        if (!existingEntry) {
+          presaleList.push(presaleListItem)
+        }
+      })
+      return presaleList
+      },
       presaleImported(presaleLink : string) {
         if (!presaleLink) {
           return
@@ -234,7 +254,6 @@ export default Vue.extend({
         }
 
         const importedPresales = this.$store.state.userProfile.importedPresales[this.ecosystemId]
-        console.log(importedPresales)
 
         const existingEntry = importedPresales.find((f: PresaleData) => equalsInsensitive(f.presaleLink, presaleConfig.presaleLink))
         if (existingEntry) {
