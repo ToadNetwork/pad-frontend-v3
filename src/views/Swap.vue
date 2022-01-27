@@ -93,9 +93,7 @@ function setSwapEcosystem(chain_id : string) {
     }
   }
 	let iframe : HTMLIFrameElement
-  let link : HTMLLinkElement
 	iframe = document.getElementById("swap-iframe")! as HTMLIFrameElement
-  link = document.getElementById("fullscreen-swap-link")! as HTMLLinkElement
 
   iframe.addEventListener("load", function() {
     this.contentWindow!.document.querySelector('body')!.style.background = 'transparent'
@@ -103,15 +101,12 @@ function setSwapEcosystem(chain_id : string) {
 
   if (chain_id == "BSC") {
     iframe.src = "/bsc/index.html" + appendParameters
-    link!.href = "/bsc/index.html"
   }
   if (chain_id == "MOVR") {
     iframe.src = "/movr/index.html" + appendParameters
-    link!.href = "/movr/index.html"
   }
   if (chain_id == "GLMR") {
     iframe.src = "/glmr/index.html" + appendParameters
-    link!.href = "/glmr/index.html"
   }
 }
 
