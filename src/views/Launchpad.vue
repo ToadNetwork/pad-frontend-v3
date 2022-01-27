@@ -167,12 +167,12 @@ const presales : {[unit: string] : object} = {
   'BSC': [
     ],
   'Moonriver': [
-      {
-        logo: 'https://www.freeiconspng.com/thumbs/mark-zuckerberg-png/mark-zuckerberg-png-images-photos-7.png',
-         name: 'Zucked Inu',
-         ticker: 'ZUCK',
-         presaleLink: '/moonriver/presale/0x86b6cC87A427EB416B4d0Ba4Fe95d0B6Ba7b4a87'
-      },
+      // {
+      //   logo: 'https://www.freeiconspng.com/thumbs/mark-zuckerberg-png/mark-zuckerberg-png-images-photos-7.png',
+      //    name: 'Zucked Inu',
+      //    ticker: 'ZUCK',
+      //    presaleLink: '/moonriver/presale/0x86b6cC87A427EB416B4d0Ba4Fe95d0B6Ba7b4a87'
+      // },
     ],
   'Moonbeam': [
     ]
