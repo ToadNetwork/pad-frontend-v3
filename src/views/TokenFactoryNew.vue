@@ -95,10 +95,12 @@
                         <label for="token-type-1">Normal token</label>
                       </div>
                       <ul class="win98-list">
+                        <li>Standard tokenomics</li>
                         <li>No transaction fee</li>
+                        <li>Capped supply</li>
                       </ul>
 
-                      <div class="win98-field-row">
+<!--                       <div class="win98-field-row">
                         <input
                         id="token-type-2"
                         type="radio"
@@ -110,7 +112,7 @@
                       <ul class="win98-list">
                         <li>Part of every transaction is redistributed to holders</li>
                         <li>The fee can be adjusted before you create the token</li>
-                      </ul>
+                      </ul> -->
 
                     </fieldset>
                   </v-stepper-content>
