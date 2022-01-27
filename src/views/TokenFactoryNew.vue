@@ -100,19 +100,20 @@
                         <li>Capped supply</li>
                       </ul>
 
-<!--                       <div class="win98-field-row">
+                      <div class="win98-field-row">
                         <input
                         id="token-type-2"
                         type="radio"
                         name="token-type-select"
                         value="redistribution"
-                        v-model="tokenType">
-                        <label for="token-type-2">With redistribution</label>
+                        v-model="tokenType"
+                        disabled>
+                        <label for="token-type-2">With redistribution (coming soon)</label>
                       </div>
                       <ul class="win98-list">
                         <li>Part of every transaction is redistributed to holders</li>
                         <li>The fee can be adjusted before you create the token</li>
-                      </ul> -->
+                      </ul>
 
                     </fieldset>
                   </v-stepper-content>
