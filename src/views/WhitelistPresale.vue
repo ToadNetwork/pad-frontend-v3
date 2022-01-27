@@ -32,7 +32,7 @@
 
         <ul class="perks-list">
           <li>
-            Your presale must have a hard cap (maximum total contribution) of <b>at least<b> $150K. While reaching the hard cap is not required, failing to reach the <b>soft cap</b> (25% of hard cap) results in the presale being automatically cancelled.
+            Your presale must have a hard cap (maximum total contribution) of <b>at least</b> $150K. While reaching the hard cap is not required, failing to reach the <b>soft cap</b> (25% of hard cap) results in the presale being automatically cancelled.
           </li>
           <li>
             At least 50% of your token's supply must be allocated to the presale, unless there's a good reason to do otherwise or your tokenomics don't allow it. This can be discussed case by case.
