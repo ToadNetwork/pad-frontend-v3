@@ -331,10 +331,10 @@
                     </template>
                     <span class="padswap-dw-balance-amount">
                       <template v-if="dwAction == 'withdraw'">
-                        {{ userStakedBalanceNum | formatNumber(4) }}
+                        {{ userStakedBalanceNum | formatNumber(6) }}
                       </template>
                       <template v-else>
-                        {{ userLpBalanceNum | formatNumber(4) }}
+                        {{ userLpBalanceNum | formatNumber(6) }}
                       </template>
                     </span>
                   </div>
