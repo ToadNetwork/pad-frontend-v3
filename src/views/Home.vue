@@ -385,7 +385,7 @@ function initializeFarms(farms: FarmData[], type: FarmType, isImported: boolean 
   }))
 }
 
-const MIN_VISIBLE_STAKE = ethers.utils.parseEther('0.00000001')
+const MIN_VISIBLE_STAKE = .00001
 
 function initializeFarmSet(farmSet: FarmSet) {
   const copy: FarmSet = JSON.parse(JSON.stringify(farmSet))
@@ -515,9 +515,9 @@ export default Vue.extend({
       }
 
       if (this.stakedOnly) {
-        visibleFarms.regularFarms = visibleFarms.regularFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance.gt(MIN_VISIBLE_STAKE))
-        visibleFarms.lpFarms = visibleFarms.lpFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance.gt(MIN_VISIBLE_STAKE))
-        visibleFarms.partnerFarms = visibleFarms.partnerFarms.filter(f => f.userStakedBalance !== undefined && f.userStakedBalance.gt(MIN_VISIBLE_STAKE))
+        visibleFarms.regularFarms = visibleFarms.regularFarms.filter(f => toFloat(f.userStakedBalance || ethers.BigNumber.from(0)) * f.lpPrice! > MIN_VISIBLE_STAKE)
+        visibleFarms.lpFarms = visibleFarms.lpFarms.filter(f => toFloat(f.userStakedBalance || ethers.BigNumber.from(0)) * f.lpPrice! > MIN_VISIBLE_STAKE)
+        visibleFarms.partnerFarms = visibleFarms.partnerFarms.filter(f => toFloat(f.userStakedBalance || ethers.BigNumber.from(0)) * f.lpPrice! > MIN_VISIBLE_STAKE)
       }
 
       let sortfn = (_1: FarmData, _2: FarmData) => 1
