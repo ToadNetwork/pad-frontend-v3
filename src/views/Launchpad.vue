@@ -153,7 +153,7 @@
       </v-data-table>
 
       <div class="text-center" style="margin: 30px 0; color: #d6d4d4">
-        Want your presale to be listed here?
+        Want your presale to be featured here?
         <v-btn
         small
         color="secondary"

@@ -58,7 +58,7 @@
       <h3>DYOR!</h3>
       <br>
       <p>This list contains <b>all presales</b> created on PadSwap - therefore, the projects on this list might not be verified.</p>
-      <p>Although DPLP ensures that liquidity cannot be pulled, malicious contracts can still prevent users from selling or infinitely mint tokens.</p>
+      <p>Although DPLP ensures that liquidity cannot be pulled, malicious contracts can still infinitely mint tokens or prevent users from selling.</p>
       <p>Please do your own research before investing.</p>
     </div>
 

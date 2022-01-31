@@ -5,7 +5,7 @@
     <img class="background" src="@/assets/images/launchpad-texture-moonriver.jpg">
     <div class="launchpad-title">
       <img class="launchpad-image" src="@/assets/images/launchpad-rocket-moonriver.svg">
-      <h1 style="margin-bottom: 0">Whitelist your presale</h1>
+      <h1 style="margin-bottom: 0">Get your presale featured on LaunchPAD</h1>
       <v-btn
       medium
       color="primary"
@@ -18,7 +18,10 @@
 
     <div class="launchpad-intro">
       <p class="please-read">
-        Before applying to get your token whitelisted, make sure that it meets the following criteria.
+        All presales launched on LaunchPAD are automatically added to the list of <a href="/allpresales" target="blank" style="color: #00f000">all presales</a>.
+      </p>
+      <p class="please-read">
+        In order for your presale to get featured and be displayed on LauchPAD's front page, it must meet the following criteria.
       </p>
     </div>
 
@@ -39,6 +42,9 @@
           </li>
           <li>
             If your token uses a custom contract, it must be audited. This can be skipped if your token was created via our token factory.
+          </li>
+          <li>
+            Your project should have a purpose and a team behind it. We don't feature "pump and dump" projects with no use case.
           </li>
         </ul>
 
