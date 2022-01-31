@@ -96,7 +96,6 @@
            <img v-if="item.logo" class="token-logo" :src="item.logo" :alt="item.name">
         </template>
 
-
         <template v-slot:item.presaleLink="{ item }">
           <v-btn
           small
@@ -105,6 +104,41 @@
           >
           View presale
           </v-btn>
+        </template>
+
+        <template v-slot:item.status="{ item }">
+          <v-chip
+          small
+          color="#8a9aae"
+          label
+          v-if="item.status == 'active'">
+            <v-icon small left>
+              mdi-clock-time-eight
+            </v-icon>
+            ACTIVE
+          </v-chip>
+
+          <v-chip
+          small
+          color="red"
+          label
+          v-if="item.status == 'aborted'">
+            <v-icon small left>
+              mdi-close-circle
+            </v-icon>
+            ABORTED
+          </v-chip>
+
+          <v-chip
+          small
+          color="green"
+          label
+          v-if="item.status == 'finished'">
+            <v-icon small left>
+              mdi-checkbox-marked-circle
+            </v-icon>
+            FINISHED
+          </v-chip>
         </template>
 
       </v-data-table>
@@ -175,6 +209,12 @@ const presales : any = [
         sortable: false
       },
       {
+        text: 'Status',
+        value: 'status',
+        align: 'center',
+        sortable: false
+      },
+      {
         text: 'Presale link',
         value: 'presaleLink',
         align: 'center',
@@ -240,7 +280,6 @@ const presales : any = [
         this.updateTable = !this.updateTable
       },
       updatePresaleList() {
-
         presales.length = 0
 
         let presalesLength = this.factoryContract.allPresalesLength().then(
@@ -249,8 +288,6 @@ const presales : any = [
           for (let i = 0; i < length; i += 1)
           this.factoryContract.allPresales(i).then((address: string) => this.getPresaleData(address))
         })
-
-
       },
       getPresaleData(presaleAddress : string) {
         const presaleContract = new ethers.Contract(presaleAddress, LAUNCHPAD_PRESALE_ABI, this.multicall)
@@ -259,9 +296,9 @@ const presales : any = [
           logo: '',
           name: '',
           ticker: '',
-          presaleLink: '/' + this.$store.getters.ecosystem.routeName + '/presale/' + presaleAddress
+          presaleLink: '/' + this.$store.getters.ecosystem.routeName + '/presale/' + presaleAddress,
+          status: ''
         }
-        console.log(presaleInfo)
         presales.push(presaleInfo)
 
         presaleContract.presaleInfo().then((info: string) => {
@@ -271,6 +308,27 @@ const presales : any = [
             presaleEntry.logo = parsedInfo.tokenLogoUrl
             this.renderTable()
           }
+        })
+
+        presaleContract.canBuy().then((canBuy: boolean) => {
+          presaleContract.canEnd().then((canEnd: boolean) => {
+            presaleContract.isAborted().then((presaleIsAborted: boolean) => {
+              const presaleIsActive = canBuy && !canEnd
+              const presaleEntry = presales.find((f: any) => equalsInsensitive(f.presaleLink, presaleInfo.presaleLink))
+              if (presaleEntry) {
+                if (presaleIsActive && !presaleIsAborted) {
+                  presaleEntry.status = 'active'
+                }
+                else if (presaleIsAborted) {
+                  presaleEntry.status = 'aborted'
+                }
+                else {
+                  presaleEntry.status = 'finished'
+                }
+                this.renderTable()
+              }
+            })
+          }) 
         })
 
         presaleContract.token().then((tokenAddress: string) => this.getTokenData(presaleAddress, tokenAddress, presaleInfo))
@@ -297,27 +355,8 @@ const presales : any = [
         })
       },
       getTableContent() {
-        var content = this.getImportedPresales().concat(this.getAllPresales())
+        var content = this.getAllPresales()
         return content
-      },
-      getImportedPresales() {
-        var presaleList : any = []
-        const whiteList = presales
-
-        const importedPresales = this.$store.state.userProfile.importedPresales[this.ecosystemId]
-      
-        importedPresales.forEach((item : any) => {
-          var presaleListItem = {
-            logo: item.logo,
-            name: item.name,
-            ticker: item.ticker,
-            presaleLink: item.presaleLink
-          }
-          if (presaleListItem.name && presaleListItem.ticker && presaleListItem.presaleLink ) {
-            presaleList.push(presaleListItem)
-          }
-        })
-        return presaleList
       },
       getAllPresales() {
         var presaleList : any = []
@@ -329,10 +368,10 @@ const presales : any = [
             logo: item.logo,
             name: item.name,
             ticker: item.ticker,
-            presaleLink: item.presaleLink
-        }
-        const existingEntry = importedPresales.find((f: any) => equalsInsensitive(f.presaleLink, item.presaleLink)) 
-          if (!existingEntry) {
+            presaleLink: item.presaleLink,
+            status: item.status
+          }
+          if (presaleListItem.name && presaleListItem.ticker && presaleListItem.presaleLink) {
               presaleList.push(presaleListItem)
           }
         })
