@@ -45,7 +45,7 @@
       <v-btn
       medium
       color="primary"
-      href="/launchpad"
+      to="/launchpad"
       style="margin-top: 10px;"
       >
         Back

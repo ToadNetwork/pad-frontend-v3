@@ -98,6 +98,19 @@
   </v-sheet>
 
     <div class="table-container">
+
+    <div class="text-center">
+    <v-btn
+    to="/allpresales"
+    style="margin: 20px"
+    color="primary"
+    >
+      Click to see all presales
+    </v-btn>
+    </div>
+    <div class="text-center">
+      <h4 style="margin-bottom: 30px; margin-top: 10px;">Featured presales:</h4>
+    </div>
     <img class="background" :src="getBackgroundTexture()">
 
       <v-data-table

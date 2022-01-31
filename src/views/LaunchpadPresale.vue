@@ -26,7 +26,7 @@
       <v-btn
       medium
       color="primary"
-      href="/launchpad"
+      to="/launchpad"
       >
         Back to launchpad
       </v-btn>

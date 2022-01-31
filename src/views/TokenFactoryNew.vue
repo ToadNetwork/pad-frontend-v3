@@ -22,7 +22,7 @@
       <div class="launchpad-title">
         <img class="launchpad-image" :src="getLaunchpadRocket()">
         <h1 style="margin-bottom: 0">LaunchPAD token factory</h1>
-        <v-btn medium color="primary" href="/launchpad" style="margin-top: 10px;">
+        <v-btn medium color="primary" to="/launchpad" style="margin-top: 10px;">
           Back
         </v-btn>
       </div>

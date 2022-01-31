@@ -89,6 +89,11 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/WhitelistPresale.vue')
   },
   {
+    path: '/allpresales',
+    name: 'All Presales',
+    component: () => import('../views/AllPresales.vue')
+  },
+  {
     path: '/:ecosystem/presale/:address',
     name: 'Launchpad Presale',
     component: () => import('../views/LaunchpadPresale.vue')
