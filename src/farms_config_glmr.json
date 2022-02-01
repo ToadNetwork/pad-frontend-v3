@@ -133,6 +133,13 @@
         "acceptedToken":"0x59193512877E2EC3bB27C178A8888Cfac62FB32D",
         "token1":"0x59193512877E2EC3bB27C178A8888Cfac62FB32D",
         "token2":"0x59193512877E2EC3bB27C178A8888Cfac62FB32D"
+      },
+      {
+        "name":"GLMR-AVAX",
+        "contract":"0xf34574cC8C60db71e9b57aFD1B03503a060E4c85",
+        "acceptedToken":"0xA7CaC2EFa6790fc7E4d6c40674a66B23dd26b28E",
+        "token1": "0xe3DB50049C74De2F7d7269823af3178Cf22fd5E3",
+        "token2": "0x4792C1EcB969B036eb51330c63bD27899A13D84e"
       }
     ],
     "retiredFarms": [
