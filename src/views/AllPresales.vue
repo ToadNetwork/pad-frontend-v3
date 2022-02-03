@@ -358,6 +358,19 @@ const presales : any = [
       },
       getTableContent() {
         var content = this.getAllPresales()
+        var criteria = {"active": 3, "finished": 2, "aborted": 1}
+
+        content.sort((a, b) => {
+          if (criteria[a.status] > criteria[b.status]) {
+            return -1
+          }
+          else if (criteria[a.status] < criteria[b.status]) {
+            return 1
+          }
+          else {
+            return 0
+          }
+        })
         return content
       },
       getAllPresales() {
