@@ -42,7 +42,9 @@
     <img class="background" :src="getBackgroundTexture()">
     <div class="launchpad-title">
       <img class="launchpad-image" :src="getLaunchpadRocket()">
-      <h1 style="margin-bottom: 0">LaunchPAD - All presales</h1>
+      <h1 v-if="this.$store.getters.ecosystem.routeName == 'bsc'" style="margin-bottom: 0">All presales (BSC)</h1>
+      <h1 v-else-if="this.$store.getters.ecosystem.routeName == 'moonriver'" style="margin-bottom: 0">All presales (Moonriver)</h1>
+      <h1 v-else style="margin-bottom: 0">All presales (Moonbeam)</h1>
       <v-btn
       medium
       color="primary"
