@@ -56,11 +56,17 @@
     </div>
 
 
-    <div class="token-warning">
-      <h3>DYOR!</h3>
-      <br>
-      <p>This list contains <b>all presales</b> created on PadSwap - therefore, the projects on this list might not be verified.</p>
-      <p>Although DPLP ensures that liquidity cannot be pulled, malicious contracts can still infinitely mint tokens or prevent users from selling.</p>
+    <div v-if="!warningHidden" class="token-warning text-left" style="border: 1px dashed yellow; position: relative;">
+      <v-btn
+      rounded
+      color="secondary"
+      style="position: absolute; top: 20px; right: 20px; opacity: 0.7;"
+      @click="warningHidden = true">
+      Close
+        </v-btn>
+      <h3 class="text-center">DYOR!</h3><br>
+      <p>This list contains <b>all presales</b> created on PadSwap - the projects on this list might not be verified and we can't guarantee their security.</p>
+      <p>Although DPLP ensures that liquidity cannot be pulled, malicious contracts can still infinitely mint tokens, prevent users from selling, or falsely imitate an existing project.</p>
       <p>Please do your own research before investing.</p>
     </div>
 
@@ -185,7 +191,8 @@ const presales : any = [
     data: () => ({
       valid: true,
 
-      updateTable : <boolean> false,
+      updateTable: <boolean> false,
+      warningHidden: <boolean> false,
 
       // Ecosystem-specific
       backgroundImage: '',
@@ -550,6 +557,7 @@ const presales : any = [
   background: rgba(24, 29, 38, 0.7) !important;
   border-radius: 20px;
   margin-bottom: 30px;
+  padding-bottom: 20px;
 }
 .launchpad-title-bar h1 {
   margin-bottom: 25px;
@@ -627,7 +635,7 @@ const presales : any = [
   background: #ffa52d69 !important;
   border-radius: 20px;
   padding: 20px;
-  margin: 20px;
+  margin: 20px 20px 0 20px;
 }
 
 </style>
