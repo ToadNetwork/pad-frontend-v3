@@ -76,7 +76,11 @@
       :headers="headers"
       :items="getTableContent()"
       item-key="name"
-      :key="updateTable">
+      :key="updateTable"
+      :footer-props="{
+        'items-per-page-options': [10, 25, 50, 100]
+      }"
+      :items-per-page="25">
 
         <template v-slot:item.favorite="{ item }">
           <v-btn
