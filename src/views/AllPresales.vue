@@ -70,6 +70,9 @@
 
     <div class="table-container">
     <img class="background" :src="getBackgroundTexture()">
+    
+        <v-text-field style="max-width: 500px; margin: 10px 30px;" label="search" v-model="search"></v-text-field>
+
 
       <v-data-table
       class="token-table"
@@ -77,6 +80,7 @@
       :items="getTableContent()"
       item-key="name"
       :key="updateTable"
+      :search="search"
       :footer-props="{
         'items-per-page-options': [10, 25, 50, 100]
       }"
@@ -188,6 +192,7 @@ const presales : any = [
 
       active: true,
       syncLock: new AwaitLock(),
+      search: '',
 
       headers: [
       {
@@ -362,9 +367,9 @@ const presales : any = [
       },
       getTableContent() {
         var content = this.getAllPresales()
-        var criteria = {"active": 3, "finished": 2, "aborted": 1}
+        var criteria : any = {"active": 3, "finished": 2, "aborted": 1}
 
-        content.sort((a, b) => {
+        content.sort((a : any, b : any) => {
           if (criteria[a.status] > criteria[b.status]) {
             return -1
           }
