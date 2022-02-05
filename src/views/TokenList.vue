@@ -177,6 +177,13 @@ export default Vue.extend({
     tokens: {
 
     'BSC': [
+      {
+        logo: require('@/assets/custom-tokens/bsc/SKC.png'),
+        name: 'Swamp King Capital',
+        ticker: 'SKC',
+        address: '0x18e68f649f27719c185ae3d13098163336ec2f8c',
+        telegram: 'https://t.me/SwampKingCapital'
+      },
       ],
     'Moonriver': [
 
