@@ -89,7 +89,7 @@
         </template>
 
         <template v-slot:item.chart="{ item }">
-           <a :href="'https://dexscreener.com/moonbeam/' + item.address" target="blank">Chart</a>
+           <a :href="'https://dexscreener.com/' + $store.getters.ecosystem.routeName  + '/' + item.address" target="blank">Chart</a>
         </template>
 
       </v-data-table>
