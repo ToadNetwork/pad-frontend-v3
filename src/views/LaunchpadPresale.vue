@@ -112,7 +112,7 @@
           <tbody>
             <tr>
               <td>Tokens in presale</td>
-              <td>{{ formatNumberWithCommas(displayedSale.presaleTokenAmount) }} {{ displayedSale.tokenSymbol }}
+              <td :style="suppliedTokenStyle">{{ formatNumberWithCommas(displayedSale.presaleTokenAmount) }} {{ displayedSale.tokenSymbol }}
                 ({{
                   trimNumber(
                     (displayedSale.presaleTokenAmount / displayedSale.tokenSupply) * 100
@@ -121,7 +121,7 @@
             </tr>
             <tr>
               <td>Total tokens provided by owner (presale + DPLP)</td>
-              <td>{{ formatNumberWithCommas(parseFloat(displayedSale.presaleTokenAmount) * 1.72) }} {{ displayedSale.tokenSymbol }}
+              <td :style="suppliedTokenStyle">{{ formatNumberWithCommas(parseFloat(displayedSale.presaleTokenAmount) * 1.72) }} {{ displayedSale.tokenSymbol }}
                 ({{
                   trimNumber(
                     ((parseFloat(displayedSale.presaleTokenAmount) * 1.72) / displayedSale.tokenSupply) * 100
@@ -650,6 +650,23 @@
       next()
     },
     computed: {
+      suppliedTokenStyle(): string {
+        let style = "font-weight: bold;"
+        let tokenPercentage = ((parseFloat(this.displayedSale.presaleTokenAmount) * 1.72) / this.displayedSale.tokenSupply) * 100
+        if (tokenPercentage > 80) {
+          style += "color: #00f3ff;"
+        }
+        else if (tokenPercentage >= 50) {
+          style += "color: #85ff00;"
+        }
+        else if (tokenPercentage >= 15) {
+          style += "color: #ffbc00;"
+        }
+        else {
+          style += "color: #ff5e00;"
+        }
+        return style
+      },
       ecosystemId: {
         get(): EcosystemId {
           return this.$store.state.ecosystemId
