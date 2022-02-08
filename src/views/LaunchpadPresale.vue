@@ -475,6 +475,18 @@
               ></v-text-field>
             </div>
 
+            <div class="form-line">
+              <v-checkbox
+              v-model="editPublic"
+              hide-details
+              >
+                <template v-slot:label>
+                  Make public
+                </template>
+              </v-checkbox>
+            </div>
+            <br>
+
             <v-btn
             large
             color="primary"
@@ -603,6 +615,7 @@
       editWebsiteUrl: <string | null> null,
       editTelegramUrl: <string | null> null,
       editDiscordUrl: <string | null> null,
+      editPublic: <boolean> true,
       websiteUrlRules: [
           (v: any) => (!v || /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/.test(v)) || 'Enter a valid website URL, or leave empty if you don\'t have one'
         ],
@@ -745,7 +758,8 @@
             tokenLogoUrl: '',
             telegramUrl: '',
             discordUrl: '',
-            websiteUrl: ''
+            websiteUrl: '',
+            isPublic: true
           },
         }
       },
@@ -908,7 +922,8 @@
           tokenLogoUrl: this.editLogoUrl,
           websiteUrl: this.editWebsiteUrl,
           telegramUrl: this.editTelegramUrl,
-          discordUrl: this.editDiscordUrl
+          discordUrl: this.editDiscordUrl,
+          isPublic: this.editPublic
         })
         const tx = await this.factoryContractSigner!.populateTransaction.changePresaleInfo(this.presaleAddress, presaleInfo)
         await this.safeSendTransaction({ tx, targetChainId: this.chainId })
@@ -982,6 +997,7 @@
           telegramUrl: "",
           discordUrl: "",
           websiteUrl: "",
+          isPublic: true
         }
         try {
             const parsed = JSON.parse(str)
@@ -992,6 +1008,9 @@
             obj.telegramUrl = this.fixUrl(obj.telegramUrl)
             obj.discordUrl = this.fixUrl(obj.discordUrl)
             obj.websiteUrl = this.fixUrl(obj.websiteUrl)
+            if (parsed.isPublic != undefined) {
+              obj.isPublic = parsed.isPublic
+            }
         } catch (e) {
             return obj
         }
@@ -1041,7 +1060,8 @@
           this.editLogoUrl = this.displayedSale.presaleInfo.tokenLogoUrl,
           this.editWebsiteUrl = this.displayedSale.presaleInfo.websiteUrl,
           this.editTelegramUrl = this.displayedSale.presaleInfo.telegramUrl,
-          this.editDiscordUrl = this.displayedSale.presaleInfo.discordUrl
+          this.editDiscordUrl = this.displayedSale.presaleInfo.discordUrl,
+          this.editPublic = this.displayedSale.presaleInfo.isPublic
         }
 
         let canBuy: boolean = false

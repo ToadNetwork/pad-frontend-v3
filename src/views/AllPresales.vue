@@ -315,7 +315,8 @@ const presales : any = [
           name: '',
           ticker: '',
           presaleLink: '/' + this.$store.getters.ecosystem.routeName + '/presale/' + presaleAddress,
-          status: ''
+          status: '',
+          isPublic: true
         }
         presales.push(presaleInfo)
 
@@ -324,6 +325,9 @@ const presales : any = [
           if (presaleEntry) {
             const parsedInfo = JSON.parse(info)
             presaleEntry.logo = parsedInfo.tokenLogoUrl
+            if (parsedInfo.isPublic != undefined) {
+              presaleEntry.isPublic = parsedInfo.isPublic
+            }
             this.renderTable()
           }
         })
@@ -400,9 +404,10 @@ const presales : any = [
             name: item.name,
             ticker: item.ticker,
             presaleLink: item.presaleLink,
-            status: item.status
+            status: item.status,
+            isPublic: item.isPublic
           }
-          if (presaleListItem.name && presaleListItem.ticker && presaleListItem.presaleLink) {
+          if (presaleListItem.name && presaleListItem.ticker && presaleListItem.presaleLink && presaleListItem.isPublic) {
               presaleList.push(presaleListItem)
           }
         })

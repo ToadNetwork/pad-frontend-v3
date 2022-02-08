@@ -272,6 +272,35 @@
               </div>
             </div>
 
+            <div class="form-line">
+              <div class="checkbox-container">
+                <v-checkbox
+                v-model="isPublic"
+                color="green"
+                hide-details
+                >
+                  <template v-slot:label>
+                    Make presale public
+                    &nbsp;
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on, attrs }">
+                        <div
+                        v-bind="attrs"
+                        v-on="on"
+                        class="hint-icon"
+                        >
+                          ?
+                        </div>
+                      </template>
+                      <span>If enabled, your presale will be visible to everyone<br>
+                      in the list of all presales.<br>
+                      You can also change this later, when the presale is live.</span>
+                    </v-tooltip>
+                  </template>
+                </v-checkbox>
+              </div>
+            </div>
+
           </div>
         </v-col>
 
@@ -577,6 +606,7 @@ import { EcosystemId, IEcosystem } from '@/ecosystem'
       telegramUrl: '',
       discordUrl: '',
       websiteUrl: '',
+      isPublic: <boolean> true,
 
       // Ecosystem-specific
       currentChain: '',
@@ -840,7 +870,8 @@ import { EcosystemId, IEcosystem } from '@/ecosystem'
           tokenLogoUrl: this.logoUrl,
           telegramUrl: this.telegramUrl,
           discordUrl: this.discordUrl,
-          websiteUrl: this.websiteUrl
+          websiteUrl: this.websiteUrl,
+          isPublic: this.isPublic
         })
 
         const tx = await this.factoryContractSigner.populateTransaction.createPresale(
