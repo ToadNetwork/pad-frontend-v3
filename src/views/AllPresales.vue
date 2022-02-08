@@ -109,7 +109,7 @@
         </template>
 
         <template v-slot:item.logo="{ item }">
-           <img v-if="item.logo" class="token-logo" :src="item.logo" :alt="item.name">
+           <img v-if="item.logo" class="token-logo" :src="item.logo" :alt="item.name" onerror="this.style.display='none'">
         </template>
 
         <template v-slot:item.presaleLink="{ item }">
