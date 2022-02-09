@@ -119,7 +119,7 @@ const MoonbeamEcosystem: IEcosystem = {
     theme: MoonbeamPadswapTheme,
     swapUrl: 'https://padswap.exchange/moonbeam/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
-    infoUrl: 'https://dexscreener.com/moonbeam/padswap',
+    infoUrl: 'https://glmr-info.padswap.exchange',
     tokenIconsFolder: 'moonbeam',
     routeName: 'moonbeam'
 }
