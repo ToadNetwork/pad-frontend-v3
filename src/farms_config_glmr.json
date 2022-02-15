@@ -170,6 +170,13 @@
         "acceptedToken":"0x92e9768A57162D074DC8C798d4E69e4E0389BBd4",
         "token1": "0xA649325Aa7C5093d12D6F98EB4378deAe68CE23F",
         "token2": "0x8f552a71EFE5eeFc207Bf75485b356A0b3f01eC9"
+      },
+      {
+        "name":"TOAD-GLMR",
+        "contract":"0xcc95d3C739497BBe739D0232D0446aB573d3c3A5",
+        "acceptedToken":"0xed048a21361fff12fb10335655b273c396994AA0",
+        "token1": "0xF480f38C366dAaC4305dC484b2Ad7a496FF00CeA",
+        "token2": "0xe3DB50049C74De2F7d7269823af3178Cf22fd5E3"
       }
     ]
   },
