@@ -79,11 +79,6 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/TokenFactory.vue')
   },
   {
-    path: '/tokenfactory-new',
-    name: 'Token Factory - New',
-    component: () => import('../views/TokenFactoryNew.vue')
-  },
-  {
     path: '/whitelistpresale',
     name: 'Whitelist Presale',
     component: () => import('../views/WhitelistPresale.vue')

@@ -21,6 +21,10 @@ import { FarmSet } from '@/types'
 
 type ChainId = 56 | 1284 | 1285
 
+enum TokenModels {
+    Standard = 0
+}
+
 enum EcosystemId {
     BSC = 0,
     Moonriver = 1,
@@ -41,6 +45,7 @@ interface IEcosystem {
     priceModel: PriceModel,
     launchPadFactoryAddress: string,
     launchPadTokenFactoryAddress: string,
+    launchPadTokenFactoryModels: Partial<Record<TokenModels, string>>,
     theme: IPadswapTheme
     swapUrl: string
     bridgeUrl: string
@@ -66,6 +71,7 @@ const BscEcosystem: IEcosystem = {
     priceModel: new PriceModel(bscDataseed, BSC_WHITELIST, wbnbAddress, WBNB_BUSD_PAIR, bscFactoryAddress, MINIMUM_LIQUIDITY_BNB, 18),
     launchPadFactoryAddress: '0xd0fA59395aE0c7eA3735225B0465BB5f63d1B13a',
     launchPadTokenFactoryAddress: '', // TODO
+    launchPadTokenFactoryModels: {},
     theme: BscPadswapTheme,
     swapUrl: 'https://padswap.exchange/bsc/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
@@ -90,7 +96,10 @@ const MoonriverEcosystem: IEcosystem = {
     minterAddress: MOVR_MINTER_ADDRESS,
     priceModel: new PriceModel(moonriverDataseed, MOVR_WHITELIST, wmovrAddress, WMOVR_USDC_PAIR, moonriverFactoryAddress, MINIMUM_LIQUIDITY_MOVR, 6),
     launchPadFactoryAddress: '0xE8b36617a06c3D592B69Fd78460dc2DF2FE82A59',
-    launchPadTokenFactoryAddress: '0xF8022F5DbA4aD1771Ed4B176DcDF2E8DE5710f94',
+    launchPadTokenFactoryAddress: '0x92A505f25CBc135E591f85f0bBd2dcb5c3B19257',
+    launchPadTokenFactoryModels: {
+        [TokenModels.Standard]: '0xd6487bF10B086187e45247A7F577acd70D823ea8'
+    },
     theme: MoonriverPadswapTheme,
     swapUrl: 'https://padswap.exchange/moonriver/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
@@ -116,6 +125,7 @@ const MoonbeamEcosystem: IEcosystem = {
     priceModel: new PriceModel(moonbeamDataseed, GLMR_WHITELIST, wglmrAddress, WGLMR_USDC_PAIR, moonbeamFactoryAddress, MINIMUM_LIQUIDITY_GLMR, 6),
     launchPadFactoryAddress: '0x20cc7692D135546e0Ff5A5d1a3B097CDE02fE6d3',
     launchPadTokenFactoryAddress: '',
+    launchPadTokenFactoryModels: {},
     theme: MoonbeamPadswapTheme,
     swapUrl: 'https://padswap.exchange/moonbeam/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
@@ -134,5 +144,6 @@ export {
     EcosystemId,
     IEcosystem,
     ChainId,
+    TokenModels,
     ECOSYSTEMS
 }
