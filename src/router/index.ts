@@ -69,6 +69,11 @@ const routes: Array<RouteConfig> = [
     component: () => import ('../views/ToS.vue')
   },
   {
+    path: '/donate',
+    name: 'Donate',
+    component: () => import('../views/Donate.vue')
+  },
+  {
     path: '/launch',
     name: 'Launch Token',
     component: () => import('../views/LaunchToken.vue')

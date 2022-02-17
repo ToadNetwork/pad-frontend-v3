@@ -385,7 +385,15 @@ export default Vue.extend({
           href: 'https://www.dropbox.com/s/bng5e1bq2u03bk6/PAD%20WHITEPAPER.PDF',
           target: '_blank',
           iconSrc: require('@/assets/icons/White Paper Icon.svg')
-        }]
+        },
+        {
+          name: 'Donate',
+          desc: 'Help us fund TOAD\'s marketing',
+          href: '/donate',
+          target: '_self',
+          iconSrc: require('@/assets/icons/Vault Icon.svg')
+        },
+        ]
       }]
     },
     ...mapGetters(['isConnected']),
