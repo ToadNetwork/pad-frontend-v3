@@ -107,8 +107,8 @@
                         name="token-type-select"
                         value="redistribution"
                         v-model="tokenType"
-                        disabled>
-                        <label for="token-type-2">With redistribution (coming soon)</label>
+                      >
+                        <label for="token-type-2">With redistribution</label>
                       </div>
                       <ul class="win98-list">
                         <li>Part of every transaction is redistributed to holders</li>
@@ -193,7 +193,8 @@
                     </v-tooltip>
                     <br><br>
 
-                    <div v-if="tokenType == 'redistribution'">
+                    <!-- TODO: two column design -->
+                    <template v-if="tokenType == 'redistribution'">
                       <label for="transactionFee" class="win98-label">Transaction Fee (%):</label><br>
                       <input id="transactionFee" class="win98-input" v-model="transactionFee">
                       <v-tooltip top>
@@ -210,8 +211,62 @@
                         This percentage of every transaction will be distributed to all holders, proportional to the amount of tokens they hold.
                         </span>
                       </v-tooltip>
+                      <br><br>
+
+                      <label for="burnFee" class="win98-label">Burn Fee (%):</label><br>
+                      <input id="burnFee" class="win98-input" v-model="burnFee">
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on, attrs }">
+                          <div
+                          v-bind="attrs"
+                          v-on="on"
+                          class="win98-hint-icon"
+                          >
+                            ?
+                          </div>
+                        </template>
+                        <span>
+                        This percentage of every transaction will be burned.
+                        </span>
+                      </v-tooltip>
+                      <br><br>
+
+                      <label for="liquidityFee" class="win98-label">Liquidity Fee (%):</label><br>
+                      <input id="liquidityFee" class="win98-input" v-model="liquidityFee">
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on, attrs }">
+                          <div
+                          v-bind="attrs"
+                          v-on="on"
+                          class="win98-hint-icon"
+                          >
+                            ?
+                          </div>
+                        </template>
+                        <span>
+                        This percentage of every transaction will be added as liquidity.
+                        </span>
+                      </v-tooltip>
+                      <br><br>
+
+                      <label for="devFee" class="win98-label">Development Fee (%):</label><br>
+                      <input id="devFee" class="win98-input" v-model="devFee">
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on, attrs }">
+                          <div
+                          v-bind="attrs"
+                          v-on="on"
+                          class="win98-hint-icon"
+                          >
+                            ?
+                          </div>
+                        </template>
+                        <span>
+                        This percentage of every transaction will be sent to the token creator's wallet to fund marketing and development.
+                        </span>
+                      </v-tooltip>
                       <br>
-                    </div>
+                    </template>
 
                     <br>
                     <span v-if="formErrors" style="color: red; white-space: pre;">{{ formErrors }}</span>
@@ -234,9 +289,17 @@
 
                     <div v-if="tokenType == 'redistribution'">
                       <label for="transactionFee" class="win98-label">Transaction Fee:</label><br>
-                      <input disabled id="transactionFee" class="win98-input" :value="transactionFee + '%'"><br>
-                    </div>
+                      <input disabled id="transactionFee" class="win98-input" :value="transactionFee + '%'"><br><br>
 
+                      <label for="burnFee" class="win98-label">Burn Fee:</label><br>
+                      <input disabled id="burnFee" class="win98-input" :value="burnFee + '%'"><br><br>
+
+                      <label for="liquidityFee" class="win98-label">Liquidity Fee:</label><br>
+                      <input disabled id="liquidityFee" class="win98-input" :value="liquidityFee + '%'"><br><br>
+
+                      <label for="devFee" class="win98-label">Development Fee:</label><br>
+                      <input disabled id="devFee" class="win98-input" :value="devFee + '%'"><br><br>
+                    </div>
 
                     <p class="win98-paragraph">If the info is correct, press "Continue"</p>
                   </v-stepper-content>
@@ -327,7 +390,6 @@
           </div>
         </div>
       </div>
-      </div>
     </v-form>
   </v-container>
 </template>
@@ -346,11 +408,20 @@ import {
   ERC20_ABI,
   APPROVE_AMOUNT,
 } from '@/constants'
-import { ChainId, TokenModels, IEcosystem } from '@/ecosystem'
+import { ChainId, TokenModel, IEcosystem } from '@/ecosystem'
 import { delay } from '@/utils'
 
 // These token symbols will not be allowed
 const symbolBlacklist = ['TOAD', 'PAD', 'USDC', 'USDT', 'DAI', 'BNB', 'BUSD', 'ETH', 'BTC', 'GLMR', 'MOVR', 'XRP', 'XMR', 'DOT', 'ADA', 'SOLAR']
+
+function countDecimals(n: number) {
+  const nString = n.toString()
+  if (!nString.includes('.')) {
+    return 0
+  } else {
+    return nString.split('.')[1].length
+  }
+}
 
 export default Vue.extend({
   components: { SliderTabs },
@@ -362,17 +433,22 @@ export default Vue.extend({
     maxFormStep: 5,
 
     // Filled in the form
-    tokenName: <string> '',
-    tokenSymbol: <string> '',
-    tokenSupply: <string> '',
-    tokenDecimals: <string> '18',
+    tokenName: '',
+    tokenSymbol: '',
+    tokenSupply: '',
+    tokenDecimals: '18',
     tokenType: <"normal" | "redistribution" | ''> '',
-    transactionFee: <string> '', // Only relevant if tokenType is "redistribution"
+
+    // Only relevant if tokenType is "redistribution"
+    transactionFee: '2',
+    burnFee: '0',
+    liquidityFee: '0',
+    devFee: '0',
 
     // Created token address
     tokenContractAddress: '',
 
-    tokenCreated: <boolean> false, // Set to true when the token has been created
+    tokenCreated: false, // Set to true when the token has been created
 
     syncLock: new AwaitLock(),
     feeTokenAllowance: <ethers.BigNumber | null> null
@@ -433,9 +509,29 @@ export default Vue.extend({
       else if (parseFloat(this.tokenDecimals) % 1 != 0 || !(/^\d+$/.test(this.tokenDecimals)) ) { errors += 'Token decimals must be a whole number\n' }
 
       if (this.tokenType == "redistribution") {
-        if (!this.transactionFee) { errors += 'Choose the transaction fee\n' }
-        else if (parseFloat(this.transactionFee) > 15 || parseFloat(this.transactionFee) < 0) { errors += 'Choose a number between 0 and 15\n' }
-        else if (!(/^(?![0.]+$)\d+(\.\d{1,10})?$/gm.test(this.transactionFee)) ) { errors += 'The number is too long or is not a valid number\n' }
+        const transactionFeeStatus = this.getFeeValidationStatus(this.transactionFee, 'transaction')
+        if (transactionFeeStatus) {
+          errors += transactionFeeStatus
+        }
+
+        const burnFeeStatus = this.getFeeValidationStatus(this.burnFee, 'burn')
+        if (burnFeeStatus) {
+          errors += burnFeeStatus
+        }
+
+        const liquidityFeeStatus = this.getFeeValidationStatus(this.liquidityFee, 'liquidity')
+        if (liquidityFeeStatus) {
+          errors += liquidityFeeStatus
+        }
+
+        const developmentFeeStatus = this.getFeeValidationStatus(this.devFee, 'development')
+        if (developmentFeeStatus) {
+          errors += developmentFeeStatus
+        }
+
+        if (this.totalReflectionFees > 30) {
+          errors += 'Total fees cannot be greater than 30%\n'
+        }
       }
 
       if (errors.length == 0) {
@@ -443,12 +539,15 @@ export default Vue.extend({
       }
       return errors
     },
-    tokenModelContractAddress(): string | undefined {
-      if (this.tokenType == "normal") {
-        return this.ecosystem.launchPadTokenFactoryModels[TokenModels.Standard]
+    tokenModel(): TokenModel {
+      if (this.tokenType == "redistribution") {
+        return TokenModel.Reflections
+      } else {
+        return TokenModel.Standard
       }
-
-      return undefined
+    },
+    tokenModelContractAddress(): string | undefined {
+      return this.ecosystem.launchPadTokenFactoryModels[this.tokenModel]
     },
     tokenFactoryContract(): ethers.Contract | null {
       if (!this.ecosystem.launchPadTokenFactoryAddress) {
@@ -461,9 +560,16 @@ export default Vue.extend({
         this.ecosystem.dataseed
       )
     },
+    // approval state for TOAD creation fee
     isFeeApproved(): boolean {
       // TODO: read creationFee from contract
       return this.feeTokenAllowance !== null && this.feeTokenAllowance.gt(1e18.toString())
+    },
+    totalReflectionFees(): number {
+      return (parseFloat(this.transactionFee) || 0) +
+        (parseFloat(this.burnFee) || 0) +
+        (parseFloat(this.liquidityFee) || 0) +
+        (parseFloat(this.devFee) || 0)
     }
   },
   async mounted() {
@@ -547,6 +653,35 @@ export default Vue.extend({
       await this.safeSendTransaction({ tx, targetChainId: this.chainId })
       await this.sync()
     },
+    getTokenModelArguments(tokenModel: TokenModel) {
+      if (tokenModel == TokenModel.Standard) {
+        return ethers.utils.defaultAbiCoder.encode(
+          ['string', 'string', 'uint8', 'uint256'],
+          [
+            this.tokenName,
+            this.tokenSymbol,
+            parseInt(this.tokenDecimals),
+            ethers.BigNumber.from(this.tokenSupply)
+          ]
+        )
+      } else if (tokenModel == TokenModel.Reflections) {
+        return ethers.utils.defaultAbiCoder.encode(
+          ['string', 'string', 'uint8', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256'],
+          [
+            this.tokenName,
+            this.tokenSymbol,
+            parseInt(this.tokenDecimals),
+            ethers.BigNumber.from(this.tokenSupply),
+            Number(this.transactionFee) * 10,
+            Number(this.liquidityFee) * 10,
+            Number(this.burnFee) * 10,
+            Number(this.devFee) * 10
+          ]
+        )
+      }
+
+      throw new Error()
+    },
     async submit() {
       if (!this.web3) {
         await this.requestConnect()
@@ -556,16 +691,7 @@ export default Vue.extend({
       const tokenFactoryContract = this.tokenFactoryContract!.connect(this.web3)
       const tokenDeployerContract = new ethers.Contract(this.tokenModelContractAddress!, LAUNCHPAD_TOKEN_DEPLOYER_ABI)
 
-      const args = ethers.utils.defaultAbiCoder.encode(
-        ['string', 'string', 'uint8', 'uint256'],
-        [
-          this.tokenName,
-          this.tokenSymbol,
-          parseInt(this.tokenDecimals),
-          ethers.BigNumber.from(this.tokenSupply)
-        ]
-      )
-
+      const args = this.getTokenModelArguments(this.tokenModel)
       const tx = await tokenFactoryContract.populateTransaction.createToken(this.tokenModelContractAddress, args)
       const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
       if (txReceipt) {
@@ -602,6 +728,24 @@ export default Vue.extend({
       } finally {
         this.syncLock.release()
       }
+    },
+    getFeeValidationStatus(fee: string, feeName: string): false | string {
+      if (fee === '') {
+        return `Specify a ${feeName} fee\n`
+      }
+
+      const feeNumber = Number(fee)
+      if (isNaN(feeNumber)) {
+        return `The ${feeName} fee is not a valid number\n`
+      }
+      if (feeNumber < 0) {
+        return `The ${feeName} fee cannot be negative\n`
+      }
+      if (countDecimals(feeNumber) > 1) {
+        return `The ${feeName} fee cannot have more than 1 decimal places\n`
+      }
+
+      return false
     },
     ...mapActions(['requestConnect', 'safeSendTransaction'])
   },

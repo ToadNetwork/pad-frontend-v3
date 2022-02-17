@@ -21,8 +21,9 @@ import { FarmSet } from '@/types'
 
 type ChainId = 56 | 1284 | 1285
 
-enum TokenModels {
-    Standard = 0
+enum TokenModel {
+    Standard = 0,
+    Reflections = 1
 }
 
 enum EcosystemId {
@@ -45,7 +46,7 @@ interface IEcosystem {
     priceModel: PriceModel,
     launchPadFactoryAddress: string,
     launchPadTokenFactoryAddress: string,
-    launchPadTokenFactoryModels: Partial<Record<TokenModels, string>>,
+    launchPadTokenFactoryModels: Partial<Record<TokenModel, string>>,
     theme: IPadswapTheme
     swapUrl: string
     bridgeUrl: string
@@ -96,9 +97,10 @@ const MoonriverEcosystem: IEcosystem = {
     minterAddress: MOVR_MINTER_ADDRESS,
     priceModel: new PriceModel(moonriverDataseed, MOVR_WHITELIST, wmovrAddress, WMOVR_USDC_PAIR, moonriverFactoryAddress, MINIMUM_LIQUIDITY_MOVR, 6),
     launchPadFactoryAddress: '0xE8b36617a06c3D592B69Fd78460dc2DF2FE82A59',
-    launchPadTokenFactoryAddress: '0x92A505f25CBc135E591f85f0bBd2dcb5c3B19257',
+    launchPadTokenFactoryAddress: '0x9774e20244004A9dFe9dc1a252495dCf6930Ca27',
     launchPadTokenFactoryModels: {
-        [TokenModels.Standard]: '0xd6487bF10B086187e45247A7F577acd70D823ea8'
+        [TokenModel.Standard]: '0xF1Ed607a0a74ce12447682A0523BF1b0C8E531F2',
+        [TokenModel.Reflections]: '0xb95f64d69ab24f826C6c90D11DD77731dB529d56'
     },
     theme: MoonriverPadswapTheme,
     swapUrl: 'https://padswap.exchange/moonriver/swap',
@@ -144,6 +146,6 @@ export {
     EcosystemId,
     IEcosystem,
     ChainId,
-    TokenModels,
+    TokenModel,
     ECOSYSTEMS
 }
