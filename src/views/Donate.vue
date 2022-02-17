@@ -97,13 +97,7 @@ export default Vue.extend({
   mixins: [formatMixin],
   components: { Farm, SliderTabs },
   data() {
-    const syncLocks = <Record<EcosystemId, AwaitLock>> {}
-    for (const ecosystem of Object.values(ECOSYSTEMS)) {
-      syncLocks[ecosystem.ecosystemId] = new AwaitLock()
-    }
-
     return {
-      syncLocks,
       active: true,
       sortBy: 'Earned',
       searchText: '',
@@ -113,16 +107,42 @@ export default Vue.extend({
   },
   async mounted() {
     this.$store.commit('setEcosystemId', 2)
+      const ecosystem = this.ecosystem
+      const multicall = this.multicall
+      const priceModel = ecosystem.priceModel
 
-    while (this.active) {
-      try {
-        await this.sync()
-      } catch (e) {
-        console.error(e)
-      } finally {
-        await delay(5000)
+      const blockNumber = await multicall.getBlockNumber()
+      let promises = [
+        priceModel.syncWithin(blockNumber, 12),
+      ]
+
+      await Promise.all(promises)
+
+      const acceptedTokens : string[] = [
+      '0xe3db50049c74de2f7d7269823af3178cf22fd5e3', // WGLMR
+      '0x818ec0a7fe18ff94269904fced6ae3dae6d6dc0b', // USDC (anySwap)
+      '0x8f552a71efe5eefc207bf75485b356a0b3f01ec9', // USDC (xPollinate)
+      '0x8e70cd5b4ff3f62659049e74b6649c6603a0e594', // USDT
+      '0x30d2a9f5fdf90ace8c17952cbb4ee48a55d916a7', // ETH (xPollinate)
+      '0xfA9343C3897324496A05fC75abeD6bAC29f8A40f', // ETH (anySwap)
+      '0x59193512877e2ec3bb27c178a8888cfac62fb32d', // GLMR PAD
+      '0xF480f38C366dAaC4305dC484b2Ad7a496FF00CeA', // TOAD
+      '0xA649325Aa7C5093d12D6F98EB4378deAe68CE23F', // BUSD
+
+      ]
+
+      let tokenUsdAmount = 0.0
+
+      for (const tokenAddress of acceptedTokens) {
+        const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, multicall)
+        const tokenBalance = await tokenContract.balanceOf(this.donationAddress)
+        tokenUsdAmount += parseFloat(ethers.utils.formatEther(tokenBalance)) * priceModel.getPriceUsd(tokenAddress)
       }
-    }
+
+      let ethBalance = await multicall.getBalance(this.donationAddress)
+      let ethUsdAmount = parseFloat(ethers.utils.formatEther(ethBalance)) * priceModel.getPriceUsd('0xe3db50049c74de2f7d7269823af3178cf22fd5e3')
+
+      this.usdDonationAmount = Math.floor(tokenUsdAmount + ethUsdAmount)
   },
   beforeDestroy() {
     this.active = false
@@ -161,66 +181,7 @@ export default Vue.extend({
       return Object.entries(this.$store.state.lastChainTransactionBlock)
     }
   },
-  watch: {
-    ecosystem() {
-      this.$padswapTheme.theme = this.ecosystem.theme
-      setTimeout(() => this.sync())
-    },
-    lastChainTransactionBlock() {
-      setTimeout(() => this.sync())
-    },
-  },
   methods: {
-    async sync() {
-      const ecosystem = this.ecosystem
-      const multicall = this.multicall
-      const mutex = this.syncLocks[this.ecosystemId]
-      await mutex.acquireAsync()
-
-      try {
-        await this.syncInternal(ecosystem, multicall)
-      } finally {
-        mutex.release()
-      }
-    },
-    async syncInternal(ecosystem: IEcosystem, multicall: ethers.providers.Provider) {
-      const priceModel = ecosystem.priceModel
-
-      const blockNumber = await multicall.getBlockNumber()
-      let promises = [
-        priceModel.syncWithin(blockNumber, 12),
-      ]
-
-      await Promise.all(promises)
-
-      const acceptedTokens : string[] = [
-      '0xe3db50049c74de2f7d7269823af3178cf22fd5e3', // WGLMR
-      '0x818ec0a7fe18ff94269904fced6ae3dae6d6dc0b', // USDC (anySwap)
-      '0x8f552a71efe5eefc207bf75485b356a0b3f01ec9', // USDC (xPollinate)
-      '0x8e70cd5b4ff3f62659049e74b6649c6603a0e594', // USDT
-      '0x30d2a9f5fdf90ace8c17952cbb4ee48a55d916a7', // ETH (xPollinate)
-      '0xfA9343C3897324496A05fC75abeD6bAC29f8A40f', // ETH (anySwap)
-      '0x59193512877e2ec3bb27c178a8888cfac62fb32d', // GLMR PAD
-      '0xF480f38C366dAaC4305dC484b2Ad7a496FF00CeA', // TOAD
-      // '0xc9BAA8cfdDe8E328787E29b4B078abf2DaDc2055', // BNB
-      '0xA649325Aa7C5093d12D6F98EB4378deAe68CE23F', // BUSD
-
-      ]
-
-      let tokenUsdAmount = 0.0
-
-      for (const tokenAddress of acceptedTokens) {
-        const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, multicall)
-        const tokenBalance = await tokenContract.balanceOf(this.donationAddress)
-        tokenUsdAmount += parseFloat(ethers.utils.formatEther(tokenBalance)) * priceModel.getPriceUsd(tokenAddress)
-      }
-
-      let ethBalance = await multicall.getBalance(this.donationAddress)
-      let ethUsdAmount = parseFloat(ethers.utils.formatEther(ethBalance)) * priceModel.getPriceUsd('0xe3db50049c74de2f7d7269823af3178cf22fd5e3')
-
-      this.usdDonationAmount = Math.floor(tokenUsdAmount + ethUsdAmount)
-
-    },
     copyText (text : string) {
       let textArea = document.createElement("textarea")
       textArea.value = text
