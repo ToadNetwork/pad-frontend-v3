@@ -306,7 +306,15 @@
 
                   <v-stepper-content step="5">
                     <div>
-                      <p class="win98-paragraph">Pressing the button below will create your token.<br><span style="color: green">The fee for creating a token is 1 TOAD.</span></p>
+                      <p class="win98-paragraph">
+                        Pressing the button below will create your token.<br>
+                        <span style="color: green">The fee for creating a token is 1 TOAD. </span>
+                        <a
+                        style="color: blue; font-weight: bold;"
+                        target="_blank"
+                        :href="getToadLinks[$store.getters.ecosystem.routeName]">Get TOAD
+                        </a>
+                      </p>
                       <button
                         class="win98-button"
                         v-on:click.prevent
@@ -427,6 +435,12 @@ export default Vue.extend({
   components: { SliderTabs },
   data: () => ({
     active: true,
+
+    getToadLinks: {
+    "bsc": "/bsc/swap?outputCurrency=0x463e737d8f740395abf44f7aac2d9531d8d539e9",
+    "moonriver": "/moonriver/swap?outputCurrency=0x165DBb08de0476271714952C3C1F068693bd60D7",
+    "moonbeam": "/moonbeam/swap?outputCurrency=0xF480f38C366dAaC4305dC484b2Ad7a496FF00CeA"
+    },
 
     // These are used to make the form work, not used anywhere else
     formStep: 1,
