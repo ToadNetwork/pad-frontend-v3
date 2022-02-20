@@ -100,7 +100,7 @@ const MoonriverEcosystem: IEcosystem = {
     launchPadTokenFactoryAddress: '0x9774e20244004A9dFe9dc1a252495dCf6930Ca27',
     launchPadTokenFactoryModels: {
         [TokenModel.Standard]: '0xF1Ed607a0a74ce12447682A0523BF1b0C8E531F2',
-        [TokenModel.Reflections]: '0xb95f64d69ab24f826C6c90D11DD77731dB529d56'
+        [TokenModel.Reflections]: '0xB454765b1047c8f4f33cA8fca82851Ca1992C0Fa'
     },
     theme: MoonriverPadswapTheme,
     swapUrl: 'https://padswap.exchange/moonriver/swap',
