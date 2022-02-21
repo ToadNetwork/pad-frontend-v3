@@ -114,7 +114,7 @@ const MoonbeamEcosystem: IEcosystem = {
     padAddress: '0x59193512877E2EC3bB27C178A8888Cfac62FB32D',
     minterAddress: '0x70790550d5F01EDd5B2Ed1dFf05eDC52cD4F1Eda',
     priceModel: new PriceModel(moonbeamDataseed, GLMR_WHITELIST, wglmrAddress, WGLMR_USDC_PAIR, moonbeamFactoryAddress, MINIMUM_LIQUIDITY_GLMR, 6),
-    launchPadFactoryAddress: '0x20cc7692D135546e0Ff5A5d1a3B097CDE02fE6d3',
+    launchPadFactoryAddress: '0x4A891F2CBa00cf8442a1d5A9219463453d326ba8',
     launchPadTokenFactoryAddress: '',
     theme: MoonbeamPadswapTheme,
     swapUrl: 'https://padswap.exchange/moonbeam/swap',
