@@ -51,7 +51,7 @@
       </v-btn>
     </div>
     <div class="launchpad-title">
-      <img class="launchpad-image" :src="displayedSale.presaleInfo.tokenLogoUrl" onerror="this.style.display='none'">
+      <img class="launchpad-image" :src="displayedSale.presaleInfo.tokenLogoUrl">
       <h1 style="padding-bottom: 0; word-wrap: break-word;">${{displayedSale.tokenSymbol}} ({{displayedSale.tokenName}}) presale</h1>
       <v-btn
       medium
