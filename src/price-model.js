@@ -58,6 +58,7 @@ const GLMR_WHITELIST = [
     '0xc234a67a4f840e61ade794be47de455361b52413', // DAI
     '0x30d2a9f5fdf90ace8c17952cbb4ee48a55d916a7', // WETH
     '0x59193512877e2ec3bb27c178a8888cfac62fb32d', // PAD
+    '0xF480f38C366dAaC4305dC484b2Ad7a496FF00CeA', // TOAD
 ]
 
 class PriceModel {

@@ -358,7 +358,8 @@ enum FarmViewOption {
 }
 
 const TOKENS: {[address: string]: string} = {
-  FUK: '0xa898bbb508c04be26af3d319b7775927afcb02af'
+  FUK: '0xa898bbb508c04be26af3d319b7775927afcb02af',
+  TOAD: '0xF480f38C366dAaC4305dC484b2Ad7a496FF00CeA'
 }
 
 function initializeFarms(farms: FarmData[], type: FarmType, isImported: boolean = false): FarmData[] {
