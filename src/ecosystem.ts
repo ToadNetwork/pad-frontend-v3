@@ -74,7 +74,7 @@ const BscEcosystem: IEcosystem = {
     routeName: 'bsc'
 }
 
-const moonriverDataseed = new ethers.providers.StaticJsonRpcProvider('https://moonriver.api.onfinality.io/public')
+const moonriverDataseed = new ethers.providers.StaticJsonRpcProvider('https://rpc.api.moonriver.moonbeam.network')
 const wmovrAddress = '0x663a07a2648296f1A3C02EE86A126fE1407888E5'
 const moonriverFactoryAddress = '0x760d2Bdb232027aB3b1594405077F9a1b91C04c1'
 const MoonriverEcosystem: IEcosystem = {
