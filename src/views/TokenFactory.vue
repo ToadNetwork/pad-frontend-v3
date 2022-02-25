@@ -60,16 +60,16 @@
                     <fieldset class="win98-fieldset">
                       <legend>Select chain</legend>
                       <div class="win98-field-row">
-                        <input id="radio1" value="0" v-model="ecosystemId" type="radio" name="chain-select" disabled>
-                        <label for="radio1">Binance Smart Chain (coming soon)</label>
+                        <input id="radio1" value="0" v-model="ecosystemId" type="radio" name="chain-select">
+                        <label for="radio1">Binance Smart Chain</label>
                       </div>
                       <div class="win98-field-row">
                         <input id="radio2" value="1" v-model="ecosystemId" type="radio" name="chain-select">
                         <label for="radio2">Moonriver</label>
                       </div>
                       <div class="win98-field-row">
-                        <input id="radio3" value="2" v-model="ecosystemId" type="radio" name="chain-select" disabled>
-                        <label for="radio3">Moonbeam (coming soon)</label>
+                        <input id="radio3" value="2" v-model="ecosystemId" type="radio" name="chain-select">
+                        <label for="radio3">Moonbeam</label>
                       </div>
                     </fieldset>
 
@@ -492,10 +492,7 @@ export default Vue.extend({
       return this.$store.getters.multicall
     },
     canContinue(): boolean {
-      if (this.formStep == 1) {
-        // TODO: remove this check when all chains are deployed
-        return this.ecosystemId == EcosystemId.Moonriver
-      } else if (this.formStep == 2) {
+      if (this.formStep == 2) {
         return this.tokenType != ''
       } else if (this.formStep == 3) {
         return this.formErrors === false
