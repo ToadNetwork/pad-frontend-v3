@@ -21,6 +21,11 @@ import { FarmSet } from '@/types'
 
 type ChainId = 56 | 1284 | 1285
 
+enum TokenModel {
+    Standard = 0,
+    Reflections = 1
+}
+
 enum EcosystemId {
     BSC = 0,
     Moonriver = 1,
@@ -41,6 +46,7 @@ interface IEcosystem {
     priceModel: PriceModel,
     launchPadFactoryAddress: string,
     launchPadTokenFactoryAddress: string,
+    launchPadTokenFactoryModels: Partial<Record<TokenModel, string>>,
     theme: IPadswapTheme
     swapUrl: string
     bridgeUrl: string
@@ -65,7 +71,11 @@ const BscEcosystem: IEcosystem = {
     minterAddress: BSC_MINTER_ADDRESS,
     priceModel: new PriceModel(bscDataseed, BSC_WHITELIST, wbnbAddress, WBNB_BUSD_PAIR, bscFactoryAddress, MINIMUM_LIQUIDITY_BNB, 18),
     launchPadFactoryAddress: '0xd0fA59395aE0c7eA3735225B0465BB5f63d1B13a',
-    launchPadTokenFactoryAddress: '', // TODO
+    launchPadTokenFactoryAddress: '0xDed45CcAe0CE904CadA2bF7165A6eE891A8C6399',
+    launchPadTokenFactoryModels: {
+        [TokenModel.Standard]: '0xd654d9ED960a09aCF291469a9c3359FCcEE4C6Af',
+        [TokenModel.Reflections]: '0xeb2D2CbbEcBE4a403C3aB8112Af5dD1394e7B329'
+    },
     theme: BscPadswapTheme,
     swapUrl: 'https://padswap.exchange/bsc/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
@@ -90,7 +100,11 @@ const MoonriverEcosystem: IEcosystem = {
     minterAddress: MOVR_MINTER_ADDRESS,
     priceModel: new PriceModel(moonriverDataseed, MOVR_WHITELIST, wmovrAddress, WMOVR_USDC_PAIR, moonriverFactoryAddress, MINIMUM_LIQUIDITY_MOVR, 6),
     launchPadFactoryAddress: '0xE8b36617a06c3D592B69Fd78460dc2DF2FE82A59',
-    launchPadTokenFactoryAddress: '0xF8022F5DbA4aD1771Ed4B176DcDF2E8DE5710f94',
+    launchPadTokenFactoryAddress: '0x9774e20244004A9dFe9dc1a252495dCf6930Ca27',
+    launchPadTokenFactoryModels: {
+        [TokenModel.Standard]: '0xF1Ed607a0a74ce12447682A0523BF1b0C8E531F2',
+        [TokenModel.Reflections]: '0xB454765b1047c8f4f33cA8fca82851Ca1992C0Fa'
+    },
     theme: MoonriverPadswapTheme,
     swapUrl: 'https://padswap.exchange/moonriver/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
@@ -115,7 +129,11 @@ const MoonbeamEcosystem: IEcosystem = {
     minterAddress: '0x70790550d5F01EDd5B2Ed1dFf05eDC52cD4F1Eda',
     priceModel: new PriceModel(moonbeamDataseed, GLMR_WHITELIST, wglmrAddress, WGLMR_USDC_PAIR, moonbeamFactoryAddress, MINIMUM_LIQUIDITY_GLMR, 6),
     launchPadFactoryAddress: '0x4A891F2CBa00cf8442a1d5A9219463453d326ba8',
-    launchPadTokenFactoryAddress: '',
+    launchPadTokenFactoryAddress: '0x9774e20244004A9dFe9dc1a252495dCf6930Ca27',
+    launchPadTokenFactoryModels: {
+        [TokenModel.Standard]: '0xF1Ed607a0a74ce12447682A0523BF1b0C8E531F2',
+        [TokenModel.Reflections]: '0xF165e8f8bbA01862E8FA25126a4B172Af20fC0A8'
+    },
     theme: MoonbeamPadswapTheme,
     swapUrl: 'https://padswap.exchange/moonbeam/swap',
     bridgeUrl: 'https://v2.padswap.exchange/bridge',
@@ -134,5 +152,6 @@ export {
     EcosystemId,
     IEcosystem,
     ChainId,
+    TokenModel,
     ECOSYSTEMS
 }
