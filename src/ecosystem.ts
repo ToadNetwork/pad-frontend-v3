@@ -73,7 +73,7 @@ const BscEcosystem: IEcosystem = {
     launchPadFactoryAddress: '0xd0fA59395aE0c7eA3735225B0465BB5f63d1B13a',
     launchPadTokenFactoryAddress: '0xDed45CcAe0CE904CadA2bF7165A6eE891A8C6399',
     launchPadTokenFactoryModels: {
-        [TokenModel.Standard]: '0xd654d9ED960a09aCF291469a9c3359FCcEE4C6Af'
+        [TokenModel.Standard]: '0xd654d9ED960a09aCF291469a9c3359FCcEE4C6Af',
         [TokenModel.Reflections]: '0xeb2D2CbbEcBE4a403C3aB8112Af5dD1394e7B329'
     },
     theme: BscPadswapTheme,
@@ -84,7 +84,7 @@ const BscEcosystem: IEcosystem = {
     routeName: 'bsc'
 }
 
-const moonriverDataseed = new ethers.providers.StaticJsonRpcProvider('https://rpc.moonriver.moonbeam.network')
+const moonriverDataseed = new ethers.providers.StaticJsonRpcProvider('https://rpc.api.moonriver.moonbeam.network')
 const wmovrAddress = '0x663a07a2648296f1A3C02EE86A126fE1407888E5'
 const moonriverFactoryAddress = '0x760d2Bdb232027aB3b1594405077F9a1b91C04c1'
 const MoonriverEcosystem: IEcosystem = {
