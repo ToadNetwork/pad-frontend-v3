@@ -100,6 +100,7 @@
                         <li>Capped supply</li>
                       </ul>
 
+                      <template v-if="$store.getters.ecosystem.routeName != 'moonriver'">
                       <div class="win98-field-row">
                         <input
                         id="token-type-2"
@@ -108,12 +109,13 @@
                         value="redistribution"
                         v-model="tokenType"
                       >
-                        <label for="token-type-2">With redistribution</label>
+                        <label for="token-type-2">With redistribution <span style="font-weight: bold">(experimental)</span></label>
                       </div>
                       <ul class="win98-list">
                         <li>Part of every transaction is redistributed to holders</li>
                         <li>The fee can be adjusted before you create the token</li>
                       </ul>
+                    </template>
 
                     </fieldset>
                   </v-stepper-content>
@@ -195,6 +197,7 @@
 
                     <!-- TODO: two column design -->
                     <template v-if="tokenType == 'redistribution'">
+                      <p style="font-weight: bold; color: #860000;">This token type has been added recently. If you encounter any issues with transaction taxes, contact us at <a href="https://t.me/toadnetwork" target="_blank">t.me/toadnetwork</a>.</p>
                       <label for="transactionFee" class="win98-label">Transaction Fee (%):</label><br>
                       <input id="transactionFee" class="win98-input" v-model="transactionFee">
                       <v-tooltip top>
@@ -542,6 +545,10 @@ export default Vue.extend({
 
         if (this.totalReflectionFees > 30) {
           errors += 'Total fees cannot be greater than 30%\n'
+        }
+
+        if (this.totalReflectionFees == 0) {
+          errors += 'Total fees must be greater than 0.'
         }
       }
 
