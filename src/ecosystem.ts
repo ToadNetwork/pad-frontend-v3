@@ -74,6 +74,7 @@ const BscEcosystem: IEcosystem = {
     launchPadTokenFactoryAddress: '0xDed45CcAe0CE904CadA2bF7165A6eE891A8C6399',
     launchPadTokenFactoryModels: {
         [TokenModel.Standard]: '0xd654d9ED960a09aCF291469a9c3359FCcEE4C6Af'
+        [TokenModel.Reflections]: '0xeb2D2CbbEcBE4a403C3aB8112Af5dD1394e7B329'
     },
     theme: BscPadswapTheme,
     swapUrl: 'https://padswap.exchange/bsc/swap',
@@ -128,8 +129,10 @@ const MoonbeamEcosystem: IEcosystem = {
     minterAddress: '0x70790550d5F01EDd5B2Ed1dFf05eDC52cD4F1Eda',
     priceModel: new PriceModel(moonbeamDataseed, GLMR_WHITELIST, wglmrAddress, WGLMR_USDC_PAIR, moonbeamFactoryAddress, MINIMUM_LIQUIDITY_GLMR, 6),
     launchPadFactoryAddress: '0x20cc7692D135546e0Ff5A5d1a3B097CDE02fE6d3',
+    launchPadTokenFactoryAddress: '0x9774e20244004A9dFe9dc1a252495dCf6930Ca27',
     launchPadTokenFactoryModels: {
-        [TokenModel.Standard]: '0xF1Ed607a0a74ce12447682A0523BF1b0C8E531F2'
+        [TokenModel.Standard]: '0xF1Ed607a0a74ce12447682A0523BF1b0C8E531F2',
+        [TokenModel.Reflections]: '0xF165e8f8bbA01862E8FA25126a4B172Af20fC0A8'
     },
     theme: MoonbeamPadswapTheme,
     swapUrl: 'https://padswap.exchange/moonbeam/swap',
