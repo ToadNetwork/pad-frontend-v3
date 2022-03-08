@@ -246,10 +246,17 @@ export default Vue.extend({
         },
         {
           name: 'LaunchPad',
-          desc: 'Partake in exclusive presales',
+          desc: 'Create and launch tokens with ease',
           href: '/launchpad',
           target: '_self',
           iconSrc: require('@/assets/icons/LaunchPAD Icon.svg')
+        },
+        {
+          name: 'Farm Factory',
+          desc: 'Launch a farm for an existing token',
+          href: '/farmfactory',
+          target: '_self',
+          iconSrc: require('@/assets/icons/Audit Icon.svg')
         },
         {
           name: 'Bridge',
