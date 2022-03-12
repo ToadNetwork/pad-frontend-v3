@@ -92,6 +92,12 @@
       }"
       :items-per-page="25">
 
+      <template v-slot:no-data>
+        <v-alert :value="true" color="gray">
+          Loading...
+        </v-alert>
+      </template>
+
         <template v-slot:item.favorite="{ item }">
           <v-btn
           small
