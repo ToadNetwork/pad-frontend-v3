@@ -89,10 +89,10 @@
                         id="token-type-1"
                         type="radio"
                         name="token-type-select"
-                        value="normal"
+                        value="basic"
                         v-model="tokenType"
                         >
-                        <label for="token-type-1">Normal token</label>
+                        <label for="token-type-1">Basic token</label>
                       </div>
                       <ul class="win98-list">
                         <li>Standard tokenomics</li>
@@ -109,7 +109,7 @@
                         value="redistribution"
                         v-model="tokenType"
                       >
-                        <label for="token-type-2">With redistribution <span style="font-weight: bold">(experimental)</span></label>
+                        <label for="token-type-2">Reflection token <span style="font-weight: bold">(experimental)</span></label>
                       </div>
                       <ul class="win98-list">
                         <li>Part of every transaction is redistributed to holders</li>
@@ -454,9 +454,9 @@ export default Vue.extend({
     tokenSymbol: '',
     tokenSupply: '',
     tokenDecimals: '18',
-    tokenType: <"normal" | "redistribution" | ''> '',
+    tokenType: <"basic" | "reflection" | ''> '',
 
-    // Only relevant if tokenType is "redistribution"
+    // Only relevant if tokenType is "reflection"
     transactionFee: '2',
     burnFee: '0',
     liquidityFee: '0',
@@ -522,7 +522,7 @@ export default Vue.extend({
       else if (parseFloat(this.tokenDecimals) < 0 || parseFloat(this.tokenDecimals) > 255 ) { errors += 'Choose a number between 0 and 255\n' }
       else if (parseFloat(this.tokenDecimals) % 1 != 0 || !(/^\d+$/.test(this.tokenDecimals)) ) { errors += 'Token decimals must be a whole number\n' }
 
-      if (this.tokenType == "redistribution") {
+      if (this.tokenType == "reflection") {
         const transactionFeeStatus = this.getFeeValidationStatus(this.transactionFee, 'transaction')
         if (transactionFeeStatus) {
           errors += transactionFeeStatus
@@ -558,7 +558,7 @@ export default Vue.extend({
       return errors
     },
     tokenModel(): TokenModel {
-      if (this.tokenType == "redistribution") {
+      if (this.tokenType == "reflection") {
         return TokenModel.Reflections
       } else {
         return TokenModel.Standard
