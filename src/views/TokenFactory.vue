@@ -198,7 +198,7 @@
                     <!-- TODO: two column design -->
                     <template v-if="tokenType == 'redistribution'">
                       <p style="font-weight: bold; color: #860000;">This token type has been added recently. If you encounter any issues with transaction taxes, contact us at <a href="https://t.me/toadnetwork" target="_blank">t.me/toadnetwork</a>.</p>
-                      <label for="transactionFee" class="win98-label">Transaction Fee (%):</label><br>
+                      <label for="transactionFee" class="win98-label">Redistribution Fee (%):</label><br>
                       <input id="transactionFee" class="win98-input" v-model="transactionFee">
                       <v-tooltip top>
                         <template v-slot:activator="{ on, attrs }">
