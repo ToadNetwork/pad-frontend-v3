@@ -38,9 +38,9 @@
     </div>
 
     <v-sheet class="launchpad-title-bar">
-    <img class="background" :src="getBackgroundTexture()">
+    <img class="background" :src="$padswapTheme.theme.backgroundTextureSrc">
     <div class="launchpad-title">
-      <img class="launchpad-image" :src="getLaunchpadRocket()">
+      <img class="launchpad-image" :src="$padswapTheme.theme.launchpadRocketSrc">
       <h1 style="margin-bottom: 0">LaunchPAD</h1>
       <v-btn
       medium
@@ -787,28 +787,6 @@ import { EcosystemId, IEcosystem } from '@/ecosystem'
 
 
         setTimeout(() => this.sync())
-      },
-      getBackgroundTexture() {
-        if (this.$store.getters.ecosystem.chainId == 56) {
-          return require('@/assets/images/launchpad-texture-bsc.jpg')
-        }
-        if (this.$store.getters.ecosystem.chainId == 1285) {
-          return require('@/assets/images/launchpad-texture-moonriver.jpg')
-        }
-        if (this.$store.getters.ecosystem.chainId == 1284) {
-          return require('@/assets/images/launchpad-texture-moonbeam.jpg')
-        }
-      },
-      getLaunchpadRocket() {
-        if (this.$store.getters.ecosystem.chainId == 56) {
-          return require('@/assets/images/launchpad-rocket-bsc.svg')
-        }
-        if (this.$store.getters.ecosystem.chainId == 1285) {
-          return require('@/assets/images/launchpad-rocket-moonriver.svg')
-        }
-        if (this.$store.getters.ecosystem.chainId == 1284) {
-          return require('@/assets/images/launchpad-rocket-moonbeam.svg')
-        }
       },
       validHardCap() {
         if (this.presaleHardCap == '') {

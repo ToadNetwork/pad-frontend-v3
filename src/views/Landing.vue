@@ -40,7 +40,7 @@
 
 	<div class="main-container">
 		<div class="content-container"> 
-    <img class="background" :src="getBackgroundTexture()">
+    <img class="background" :src="$padswapTheme.theme.backgroundTextureSrc">
 
 			<!------------------->
 			<!-- PadSwap logo --->
@@ -445,17 +445,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    getBackgroundTexture() {
-      if (this.$store.getters.ecosystem.chainId == 56) {
-        return require('@/assets/images/launchpad-texture-bsc.jpg')
-      }
-      if (this.$store.getters.ecosystem.chainId == 1285) {
-        return require('@/assets/images/launchpad-texture-moonriver.jpg')
-      }
-      if (this.$store.getters.ecosystem.chainId == 1284) {
-        return require('@/assets/images/launchpad-texture-moonbeam.jpg')
-      }
-    },
     async sync() {
       const ecosystem = this.ecosystem
       const multicall = this.multicall

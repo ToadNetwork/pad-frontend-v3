@@ -18,9 +18,9 @@
       <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
     </div>
     <v-sheet class="launchpad-title-bar">
-      <img class="background" :src="getBackgroundTexture()">
+      <img class="background" :src="$padswapTheme.theme.backgroundTextureSrc">
       <div class="launchpad-title">
-        <img class="launchpad-image" :src="getLaunchpadRocket()">
+        <img class="launchpad-image" :src="$padswapTheme.theme.launchpadRocketSrc">
         <h1 style="margin-bottom: 0">LaunchPAD token factory</h1>
         <v-btn medium color="primary" to="/launchpad" style="margin-top: 10px;">
           Back
@@ -635,30 +635,6 @@ export default Vue.extend({
         this.formStep = 1
       if (this.formStep > this.maxFormStep)
         this.formStep = this.maxFormStep
-    },
-    getBackgroundTexture() {
-      // TODO: move to padswap-theme.ts
-      if (this.$store.getters.ecosystem.chainId == 56) {
-        return require('@/assets/images/launchpad-texture-bsc.jpg')
-      }
-      if (this.$store.getters.ecosystem.chainId == 1285) {
-        return require('@/assets/images/launchpad-texture-moonriver.jpg')
-      }
-      if (this.$store.getters.ecosystem.chainId == 1284) {
-        return require('@/assets/images/launchpad-texture-moonbeam.jpg')
-      }
-    },
-    getLaunchpadRocket() {
-      // TODO: move to padswap-theme.ts
-      if (this.$store.getters.ecosystem.chainId == 56) {
-        return require('@/assets/images/launchpad-rocket-bsc.svg')
-      }
-      if (this.$store.getters.ecosystem.chainId == 1285) {
-        return require('@/assets/images/launchpad-rocket-moonriver.svg')
-      }
-      if (this.$store.getters.ecosystem.chainId == 1284) {
-        return require('@/assets/images/launchpad-rocket-moonbeam.svg')
-      }
     },
     async approve() {
       if (!this.web3) {

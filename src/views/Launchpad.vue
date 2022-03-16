@@ -38,10 +38,10 @@
 
 
   <v-sheet class="launchpad-title-bar">
-    <img class="background" :src="getBackgroundTexture()">
+    <img class="background" :src="$padswapTheme.theme.backgroundTextureSrc">
 
     <div class="launchpad-title">
-      <img class="launchpad-image" :src="getLaunchpadRocket()">
+      <img class="launchpad-image" :src="$padswapTheme.theme.launchpadRocketSrc">
       <h1>LaunchPAD</h1>
     </div>
     <v-row
@@ -111,7 +111,7 @@
     <div class="text-center">
       <h4 style="margin-bottom: 30px; margin-top: 10px;">Featured presales:</h4>
     </div>
-    <img class="background" :src="getBackgroundTexture()">
+    <img class="background" :src="$padswapTheme.theme.backgroundTextureSrc">
 
       <v-data-table
       class="token-table"
@@ -288,28 +288,6 @@ export default Vue.extend({
       },
     setEcosystem(chain_id : string) {
      this.currentChain = chain_id
-    },
-    getBackgroundTexture() {
-      if (this.$store.getters.ecosystem.chainId == 56) {
-        return require('@/assets/images/launchpad-texture-bsc.jpg')
-      }
-      if (this.$store.getters.ecosystem.chainId == 1285) {
-        return require('@/assets/images/launchpad-texture-moonriver.jpg')
-      }
-      if (this.$store.getters.ecosystem.chainId == 1284) {
-        return require('@/assets/images/launchpad-texture-moonbeam.jpg')
-      }
-    },
-    getLaunchpadRocket() {
-      if (this.$store.getters.ecosystem.chainId == 56) {
-        return require('@/assets/images/launchpad-rocket-bsc.svg')
-      }
-      if (this.$store.getters.ecosystem.chainId == 1285) {
-        return require('@/assets/images/launchpad-rocket-moonriver.svg')
-      }
-      if (this.$store.getters.ecosystem.chainId == 1284) {
-        return require('@/assets/images/launchpad-rocket-moonbeam.svg')
-      }
     },
     goToPresale(presaleAddress: string) {
       const chain = this.$store.getters.ecosystem.routeName

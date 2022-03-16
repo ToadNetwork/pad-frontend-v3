@@ -39,9 +39,9 @@
     </div>
 
     <v-sheet class="launchpad-title-bar">
-    <img class="background" :src="getBackgroundTexture()">
+    <img class="background" :src="$padswapTheme.theme.backgroundTextureSrc">
     <div class="launchpad-title">
-      <img class="launchpad-image" :src="getLaunchpadRocket()">
+      <img class="launchpad-image" :src="$padswapTheme.theme.launchpadRocketSrc">
       <h1 v-if="this.$store.getters.ecosystem.routeName == 'bsc'" style="margin-bottom: 0">All presales (BSC)</h1>
       <h1 v-else-if="this.$store.getters.ecosystem.routeName == 'moonriver'" style="margin-bottom: 0">All presales (Moonriver)</h1>
       <h1 v-else style="margin-bottom: 0">All presales (Moonbeam)</h1>
@@ -75,7 +75,7 @@
 
 
     <div class="table-container">
-    <img class="background" :src="getBackgroundTexture()">
+    <img class="background" :src="$padswapTheme.theme.backgroundTextureSrc">
     
         <v-text-field style="max-width: 500px; margin: 10px 30px;" label="search" v-model="search"></v-text-field>
 
@@ -464,28 +464,6 @@ const presales : any = [
           if (id > -1) {
             importedPresales.splice(id, 1);
            }
-        }
-      },
-      getBackgroundTexture() {
-        if (this.$store.getters.ecosystem.chainId == 56) {
-          return require('@/assets/images/launchpad-texture-bsc.jpg')
-        }
-        if (this.$store.getters.ecosystem.chainId == 1285) {
-          return require('@/assets/images/launchpad-texture-moonriver.jpg')
-        }
-        if (this.$store.getters.ecosystem.chainId == 1284) {
-          return require('@/assets/images/launchpad-texture-moonbeam.jpg')
-        }
-      },
-      getLaunchpadRocket() {
-        if (this.$store.getters.ecosystem.chainId == 56) {
-          return require('@/assets/images/launchpad-rocket-bsc.svg')
-        }
-        if (this.$store.getters.ecosystem.chainId == 1285) {
-          return require('@/assets/images/launchpad-rocket-moonriver.svg')
-        }
-        if (this.$store.getters.ecosystem.chainId == 1284) {
-          return require('@/assets/images/launchpad-rocket-moonbeam.svg')
         }
       },
       copyAddress (address : string) {
