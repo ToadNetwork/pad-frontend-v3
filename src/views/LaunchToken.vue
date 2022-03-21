@@ -188,8 +188,8 @@
 
             <div class="form-line" v-if="tokenName && tokenName.length > 0">
               <p>{{tokenSymbol}} ({{tokenName}})</p>
-              <p>Max supply: {{displayedTokenSupply}} {{tokenSymbol}}</p>
-              <p>Presale contract address (after deploy): {{ presaleContractAddress }}</p>
+              <p>Total supply: {{displayedTokenSupply}} {{tokenSymbol}}</p>
+              <p>Presale contract address (after deploy):<br><span style="word-break: break-all;"> {{ presaleContractAddress }}</span></p>
             </div>
             <div v-else-if="tokenContractError">
               <p style="color: red;">{{ tokenContractError }}</p>
