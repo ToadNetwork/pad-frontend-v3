@@ -346,18 +346,114 @@
                       </div>
                       </template>
                       <span>The maximum total amount of {{ presaleCurrency }} that can be contributed during the presale.<br>
-                      When the hard cap is reached, the presale ends successfully.</span>
+                      The presale ends when the hard cap is reached or when the timer expires.</span>
                   </v-tooltip>
                 </template>
 
             </v-text-field>
 
+            <div class="form-line">
+            <v-text-field
+            v-model="presaleTokenAmount"
+            label="Number of tokens to provide"
+            type="number"
+            :rules="validTokenAmount()"
+            required
+            :suffix="tokenSymbol"
+            >
+
+                <template v-slot:append>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+
+                      &nbsp;
+                      <div
+                      v-bind="attrs"
+                      v-on="on"
+                      class="hint-icon"
+                      >
+                        ?
+                      </div>
+                      </template>
+                      <span>The amount of tokens you want to provide to the presale.<br>
+                      58% of these tokens will be sold to users, and 42% will be added to liquidity.</span>
+                  </v-tooltip>
+                </template>
+
+            </v-text-field>
+          </div>
+
             <v-text-field
             v-model="presaleSoftCap"
-            label="Soft cap (25% of hard cap)"
             pattern="[0-9]"
             disabled
             readonly
+            label="Soft cap"
+            :suffix="presaleCurrency"
+            >
+                <template v-slot:append>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+
+                      &nbsp;
+                      <div
+                      v-bind="attrs"
+                      v-on="on"
+                      class="hint-icon"
+                      >
+                        ?
+                      </div>
+                      </template>
+                      <span>The minimum amount of {{ presaleCurrency }} that must be raised.<br>
+                      If the timer expires and the soft cap is not reached, the presale will fail and the contributions will be refunded.<br>
+                      The soft cap is always 25% of hard cap.</span>
+                  </v-tooltip>
+                </template>
+
+            </v-text-field>
+          </div>
+
+
+          <div class="form-line">
+            <v-text-field
+            v-model="presalePrice"
+            disabled
+            readonly
+            label="Presale price"
+            :suffix="tokenSymbol + ' per ' + presaleCurrency"
+            >
+              <template v-slot:append>
+              {{tokenSymbol}}&nbsp;per&nbsp;{{presaleCurrency}}
+              </template>
+
+                <template v-slot:append>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+
+                      &nbsp;
+                      <div
+                      v-bind="attrs"
+                      v-on="on"
+                      class="hint-icon"
+                      >
+                        ?
+                      </div>
+                      </template>
+                      <span>The price of your tokens during the presale.<br>
+                      Keep in mind that 58% of provided tokens are sold to users and 42% are added to liquidity.<br>
+                      </span>
+                  </v-tooltip>
+                </template>
+            </v-text-field>
+          </div>
+
+          <div class="form-line">
+            <v-text-field
+            v-model="presaleMaxContribution"
+            :label="'Maximum contribution per user (0 for infinite)'"
+            :rules="maxContributionRules"
+            required
+            type="number"
             :suffix="presaleCurrency"
             :disabled="!tokenSymbol"
             >
@@ -374,14 +470,11 @@
                         ?
                       </div>
                       </template>
-                      <span>The minimum total amount of {{ presaleCurrency }} that must be contributed.<br>
-                      If the timer expires and the soft cap is not reached, the presale will fail and the contributions will be refunded.</span>
+                      <span>You can use this to limit the amount of {{ presaleCurrency }}<br>that a single user can contribute.</span>
                   </v-tooltip>
                 </template>
-
             </v-text-field>
           </div>
-
 
           <div class="form-line">
             <v-text-field
@@ -417,92 +510,12 @@
             </v-text-field>
           </div>
 
-          <div class="form-line">
-            <v-text-field
-            v-model="presalePrice"
-            label="Presale price"
-            :rules="validPresalePrice()"
-            required
-            :disabled="!tokenSymbol"
-            >
-              <template v-slot:append>
-              {{tokenSymbol}} per {{presaleCurrency}}
-              </template>
-            </v-text-field>
-          </div>
-
-          <div class="form-line">
-            <v-text-field
-            v-model="presaleTokenAmount"
-            disabled
-            readonly
-            type="number"
-            :suffix="tokenSymbol"
-            >
-              <template v-slot:prepend>
-                Number of {{tokenSymbol}} tokens to provide
-              </template>
-
-                <template v-slot:append>
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on, attrs }">
-
-                      &nbsp;
-                      <div
-                      v-bind="attrs"
-                      v-on="on"
-                      class="hint-icon"
-                      >
-                        ?
-                      </div>
-                      </template>
-                      <span>You need to provide 172% of tokens sold directly during the presale.<br>
-                      (in order to cover both the presale and the liquidity added to DPLP).</span>
-                  </v-tooltip>
-                </template>
-
-            </v-text-field>
-          </div>
-
-          <div class="form-line">
-            <v-text-field
-            v-model="presaleMaxContribution"
-            :label="'Maximum contribution per user (0 for infinite)'"
-            :rules="maxContributionRules"
-            required
-            type="number"
-            :suffix="presaleCurrency"
-            :disabled="!tokenSymbol"
-            >
-                <template v-slot:append>
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on, attrs }">
-
-                      &nbsp;
-                      <div
-                      v-bind="attrs"
-                      v-on="on"
-                      class="hint-icon"
-                      >
-                        ?
-                      </div>
-                      </template>
-                      <span>You can use this to limit the amount of {{ presaleCurrency }}<br>that a single user can contribute.</span>
-                  </v-tooltip>
-                </template>
-            </v-text-field>
-          </div>
         </div>
-
-
-
 
         </div>
       </v-col>
 
     </v-row>
-
-
 
     <div class="form-line text-center">
       <div style="display: inline-block;">
@@ -597,7 +610,7 @@ import { EcosystemId, IEcosystem } from '@/ecosystem'
       presaleHardCap: <string> '',
       presaleSoftCap: <number | null> null,
       presaleDuration: <string> '',
-      presaleTokenAmount: <number | null> null,
+      presaleTokenAmount: <string> '',
       presalePrice: <string> '',
       presaleMaxContribution: <string> '',
 
@@ -801,7 +814,23 @@ import { EcosystemId, IEcosystem } from '@/ecosystem'
         if ( !(/^(?![0.]+$)\d+(\.\d{1,10})?$/gm.test(this.presaleHardCap)) ) {
           return ['Input a valid positive number']
         }
-        if (this.userTokenBalance && parseFloat(ethers.utils.formatUnits(this.userTokenBalance, this.tokenDecimals!)) < this.presaleTokenAmount!) {
+        if (this.userTokenBalance && parseFloat(ethers.utils.formatUnits(this.userTokenBalance, this.tokenDecimals!)) < parseFloat(this.presaleTokenAmount)!) {
+          return ['You don\'t have enough ' + this.tokenSymbol + ' tokens to launch this presale']
+        }
+
+        return [true]
+      },
+      validTokenAmount() {
+        if (this.presaleTokenAmount == '') {
+          return ['Choose the amount of tokens to provide']
+        }
+        if (parseFloat(this.presaleHardCap) < 0.1) {
+          return ['The amount provided is too low']
+        }
+        if ( !(/^(?![0.]+$)\d+(\.\d{1,10})?$/gm.test(this.presaleHardCap)) ) {
+          return ['Input a valid positive number']
+        }
+        if (this.userTokenBalance && parseFloat(ethers.utils.formatUnits(this.userTokenBalance, this.tokenDecimals!)) < parseFloat(this.presaleTokenAmount)!) {
           return ['You don\'t have enough ' + this.tokenSymbol + ' tokens to launch this presale']
         }
 
@@ -817,7 +846,7 @@ import { EcosystemId, IEcosystem } from '@/ecosystem'
         if (parseFloat(this.presalePrice) < 10) {
           return ['You must provide at least 10 ' + this.tokenSymbol + ' tokens per ' + this.presaleCurrency]
         }
-        if (this.userTokenBalance && parseFloat(ethers.utils.formatUnits(this.userTokenBalance, this.tokenDecimals!)) < this.presaleTokenAmount!) {
+        if (this.userTokenBalance && parseFloat(ethers.utils.formatUnits(this.userTokenBalance, this.tokenDecimals!)) < parseFloat(this.presaleTokenAmount)!) {
           return ['You don\'t have enough ' + this.tokenSymbol + ' tokens to launch this presale']
         }
 
@@ -842,7 +871,7 @@ import { EcosystemId, IEcosystem } from '@/ecosystem'
         const presaleContractAddress = this.presaleContractAddress
         const buyLimit = ethers.utils.parseEther(this.presaleMaxContribution.toString())
         const hardCap = ethers.utils.parseEther(this.presaleHardCap)
-        const tokensPerEth = this.presalePrice
+        const tokensPerEth = parseFloat(this.presalePrice)
         const durationTime = parseFloat(this.presaleDuration.toString()) * 60 * 60
         const presaleInfo = JSON.stringify({
           tokenLogoUrl: this.logoUrl,
@@ -937,12 +966,14 @@ import { EcosystemId, IEcosystem } from '@/ecosystem'
       ...mapActions(['requestConnect', 'safeSendTransaction'])
     },
     watch: {
-      presalePrice: function(newAmount) {
-        this.presaleTokenAmount = Math.ceil(parseFloat(this.presalePrice) * parseFloat(this.presaleHardCap) * 1.72)
+      presaleTokenAmount: function(newAmount) {
+        let soldAmount : number = (parseFloat(this.presaleTokenAmount) / 1.72) * 1.0
+        this.presalePrice = (soldAmount / parseFloat(this.presaleHardCap)).toFixed(0).toString()
       },
       presaleHardCap: function(newSupply) {
         this.presaleSoftCap = parseFloat(this.presaleHardCap) * 0.25
-        this.presaleTokenAmount = Math.ceil(parseFloat(this.presalePrice) * parseFloat(this.presaleHardCap) * 1.72)
+        let soldAmount : number = (parseFloat(this.presaleTokenAmount) / 1.72) * 1.0
+        this.presalePrice = (soldAmount / parseFloat(this.presaleHardCap)).toString()
       },
       tokenContractAddress(val) {
         this.tokenContractError = null
