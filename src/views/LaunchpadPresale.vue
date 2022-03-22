@@ -792,12 +792,12 @@
     },
     methods: {
       tokenContractLink() {
-        let chainExplorerLinks = {
+        let chainExplorerLinks : any = {
           'bsc': 'https://bscscan.com/token/',
           'moonriver': 'https://moonriver.moonscan.io/token/',
           'moonbeam': 'https://moonbeam.moonscan.io/token/'
         }
-        let chainExplorerNames = {
+        let chainExplorerNames : any = {
           'bsc': 'BSCscan',
           'moonriver': 'Moonscan',
           'moonbeam': 'Moonscan'
