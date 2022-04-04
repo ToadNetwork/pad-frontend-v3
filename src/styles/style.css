@@ -1,0 +1,77 @@
+/***********************************/
+/*    Global, site-wide styles     */
+/***********************************/
+
+/* Generic panel */
+.panel {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 20px;
+  background: rgba(24, 29, 38, 0.7) !important;
+  border-radius: 20px;
+  margin: 20px 0;
+}
+.fullwidth {
+  width: 100%;
+}
+
+/* Generic title, usually at the top of a panel */
+.title {
+  font-size: 2em;
+  color: white;
+  text-shadow: #000 2px 2px 2px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Link to the wiki page, used throughout the site */
+.wiki-link {
+  
+}
+
+
+/* Title bars at the top of the page with product descriptions */
+.product-title-bar {
+  z-index: 1;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 20px;
+  background: rgba(24, 29, 38, 0.7) !important;
+  border-radius: 20px;
+}
+.product-title-bar h1 {
+  margin-bottom: 25px;
+}
+.product-title-bar-section {
+  text-align: center;
+  font-size: 0.7rem;
+}
+.product-title-bar-section {
+  text-align: center;
+  padding: 20px;
+}
+.product-title-bar-background {
+  pointer-events: none;
+  position: absolute;
+  min-width: 100%;
+  min-height: 100%;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  opacity: 0.06;
+}
+
+/* Title */
+.product-title {
+  width: 100%;
+}
+.product-title img {
+  max-width: 100px;
+}
+.product-title h1 {
+  color: white;
+  text-shadow: #000 2px 2px 2px;
+  -webkit-font-smoothing: antialiased;
+}

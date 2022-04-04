@@ -261,8 +261,8 @@ export default Vue.extend({
         {
           name: 'Vault',
           desc: 'PAD\'s backing reserves',
-          href: 'https://v2.padswap.exchange/vault',
-          target: '_blank',
+          href: '/vault',
+          target: '_self',
           iconSrc: require('@/assets/icons/Vault Icon.svg')
         },
         {

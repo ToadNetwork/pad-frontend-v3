@@ -570,8 +570,8 @@
 </template>
 
 <script lang="ts">
-import SliderTabs from '@/components/SliderTabs.vue'
-import { EcosystemId, IEcosystem } from '@/ecosystem'
+  import SliderTabs from '@/components/SliderTabs.vue'
+  import { EcosystemId, IEcosystem } from '@/ecosystem'
 
   import Vue from 'vue'
   import { mapActions } from 'vuex'
