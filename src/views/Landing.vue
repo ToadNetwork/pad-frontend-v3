@@ -1,186 +1,141 @@
 <template>
   <v-container class="padswap-farms-home">
-    <div class="padswap-header-box">
-      <slider-tabs
-        class="padswap-ecosystem-tabs"
-        v-model="ecosystemId"
-      >
-        <v-tab class="d-flex flex-column">
-          <v-img
-            height="30"
-            width="30"
-            contain
-            src="../assets/tokens/bsc/PAD.svg"
-          />
-          <div>BSC</div>
-        </v-tab>
-        <v-tab class="d-flex flex-column">
-          <v-img
-            height="30"
-            width="30"
-            contain
-            src="../assets/tokens/moonriver/PAD.svg"
-          />
-          <div>Moonriver</div>
-        </v-tab>
-        <v-tab class="d-flex flex-column">
-          <v-img
-            height="30"
-            width="30"
-            contain
-            src="../assets/tokens/moonbeam/PAD.svg"
-          />
-          <div>Moonbeam</div>
-        </v-tab>
-      </slider-tabs>
-      <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
 
+    <!-------------->
+    <!-- Header ---->
+    <!-------------->
+
+    <div class="header-box">
+      <div class="header-img-container">
+        <v-img
+        :src="$padswapTheme.theme.headerLogoSrc"
+          contain
+        height="150px"
+        width="500px"
+        style="max-width: 70vw"
+        />
+      </div>
+      <div style="font-size: 14px; color: #B3B8C1; margin-top: 10px;">Truly decentralized, multi-chain DeFi ecosystem</div>
     </div>
 
 
-	<div class="main-container">
-		<div class="content-container"> 
-    <img class="background" :src="$padswapTheme.theme.backgroundTextureSrc">
 
-			<!------------------->
-			<!-- PadSwap logo --->
-			<!------------------->
+    <!-------------------->
+    <!-- Product list ---->
+    <!-------------------->
 
-			<div class="header-box">
-				<div class="header-img-container">
-					<v-img
-					:src="$padswapTheme.theme.headerLogoSrc"
-					contain
-					height="150px"
-					width="500px"
-					style="max-width: 70vw"
-					/>
-				</div>
-      	<div style="font-size: 14px; color: #B3B8C1; margin-top: 10px;">One stop shop for your farming needs</div>
-			</div>
+    <!-- Button row -->
+    <v-row class="justify-center title-card-container">
+      <v-card
+        href="/swap"
+        target="/blank"
+        class="title-card hover-rgb">
+        <div class="icon-container">
+          <img src="@/assets/icons/Swap Icon.svg">
+        </div>
+        <div class="title-card-name">Swap</div>
+        <v-card-subtitle class="text-center" style="font-size: 1.05rem">Exchange tokens<br>on multiple chains.</v-card-subtitle>
+      </v-card>
 
-			<!----------------->
-			<!-- Your stake --->
-			<!----------------->
+      <v-card
+        href="/farms"
+        target="/blank"
+        class="title-card hover-rgb">
+        <div class="icon-container">
+          <img src="@/assets/icons/Farms Icon.svg">
+        </div>
+        <div class="title-card-name">Farms</div>
+        <v-card-subtitle class="text-center" style="font-size: 1.05rem">
+          Earn passive income<br>
+          by providing liquidity.
+        </v-card-subtitle>
+      </v-card>
 
-			<v-row
-			style="padding-top: 20px; padding-bottom: 20px;"
-			align="center"
-			justify="center">
+      <v-card
+        href="/launchpad"
+        target="/blank"
+        class="title-card hover-rgb">
+        <div class="icon-container">
+          <img src="@/assets/icons/LaunchPAD Icon.svg">
+        </div>
+        <div class="title-card-name">LaunchPAD</div>
+        <v-card-subtitle class="text-center" style="font-size: 1.05rem">Create and launch a token<br>in a few easy steps.</v-card-subtitle>
+      </v-card>
 
-				<v-col
-				cols="12">
-					<div class="rounded-box">
-						<p class="text-center">Your stake</p>
-						<v-card
-              class="py-4 px-2"
-            >
-              <v-row>
-                <v-col
-                  class="d-flex justify-center"
-                  md="3"
-                  cols="6"
-                >
-                  <div class="d-flex flex-column">
-                    <div class="padswap-data-item">${{ totals.staked | formatNumberKM(2) }}</div>
-                    <div class="padswap-data-title">TOTAL STAKED</div>
-                  </div>
-                </v-col>
-                <v-col
-                  class="d-flex justify-center"
-                  md="3"
-                  cols="6"
-                >
-                  <div class="d-flex flex-column">
-                    <div class="padswap-data-item">${{ totals.rewards | formatNumberKM }}</div>
-                    <div class="padswap-data-title">PENDING REWARDS</div>
-                  </div>
-                </v-col>
-                <v-col
-                  class="d-flex justify-center"
-                  md="3"
-                  cols="6"
-                >
-                  <div class="d-flex flex-column">
-                    <div class="padswap-data-item">{{ totals.averageROI | formatPercent }}</div>
-                    <div class="padswap-data-title">AVERAGE ROI</div>
-                  </div>
-                </v-col>
-                <v-col
-                  class="d-flex justify-center"
-                  md="3"
-                  cols="6"
-                >
-                  <div class="d-flex flex-column ml-sm-0 ml-n7">
-                    <div class="padswap-data-item">{{ totals.averageAPY | formatPercent }}</div>
-                    <div class="padswap-data-title">AVERAGE APY</div>
-                  </div>
-                </v-col>
-              </v-row>
+      <v-card
+        href="/bridge"
+        target="/blank"
+        class="title-card hover-rgb">
+        <div class="icon-container">
+          <img src="@/assets/icons/Bridge Icon.svg">
+        </div>
+        <div class="title-card-name">Bridge</div>
+        <v-card-subtitle class="text-center" style="font-size: 1.05rem">Transfer tokens<br>between supported chains.</v-card-subtitle>
+      </v-card>
+
+      <v-card
+        href="/vault"
+        target="/blank"
+        class="title-card hover-rgb">
+        <div class="icon-container">
+          <img src="@/assets/icons/Vault Icon.svg">
+        </div>
+        <div class="title-card-name">Vault</div>
+        <v-card-subtitle class="text-center" style="font-size: 1.05rem">Creates backing for PAD<br>from PadSwap fees.</v-card-subtitle>
+      </v-card>
+
+      <v-card
+        href="https://meme-guardians.com/"
+        target="/blank"
+        class="title-card hover-rgb">
+        <div class="icon-container">
+          <img src="@/assets/icons/Games Icon.svg">
+        </div>
+        <div class="title-card-name">Meme Guardians</div>
+        <v-card-subtitle class="text-center" style="font-size: 1.05rem">Our own online RPG, playable right now.</v-card-subtitle>
+      </v-card>
+
+
+    </v-row>
+  </div>
+
+  <!-------------------------->
+  <!-- Market cap counter ---->
+  <!-------------------------->
+
+  <v-row style="padding-top: 20px; padding-bottom: 20px;">
+    <v-col
+    cols="12">
+      <div class="rounded-box">
+        <p class="text-center">Some stats</p>
+        <div class="inner-rounded-box">
+          <v-row
+          align="center"
+          justify="center">
+
+            <v-card
+            class="title-card">
+              <div class="title-card-name" style="font-size: 2rem; margin-top: 10px;">${{biOrMiOrK(toadMarketCap)}}</div>
+              <v-card-subtitle class="text-center" style="font-size: 1.05rem">TOAD market cap</v-card-subtitle>
             </v-card>
 
-						<div class="text-center" style="margin-top: 20px;">
-							<router-link
-            	to="/farms"
-              style="display: inline-block;"
-          		>
-                <div
-                class="padswap-farm-btn"
-                style="padding: 10px; text-decoration: none;">
-          	 		  Go to farms
-                </div>
-          		</router-link>
-						</div>
-					</div>
-				</v-col>
-			
-			</v-row>
+            <v-card
+            class="title-card">
+              <div class="title-card-name" style="font-size: 2rem; margin-top: 10px;">${{biOrMiOrK(padMarketCap)}}</div>
+              <v-card-subtitle class="text-center" style="font-size: 1.05rem">PAD market cap</v-card-subtitle>
+            </v-card>
 
-			<!--------------------->
-			<!-- Stats sections --->
-			<!--------------------->
+            <v-card
+            class="title-card">
+              <div class="title-card-name" style="font-size: 2rem; margin-top: 10px;">∞</div>
+              <v-card-subtitle class="text-center" style="font-size: 1.05rem">Growth potential</v-card-subtitle>
+            </v-card>
 
-			<v-row
-			style="padding-top: 20px; padding-bottom: 20px;"
-			align="center"
-			justify="center">
-
-				<v-col
-				cols="12"
-				md="5">
-					<div class="rounded-box">
-						<p class="text-center">Expected daily ROI</p>
-						<div class="inner-rounded-box">
-							<div class="padswap-data-item text-center">≈ ${{ totals.dailyUSD | formatNumberKM(2) }}
-							</div>
-						</div>
-					</div>
-				</v-col>
-
-				<v-col
-				cols="12"
-				md="2">
-					<v-img
-					:src="$padswapTheme.theme.toadPadImageSrc"
-					contain
-					height="105"
-					width="100%"
-					/>
-				</v-col>
-
-				<v-col
-				cols="12"
-				md="5">
-					<div class="rounded-box">
-						<p class="text-center">Expected monthly ROI</p>
-						<div class="inner-rounded-box">
-							<div class="padswap-data-item text-center">≈ ${{ totals.dailyUSD * 30 | formatNumberKM(2) }}
-							</div>
-						</div>
-					</div>
-				</v-col>
-			
-			</v-row>
+          </v-row>
+        </div>
+      </div>
+    </v-col>
+  </v-row>
 
 			<!-------------------------------->
 			<!-- Get started with farming ---->
@@ -191,7 +146,7 @@
 				<v-col
 				cols="12">
 					<div class="rounded-box">
-						<p class="text-center">Get started with farming</p>
+						<p class="text-center">Looking to get started with farming?</p>
 						<div class="inner-rounded-box">
 							<v-row class="text-center"
 							align="center"
@@ -266,289 +221,288 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { ethers } from 'ethers'
-import { providers } from '@0xsequence/multicall'
-import AwaitLock from 'await-lock'
-import { List } from 'linq-collections'
+  import Vue from 'vue'
+  import SliderTabs from '@/components/SliderTabs.vue'
+  import { ethers } from 'ethers'
+  import { providers } from '@0xsequence/multicall'
+  import { delay, equalsInsensitive, toFloat } from '@/utils'
+  import { IEcosystem, EcosystemId, ChainId } from '@/ecosystem'
+  import { mapActions } from 'vuex'
+  import AwaitLock from 'await-lock'
+  import {
+    PADSWAP_PAIR_ABI,
+    ERC20_ABI,
+  } from '../constants'
+  import VueApexCharts from 'vue-apexcharts'
+  import { padAddress as padAddressBSC, vault as vaultBSC } from '../farms_config_bsc.json'
+  import { padAddress as padAddressMOVR, vault as vaultMOVR } from '../farms_config_movr.json'
+  import { padAddress as padAddressGLMR, vault as vaultGLMR } from '../farms_config_glmr.json'
+  export default Vue.extend({
+    components: {
+      SliderTabs, 
+      apexchart: VueApexCharts
+    },
+    data () {
+      return {
+        active: <boolean> true,
+        syncLock: new AwaitLock(),
+        options: <any> {
+          tooltip: <any> {
+            enabled: true,
+              y: {
+                formatter: (value : any, { series, seriesIndex, dataPointIndex, w } : any ) => {
+                  // @ts-ignore
+                  return '$' + this.biOrMiOrK(value)
+                }
+              },
+              x: {
+                format: 'dd MMM yyyy',
+              },
+          },
+          legend: {
+            position: 'right',
+              formatter: (seriesName : string) => {
+                // @ts-ignore
+                return seriesName
+              }
+          },
+          chart: {
+            toolbar: {
+              show: false
+            },
+          },
+          plotOptions: {
+            treemap: {
+              distributed: true,
+              useFillColorAsStroke: true
+            }
+          },
+        },
 
-import Farm from '@/components/Farm.vue'
-import SliderTabs from '@/components/SliderTabs.vue'
-import {
-  PADSWAP_FARM_ABI,
-  PADSWAP_LP_FARM_ABI,
-  MINTER_ABI,
-  PADSWAP_PAIR_ABI,
-  MULTICALL_ADDRESS
-} from '../constants'
-import { EcosystemId, IEcosystem, ECOSYSTEMS } from '@/ecosystem'
-import { formatMixin } from '@/format'
-import { FarmType, FarmData, FarmSet } from '@/types'
-import { delay } from '@/utils'
 
-enum FarmViewOption {
-  Regular = 0,
-  DPLP = 1,
-  Partner = 2
-}
 
-const TOKENS: {[address: string]: string} = {
-  FUK: '0xa898bbb508c04be26af3d319b7775927afcb02af'
-}
 
-function toFloat(bn: ethers.BigNumber, units: number = 18) {
-  return parseFloat(ethers.utils.formatUnits(bn, units))
-}
+        toadMarketCap: <number> 0,
+        padMarketCap: <number> 0,
 
-function initializeFarms(farms: FarmData[], type: FarmType): FarmData[] {
-  return farms.map(f => ({
-    ...f,
-    rewardToken: f.rewardToken,
-    type,
-    poolSize: undefined,
-    poolValue: undefined,
-    tvl: undefined,
-    farmTotalSupply: undefined,
-    pairTotalSupply: undefined,
-    mintShare: undefined,
-    lpPrice: undefined,
-    rewardTokenPrice: undefined,
-    roi: undefined,
-    apy: undefined,
-    userLpBalance: undefined,
-    userStakedBalance: undefined,
-    userRewardsBalance: undefined,
-    userAllowance: undefined
-  }))
-}
 
-function initializeFarmSet(farmSet: FarmSet) {
-  const copy: FarmSet = JSON.parse(JSON.stringify(farmSet))
-  copy.regularFarms.farms = initializeFarms(copy.regularFarms.farms, FarmType.Regular)
-  copy.regularFarms.retiredFarms = initializeFarms(copy.regularFarms.retiredFarms, FarmType.Regular)
-  copy.lpFarms.farms = initializeFarms(copy.lpFarms.farms, FarmType.LP)
-  copy.partnerFarms.farms = initializeFarms(copy.partnerFarms.farms, FarmType.Partner)
-  return copy
-}
 
-export default Vue.extend({
-  name: 'Home',
-  mixins: [formatMixin],
-  components: { Farm, SliderTabs },
-  data() {
-    const farms = <Record<EcosystemId, FarmSet>> {}
-    const syncLocks = <Record<EcosystemId, AwaitLock>> {}
-    for (const ecosystem of Object.values(ECOSYSTEMS)) {
-      farms[ecosystem.ecosystemId] = initializeFarmSet(ecosystem.farmSet)
-      syncLocks[ecosystem.ecosystemId] = new AwaitLock()
-    }
 
-    return {
-      farms,
-      syncLocks,
-      active: true,
-      farmViewOption: null,
-      stakedOnly: false,
-      includeRetired: false,
-      sortBy: 'Earned',
-      searchText: ''
-    }
-  },
-  async mounted() {
-    while (this.active) {
-      try {
-        await this.sync()
-      } catch (e) {
-        console.error(e)
-      } finally {
-        await delay(5000)
+
+        series: [],
+        totalBacking: 0,
+        // PAD stats
+        mcap: 0,
+        padSupply: <number> 0,
+        padPrice: <number> 0,
+        backingPercentage: '0.000000',
+        userPadBalance: <number> 0,
+        amount: <number> 0,
+        expected: <any> '',
+        contractAddress: <string> '',
+        contractABI: <any> {},
+        tokens: <any> [],
+        pairs: <any> [],
+        userTokenAllowance: <number> 0,
+        vaultProcessed: <boolean> false
       }
-    }
-  },
-  beforeDestroy() {
-    this.active = false
-  },
-  beforeRouteLeave(to: any, from: any, next: Function) {
-    this.active = false
-    next()
-  },
-  computed: {
-    ecosystemId: {
-      get(): EcosystemId {
-        return this.$store.state.ecosystemId
+    },
+    created () {
+      // Setting ecosystem to bsc
+      this.$store.commit('setEcosystemId', 2)
+      setTimeout(async () => {
+        setTimeout(async () => {
+          await this.getData()
+        }, 1000)
+      }, 1000)
+    },
+    async mounted () {
+      while (this.active) {
+        try {
+          await this.sync()
+        } catch (e) {
+          console.error(e)
+        }
+        await delay(3000)
+      }
+    },
+    watch: {
+      amount() {
+        const expectedUSD : number = this.amount * this.padPrice
+        this.expected = '~' + expectedUSD.toString() + ' USD worth of tokens'
+      }
+    },
+    computed: {
+      vault(): any {
+        if (this.chainName == 'bsc') {
+          return vaultBSC
+        }
+        else if (this.chainName == 'moonriver') {
+          return vaultMOVR
+        }
+        else {
+          return vaultGLMR
+        }
       },
-      set(val: EcosystemId) {
-        this.$store.commit('setEcosystemId', val)
-      }
-    },
-    ecosystem(): IEcosystem {
-      return this.$store.getters.ecosystem
-    },
-    currentFarmSet(): FarmSet {
-      return this.farms[this.ecosystemId]
-    },
-    totals(): Object {
-      const allFarms: FarmData[] = []
-      allFarms.push(...this.currentFarmSet.regularFarms.farms,
-                    ...this.currentFarmSet.regularFarms.retiredFarms,
-                    ...this.currentFarmSet.lpFarms.farms,
-                    ...this.currentFarmSet.partnerFarms.farms)
-      const farmsList = new List(allFarms)
-
-      const totals: any = {
-        staked: farmsList.sum(f => toFloat(f.userStakedBalance || ethers.BigNumber.from(0)) * f.lpPrice!),
-        rewards: farmsList.sum(f => f.userRewardsBalance! * f.rewardTokenPrice!)
-      }
-
-      const weightedTotalROI = farmsList.sum(f => toFloat(f.userStakedBalance || ethers.BigNumber.from(0)) * f.lpPrice! * f.roi!)
-      const weightedTotalAPY = farmsList.sum(f => toFloat(f.userStakedBalance || ethers.BigNumber.from(0)) * f.lpPrice! * f.apy!)
-      totals.averageROI = weightedTotalROI / totals.staked
-      totals.averageAPY = weightedTotalAPY / totals.staked
-
-      const padPrice = this.$store.state.padPrice
-      totals.dailyPAD = totals.staked * totals.averageROI / padPrice
-      totals.dailyUSD = totals.staked * totals.averageROI
-
-      for (const total in totals) {
-        if (isNaN(totals[total])) {
-          totals[total] = 0
+      padAddress() : string {
+        if (this.chainName == 'bsc') {
+          return padAddressBSC
         }
-      }
-      return totals
-    },
-    multicall(): ethers.providers.Provider {
-      return new providers.MulticallProvider(this.ecosystem.dataseed, {
-        batchSize: 300,
-        timeWindow: 0,
-        contract: MULTICALL_ADDRESS
-      })
-    },
-    isConnected(): boolean {
-      return this.$store.getters.isConnected
-    },
-    userAddress(): string {
-      return this.$store.state.address
-    },
-    lastChainTransactionBlock(): Object {
-      // access properties explicitly to trigger reactivity
-      return Object.entries(this.$store.state.lastChainTransactionBlock)
-    }
-  },
-  watch: {
-    ecosystem(val) {
-      this.$padswapTheme.theme = this.ecosystem.theme
-      this.farmViewOption = null
-      setTimeout(() => this.sync())
-    },
-    lastChainTransactionBlock() {
-      setTimeout(() => this.sync())
-    }
-  },
-  methods: {
-    async sync() {
-      const ecosystem = this.ecosystem
-      const multicall = this.multicall
-      const mutex = this.syncLocks[this.ecosystemId]
-      await mutex.acquireAsync()
-
-      try {
-        await this.syncInternal(ecosystem, multicall)
-      } finally {
-        mutex.release()
-      }
-    },
-    async syncInternal(ecosystem: IEcosystem, multicall: ethers.providers.Provider) {
-      const priceModel = ecosystem.priceModel
-      const allFarms: FarmData[] = []
-      allFarms.push(...this.currentFarmSet.regularFarms.farms,
-                    ...this.currentFarmSet.regularFarms.retiredFarms,
-                    ...this.currentFarmSet.lpFarms.farms,
-                    ...this.currentFarmSet.partnerFarms.farms)
-
-      let mintSupply: number
-      const minterContract = new ethers.Contract(ecosystem.minterAddress, MINTER_ABI, multicall)
-      const blockNumber = await multicall.getBlockNumber()
-      const promises = [
-        priceModel.syncWithin(blockNumber, 12),
-        minterContract.totalSupply().then((n: ethers.BigNumber) => mintSupply = parseFloat(ethers.utils.formatEther(n)))
-      ]
-
-      for (const farm of allFarms) {
-        const farmContract = new ethers.Contract(farm.contract, farm.type == FarmType.LP ? PADSWAP_LP_FARM_ABI : PADSWAP_FARM_ABI, multicall)
-        const pairContract = new ethers.Contract(farm.acceptedToken, PADSWAP_PAIR_ABI, multicall)
-        const p1 = farm.type == FarmType.LP ? farmContract.dividendPool().then((n: ethers.BigNumber) => farm.poolSize = parseFloat(ethers.utils.formatEther(n)))
-                                            : farmContract.farmPool().then((n: ethers.BigNumber) => farm.poolSize = parseFloat(ethers.utils.formatEther(n)))
-        const p2 = farmContract.totalSupply().then((n: ethers.BigNumber) => farm.farmTotalSupply = parseFloat(ethers.utils.formatEther(n)))
-        const p3 = pairContract.totalSupply().then((n: ethers.BigNumber) => farm.pairTotalSupply = parseFloat(ethers.utils.formatEther(n)))
-        const p4 = minterContract.sharesOf(farm.contract).then((n: ethers.BigNumber) => farm.mintShare = parseFloat(ethers.utils.formatEther(n)))
-        promises.push(p1, p2, p3, p4)
-
-        if (this.isConnected) {
-          const p5 = pairContract.balanceOf(this.userAddress).then((n: ethers.BigNumber) => farm.userLpBalance = n)
-          const p6 = pairContract.allowance(this.userAddress, farm.contract).then((n: ethers.BigNumber) => farm.userAllowance = parseInt(n.toString()))
-          const p7 = farmContract.sharesOf(this.userAddress).then((n: ethers.BigNumber) => farm.userStakedBalance = n)
-          const p8 = farmContract.estimateRewardsOf(this.userAddress).then((n: ethers.BigNumber) => farm.userRewardsBalance = parseFloat(ethers.utils.formatEther(n)))
-          promises.push(p5, p6, p7, p8)
+        else if (this.chainName == 'moonriver') {
+          return padAddressMOVR
         }
-      }
-
-      await Promise.all(promises)
-      const padPrice = priceModel.getPriceUsd(ecosystem.padAddress)
-      this.$store.commit('setPadPrice', padPrice)
-
-      for (const farm of allFarms) {
-        const isSingleStake = farm.token1 == farm.token2
-        if (isSingleStake) {
-          farm.lpPrice = priceModel.getPriceUsd(farm.acceptedToken)
-          farm.tvl = farm.lpPrice * farm.farmTotalSupply!
-        } else {
-          const reserveUsd = priceModel.getReserveUsd(farm.acceptedToken)
-          farm.lpPrice = reserveUsd / farm.pairTotalSupply!
-          farm.tvl = reserveUsd
+        else {
+          return padAddressGLMR
         }
+      },
+      ecosystemId: {
+        get(): EcosystemId {
+          return this.$store.state.ecosystemId
+        },
+        set(val: EcosystemId) {
+          this.$store.commit('setEcosystemId', val)
+          this.totalBacking = 0
+          this.mcap = 0
+          this.vaultProcessed = false
+          setTimeout(async () => {
 
-        let dripRate
-        let decay
-        if (farm.type == FarmType.Regular) {
-          dripRate = 0.1
-          decay = 0
-          farm.rewardTokenPrice = padPrice
-          farm.roi = farm.poolSize! * farm.rewardTokenPrice * dripRate / (farm.lpPrice! * farm.farmTotalSupply!)
-        } else if (farm.type == FarmType.Partner) {
-          dripRate = 0.0069
-          decay = 0.0075
-          const rewardTokenAddress = TOKENS[farm.rewardToken!]
-          farm.rewardTokenPrice = priceModel.getPriceUsd(rewardTokenAddress)
-          farm.roi = farm.poolSize! * farm.rewardTokenPrice * dripRate / (farm.lpPrice! * farm.farmTotalSupply!)
-        } else {
-          dripRate = 0.0075
-          decay = 0.0075
-          farm.rewardTokenPrice = farm.lpPrice
-          farm.roi = farm.poolSize! * dripRate / farm.farmTotalSupply!
+              setTimeout(async () => {
+              await this.getData()
+            }, 1000)
+          }, 1000)
         }
+      },
+      address(): string {
+        return this.$store.state.address
+      },
+      multicall(): ethers.providers.Provider {
+        return this.$store.getters.multicall
+      },
+      ecosystem(): IEcosystem {
+        return this.$store.getters.ecosystem
+      },
+      priceModel() : any {
+        return this. $store.getters.ecosystem.priceModel
+      },
+      web3(): ethers.Signer | null {
+        return this.$store.state.web3
+      },
+      chainId(): ChainId {
+        return this.$store.getters.ecosystem.chainId
+      },
+      chainName(): string {
+        return this.$store.getters.ecosystem.routeName
+      },
+      isApproveComplete(): boolean {
+        if (this.userTokenAllowance == 0) {
+          return false
+        }
+        return (this.userTokenAllowance >= this.amount)
+      },
+    },
+    beforeRouteLeave (to, from, next) {
+      next()
+    },
+    methods: {
+      setMax() {
+        this.amount = Math.floor(this.userPadBalance)
+      },
+      async sync() {
+          await this.syncLock.acquireAsync()
+          try {
+            await this.syncInternal()
+          } finally {
+            this.syncLock.release()
+          }
+      },
+      async syncInternal() {
+        const vault = this.contractAddress
+          if (!vault) {
+            return
+          }
+      },
+      round(num : any, dec : any) {
+        num = Number(num).toFixed(20)
+        if(!Number.isFinite(Number(num))) num = '0.0'
+        num = Number(num).toFixed(20)
+        const regex = new RegExp(`^-?\\d+(?:\\.\\d{0,${dec}})?`)
+        let [int, decimals] = num.toString().replace(',', '.').split('.')
+        if(dec == 0) return int
+        const rounded = num.toString().match(regex)[0]
+        return rounded
+      },
+      biOrMiOrK(num : number) : string {
+        if(num>=1e9) return this.round(num/1e9, 2) + 'BI'
+        else if(num>=1e6) return this.round(num/1e6, 2) + 'M'
+        else if (num>=1e3) return this.round(num/1e3, 2) + 'K'
+        else if (num>= 1e2) return this.round(num, 2)
+        else if (num >= 1) return this.round(num, 4)
+        else return this.round(num, 6)
+      },
+      getVaultContainerStyle() : string {
+        if (this.mcap == 0 || this.vaultProcessed == false) {
+          return "visibility: hidden"
+        }
+        else {
+          return ""
+        }
+      },
+      getBlockExplorerLink() : string {
+        let chainExplorerLinks : any = {
+          'bsc': 'https://bscscan.com/address/',
+          'moonriver': 'https://moonriver.moonscan.io/address/',
+          'moonbeam': 'https://moonbeam.moonscan.io/address/'
+        }
+        let chainExplorerNames : any = {
+          'bsc': 'BSCscan',
+          'moonriver': 'Moonscan',
+          'moonbeam': 'Moonscan'
+        }
+        let chain = this.$store.getters.ecosystem.routeName
+        let explorerLink = chainExplorerLinks[chain]
+        let explorerName = chainExplorerNames[chain]
+        return '<a href="' + explorerLink + this.contractAddress + '" target="_blank">View on ' + explorerName +'</a>'
+      },
+      async getData() {
+        const moonbeamToadAddress = "0xf480f38c366daac4305dc484b2ad7a496ff00cea"
+        const moonbeamPadAddress = "0x59193512877e2ec3bb27c178a8888cfac62fb32d"
 
-        farm.poolValue = farm.poolSize! * farm.rewardTokenPrice
-        farm.apy = this.getApy(farm.roi, decay)
-      }
+        const toadPrice = this.priceModel.getPriceUsd(moonbeamToadAddress)
+        const padPrice = this.priceModel.getPriceUsd(moonbeamPadAddress)
+
+        const padContract = new ethers.Contract(moonbeamPadAddress, ERC20_ABI, this.multicall)
+        const padSupply = await padContract.totalSupply()
+
+        this.toadMarketCap = toadPrice * 195000
+        this.padMarketCap = padPrice * toFloat(padSupply)
+      },
+      async approve() {
+        let padContract = new ethers.Contract(this.padAddress, ERC20_ABI, this.multicall)
+        padContract = padContract!.connect(this.web3!)
+        let amount = ethers.utils.parseEther( this.amount.toString().replace(',','.') )
+        const tx = await padContract.populateTransaction.approve(this.contractAddress, amount)
+        await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+      },
+      async redeem() {
+        const vaultContract = new ethers.Contract(this.contractAddress, this.contractABI, this.multicall)
+        let amount = ethers.utils.parseEther( this.amount.toString().replace(',','.') )
+        const tx = await vaultContract.populateTransaction.redeemBacking(amount)
+        const succeeded = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+      },
+      ...mapActions(['requestConnect', 'safeSendTransaction'])
     },
-    getApy(roi: number, decay: number) {
-      let initial = 100
-      for (let i = 0; i < 365; i++) {
-        initial += initial * roi
-        roi -= roi * decay
-      }
-      return Math.round(100 * (initial - 100)) / 10000
-    },
-    toggleFarmViewOption(option: FarmViewOption) {
-      if (this.farmViewOption === option) {
-        setTimeout(() => this.farmViewOption = null)
-      }
-    }
-  }
-})
+  })
 </script>
 
 <style scoped>
+
+/* Header and TOAD stats */
+
+.toad-stats-card * {
+  height: 100%;
+  min-width: 200px;
+  font-family: Roboto Mono, monospace;
+}
 
 .background {
   pointer-events: none;
@@ -561,129 +515,13 @@ export default Vue.extend({
   opacity: 0.1;
 }
 
-.v-card {
-  background: #181D26;
-  border-radius: 15px !important;
-  width: 100%;
-  color: #B3B8C1 !important;
-  padding: 5px 30px;
-  font-family: Roboto;
-}
-.v-select {
-  border-radius: 8px;
-}
-.v-text-field {
-  border-radius: 8px;
-}
-.v-select-list.v-sheet {
-  background: #000000;
-  font-family: Roboto;
-  border-radius: 8px;
-}
-
-.padswap-content-sheet {
-  width: 100%;
-  background: transparent;
-}
-.padswap-ecosystem-subheader {
-  font-size: 14px;
-  color: #B3B8C1;
-  margin-top: 4px;
-  margin-bottom: 50px;
-  height: auto;
-}
-.padswap-ecosystem-tabs /deep/ .v-tabs-bar {
-  background: rgba(24, 29, 38, 0.7);
-}
-.padswap-ecosystem-tabs /deep/ .v-tabs-slider-wrapper {
-  background: linear-gradient(180deg, #F99DF3 0%, #FA77F1 100%);
-}
-.padswap-ecosystem-tabs .v-tab {
-  padding: 10px 0px;
-  font-weight: bold;
-  color: #FFFFFF;
-  min-width: 110px;
-}
-.padswap-ecosystem-tabs .v-tab--active {
-  color: #66015e !important;
-}
-
-.padswap-farm-type-tabs {
-  width: 270px;
-  max-width: 270px;
-}
-.padswap-farm-type-tabs /deep/ .v-tabs-bar {
-  background: #292D38;
-}
-.padswap-farm-type-tabs .v-tab {
-  color: #879CA5 !important;
-  max-width: 90px;
-}
-.padswap-farm-type-tabs .v-tab--active {
-  color: #181D26 !important;
-}
-
-.padswap-header-box {
-  margin-top: 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.padswap-farm-title {
-  font-family: Roboto Mono;
-  color: #FB53EF;
-  font-size: 16px;
-}
-.padswap-farm-title-shadow {
-  text-shadow: 0px 0px 4px rgba(250, 64, 237, 0.5);
-}
-.v-card.padswap-farms {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.padswap-data-title {
-  font-size: 12px;
-  color: #71767F;
-}
-.padswap-data-item {
-  font-size: 24px;
-  color: #FFFFFF;
-}
-
-.v-text-field /deep/ .v-icon {
-  opacity: 0.5;
-}
-
-
-/*******************************/
-/* Dashboard content container */
-/*******************************/
-
-.main-container {
-	text-align: center;
-}
-
-.content-container {
-  z-index: 1;
-  position: relative;
-  overflow: hidden;
-
-	display: inline-block;
-	max-width: 1200px;
-	text-align: left;
-	background-image: radial-gradient(circle farthest-side at 50% -20%,rgb(17 95 13 / 35%),#101722 78%);
-	padding: 20px;
-	border-radius: 20px;
-}
-
 /*****************/
 /* Content boxes */
 /*****************/
 
 .header-box {
 	text-align: center;
-	margin-top: 50px;
-	margin-bottom: 50px;
+	margin-top: 20px;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -696,9 +534,6 @@ export default Vue.extend({
   text-align:;
 	padding-left: 40px;
 	padding-right: 30px;
-	/*background-color: #84848466;*/
-	/*border-radius: 20px;*/
-	/*border: 1px solid #ffffff2e;*/
 }
 
 .header-img-container div {
@@ -706,17 +541,17 @@ export default Vue.extend({
 }
 
 .rounded-box {
-	background-color: #182326a3;
-	padding: 20px;
-	border-radius: 20px;
-	/*border: 1px solid #ffffff2e;*/
+  background: linear-gradient(135deg, rgb(178 0 255 / 20%) 0%, rgb(84 0 255 / 20%) 100%);
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid rgb(0 166 255 / 26%);
 }
 
 .inner-rounded-box {
-	background-color: #181d26;
-	padding: 20px;
-	border-radius: 10px;
-	border: 1px solid #ffffff0f;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #ffffff0f;
 }
 
 /***********************/
@@ -775,27 +610,64 @@ export default Vue.extend({
 	color: orange;
 }
 
-/****************/
-/* Product list */
-/****************/
+/*****************/
+/* Product cards */
+/*****************/
 
-.product-description {
-	color: gray;
+.title-card-container {
+  padding-top: 60px;
+}
+
+.title-card * {
+  font-family: Roboto Mono, monospace;
+}
+
+.title-card, .title-card:before {
+  z-index: 2;
+  background-color: #000 !important;
+  border: 1px solid rgb(0 166 255 / 26%);
+  width: 210px;
+  margin: 40px 15px;
+  padding-bottom: 10px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgb(178 0 255 / 20%) 0%, rgb(84 0 255 / 20%) 100%);
+}
+.title-card:hover {
+  border: 1px solid green;
+}
+
+.title-card .v-card__subtitle {
+  padding: 10px 0 0 0 !important;
+  font-size: 0.8em !important;
+}
+
+.title-card .icon-container {
+  text-align: center;
+  /*border-radius: 100px;*/
+}
+
+.title-card .icon-container img {
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid rgb(0 166 255 / 26%);
+  overflow: show;
+  height: 80px;
+  width: 80px;
+  margin-top: -30px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.05) 100%);
+}
+
+.title-card-name {
+  text-align: center;
+  font-size: 1.2rem;
+  color: white;
+}
+
+@media all and (max-width: 400px) {
+  .title-card, .title-card:before {
+    width: 85vw;
+  }
 }
 
 
-.padswap-farm-btn {
-  border-radius: 100px;
-  background: linear-gradient(180deg, #00FC4c 0%, #00D741 100%);
-  color: #00310F;
-  width: 220px;
-  text-transform: none;
-  font-size: 16px;
-  font-weight: bold;
-  font-family: Roboto Mono;
-}
-.padswap-farm-btn:hover {
-  background: linear-gradient(180deg, #76ae88 0%, #1e843d 100%);
-}
-a { text-decoration: none !important; }
 </style>
