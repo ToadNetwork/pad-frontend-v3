@@ -222,89 +222,21 @@
 
 <script lang="ts">
   import Vue from 'vue'
-  import SliderTabs from '@/components/SliderTabs.vue'
   import { ethers } from 'ethers'
   import { providers } from '@0xsequence/multicall'
-  import { delay, equalsInsensitive, toFloat } from '@/utils'
+  import { delay, toFloat } from '@/utils'
   import { IEcosystem, EcosystemId, ChainId } from '@/ecosystem'
-  import { mapActions } from 'vuex'
-  import AwaitLock from 'await-lock'
   import {
     PADSWAP_PAIR_ABI,
     ERC20_ABI,
   } from '../constants'
-  import VueApexCharts from 'vue-apexcharts'
-  import { padAddress as padAddressBSC, vault as vaultBSC } from '../farms_config_bsc.json'
-  import { padAddress as padAddressMOVR, vault as vaultMOVR } from '../farms_config_movr.json'
-  import { padAddress as padAddressGLMR, vault as vaultGLMR } from '../farms_config_glmr.json'
+
   export default Vue.extend({
-    components: {
-      SliderTabs, 
-      apexchart: VueApexCharts
-    },
     data () {
       return {
         active: <boolean> true,
-        syncLock: new AwaitLock(),
-        options: <any> {
-          tooltip: <any> {
-            enabled: true,
-              y: {
-                formatter: (value : any, { series, seriesIndex, dataPointIndex, w } : any ) => {
-                  // @ts-ignore
-                  return '$' + this.biOrMiOrK(value)
-                }
-              },
-              x: {
-                format: 'dd MMM yyyy',
-              },
-          },
-          legend: {
-            position: 'right',
-              formatter: (seriesName : string) => {
-                // @ts-ignore
-                return seriesName
-              }
-          },
-          chart: {
-            toolbar: {
-              show: false
-            },
-          },
-          plotOptions: {
-            treemap: {
-              distributed: true,
-              useFillColorAsStroke: true
-            }
-          },
-        },
-
-
-
-
         toadMarketCap: <number> 0,
         padMarketCap: <number> 0,
-
-
-
-
-
-        series: [],
-        totalBacking: 0,
-        // PAD stats
-        mcap: 0,
-        padSupply: <number> 0,
-        padPrice: <number> 0,
-        backingPercentage: '0.000000',
-        userPadBalance: <number> 0,
-        amount: <number> 0,
-        expected: <any> '',
-        contractAddress: <string> '',
-        contractABI: <any> {},
-        tokens: <any> [],
-        pairs: <any> [],
-        userTokenAllowance: <number> 0,
-        vaultProcessed: <boolean> false
       }
     },
     created () {
@@ -316,56 +248,14 @@
         }, 1000)
       }, 1000)
     },
-    async mounted () {
-      while (this.active) {
-        try {
-          await this.sync()
-        } catch (e) {
-          console.error(e)
-        }
-        await delay(3000)
-      }
-    },
-    watch: {
-      amount() {
-        const expectedUSD : number = this.amount * this.padPrice
-        this.expected = '~' + expectedUSD.toString() + ' USD worth of tokens'
-      }
-    },
     computed: {
-      vault(): any {
-        if (this.chainName == 'bsc') {
-          return vaultBSC
-        }
-        else if (this.chainName == 'moonriver') {
-          return vaultMOVR
-        }
-        else {
-          return vaultGLMR
-        }
-      },
-      padAddress() : string {
-        if (this.chainName == 'bsc') {
-          return padAddressBSC
-        }
-        else if (this.chainName == 'moonriver') {
-          return padAddressMOVR
-        }
-        else {
-          return padAddressGLMR
-        }
-      },
       ecosystemId: {
         get(): EcosystemId {
           return this.$store.state.ecosystemId
         },
         set(val: EcosystemId) {
           this.$store.commit('setEcosystemId', val)
-          this.totalBacking = 0
-          this.mcap = 0
-          this.vaultProcessed = false
           setTimeout(async () => {
-
               setTimeout(async () => {
               await this.getData()
             }, 1000)
@@ -393,34 +283,11 @@
       chainName(): string {
         return this.$store.getters.ecosystem.routeName
       },
-      isApproveComplete(): boolean {
-        if (this.userTokenAllowance == 0) {
-          return false
-        }
-        return (this.userTokenAllowance >= this.amount)
-      },
     },
     beforeRouteLeave (to, from, next) {
       next()
     },
     methods: {
-      setMax() {
-        this.amount = Math.floor(this.userPadBalance)
-      },
-      async sync() {
-          await this.syncLock.acquireAsync()
-          try {
-            await this.syncInternal()
-          } finally {
-            this.syncLock.release()
-          }
-      },
-      async syncInternal() {
-        const vault = this.contractAddress
-          if (!vault) {
-            return
-          }
-      },
       round(num : any, dec : any) {
         num = Number(num).toFixed(20)
         if(!Number.isFinite(Number(num))) num = '0.0'
@@ -439,30 +306,6 @@
         else if (num >= 1) return this.round(num, 4)
         else return this.round(num, 6)
       },
-      getVaultContainerStyle() : string {
-        if (this.mcap == 0 || this.vaultProcessed == false) {
-          return "visibility: hidden"
-        }
-        else {
-          return ""
-        }
-      },
-      getBlockExplorerLink() : string {
-        let chainExplorerLinks : any = {
-          'bsc': 'https://bscscan.com/address/',
-          'moonriver': 'https://moonriver.moonscan.io/address/',
-          'moonbeam': 'https://moonbeam.moonscan.io/address/'
-        }
-        let chainExplorerNames : any = {
-          'bsc': 'BSCscan',
-          'moonriver': 'Moonscan',
-          'moonbeam': 'Moonscan'
-        }
-        let chain = this.$store.getters.ecosystem.routeName
-        let explorerLink = chainExplorerLinks[chain]
-        let explorerName = chainExplorerNames[chain]
-        return '<a href="' + explorerLink + this.contractAddress + '" target="_blank">View on ' + explorerName +'</a>'
-      },
       async getData() {
         const moonbeamToadAddress = "0xf480f38c366daac4305dc484b2ad7a496ff00cea"
         const moonbeamPadAddress = "0x59193512877e2ec3bb27c178a8888cfac62fb32d"
@@ -476,20 +319,6 @@
         this.toadMarketCap = toadPrice * 195000
         this.padMarketCap = padPrice * toFloat(padSupply)
       },
-      async approve() {
-        let padContract = new ethers.Contract(this.padAddress, ERC20_ABI, this.multicall)
-        padContract = padContract!.connect(this.web3!)
-        let amount = ethers.utils.parseEther( this.amount.toString().replace(',','.') )
-        const tx = await padContract.populateTransaction.approve(this.contractAddress, amount)
-        await this.safeSendTransaction({ tx, targetChainId: this.chainId })
-      },
-      async redeem() {
-        const vaultContract = new ethers.Contract(this.contractAddress, this.contractABI, this.multicall)
-        let amount = ethers.utils.parseEther( this.amount.toString().replace(',','.') )
-        const tx = await vaultContract.populateTransaction.redeemBacking(amount)
-        const succeeded = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
-      },
-      ...mapActions(['requestConnect', 'safeSendTransaction'])
     },
   })
 </script>
