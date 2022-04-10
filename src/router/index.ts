@@ -16,6 +16,11 @@ const routes: Array<RouteConfig> = [
     component: Landing
   },
   {
+    path: '/meme-guardians',
+    name: 'Meme Guardians',
+    component: () => import('../views/MemeGuardians.vue')
+  },
+  {
     path: '/farms',
     name: 'PadSwap Farms',
     component: Home
