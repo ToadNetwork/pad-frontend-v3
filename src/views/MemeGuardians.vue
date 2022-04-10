@@ -99,8 +99,8 @@
         const toadAmount = await toadContract.balanceOf(this.address)
 
         data["tokens"] = {
-          "TOAD": toadAmount,
-          "PAD": padAmount
+          "TOAD": toFloat(toadAmount),
+          "PAD": toFloat(padAmount)
         }
 
         this.iframeSrc = this.gameSrc + "#" + JSON.stringify(data)
