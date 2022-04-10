@@ -137,15 +137,28 @@
       <p>
         Vault contract: <span v-html="getBlockExplorerLink()"></span>
       </p>
+
       <div class="pad-stats-card">
         <h1>${{ padPrice.toFixed(8) }}</h1>
         <p>Current PAD price</p>
       </div>
+
       <div class="pad-stats-card">
         <h1>${{ (padPrice * (backingPercentage / 100.0)).toFixed(8) }}</h1>
         <p>Minimum possible PAD price* <br>
-        ({{ backingPercentage }}% of current price)</p></p>
+        ({{ backingPercentage }}% of current price)</p>
       </div>
+
+      <div class="pad-stats-card">
+        <h1>${{ biOrMiOrK(mcap) }}</h1>
+        <p>PAD market cap</p>
+      </div>
+
+      <div class="pad-stats-card">
+        <h1>${{ biOrMiOrK(totalBacking) }}</h1>
+        <p>Backing reserves</p>
+      </div>
+
     </v-col>
   </v-row>
   </div>
@@ -288,6 +301,9 @@
   import { mapActions } from 'vuex'
   import AwaitLock from 'await-lock'
   import {
+    BSC_MINTER_ADDRESS,
+    MOVR_MINTER_ADDRESS,
+    MINTER_ABI,
     PADSWAP_PAIR_ABI,
     ERC20_ABI,
   } from '../constants'
@@ -693,6 +709,9 @@
         let userBalance = await padContract.balanceOf(this.address)
         this.userPadBalance = toFloat(userBalance)
 
+        // const minterContract = new ethers.Contract(BSC_MINTER_ADDRESS, MINTER_ABI, this.multicall)
+        // console.log(minterContract)
+
       },
       async approve() {
         let padContract = new ethers.Contract(this.padAddress, ERC20_ABI, this.multicall)
@@ -714,6 +733,10 @@
 
 <style src="../styles/style.css" />
 <style scoped>
+
+* {
+  font-family: "Roboto mono", monospace;
+}
 
 /********************/
 /* Ecosystem slider */
@@ -856,6 +879,13 @@
   .backing-ratio-subtitle {
     text-shadow: #000 2px 2px 2px;
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* Adjusting the vault visual for smaller screen sizes */
+  @media screen and (max-width: 550px) {
+    .backing-hint-column {
+      display: none;
+    }
   }
 
 
