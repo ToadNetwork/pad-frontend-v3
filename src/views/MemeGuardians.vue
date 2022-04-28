@@ -1,30 +1,52 @@
 <template>
   <v-container>
 
-    <div class="iframe-container">
-      <iframe :src="iframeSrc" ref="gameIframe" class="game-iframe">
-      </iframe>
+    <div class="main-container">
+      <div class="iframe-container">
+        <iframe :src="iframeSrc" ref="gameIframe" class="game-iframe" scrolling="no">
+        </iframe>
+      </div>
     </div>
 
   </v-container>
 </template>
-
 <script lang="ts">
   import Vue from 'vue'
   import { ethers } from 'ethers'
-  import { Client, WriteStorageObject } from "@heroiclabs/nakama-js"
   import { providers } from '@0xsequence/multicall'
   import { delay, toFloat } from '@/utils'
   import { IEcosystem, EcosystemId, ChainId } from '@/ecosystem'
   import {
     PADSWAP_PAIR_ABI,
     ERC20_ABI,
+    PADSWAP_FARM_ABI
   } from '../constants'
 
+  import {
+    nftMinterAddress,
+    NFT_MINTER_ABI_V1 as NFT_MINTER_ABI,
+    MASTER_CONTRACT_ABI,
+    SUPPORTED_NFTS
+   } from '../nft_config.json'
 
   // @ts-ignore:disable-next-line
   import VueCryptojs from 'vue-cryptojs';
   Vue.use(VueCryptojs)
+
+  const nft_addresses = {
+    "wemove_alkebulan": "0xED1F51dA731B4E760C63B3B8f89d6eEE2AD36941"
+  }
+
+  const token_addresses = {
+    "TOAD": "0xf480f38c366daac4305dc484b2ad7a496ff00cea",
+    "PAD": "0x59193512877e2ec3bb27c178a8888cfac62fb32d"
+  }
+
+  const farms = {
+    "bsc": {
+      "toad_hoge": "0xA9F4eaA4e55Be6EB54018BAE0698b644BB36B47C"
+    }
+  }
 
   export default Vue.extend({
     data () {
@@ -82,53 +104,106 @@
       next()
     },
     methods: {
+      // Fetches all supported NFTs/tokens from the user's wallet
+      // This is a mediocre solution as it's possible to make the game think that you own all the NFTs when you really don't
+      // But it works for now as a proof of concept
       async updateWalletData() {
-        // TODO: Encrypt the data before sending
+        const userBalance : any = {}
+        const promises : any = []
 
+        // ERC-721 NFTs
+        for (const [key, value] of Object.entries(nft_addresses)) {
+          const nftContract = new ethers.Contract(value, ERC20_ABI, this.multicall)
+          const promise = nftContract.balanceOf(this.address).then((res : any) => userBalance[key] = ethers.utils.formatUnits(res, 0))
+          promises.push(promise)
+        }
+        await Promise.all(promises)
+
+        // ERC-20 tokens
+        for (const [key, value] of Object.entries(token_addresses)) {
+          const tokenContract = new ethers.Contract(value, ERC20_ABI, this.multicall)
+          const promise = tokenContract.balanceOf(this.address).then((res : any) => userBalance[key] = ethers.utils.formatEther(res))
+          promises.push(promise)
+        }
+        await Promise.all(promises)
+
+        // Special items available to farm stakers
+        const dataseedBsc = new ethers.providers.StaticJsonRpcProvider('https://bsc-dataseed1.defibit.io/')
+        const multicallAddress = "0x92F07bC24d6EA171581895121E65E23a91afa9c5"
+
+        const multicallBsc = new providers.MulticallProvider(dataseedBsc, {
+             batchSize: 300,
+            timeWindow: 0,
+            contract: multicallAddress
+         })
+
+        const farmContract = new ethers.Contract("0xA9F4eaA4e55Be6EB54018BAE0698b644BB36B47C", PADSWAP_FARM_ABI, multicallBsc)
+
+        const farmShares = await farmContract.sharesOf(this.address)
+        if (farmShares > 0) {
+          userBalance["hoge_farm"] = 1
+        }
+
+        // Our ERC-1155 tokens
+        let erc1155Balance : any = {}
+        let minterContract = new ethers.Contract(nftMinterAddress, NFT_MINTER_ABI, this.multicall)
+
+        for (var i = 0; i < SUPPORTED_NFTS.length; i++) {
+          const nft_id = SUPPORTED_NFTS[i]
+
+          const balance_p = minterContract.balanceOf(this.address, nft_id)
+
+          const balance = await balance_p
+
+          const item_balance = ethers.utils.formatUnits(balance, 0)
+
+          if (parseFloat(item_balance) > 0) {
+            erc1155Balance[nft_id.toString()] = item_balance
+          }
+        }
+
+
+        // Passing the data to the game
         var data : any = {
           "walletAddress": this.address
         }
 
-        const moonbeamToadAddress = "0xf480f38c366daac4305dc484b2ad7a496ff00cea"
-        const moonbeamPadAddress = "0x59193512877e2ec3bb27c178a8888cfac62fb32d"
+        data["tokens"] = userBalance
+        data["erc1155_tokens"] = erc1155Balance
 
-        const padContract = new ethers.Contract(moonbeamPadAddress, ERC20_ABI, this.multicall)
-        const toadContract = new ethers.Contract(moonbeamToadAddress, ERC20_ABI, this.multicall)
-
-        const padAmount = await padContract.balanceOf(this.address)
-        const toadAmount = await toadContract.balanceOf(this.address)
-
-        data["tokens"] = {
-          "TOAD": toFloat(toadAmount),
-          "PAD": toFloat(padAmount)
-        }
 
         this.iframeSrc = this.gameSrc + "#" + JSON.stringify(data)
       },
-      round(num : any, dec : any) {
-        num = Number(num).toFixed(20)
-        if(!Number.isFinite(Number(num))) num = '0.0'
-        num = Number(num).toFixed(20)
-        const regex = new RegExp(`^-?\\d+(?:\\.\\d{0,${dec}})?`)
-        let [int, decimals] = num.toString().replace(',', '.').split('.')
-        if(dec == 0) return int
-        const rounded = num.toString().match(regex)[0]
-        return rounded
-      },
+      async getMetadata(nft_id : number) {
+        const id_str = nft_id.toString()
+        const fileName = id_str.padStart(64, '0')
+        const response = await fetch("https://meme-guardians.com/api/metadata/" + fileName + ".json")
+        const item_data = await response.json()
+        return item_data
+      }
     },
   })
 </script>
 
 <style scoped>
 
-.iframe-container {
-  margin: 0;
-  padding: 0;
-  position: fixed;
-  top: 50px;
-  left: 0;
+.main-container {
   width: 100vw;
   height: calc(100vh - 50px);
+  text-align: center;
+}
+
+.iframe-container {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 90%;
+  width: 100%;
+  border-radius: 25px;
+  overflow: hidden;
 }
 
 .game-iframe {
@@ -136,179 +211,5 @@
   height: 100%;
   border: none;
 }
-
-/* Header and TOAD stats */
-
-.toad-stats-card * {
-  height: 100%;
-  min-width: 200px;
-  font-family: Roboto Mono, monospace;
-}
-
-.background {
-  pointer-events: none;
-  position: absolute;
-  min-width: 100%;
-  min-height: 100%;
-  left: 0;
-  top: 0;
-  z-index: -1;
-  opacity: 0.1;
-}
-
-/*****************/
-/* Content boxes */
-/*****************/
-
-.header-box {
-	text-align: center;
-	margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  text-align: center;
-}
-
-.header-img-container {
-	display: inline-block;
-  width: 100%;
-  text-align:;
-	padding-left: 40px;
-	padding-right: 30px;
-}
-
-.header-img-container div {
-  display: inline-block;
-}
-
-.rounded-box {
-  background: linear-gradient(135deg, rgb(178 0 255 / 20%) 0%, rgb(84 0 255 / 20%) 100%);
-  padding: 20px;
-  border-radius: 20px;
-  border: 1px solid rgb(0 166 255 / 26%);
-}
-
-.inner-rounded-box {
-  background-color: rgba(0, 0, 0, 0.3);
-  padding: 20px;
-  border-radius: 10px;
-  border: 1px solid #ffffff0f;
-}
-
-/***********************/
-/* Informational links */
-/***********************/
-
-.info-link {
-	display: inline-block;
-	width: 100%;
-	padding-top: 7px;
-	text-align: center;
-	color: white;
-}
-.info-link a {
-	color: white;
-}
-.info-link a:hover {
-	color: orange;
-}
-
-
-/****************************/
-/* Get started with farming */
-/****************************/
-
-.tutorial-item-container {
-	padding-top: 20px;
-	padding-left: 20px;
-	padding-right: 20px;
-}
-
-.tutorial-item {
-	text-decoration: none;
-	color: white;
-}
-
-.tutorial-item p {
-	margin-top: 5px;
-}
-
-.tutorial-item .rounded-icon {
-	padding: 40px;
-	border-radius: 20%;
-	border: 2px dashed rgba(255, 255, 255, 0.2);
-}
-
-/* Hover effect */
-.tutorial-item:hover {
-	color: orange;
-}
-.tutorial-item:hover .rounded-icon {
-	border: 2px dashed orange;
-}
-.tutorial-item:hover .rounded-icon {
-	border: 2px dashed orange;
-	color: orange;
-}
-
-/*****************/
-/* Product cards */
-/*****************/
-
-.title-card-container {
-  padding-top: 60px;
-}
-
-.title-card * {
-  font-family: Roboto Mono, monospace;
-}
-
-.title-card, .title-card:before {
-  z-index: 2;
-  background-color: #000 !important;
-  border: 1px solid rgb(0 166 255 / 26%);
-  width: 210px;
-  margin: 40px 15px;
-  padding-bottom: 10px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, rgb(178 0 255 / 20%) 0%, rgb(84 0 255 / 20%) 100%);
-}
-.title-card:hover {
-  border: 1px solid green;
-}
-
-.title-card .v-card__subtitle {
-  padding: 10px 0 0 0 !important;
-  font-size: 0.8em !important;
-}
-
-.title-card .icon-container {
-  text-align: center;
-  /*border-radius: 100px;*/
-}
-
-.title-card .icon-container img {
-  padding: 10px;
-  border-radius: 20px;
-  border: 1px solid rgb(0 166 255 / 26%);
-  overflow: show;
-  height: 80px;
-  width: 80px;
-  margin-top: -30px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.05) 100%);
-}
-
-.title-card-name {
-  text-align: center;
-  font-size: 1.2rem;
-  color: white;
-}
-
-@media all and (max-width: 400px) {
-  .title-card, .title-card:before {
-    width: 85vw;
-  }
-}
-
 
 </style>

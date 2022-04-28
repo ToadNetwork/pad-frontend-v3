@@ -15,6 +15,7 @@
     "ethers": "^5.5.2",
     "js-graph-algorithms": "^1.0.18",
     "linq-collections": "^1.0.254",
+    "rss3": "^0.8.19",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-cryptojs": "^2.2.1",
