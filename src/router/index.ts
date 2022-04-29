@@ -21,11 +21,6 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/MemeGuardians.vue')
   },
   {
-    path: '/nft',
-    name: 'NFTs',
-    component: () => import('../views/NFT.vue')
-  },
-  {
     path: '/farms',
     name: 'PadSwap Farms',
     component: Home
