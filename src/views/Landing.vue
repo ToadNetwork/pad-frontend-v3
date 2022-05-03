@@ -154,11 +154,10 @@
 								<div class="tutorial-item-container">
 									<a
 									class="tutorial-item"
-									href="/onramp"
-									target="_self"
 									>
 										<v-icon large class="rounded-icon">mdi-cash-multiple</v-icon>
-										<p>Buy BNB<br>with fiat</p>
+										<p>Buy the chain's token<br>
+                      (e.g. GLMR on Moonbeam)</p>
 									</a>
 								</div>
 
@@ -171,7 +170,7 @@
 									target="_blank"
 									>
 									<v-icon large class="rounded-icon">mdi-swap-horizontal</v-icon>
-									<p>Swap BNB for tokens<br>of your choice</p>
+									<p>Swap for tokens<br>of your choice</p>
 								</a>
 								</div>
 
