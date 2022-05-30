@@ -73,8 +73,8 @@
         <v-simple-table class="data-table">
           <tbody>
             <tr>
-              <td>Token name</td>
-              <td>{{ displayedSale.tokenName }}</td>
+              <td>Token contract</td>
+              <td v-html="tokenContractLink()"></td>
             </tr>
             <tr>
               <td>Token symbol</td>
@@ -571,6 +571,7 @@
       // Data pulled from the contract
       tokenName: null,
       tokenSymbol: null,
+      tokenAddress: <string> '',
       tokenSupply: <ethers.BigNumber | null> null,
       tokenDecimals: <number | null> null,
       presaleHardCap: <ethers.BigNumber | null> null,
@@ -790,6 +791,22 @@
       }
     },
     methods: {
+      tokenContractLink() {
+        let chainExplorerLinks : any = {
+          'bsc': 'https://bscscan.com/token/',
+          'moonriver': 'https://moonriver.moonscan.io/token/',
+          'moonbeam': 'https://moonbeam.moonscan.io/token/'
+        }
+        let chainExplorerNames : any = {
+          'bsc': 'BSCscan',
+          'moonriver': 'Moonscan',
+          'moonbeam': 'Moonscan'
+        }
+        let chain = this.$store.getters.ecosystem.routeName
+        let explorerLink = chainExplorerLinks[chain]
+        let explorerName = chainExplorerNames[chain]
+        return '<a href="' + explorerLink + this.tokenAddress + '" target="_blank">View on ' + explorerName +'</a>'
+      },
       presaleImported() {
         const importedPresales = this.$store.state.userProfile.importedPresales[this.ecosystemId]
 
@@ -1024,6 +1041,7 @@
         if (this.tokenName === null) {
           this.isPresaleValid = true
           const tokenAddress = <string> await this.presaleContract.token()
+          this.tokenAddress = tokenAddress
           const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, this.multicall)
 
           const firstLoadData = {

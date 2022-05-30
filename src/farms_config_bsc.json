@@ -19,24 +19,10 @@
         "token2":"0xc0888d80ee0abf84563168b3182650c0addeb6d5"
       },
       {
-        "name":"PAD-BTC",
-        "contract":"0x5A86157Ea673A3b6608fc2D99f4D3E624631B53d",
-        "acceptedToken":"0x8db3e34f642aa4b404956557a681bc8973529356",
-        "token1":"0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c",
-        "token2":"0xc0888d80ee0abf84563168b3182650c0addeb6d5"
-      },
-      {
         "name":"PAD-BUSD",
         "contract":"0xF189bd30bCe093fca7E688A2dE28BB14aFF47A35",
         "acceptedToken":"0x2856add546e729425383173d4f65bb3e23e796a4",
         "token1":"0xe9e7cea3dedca5984780bafc599bd69add087d56",
-        "token2":"0xc0888d80ee0abf84563168b3182650c0addeb6d5"
-      },
-      {
-        "name":"PAD-ETH",
-        "contract":"0xaF56Ae5De49Fb6F94309E00Bf9C9368B0dd0fC96",
-        "acceptedToken":"0x4bddda73f0a83ccada25107830e29de594e8f7c2",
-        "token1":"0x2170ed0880ac9a755fd29b2688956bd959f933f8",
         "token2":"0xc0888d80ee0abf84563168b3182650c0addeb6d5"
       },
       {
@@ -45,13 +31,6 @@
         "acceptedToken":"0xc8b8568e7963054a00f107805f8156a7b283a6c2",
         "token1":"0xa4fffc757e8c4f24e7b209c033c123d20983ad40",
         "token2":"0x463e737d8f740395abf44f7aac2d9531d8d539e9"
-      },
-      {
-        "name":"PAD-HOGE",
-        "contract":"0x662425AaB93bA95b3bF3cBF9A909b9B1bC93E834",
-        "acceptedToken":"0xb7073b6082e8b77ab667fac3ab02e88b2c3937d3",
-        "token1":"0xa4fffc757e8c4f24e7b209c033c123d20983ad40",
-        "token2":"0xc0888d80ee0abf84563168b3182650c0addeb6d5"
       },
       {
         "name":"TOAD-BNB",
@@ -75,27 +54,6 @@
         "token2":"0x463e737d8f740395abf44f7aac2d9531d8d539e9"
       },
       {
-        "name":"TOAD-DOT",
-        "contract":"0xB6D1631E82cE3c5D29F0AF066BD6B1B0e77CdE2E",
-        "acceptedToken":"0x16e3070c41025d6ad2f24a0b2ecdae22f8f4aa98",
-        "token1":"0x7083609fce4d1d8dc0c979aab8c869ea2c873402",
-        "token2":"0x463e737d8f740395abf44f7aac2d9531d8d539e9"
-      },
-      {
-        "name":"PAD-DOGE",
-        "contract":"0xc27192bd78e60393725F4c4515f6358c65F8BeFa",
-        "acceptedToken":"0x2658d6f3f3ce0d908b85a13bccf690991568ffe8",
-        "token1":"0xbA2aE424d960c26247Dd6c32edC70B295c744C43",
-        "token2":"0xc0888d80ee0abf84563168b3182650c0addeb6d5"
-      },
-      {
-        "name":"PAD-ADA",
-        "contract":"0x5459A5CD736c09e8A7fc3aCA1cF6A184Bed8a567",
-        "acceptedToken":"0xfc7a8c82f0f223503a08c632d5f32660e29bd017",
-        "token1":"0x3ee2200efb3400fabb9aacf31297cbdd1d435d47",
-        "token2":"0xc0888d80ee0abf84563168b3182650c0addeb6d5"
-      },
-      {
         "name":"BUSD-USDT",
         "contract":"0x317De8C509D9a87C9E20c8dF1e1ef960cc9dc534",
         "acceptedToken":"0x79be2fdef6db5235c637fbafde2ee2df343118c8",
@@ -116,6 +74,20 @@
         "token1":"0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
         "token2":"0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
       },
+      {
+        "name":"BNB-BTC",
+        "contract":"0xb87b836083617f61B9c35ddd934C7bC03fF55E82",
+        "acceptedToken":"0x8e06c9a375da80d972e687981310b6da56530b80",
+        "token1":"0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c",
+        "token2":"0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+      },
+      {
+        "name":"BNB-ETH",
+        "contract":"0x19D61e9a075a2d67E45871313cBCE8Fe744D115a",
+        "acceptedToken":"0x088690de46947b82ec7ae5fa36493003a169616f",
+        "token1":"0x2170ed0880ac9a755fd29b2688956bd959f933f8",
+        "token2":"0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+      },
       { 
         "single_token": true,
         "name":"TOAD",
@@ -135,6 +107,48 @@
       }
     ],
     "retiredFarms": [
+      {
+        "name":"PAD-BTC",
+        "contract":"0x5A86157Ea673A3b6608fc2D99f4D3E624631B53d",
+        "acceptedToken":"0x8db3e34f642aa4b404956557a681bc8973529356",
+        "token1":"0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c",
+        "token2":"0xc0888d80ee0abf84563168b3182650c0addeb6d5"
+      },
+      {
+        "name":"PAD-ETH",
+        "contract":"0xaF56Ae5De49Fb6F94309E00Bf9C9368B0dd0fC96",
+        "acceptedToken":"0x4bddda73f0a83ccada25107830e29de594e8f7c2",
+        "token1":"0x2170ed0880ac9a755fd29b2688956bd959f933f8",
+        "token2":"0xc0888d80ee0abf84563168b3182650c0addeb6d5"
+      },
+      {
+        "name":"PAD-HOGE",
+        "contract":"0x662425AaB93bA95b3bF3cBF9A909b9B1bC93E834",
+        "acceptedToken":"0xb7073b6082e8b77ab667fac3ab02e88b2c3937d3",
+        "token1":"0xa4fffc757e8c4f24e7b209c033c123d20983ad40",
+        "token2":"0xc0888d80ee0abf84563168b3182650c0addeb6d5"
+      },
+      {
+        "name":"TOAD-DOT",
+        "contract":"0xB6D1631E82cE3c5D29F0AF066BD6B1B0e77CdE2E",
+        "acceptedToken":"0x16e3070c41025d6ad2f24a0b2ecdae22f8f4aa98",
+        "token1":"0x7083609fce4d1d8dc0c979aab8c869ea2c873402",
+        "token2":"0x463e737d8f740395abf44f7aac2d9531d8d539e9"
+      },
+      {
+        "name":"PAD-DOGE",
+        "contract":"0xc27192bd78e60393725F4c4515f6358c65F8BeFa",
+        "acceptedToken":"0x2658d6f3f3ce0d908b85a13bccf690991568ffe8",
+        "token1":"0xbA2aE424d960c26247Dd6c32edC70B295c744C43",
+        "token2":"0xc0888d80ee0abf84563168b3182650c0addeb6d5"
+      },
+      {
+        "name":"PAD-ADA",
+        "contract":"0x5459A5CD736c09e8A7fc3aCA1cF6A184Bed8a567",
+        "acceptedToken":"0xfc7a8c82f0f223503a08c632d5f32660e29bd017",
+        "token1":"0x3ee2200efb3400fabb9aacf31297cbdd1d435d47",
+        "token2":"0xc0888d80ee0abf84563168b3182650c0addeb6d5"
+      },
       {
         "name":"PAD-PR",
         "contract":"0xf6E5A88EC5eBa2c8A22845bdf5f1f5167119b270",

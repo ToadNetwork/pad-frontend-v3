@@ -18,9 +18,9 @@
       <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
     </div>
     <v-sheet class="launchpad-title-bar">
-      <img class="background" :src="getBackgroundTexture()">
+      <img class="background" :src="$padswapTheme.theme.backgroundTextureSrc">
       <div class="launchpad-title">
-        <img class="launchpad-image" :src="getLaunchpadRocket()">
+        <img class="launchpad-image" :src="$padswapTheme.theme.launchpadRocketSrc">
         <h1 style="margin-bottom: 0">LaunchPAD token factory</h1>
         <v-btn medium color="primary" to="/launchpad" style="margin-top: 10px;">
           Back
@@ -89,10 +89,10 @@
                         id="token-type-1"
                         type="radio"
                         name="token-type-select"
-                        value="normal"
+                        value="basic"
                         v-model="tokenType"
                         >
-                        <label for="token-type-1">Normal token</label>
+                        <label for="token-type-1">Basic token</label>
                       </div>
                       <ul class="win98-list">
                         <li>Standard tokenomics</li>
@@ -109,7 +109,7 @@
                         value="redistribution"
                         v-model="tokenType"
                       >
-                        <label for="token-type-2">With redistribution <span style="font-weight: bold">(experimental)</span></label>
+                        <label for="token-type-2">Reflection token <span style="font-weight: bold">(experimental)</span></label>
                       </div>
                       <ul class="win98-list">
                         <li>Part of every transaction is redistributed to holders</li>
@@ -198,7 +198,7 @@
                     <!-- TODO: two column design -->
                     <template v-if="tokenType == 'redistribution'">
                       <p style="font-weight: bold; color: #860000;">This token type has been added recently. If you encounter any issues with transaction taxes, contact us at <a href="https://t.me/toadnetwork" target="_blank">t.me/toadnetwork</a>.</p>
-                      <label for="transactionFee" class="win98-label">Transaction Fee (%):</label><br>
+                      <label for="transactionFee" class="win98-label">Redistribution Fee (%):</label><br>
                       <input id="transactionFee" class="win98-input" v-model="transactionFee">
                       <v-tooltip top>
                         <template v-slot:activator="{ on, attrs }">
@@ -454,9 +454,9 @@ export default Vue.extend({
     tokenSymbol: '',
     tokenSupply: '',
     tokenDecimals: '18',
-    tokenType: <"normal" | "redistribution" | ''> '',
+    tokenType: <"basic" | "reflection" | ''> '',
 
-    // Only relevant if tokenType is "redistribution"
+    // Only relevant if tokenType is "reflection"
     transactionFee: '2',
     burnFee: '0',
     liquidityFee: '0',
@@ -522,7 +522,7 @@ export default Vue.extend({
       else if (parseFloat(this.tokenDecimals) < 0 || parseFloat(this.tokenDecimals) > 255 ) { errors += 'Choose a number between 0 and 255\n' }
       else if (parseFloat(this.tokenDecimals) % 1 != 0 || !(/^\d+$/.test(this.tokenDecimals)) ) { errors += 'Token decimals must be a whole number\n' }
 
-      if (this.tokenType == "redistribution") {
+      if (this.tokenType == "reflection") {
         const transactionFeeStatus = this.getFeeValidationStatus(this.transactionFee, 'transaction')
         if (transactionFeeStatus) {
           errors += transactionFeeStatus
@@ -558,7 +558,7 @@ export default Vue.extend({
       return errors
     },
     tokenModel(): TokenModel {
-      if (this.tokenType == "redistribution") {
+      if (this.tokenType == "reflection") {
         return TokenModel.Reflections
       } else {
         return TokenModel.Standard
@@ -635,30 +635,6 @@ export default Vue.extend({
         this.formStep = 1
       if (this.formStep > this.maxFormStep)
         this.formStep = this.maxFormStep
-    },
-    getBackgroundTexture() {
-      // TODO: move to padswap-theme.ts
-      if (this.$store.getters.ecosystem.chainId == 56) {
-        return require('@/assets/images/launchpad-texture-bsc.jpg')
-      }
-      if (this.$store.getters.ecosystem.chainId == 1285) {
-        return require('@/assets/images/launchpad-texture-moonriver.jpg')
-      }
-      if (this.$store.getters.ecosystem.chainId == 1284) {
-        return require('@/assets/images/launchpad-texture-moonbeam.jpg')
-      }
-    },
-    getLaunchpadRocket() {
-      // TODO: move to padswap-theme.ts
-      if (this.$store.getters.ecosystem.chainId == 56) {
-        return require('@/assets/images/launchpad-rocket-bsc.svg')
-      }
-      if (this.$store.getters.ecosystem.chainId == 1285) {
-        return require('@/assets/images/launchpad-rocket-moonriver.svg')
-      }
-      if (this.$store.getters.ecosystem.chainId == 1284) {
-        return require('@/assets/images/launchpad-rocket-moonbeam.svg')
-      }
     },
     async approve() {
       if (!this.web3) {
