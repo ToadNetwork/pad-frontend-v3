@@ -139,11 +139,11 @@
           cols="6"
         >
           <v-btn
-            @click.stop="isEnabled ? harvest() : enable()"
+            @click.stop="(isEnabled && isEnoughApproved) ? harvest() : enable()"
             class="padswap-farm-btn"
             :class="{ 'padswap-shake': currentAnimations['enableButton'] }"
           >
-            <template v-if="isEnabled">
+            <template v-if="(isEnabled && isEnoughApproved)">
               Harvest
             </template>
             <template v-else>
@@ -339,13 +339,6 @@
                     </span>
                   </div>
 
-                  <v-overlay
-                    v-if="!isEnabled"
-                    color="transparent"
-                    absolute
-                    @click="shakeButton('enableButton')"
-                  >
-                  </v-overlay>
                 </v-card>
                 <v-subheader class="d-flex align-baseline px-0 mt-3">
                   <v-icon small class="mr-2">mdi-information-outline</v-icon>
@@ -469,7 +462,11 @@ export default Vue.extend({
       return this.roi === undefined
     },
     isEnabled(): boolean {
-      return this.userAllowance !== undefined && this.userAllowance >= FARM_REQUIRED_ALLOWANCE
+      return this.userAllowance !== undefined && this.userAllowance > 0
+    },
+    isEnoughApproved(): boolean {
+      const allowance = ethers.utils.parseUnits(this.userAllowance.toString(), "0")
+      return this.userAllowance !== undefined && allowance >= this.dwActionAmountBn
     },
     stakedLpValue(): number {
       if (!this.userStakedBalanceNum) {
@@ -529,6 +526,10 @@ export default Vue.extend({
     validationStatus(): ValidationStatus {
       if (this.dwActionAmount == null || this.dwActionAmountBn.lte(0)) {
         return { status: false }
+      }
+
+      if (this.dwAction == 'deposit' && !this.isEnoughApproved) {
+        return { status: false, message: 'Please enable the farm first'}
       }
 
       if (this.dwAction == 'deposit' && this.dwActionAmountBn.gt(this.userLpBalance)) {
