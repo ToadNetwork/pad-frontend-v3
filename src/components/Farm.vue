@@ -378,7 +378,7 @@ import {
 import { IEcosystem, EcosystemId, ECOSYSTEMS } from '@/ecosystem'
 import { formatMixin } from '@/format'
 import { FarmData } from '@/types'
-import { delay, equalsInsensitive } from '@/utils'
+import { delay, equalsInsensitive, toFloat } from '@/utils'
 
 type ValidationStatus = {
   status: boolean,
@@ -465,8 +465,12 @@ export default Vue.extend({
       return this.userAllowance !== undefined && this.userAllowance > 0
     },
     isEnoughApproved(): boolean {
-      const allowance = ethers.utils.parseUnits(this.userAllowance.toString(), "0")
-      return this.userAllowance !== undefined && allowance >= this.dwActionAmountBn
+      if (this.userAllowance == undefined || !this.dwActionAmountBn) {
+        return false
+      }
+      const actionAmount = parseFloat(ethers.utils.formatUnits(this.dwActionAmountBn, "0"))
+
+      return this.userAllowance >= actionAmount
     },
     stakedLpValue(): number {
       if (!this.userStakedBalanceNum) {
