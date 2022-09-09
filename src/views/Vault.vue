@@ -1,6 +1,12 @@
 <template>
-  <div>
-    <div class="padswap-header-box">
+  <div style="text-align: center; padding-bottom: 200px;">
+
+  <!-------------------------------------------->
+  <!-- The vault currently defaults to BSC,   -->
+  <!-- ecosystem slider is commented out      -->
+  <!-------------------------------------------->
+
+    <!--     <div class="padswap-header-box">
       <slider-tabs
         class="padswap-ecosystem-tabs"
         v-model="ecosystemId"
@@ -34,39 +40,21 @@
         </v-tab>
       </slider-tabs>
       <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
-    </div>
+    </div> -->
+    <br><br>
 
-
-  <!------------------------------------------------------>
-  <!-- Title bar with product description and wiki link -->
-  <!------------------------------------------------------>
-
-    <v-sheet class="product-title-bar">
-    <img class="product-title-bar-background" :src="$padswapTheme.theme.backgroundTextureSrc">
-    <div class="product-title">
-      <img style="width:80px; height: 80px;" src="@/assets/icons/Vault Icon.svg">
-      <h1 style="margin-bottom: 0">Vault</h1>
-    </div>
-
-    <div class="launchpad-intro">
-      <p class="please-read">
-        Collects backing for PAD from PadSwap fees.<br>
-        Backing can be redeemed by users at any time.
-      </p>
-    </div>
-
-    <a href="https://docs.toad.network/fundamentals/the-vault" target="_blank">Learn more about the Vault on TOAD Wiki</a>
-
-    </v-sheet> 
-
-  <br><br><br>
 
   <!-------------------------------------------->
   <!--             Loading screen             -->
   <!-------------------------------------------->
 
-  <div class="text-center" v-if="vaultProcessed == false || mcap == 0">
-    Loading vault data, please wait...
+  <div class="text-center" v-if="vaultProcessed == false">
+    <v-card
+    outlined>
+      <v-card-text>
+        Loading vault data, please wait...
+      </v-card-text>
+    </v-card>
   </div>
 
 
@@ -75,7 +63,10 @@
   <!--  shown only after the vault data has been loaded     -->
   <!---------------------------------------------------------->
 
-  <div :style="getVaultContainerStyle()">
+  <div
+  :style="vaultProcessed ? 'visibility: visible;' : 'visibility: hidden;'"
+  style="display: inline-block; max-width: 1200px;">
+
 
   <!-------------------------------------------->
   <!--                                        -->
@@ -83,20 +74,28 @@
   <!--                                        -->
   <!-------------------------------------------->
 
-  <div class="fullwidth panel">
-    <h1 class="title">PAD stats</h1>
+  <div class="fullwidth panel main-panel" style="margin-bottom: 15px !important;">
+
+    <img style="width: 50px; height: 50px;" src="@/assets/icons/Vault Icon.svg">
+    <h1 class="title">The Vault</h1>
     <br>
+    <div class="launchpad-intro">
+      <p class="please-read">
+        Collects backing for PAD from PadSwap fees.<br>
+        Backing can be redeemed by users at any time.
+      </p>
+    </div>
+
+    <a href="https://docs.toad.network/fundamentals/the-vault" target="_blank">More on TOAD Wiki</a>
+    <br><br>
     <v-divider></v-divider>
     <br><br>
 
-    <v-row
-    align="center"
-    justify="center">
-
-    <!-- Vault backing percentage -->
-    <v-col
-    cols="12"
-    md="6">      <div class="vault-backing-section">
+    <!--------------------------------------------->
+    <!-- Fancy container with backing percentage -->
+    <!--------------------------------------------->
+    <div style="display: inline-block;">
+      <div class="vault-backing-section">
         <div class="vault-backing-container">
         <div class="backing-hint-column">
           <div class="backing-hint" style="bottom: 95%">
@@ -128,163 +127,182 @@
         </div>
         </div>
       </div>
-    </v-col>
+    </div>
 
-    <!-- PAD stats -->
-    <v-col
-    cols="12"
-    md="6">
-      <p>
-        Vault contract: <span v-html="getBlockExplorerLink()"></span>
-      </p>
+    <!-------------------->
+    <!-- Redeem backing -->
+    <!-------------------->
+    <div class="redeem-section" style="position: relative; display: inline-block; top: 0; vertical-align: top;">
+      <div
+      width="100%"
+      >
+        <div
+        style="display: inline-block; border: 1px solid #bb8000; color: #bb8000; border-radius: 15px; text-align: left; padding: 15px; margin: 20px 0; max-width: 400px; vertical-align: top;">
+          <span style="font-size:  0.8em;">
+            PAD is {{backingPercentage}}% backed.<br>
+            By redeeming PAD's backing tokens,<br>
+            you will receive ~{{backingPercentage}}% of its value.
+          </span>
+        </div>
+        <br>
+        <v-text-field
+          v-model="amount"
+          type="number"
+          min="0.0"
+          outlined
+          dense
+          color="#00FC4c"
+          background-color="black"
+          hide-spin-buttons
+          append-icon
+          class="mr-3"
+          height="50px"
+          label="Amount of PAD to burn"
+          style="padding-top:5px; border-radius: 10px;"
+          width="100%"
+          >
+          <template v-slot:append>
+            <v-btn
+              @click="setMax"
+              small
+              color="transparent"
+              class="padswap-max-btn mr-n3">
+              Max
+            </v-btn>
+          </template>
+        </v-text-field>
 
-      <div class="pad-stats-card">
-        <h1>${{ padPrice.toFixed(8) }}</h1>
-        <p>Current PAD price</p>
+        <v-text-field
+          v-model="expected"
+          outlined
+          disabled
+          dense
+          background-color="dark-grey"
+          class="mr-3"
+          height="50px"
+          label="You will receive"
+          style="border-radius: 10px;"
+          width="100%"
+          >
+        </v-text-field>
+
+        <div class="text-center">
+          <v-btn
+          v-if="!address"
+          x-large
+          outlined
+          width="100%"
+          @click="requestConnect"
+          >
+            Connect Wallet
+          </v-btn>
+          <v-btn
+          v-else-if="!isApproveComplete"
+          x-large
+          outlined
+          width="100%"
+          @click="approve"
+          >
+            Approve
+          </v-btn>
+          <v-btn
+          v-else="!isApproveComplete"
+          x-large
+          outlined
+          color="light-green"
+          width="100%"
+          @click="redeem"
+          >
+            Redeem
+          </v-btn>
+        </div>
       </div>
-
-      <div class="pad-stats-card">
-        <h1>${{ (padPrice * (backingPercentage / 100.0)).toFixed(8) }}</h1>
-        <p>Minimum possible PAD price* <br>
-        ({{ backingPercentage }}% of current price)</p>
-      </div>
-
-      <div class="pad-stats-card">
-        <h1>${{ biOrMiOrK(mcap) }}</h1>
-        <p>PAD market cap</p>
-      </div>
-
-      <div class="pad-stats-card">
-        <h1>${{ biOrMiOrK(totalBacking) }}</h1>
-        <p>Backing reserves</p>
-      </div>
-
-    </v-col>
-  </v-row>
+    </div>
   </div>
 
-
-  <!-------------------------------------------->
-  <!--                                        -->
-  <!--  Reserves breakdown & redeem backing   -->
-  <!--                                        -->
-  <!-------------------------------------------->
+  <!------------------------------------------>
+  <!--                                      -->
+  <!--  Reserves breakdown & burn counter   -->
+  <!--                                      -->
+  <!------------------------------------------>
 
   <v-row
   align-content="stretch"
   justify="center">
-
-  <v-col
-  cols="12"
-  md="6">
-    <div class="fullwidth panel" style="max-height: 500px; max-width: 800px;">
-      <h1 class="title">Vault Holdings</h1>
-      <br>
-      <v-divider></v-divider>
-
+    <v-col
+    cols="12"
+    md="6">
+      <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
+        <h1 class="title">Vault Holdings</h1>
+        <br>
+        <v-divider style="margin-bottom: 10px;"></v-divider>
           <apexchart
-          ref="holdings"
-          type="donut"
-          height="90%"
-          :options="options"
-          :series="series">
+            ref="holdings"
+            type="donut"
+            width="100%"
+            :options="options"
+            :series="series">
           </apexchart>
+      </div>
+    </v-col>
 
-    </div>
-  </v-col>
-
-  <v-col
-  cols="12"
-  md="6">
-    <div class="fullwidth panel">
-      <h1 class="title">Redeem backing</h1>
-      <br>
-      <v-divider></v-divider>
-        <v-row
-        justify="center"
-        style="margin-top:10px">
-          <v-col
-          cols="12">
-            <v-text-field
-              v-model="amount"
-              type="number"
-              min="0.0"
-              outlined
-              rounded
-              dense
-              color="#00FC4c"
-              background-color="black"
-              hide-spin-buttons
-              append-icon
-              class="mr-3"
-              height="50px"
-              label="Amount of PAD to burn"
-              style="padding-top:5px"
-              >
-              <template v-slot:append>
-                <v-btn
-                  @click="setMax"
-                  small
-                  color="dark-grey"
-                  class="padswap-max-btn mr-n3">
-                  Max
-                </v-btn>
-              </template>
-            </v-text-field>
-          </v-col>
-          <v-col
-          cols="12">
-            <v-text-field
-              v-model="expected"
-              outlined
-              disabled
-              rounded
-              dense
-              background-color="dark-grey"
-              class="mr-3"
-              height="50px"
-              label="You will receive"
-              >
-            </v-text-field>
-          </v-col>
-          <v-col
-          cols="12">
-            <div class="text-center">
-              <v-btn
-              v-if="!address"
-              x-large
-              outlined
-              width="300"
-              @click="requestConnect"
-              >
-                Connect Wallet
-              </v-btn>
-              <v-btn
-              v-else-if="!isApproveComplete"
-              x-large
-              outlined
-              width="300"
-              @click="approve"
-              >
-                Approve
-              </v-btn>
-              <v-btn
-              v-else="!isApproveComplete"
-              x-large
-              outlined
-              color="light-green"
-              width="300"
-              @click="redeem"
-              >
-                Redeem
-              </v-btn>
-            </div>
-          </v-col>
-        </v-row>
-    </div>
-  </v-col>
+    <v-col
+    cols="12"
+    md="6">
+      <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
+        <h1 class="title">PAD Burned</h1>
+        <br>
+        <v-divider style="margin-bottom: 80px;"></v-divider>
+        <div
+        style="display: inline-block; border: 2px solid orange; height: 150px; width: 150px; text-align: center; margin-bottom: 25px; border-radius: 50%;">
+        <v-icon large
+        color="orange"
+        style="margin-bottom: 10px; margin-top: 15px;">
+          mdi-fire
+        </v-icon>
+        <h1 class="title">
+          {{biOrMiOrK(padBurned)}}<br>PAD
+        </h1>
+        </div>
+      </div>
+    </v-col>
   </v-row>
 
+  <v-row
+  align-content="stretch"
+  justify="center">
+    <v-col cols="12" md="6">
+      <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
+        <h1 class="title">Inflation Rate</h1>
+        <br>
+        <v-divider style="margin-bottom: 80px;"></v-divider>
+        <apexchart
+        ref="inflation"
+        width="99%"
+        height="265px"
+        type="line"
+        :options="inflationOptions"
+        :series="inflation">
+        </apexchart>
+      </div>
+    </v-col>
+
+    <v-col cols="12" md="6">
+      <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
+        <h1 class="title">PAD Supply</h1>
+        <br>
+        <v-divider style="margin-bottom: 80px;"></v-divider>
+        <apexchart
+        ref="supply"
+        width="99%"
+        height="265px"
+        type="line"
+        :options="circulatingOptions"
+        :series="supply">
+        </apexchart>
+      </div>
+    </v-col>
+  </v-row>
 
 </v-container>
 </div>
@@ -292,6 +310,7 @@
 </template>
 
 <script lang="ts">
+  import axios from 'axios'
   import Vue from 'vue'
   import SliderTabs from '@/components/SliderTabs.vue'
   import { ethers } from 'ethers'
@@ -323,6 +342,10 @@
         active: <boolean> true,
         syncLock: new AwaitLock(),
         options: <any> {
+          stroke: {
+            show: false,
+            colors: ["#181d26b3"]
+          },
           tooltip: <any> {
             enabled: true,
               y: {
@@ -336,11 +359,58 @@
               },
           },
           legend: {
-            position: 'right',
-              formatter: (seriesName : string) => {
-                // @ts-ignore
-                return seriesName
+            position: 'bottom',
+            formatter: (seriesName : string) => {
+              // @ts-ignore
+              return seriesName
+            }
+
+          },
+          chart: {
+            toolbar: {
+              show: false
+            },
+
+                colors: ["green", "blue", "purple", "yellow", "orange", "black", "white"]
+          },
+          plotOptions: {
+            pie: {
+              donut: {
+                size: '50%'
               }
+            },
+            treemap: {
+              distributed: true,
+              useFillColorAsStroke: true
+            }
+          },
+          colors: []
+        },
+        series: [],
+
+        burnOptions: <any> {
+          stroke: {
+            show: false,
+          },
+          tooltip: <any> {
+            enabled: true,
+              y: {
+                formatter: (value : any, { series, seriesIndex, dataPointIndex, w } : any ) => {
+                  // @ts-ignore
+                  return this.biOrMiOrK(value) + ' PAD'
+                }
+              },
+              x: {
+                format: 'dd MMM yyyy',
+              },
+          },
+          legend: {
+            position: 'bottom',
+            formatter: (seriesName : string) => {
+              // @ts-ignore
+              return seriesName
+            }
+
           },
           chart: {
             toolbar: {
@@ -348,24 +418,151 @@
             },
           },
           plotOptions: {
+            pie: {
+              donut: {
+                size: '60%'
+              }
+            },
             treemap: {
               distributed: true,
               useFillColorAsStroke: true
             }
           },
         },
-        series: [],
+        burnSeries: [],
+
+        inflationOptions: {
+      zoom: {
+        enabled: true,
+        type: 'x',  
+        autoScaleYaxis: true
+      },
+      colors: ["#bfbf1f"],
+      tooltip: {
+        enabled: true,
+          y: {
+            formatter: function(value: any, { series, seriesIndex, dataPointIndex, w }: { series: any, seriesIndex: any, dataPointIndex: any, w: any }) {
+              return value+'%'
+            }
+          },
+          x: {
+            format: 'dd MMM yyyy',
+          },
+        },
+        chart: {
+          id: 'vuechart-example'
+        },
+        xaxis: {
+          type: 'datetime',
+          tooltip: {
+            enabled: false
+          },
+          labels: {
+            show: true,
+            style: {
+              colors: 'gray',
+              fontSize: '12px'
+            },
+          }
+        },
+        yaxis: {
+          min: 0,
+          max: 2.5,
+          tickAmount: 5,
+          type: 'datetime',
+          tooltip: {
+            enabled: false
+          },
+          labels: {
+            show: true,
+            style: {
+              colors: 'gray',
+              fontSize: '12px'
+            },
+          }
+        }
+      },
+      circulatingOptions: {
+      colors: ["#77bf1f"],
+        tooltip: {
+          enabled: true,
+            y: {
+              formatter: function(value: any, { series, seriesIndex, dataPointIndex, w }: { series: any, seriesIndex: any, dataPointIndex: any, w: any }) {
+                return value + 'BI'
+              }
+            },
+            x: {
+              format: 'dd MMM yyyy',
+            },
+        },
+        chart: {
+          id: 'vuechart-example'
+        },
+        xaxis: {
+          type: 'datetime',
+          tooltip: {
+            enabled: false,
+            theme:'dark',
+            style: {
+              backgroundColor: 'black'
+            }
+          },
+          labels: {
+            show: true,
+            style: {
+              colors: 'gray',
+              fontSize: '12px'
+            },
+          }
+        },
+        yaxis: {
+          min: 0,
+          max: 200,
+          tickAmount: 5,
+          type: 'datetime',
+          tooltip: {
+            enabled: false,
+            theme:'dark',
+            style: {
+              backgroundColor: 'black'
+            }
+          },
+          labels: {
+            formatter: function(value : any, timestamp: any, opts: any) {
+              return value+'BI'
+            },
+            show: true,
+            style: {
+              colors: 'gray',
+              fontSize: '12px'
+            },
+          }
+        }
+      },
+      inflation: [{
+        name: 'Inflation Rate',
+        data: []
+      }],
+      supply: [{
+        name: 'Circulating Supply',
+        data: []
+      }],
+
+
+        inflationCalculated: <boolean> false,
+
         totalBacking: 0,
 
         // PAD stats
         mcap: 0,
         padSupply: <number> 0,
+        padBurned: <number> 0,
         padPrice: <number> 0,
-        backingPercentage: '0.000000',
+        backingPercentage: <string> '0',
         userPadBalance: <number> 0,
 
         amount: <number> 0,
-        expected: <any> '',
+        expected: <string> '~0 USD',
 
         contractAddress: <string> '',
         contractABI: <any> {},
@@ -381,6 +578,7 @@
     created () {
       // Setting ecosystem to bsc
       this.$store.commit('setEcosystemId', 0)
+
 
       setTimeout(async () => {
         await this.loadVaultData()
@@ -403,7 +601,7 @@
     watch: {
       amount() {
         const expectedUSD : number = this.amount * this.padPrice
-        this.expected = '~' + expectedUSD.toString() + ' USD worth of tokens'
+        this.expected = '~' + expectedUSD.toString() + ' USD'
       }
     },
     computed: {
@@ -513,14 +711,6 @@
         else if (num>= 1e2) return this.round(num, 2)
         else if (num >= 1) return this.round(num, 4)
         else return this.round(num, 6)
-      },
-      getVaultContainerStyle() : string {
-        if (this.mcap == 0 || this.vaultProcessed == false) {
-          return "visibility: hidden"
-        }
-        else {
-          return ""
-        }
       },
       getBlockExplorerLink() : string {
         let chainExplorerLinks : any = {
@@ -642,7 +832,7 @@
         }
 
         // Balances of individual tokens
-        // TODO: call all promises simultaneously
+        // TODO: call everything simultaneously
         for (const token of this.vault.tokens) {
           const tokenContract = new ethers.Contract(token, ERC20_ABI, this.multicall)
 
@@ -660,20 +850,35 @@
           else {
             vaultData[tokenName] = tokenUSD
           }
-
         }
 
         this.totalBacking = totalBackingUSD
 
+        const tokenColors : any = {
+          "Toad Network": "#66b535",
+          "Lily Pad": "#bfed79",
+          "PARADOX NFT BSC": "#3ebbc2",
+          "Wrapped BNB": "#f2d513",
+          "BUSD Token": "#d98116",
+
+        }
+
         // Updating the pie chart
         let tokenLabels = []
         let tokenValues = []
+        let labelColors = []
         let smallBalances : number = 0
         let total : number = 0
         for (const [key, value]  of Object.entries(vaultData)) {
           if (value as number >= 1000) {
             tokenLabels.push(key)
             tokenValues.push(value)
+            if (key in tokenColors) {
+              labelColors.push(tokenColors[key])
+            }
+            else {
+              labelColors.push('A0A0A0')
+            }
           }
           else {
             smallBalances += value as number
@@ -681,16 +886,40 @@
         }
         tokenLabels.push('Other')
         tokenValues.push(smallBalances)
+        labelColors.push('#ac9cba')
         
+
+
         const backingChart : any = this.$refs!.holdings!
         backingChart.updateOptions({
-          labels: tokenLabels
+          labels: tokenLabels,
+          colors: labelColors
         })
         backingChart.updateSeries(tokenValues)
 
         window.setInterval(() => this.getPadInfo(), 2000)
 
+        const burnStatsResponse = await axios.post('https://api.thegraph.com/subgraphs/name/toadguy/pad-token', {
+            query: `
+            {
+              tokens(address:"` + this.padAddress + `") {
+                id
+                address
+                totalBurned
+                totalSupply
+              }
+            }
+            `
+        })
+        const padStats = JSON.parse(burnStatsResponse.request.response).data.tokens
+        // console.log(padStats)
+        this.padBurned = parseFloat(padStats[0].totalBurned)
+
         this.vaultProcessed = true
+
+        if (!this.inflationCalculated) {
+          this.calculateCircSupply()
+        }
       },
       async getPadInfo() {
         // Getting PAD stats
@@ -708,10 +937,45 @@
 
         let userBalance = await padContract.balanceOf(this.address)
         this.userPadBalance = toFloat(userBalance)
+        
+      },
+      calculateCircSupply() {
+        let circulating = 10*1e9
+        const maxSupply = 200*1e9
+        const mintRate = 0.0013
+        let remainingSupply = 190*1e9
+        const circSupply = []
+        const inflationRate = []
+        const mintedPerDay = []
+        const remainingSupplyPerDay = []
+        const arr = []
+        for(let i = 0; i<= 3650; i++) {
+          const epoch = (1620490010 + i*86400) *1000
+          // console.log(epoch)
+          // console.log(i)
+          arr[i] = i
+          const mint = mintRate*remainingSupply
+          circulating = circulating + mint
+          circSupply[i] = [epoch, this.round(circulating/1e9, 3)]
+          mintedPerDay[i] = mint
+          inflationRate[i] = [epoch, this.round(mint/circulating*100, 4)]
+          remainingSupplyPerDay[i] = remainingSupply
+          remainingSupply = remainingSupply - mint
 
-        // const minterContract = new ethers.Contract(BSC_MINTER_ADDRESS, MINTER_ABI, this.multicall)
-        // console.log(minterContract)
+          const inflationChart : any = this.$refs!.inflation!
+          const supplyChart : any = this.$refs!.supply!
 
+          if(i == 3650) {
+            inflationChart.updateSeries([{
+              data: inflationRate
+            }]);
+            inflationChart.zoomX(new Date(1620490010 *1000).getTime(), new Date((1620490010 + 2*365*86400) *1000).getTime())
+            supplyChart.updateSeries([{
+              data: circSupply
+            }]);
+            supplyChart.zoomX(new Date(1620490010 *1000).getTime(), new Date((1620490010 + 1*365*86400) *1000).getTime())
+          }
+        }
       },
       async approve() {
         let padContract = new ethers.Contract(this.padAddress, ERC20_ABI, this.multicall)
@@ -732,6 +996,28 @@
 </script>
 
 <style src="../styles/style.css" />
+<style>
+  
+  /******************************************/
+  /*                                        */
+  /*           Apexcharts styling           */
+  /*                                        */
+  /******************************************/
+
+  .apexcharts-legend-text {
+    color: white !important;
+  }
+
+  .apexcharts-tooltip {
+    background-color: #D0D0D0 !important;
+    color: #000000 !important;
+  }
+
+  .apexcharts-menu, .apexcharts-menu-item {
+    background-color: #D0D0D0 !important;
+    color: #000000 !important;
+  }
+</style>
 <style scoped>
 
 * {
@@ -779,7 +1065,7 @@
   /******************************************/
 
   .vault-backing-section {
-    display: block;
+    display: inline-block;
     min-height: 500px;
     text-align: center;
   }
@@ -882,11 +1168,27 @@
   }
 
   /* Adjusting the vault visual for smaller screen sizes */
-  @media screen and (max-width: 550px) {
+  @media screen and (max-width: 565px) {
     .backing-hint-column {
       display: none;
     }
   }
+
+  @media screen and (min-width: 565px) {
+    .vault-backing-section {
+      min-width: 515px;
+    }
+    .redeem-section {
+      margin: 0 60px;
+    }
+  }
+
+  @media screen and (min-width: 1262px) {
+    .main-panel {
+      min-width: 1000px;
+    }
+  }
+
 
 
   /******************************************/
@@ -895,18 +1197,14 @@
   /*                                        */
   /******************************************/
 
-
   .pad-stats-card {
-    display: inline-block;
     width: 300px;
     height: 150px;
     max-height: 150px;
-    background-color: #232530;
+    background-color: transparent;
     margin: 5px;
     overflow: hidden;
     border-radius: 20px;
-    -webkit-box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.59); 
-  box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.59);
   }
 
   .pad-stats-card h1 {
