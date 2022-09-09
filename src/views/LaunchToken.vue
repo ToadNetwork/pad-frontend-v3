@@ -419,8 +419,10 @@
             v-model="presalePrice"
             disabled
             readonly
+            required
             label="Presale price"
             :suffix="tokenSymbol + ' per ' + presaleCurrency"
+            :rules="validPresalePrice()"
             >
               <template v-slot:append>
               {{tokenSymbol}}&nbsp;per&nbsp;{{presaleCurrency}}
