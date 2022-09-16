@@ -225,84 +225,94 @@
   <!--  Reserves breakdown & burn counter   -->
   <!--                                      -->
   <!------------------------------------------>
+  <div class="text-center">
+    <div style="margin-left: 2%; max-width: 96%;">
+      <v-row
+      style="margin-bottom: 10px;"
+      justify="center">
+        <v-col
+        cols="12"
+        md="6">
+          <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
+            <h1 class="title">Vault Holdings</h1>
+            <br>
+            <v-divider style="margin-bottom: 10px;"></v-divider>
+            <div class="apexchart-container">
+              <apexchart
+                ref="holdings"
+                type="donut"
+                width="100%"
+                :options="options"
+                :series="series">
+              </apexchart>
+            </div>
+          </div>
+        </v-col>
 
-  <v-row
-  align-content="stretch"
-  justify="center">
-    <v-col
-    cols="12"
-    md="6">
-      <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
-        <h1 class="title">Vault Holdings</h1>
-        <br>
-        <v-divider style="margin-bottom: 10px;"></v-divider>
-          <apexchart
-            ref="holdings"
-            type="donut"
-            width="100%"
-            :options="options"
-            :series="series">
-          </apexchart>
-      </div>
-    </v-col>
+        <v-col
+        cols="12"
+        md="6">
+          <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
+            <h1 class="title">PAD Burned</h1>
+            <br>
+            <v-divider style="margin-bottom: 80px;"></v-divider>
+            <div
+            style="display: inline-block; border: 2px solid orange; height: 150px; width: 150px; text-align: center; margin-bottom: 25px; border-radius: 50%;">
+            <v-icon large
+            color="orange"
+            style="margin-bottom: 10px; margin-top: 15px;">
+              mdi-fire
+            </v-icon>
+            <h1 class="title">
+              {{biOrMiOrK(padBurned)}}<br>PAD
+            </h1>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
+    </div>
 
-    <v-col
-    cols="12"
-    md="6">
-      <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
-        <h1 class="title">PAD Burned</h1>
-        <br>
-        <v-divider style="margin-bottom: 80px;"></v-divider>
-        <div
-        style="display: inline-block; border: 2px solid orange; height: 150px; width: 150px; text-align: center; margin-bottom: 25px; border-radius: 50%;">
-        <v-icon large
-        color="orange"
-        style="margin-bottom: 10px; margin-top: 15px;">
-          mdi-fire
-        </v-icon>
-        <h1 class="title">
-          {{biOrMiOrK(padBurned)}}<br>PAD
-        </h1>
-        </div>
-      </div>
-    </v-col>
-  </v-row>
+    <div style="margin-left: 2%; max-width: 96%;">
+      <v-row
+      justify="center">
+        <v-col cols="12" md="6">
+          <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
+            <h1 class="title">Inflation Rate</h1>
+            <br>
+            <v-divider style="margin-bottom: 80px;"></v-divider>
+            <div class="apexchart-container">
+              <apexchart
+              ref="inflation"
+              width="99%"
+              height="265px"
+              type="line"
+              :options="inflationOptions"
+              :series="inflation">
+              </apexchart>
+            </div>
+          </div>
+        </v-col>
 
-  <v-row
-  align-content="stretch"
-  justify="center">
-    <v-col cols="12" md="6">
-      <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
-        <h1 class="title">Inflation Rate</h1>
-        <br>
-        <v-divider style="margin-bottom: 80px;"></v-divider>
-        <apexchart
-        ref="inflation"
-        width="99%"
-        height="265px"
-        type="line"
-        :options="inflationOptions"
-        :series="inflation">
-        </apexchart>
-      </div>
-    </v-col>
-
-    <v-col cols="12" md="6">
-      <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
-        <h1 class="title">PAD Supply</h1>
-        <br>
-        <v-divider style="margin-bottom: 80px;"></v-divider>
-        <apexchart
-        ref="supply"
-        width="99%"
-        height="265px"
-        type="line"
-        :options="circulatingOptions"
-        :series="supply">
-        </apexchart>
-      </div>
-    </v-col>
-  </v-row>
+        <v-col cols="12" md="6">
+          <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
+            <h1 class="title">PAD Supply</h1>
+            <br>
+            <v-divider style="margin-bottom: 80px;"></v-divider>
+            <div class="apexchart-container">
+              <apexchart
+              ref="supply"
+              width="99%"
+              height="265px"
+              type="line"
+              :options="circulatingOptions"
+              :series="supply">
+              </apexchart>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
+    </div>
+  </div>
 
 </v-container>
 </div>
@@ -1004,6 +1014,10 @@
   /*                                        */
   /******************************************/
 
+  .apexchart-container {
+
+  }
+
   .apexcharts-legend-text {
     color: white !important;
   }
@@ -1017,6 +1031,7 @@
     background-color: #D0D0D0 !important;
     color: #000000 !important;
   }
+
 </style>
 <style scoped>
 
