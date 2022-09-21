@@ -106,7 +106,7 @@
                         id="token-type-2"
                         type="radio"
                         name="token-type-select"
-                        value="redistribution"
+                        value="reflection"
                         v-model="tokenType"
                       >
                         <label for="token-type-2">Reflection token <span style="font-weight: bold">(experimental)</span></label>
@@ -196,7 +196,7 @@
                     <br><br>
 
                     <!-- TODO: two column design -->
-                    <template v-if="tokenType == 'redistribution'">
+                    <template v-if="tokenType == 'reflection'">
                       <p style="font-weight: bold; color: #860000;">This token type has been added recently. If you encounter any issues with transaction taxes, contact us at <a href="https://t.me/toadnetwork" target="_blank">t.me/toadnetwork</a>.</p>
                       <label for="transactionFee" class="win98-label">Redistribution Fee (%):</label><br>
                       <input id="transactionFee" class="win98-input" v-model="transactionFee">
@@ -290,7 +290,7 @@
                     <label for="tokenDecimals" class="win98-label">Decimals:</label><br>
                     <input disabled id="tokenDecimals" class="win98-input" :value="tokenDecimals"><br><br>
 
-                    <div v-if="tokenType == 'redistribution'">
+                    <div v-if="tokenType == 'reflection'">
                       <label for="transactionFee" class="win98-label">Transaction Fee:</label><br>
                       <input disabled id="transactionFee" class="win98-input" :value="transactionFee + '%'"><br><br>
 
