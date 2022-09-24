@@ -616,10 +616,6 @@
       }
     },
     created () {
-      // Setting ecosystem to bsc
-      this.$store.commit('setEcosystemId', 0)
-
-
       setTimeout(async () => {
         await this.loadVaultData()
         setTimeout(async () => {
