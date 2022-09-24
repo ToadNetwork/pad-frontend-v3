@@ -729,7 +729,8 @@
           interval=setInterval(()=>{ 
             percent++
             cnt.innerHTML = percent + '%'
-            water.style.transform='translate(0'+','+(100-percent)+'%)'
+            var movementDirection = Math.sign(this.backingPercentage - percent)
+            water.style.transform='translate(0'+','+(movementDirection * (100-percent) )+'%)'
             if(percent==Math.floor(this.backingPercentage)){
               clearInterval(interval)
             }
