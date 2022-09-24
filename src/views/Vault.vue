@@ -6,7 +6,7 @@
   <!-- ecosystem slider is commented out      -->
   <!-------------------------------------------->
 
-    <!--     <div class="padswap-header-box">
+   <div class="padswap-header-box">
       <slider-tabs
         class="padswap-ecosystem-tabs"
         v-model="ecosystemId"
@@ -40,7 +40,7 @@
         </v-tab>
       </slider-tabs>
       <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
-    </div> -->
+    </div>
     <br><br>
 
 
@@ -411,7 +411,6 @@
             toolbar: {
               show: false
             },
-
                 colors: ["green", "blue", "purple", "yellow", "orange", "black", "white"]
           },
           plotOptions: {
