@@ -673,6 +673,7 @@
         set(val: EcosystemId) {
           this.$store.commit('setEcosystemId', val)
           this.totalBacking = 0
+          this.backingPercentage = 0
           this.mcap = 0
           this.vaultProcessed = false
           setTimeout(async () => {
@@ -720,6 +721,8 @@
     methods: {
       loadVaultAnimation() {
           var cnt=document.getElementById("count")
+          cnt.innerHTML = 0 + '%'
+
           var water=document.getElementById("water")
           var percent=cnt.innerText.split('%')[0]
           var interval;
