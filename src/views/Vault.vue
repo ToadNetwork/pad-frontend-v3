@@ -934,7 +934,8 @@
           "PARADOX NFT BSC": "#3ebbc2",
           "Wrapped BNB": "#f2d513",
           "BUSD Token": "#d98116",
-          "Wrapped GLMR": "#9970BA"
+          "Wrapped GLMR": "#9970BA",
+          "USD Coin": "#6E94BA"
         }
 
         // Updating the pie chart
