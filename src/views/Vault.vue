@@ -730,7 +730,7 @@
             if(percent==Math.floor(this.backingPercentage)){
               clearInterval(interval)
             }
-          }, 140)
+          }, 40)
       },
 
       scrollTo(el, offset) {
