@@ -620,7 +620,7 @@
         await this.loadVaultData()
         setTimeout(async () => {
           await this.getVaultLpValue()
-          await this.scrollTo('backing-animation', 70)
+          // await this.scrollTo('backing-animation', 120)
           await this.loadVaultAnimation()
       }, 1000)
 
@@ -679,6 +679,8 @@
               await this.loadVaultData()
               setTimeout(async () => {
               await this.getVaultLpValue()
+              // await this.scrollTo('backing-animation', 120)
+              await this.loadVaultAnimation()
             }, 1000)
           }, 1000)
         }
