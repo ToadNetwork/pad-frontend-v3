@@ -930,10 +930,11 @@
         const tokenColors : any = {
           "Toad Network": "#66b535",
           "Lily Pad": "#bfed79",
+          "Glmr Pad": "#bfed79",
           "PARADOX NFT BSC": "#3ebbc2",
           "Wrapped BNB": "#f2d513",
           "BUSD Token": "#d98116",
-
+          "Wrapped GLMR": "#9970BA"
         }
 
         // Updating the pie chart
