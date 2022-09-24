@@ -81,12 +81,15 @@
     <br>
     <div class="launchpad-intro">
       <p class="please-read">
-        Collects backing for PAD from PadSwap fees.<br>
-        Backing can be redeemed by users at any time.
+        Collects backing for PAD. Redeem anytime.
       </p>
     </div>
 
-    <a href="https://docs.toad.network/fundamentals/the-vault" target="_blank">Learn More</a>
+    <v-btn
+    href="https://docs.toad.network/fundamentals/the-vault"
+    outlined
+    target="_blank"
+    >Learn More</v-btn>
     <br><br>
     <v-divider></v-divider>
     <br><br>
