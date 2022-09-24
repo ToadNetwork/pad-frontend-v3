@@ -86,7 +86,7 @@
       </p>
     </div>
 
-    <a href="https://docs.toad.network/fundamentals/the-vault" target="_blank">More on TOAD Wiki</a>
+    <a href="https://docs.toad.network/fundamentals/the-vault" target="_blank">Learn More</a>
     <br><br>
     <v-divider></v-divider>
     <br><br>
@@ -94,6 +94,15 @@
     <!--------------------------------------------->
     <!-- Fancy container with backing percentage -->
     <!--------------------------------------------->
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" style="display: none;">
+      <symbol id="wave">
+        <path d="M420,20c21.5-0.4,38.8-2.5,51.1-4.5c13.4-2.2,26.5-5.2,27.3-5.4C514,6.5,518,4.7,528.5,2.7c7.1-1.3,17.9-2.8,31.5-2.7c0,0,0,0,0,0v20H420z"></path>
+        <path d="M420,20c-21.5-0.4-38.8-2.5-51.1-4.5c-13.4-2.2-26.5-5.2-27.3-5.4C326,6.5,322,4.7,311.5,2.7C304.3,1.4,293.6-0.1,280,0c0,0,0,0,0,0v20H420z"></path>
+        <path d="M140,20c21.5-0.4,38.8-2.5,51.1-4.5c13.4-2.2,26.5-5.2,27.3-5.4C234,6.5,238,4.7,248.5,2.7c7.1-1.3,17.9-2.8,31.5-2.7c0,0,0,0,0,0v20H140z"></path>
+        <path d="M140,20c-21.5-0.4-38.8-2.5-51.1-4.5c-13.4-2.2-26.5-5.2-27.3-5.4C46,6.5,42,4.7,31.5,2.7C24.3,1.4,13.6-0.1,0,0c0,0,0,0,0,0l0,20H140z"></path>
+      </symbol>
+    </svg>
+
     <div style="display: inline-block;">
       <div class="vault-backing-section">
         <div class="vault-backing-container">
@@ -116,13 +125,22 @@
         <div class="vault-backing-outer">
           <div class="vault-backing-inner">
             <div class="vault-backing-liquid-container">
-              <div class="vault-backing-liquid" :style="'height:' + backingPercentage + '%'">
+              <div class="box" id="backing-animation">
+              <div class="percent">
+                <div class="percentNum" id="count">0%</div>
+                <div class="percentCaption">BACKED</div>
+              </div>
+              <div id="water" class="water">
+                <svg viewBox="0 0 560 20" class="water_wave water_wave_back">
+                  <use xlink:href="#wave"></use>
+                </svg>
+                <svg viewBox="0 0 560 20" class="water_wave water_wave_front">
+                  <use xlink:href="#wave"></use>
+                </svg>
               </div>
             </div>
-            <div class="backing-ratio-container">
-              <div class="backing-ratio-title">{{backingPercentage}}%</div>
-              <div class="backing-ratio-subtitle">Backing ratio</div>
             </div>
+           
           </div>
         </div>
         </div>
@@ -226,11 +244,12 @@
   <!--                                      -->
   <!------------------------------------------>
   <div class="text-center">
-    <div style="margin-left: 2%; max-width: 96%;">
+    <div>
       <v-row
       style="margin-bottom: 10px;"
       justify="center">
         <v-col
+        class="no-padding"
         cols="12"
         md="6">
           <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
@@ -250,36 +269,42 @@
         </v-col>
 
         <v-col
+        class="no-padding"
         cols="12"
         md="6">
           <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
             <h1 class="title">PAD Burned</h1>
             <br>
             <v-divider style="margin-bottom: 80px;"></v-divider>
-            <div
-            style="display: inline-block; border: 2px solid orange; height: 150px; width: 150px; text-align: center; margin-bottom: 25px; border-radius: 50%;">
-            <v-icon large
-            color="orange"
-            style="margin-bottom: 10px; margin-top: 15px;">
-              mdi-fire
-            </v-icon>
-            <h1 class="title">
-              {{biOrMiOrK(padBurned)}}<br>PAD
-            </h1>
+            <div style="height:200px;">
+              <div class="burn-counter-left">
+                <i aria-hidden="true" class="v-icon notranslate mdi mdi-fire theme--dark orange--text"></i>
+                <h1 class="title" style="margin-top: -7px;">{{round((padBurned/200000000000)*100, 2)}}%</h1>
+                <div style="line-height: 15px;font-size: 10px;">OF THE <br>TOTAL SUPPLY</div>
+              </div>
+              <div class="burn-counter-center"><i aria-hidden="true" class="v-icon notranslate mdi mdi-fire theme--dark orange--text" style="font-size: 36px; margin-bottom: 10px; margin-top: 39px;"></i><h1 data-v-193be130="" class="title"> 1.93BI<br data-v-193be130="">PAD </h1></div>
+              <div class="burn-counter-right">
+                <i aria-hidden="true" class="v-icon notranslate mdi mdi-fire theme--dark orange--text"></i>
+                <h1 class="title" style="margin-top: -7px;">{{round((padBurned/(padSupply/1e18))*100, 2)}}%</h1>
+                <div style="line-height: 15px;font-size: 10px;">OF THE <br>CIRC. SUPPLY</div>
+              </div>
             </div>
           </div>
         </v-col>
       </v-row>
     </div>
 
-    <div style="margin-left: 2%; max-width: 96%;">
+    <div>
       <v-row
       justify="center">
-        <v-col cols="12" md="6">
-          <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
+        <v-col
+        class="no-padding"
+        cols="12"
+        md="6">
+          <div class="fullwidth panel" style="max-width: 800px; height: 400px;">
             <h1 class="title">Inflation Rate</h1>
             <br>
-            <v-divider style="margin-bottom: 80px;"></v-divider>
+            <v-divider style="margin-bottom: 20px;"></v-divider>
             <div class="apexchart-container">
               <apexchart
               ref="inflation"
@@ -293,11 +318,14 @@
           </div>
         </v-col>
 
-        <v-col cols="12" md="6">
-          <div class="fullwidth panel" style="max-width: 800px; height: 100%;">
+        <v-col
+        class="no-padding"
+        cols="12"
+        md="6">
+          <div class="fullwidth panel" style="max-width: 800px; height: 400px;">
             <h1 class="title">PAD Supply</h1>
             <br>
-            <v-divider style="margin-bottom: 80px;"></v-divider>
+            <v-divider style="margin-bottom: 20px;"></v-divider>
             <div class="apexchart-container">
               <apexchart
               ref="supply"
@@ -594,8 +622,11 @@
         await this.loadVaultData()
         setTimeout(async () => {
           await this.getVaultLpValue()
-        }, 1000)
+          await this.scrollTo('backing-animation', 70)
+          await this.loadVaultAnimation()
       }, 1000)
+
+      },60);
     },
     async mounted () {
       while (this.active) {
@@ -687,9 +718,37 @@
       next()
     },
     methods: {
+      loadVaultAnimation() {
+          var cnt=document.getElementById("count")
+          var water=document.getElementById("water")
+          var percent=cnt.innerText.split('%')[0]
+          var interval;
+          interval=setInterval(()=>{ 
+            percent++
+            cnt.innerHTML = percent + '%'
+            water.style.transform='translate(0'+','+(100-percent)+'%)'
+            if(percent==Math.floor(this.backingPercentage)){
+              clearInterval(interval)
+            }
+          }, 140)
+      },
+
+      scrollTo(el, offset) {
+          var element = document.getElementById(el)
+          var headerOffset = offset
+          var elementPosition = element.getBoundingClientRect().top
+          var offsetPosition = elementPosition + window.pageYOffset - headerOffset
+          
+          window.scrollTo({
+              top: offsetPosition,
+              behavior: "smooth"
+          });  
+      },
+      
       setMax() {
         this.amount = Math.floor(this.userPadBalance)
       },
+
       async sync() {
           await this.syncLock.acquireAsync()
           try {
@@ -1007,7 +1066,9 @@
 
 <style src="../styles/style.css" />
 <style>
-  
+  html {
+    scroll-behavior: smooth;
+  } 
   /******************************************/
   /*                                        */
   /*           Apexcharts styling           */
@@ -1078,7 +1139,93 @@
   /* The fancy way to display vault backing */
   /*                                        */
   /******************************************/
+  *, *:before, *:after {
+    box-sizing: border-box;
+    outline: none;
+    }
 
+    body {
+    background:#020438;
+    font: 14px/1 'Open Sans', helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .box{
+    height: 500px;
+    width: 294px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #00f2ff33;
+    border-radius:1%;
+    overflow: hidden; 
+  }
+  .percentNum {
+    font-size: 50px;
+  }
+  .percentCaption {
+    line-height: 14px;
+    padding: 0;
+    font-size: 26px;
+  }
+  .percent{
+    position: absolute;
+    left: 0;
+    top: 44%;
+    z-index:3;
+    width: 100%;
+    height: 100%;
+    align-items:center;
+    justify-content:center; 
+    color:#fff;
+    font-size:64px;
+  }
+  .water{
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index:2;
+    width: 100%;
+    height: 100%;
+    transform: translate(0,100%);
+    background: #6bb535 !important;
+    transition: all .3s;
+  }
+  .wave{
+    width: 200%;
+    position: absolute;
+    bottom: 100%;
+  }
+
+  .water_wave_back {
+    width: 200%;
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    fill: #bfed79 !important;
+    animation: wave-back 1.6s infinite linear;
+  }
+  .water_wave_front {
+    width: 200%;
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    fill: #6bb535 !important;
+    margin-bottom: -1px;
+    animation: wave-front .8s infinite linear;
+  }
+  @keyframes wave-front {
+    100% {
+      transform: translate(-50%, 0);
+    }
+  }
+
+  @keyframes wave-back {
+    100% {
+      transform: translate(50%, 0);
+    }
+  }
   .vault-backing-section {
     display: inline-block;
     min-height: 500px;
@@ -1111,7 +1258,6 @@
 
   .vault-backing-liquid-container {
     position: relative;
-    transform: rotate(180deg);
     width: 100%;
     height: 100%;
   }
@@ -1182,30 +1328,6 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Adjusting the vault visual for smaller screen sizes */
-  @media screen and (max-width: 565px) {
-    .backing-hint-column {
-      display: none;
-    }
-  }
-
-  @media screen and (min-width: 565px) {
-    .vault-backing-section {
-      min-width: 515px;
-    }
-    .redeem-section {
-      margin: 0 60px;
-    }
-  }
-
-  @media screen and (min-width: 1262px) {
-    .main-panel {
-      min-width: 1000px;
-    }
-  }
-
-
-
   /******************************************/
   /*                                        */
   /*           General PAD stats            */
@@ -1230,6 +1352,127 @@
 
   .pad-stats-card p {
     font-size: 0.9em;
+  }
+  
+  .burn-counter-left {
+    z-index: 3;
+    background: #11141b;
+    position: absolute;
+    display: inline-block;
+    border: 2px solid orange;
+    height: 160px;
+    top: 210px;
+    left: 20px;
+    width: 160px;
+    text-align: center;
+    margin-bottom: 25px;
+    border-radius: 50%;
+  }
+
+  .burn-counter-center {
+    left: 143px;
+    display: inline-block;
+    border: 2px solid orange;
+    height: 200px;
+    width: 200px;
+    text-align: center;
+    margin-bottom: 25px;
+    border-radius: 50%;
+    position: absolute;
+  }
+
+  .burn-counter-right {
+    background: #11141b;
+    position: absolute;
+    display: inline-block;
+    border: 2px solid orange;
+    height: 160px;
+    top: 210px;
+    left: 310px;
+    width: 160px;
+    text-align: center;
+    margin-bottom: 25px; 
+    border-radius: 50%;
+  }
+  .burn-counter-left > i {
+      font-size: 36px; margin-bottom: 11px; margin-top: 23px;
+  }
+  .burn-counter-right > i {
+      font-size: 36px; margin-bottom: 11px; margin-top: 23px;
+  }
+  /* Adjusting the vault visual for smaller screen sizes */
+  @media screen and (max-width: 565px) {
+    .backing-hint-column {
+      display: none;
+    }
+
+    .box{
+      min-height: 400px !important;
+      height: 400px !important;
+      min-width: 240px !important;
+      width: 240px !important;
+    }
+
+    .vault-backing-outer {
+      min-height: 400px !important;
+      height: 400px !important;
+      min-width: 244px !important;
+      width: 244px !important;
+    }
+
+    .vault-backing-section {
+      min-height: 420px;
+    }
+
+    .burn-counter-left {
+      width: 130px;
+      height: 130px;
+    }
+
+    .burn-counter-center {
+      left: 102px;
+      height: 160px;
+      width: 160px;
+    }
+
+    .burn-counter-right {
+      left: 223px;
+      width: 130px;
+      height: 130px;
+    }
+
+    .burn-counter-left > i, .burn-counter-right > i {
+      margin-top: 10px;
+    }
+
+    .burn-counter-center > i {
+      margin-top: 22px;
+    }
+
+    .v-application .justify-center {
+      margin: 0px;
+      justify-content: center !important;
+      max-width: 100%;
+    }
+    .no-padding {
+      padding-left: 0px !important;
+      padding-right: 0px !important;
+    }
+  }
+
+  @media screen and (min-width: 565px) {
+    .vault-backing-section {
+      min-width: 515px;
+    }
+    .redeem-section {
+      margin: 0 60px;
+    }
+  }
+
+  @media screen and (min-width: 1262px) {
+    .main-panel {
+      min-width: 1000px;
+    }
   }
 
 </style>
