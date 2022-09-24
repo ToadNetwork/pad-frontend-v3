@@ -285,7 +285,7 @@
                 <h1 class="title" style="margin-top: -7px;">{{round((padBurned/200000000000)*100, 2)}}%</h1>
                 <div style="line-height: 15px;font-size: 10px;">OF THE <br>TOTAL SUPPLY</div>
               </div>
-              <div class="burn-counter-center"><i aria-hidden="true" class="v-icon notranslate mdi mdi-fire theme--dark orange--text" style="font-size: 36px; margin-bottom: 10px; margin-top: 39px;"></i><h1 data-v-193be130="" class="title"> 1.93BI<br data-v-193be130="">PAD </h1></div>
+              <div class="burn-counter-center"><i aria-hidden="true" class="v-icon notranslate mdi mdi-fire theme--dark orange--text" style="font-size: 36px; margin-bottom: 10px; margin-top: 39px;"></i><h1 data-v-193be130="" class="title"> {{biOrMiOrK(padBurned)}}<br data-v-193be130="">PAD </h1></div>
               <div class="burn-counter-right">
                 <i aria-hidden="true" class="v-icon notranslate mdi mdi-fire theme--dark orange--text"></i>
                 <h1 class="title" style="margin-top: -7px;">{{round((padBurned/(padSupply/1e18))*100, 2)}}%</h1>
@@ -973,7 +973,13 @@
 
         window.setInterval(() => this.getPadInfo(), 2000)
 
-        const burnStatsResponse = await axios.post('https://api.thegraph.com/subgraphs/name/toadguy/pad-token', {
+        let subgraphTokenIds = [
+          'pad-token',
+          'pad-token-movr',
+          'pad-token-glmr'
+        ]
+
+        const burnStatsResponse = await axios.post('https://api.thegraph.com/subgraphs/name/toadguy/' + subgraphTokenIds[this.ecosystemId], {
             query: `
             {
               tokens(address:"` + this.padAddress + `") {
