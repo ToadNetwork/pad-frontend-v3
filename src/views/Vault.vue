@@ -1014,17 +1014,32 @@
         
       },
       calculateCircSupply() {
-        let circulating = 10*1e9
         const maxSupply = 200*1e9
-        const mintRate = 0.0013
+
+        let circulating = 10*1e9
+        let mintRate = 0.0013
         let remainingSupply = 190*1e9
+        let launchDate = 1620490010
+
+        if (this.ecosystemId != 0) {
+          circulating = 20*1e9
+          remainingSupply = 180*1e9
+          mintRate = 0.0009
+        }
+        if (this.ecosystemId == 1) {
+          launchDate = 1635753600
+        }
+        if (this.ecosystemId == 2) {
+          launchDate = 1641888000
+        }
+
         const circSupply = []
         const inflationRate = []
         const mintedPerDay = []
         const remainingSupplyPerDay = []
         const arr = []
         for(let i = 0; i<= 3650; i++) {
-          const epoch = (1620490010 + i*86400) *1000
+          const epoch = (launchDate + i*86400) *1000
           // console.log(epoch)
           // console.log(i)
           arr[i] = i
@@ -1043,11 +1058,11 @@
             inflationChart.updateSeries([{
               data: inflationRate
             }]);
-            inflationChart.zoomX(new Date(1620490010 *1000).getTime(), new Date((1620490010 + 2*365*86400) *1000).getTime())
+            inflationChart.zoomX(new Date(launchDate *1000).getTime(), new Date((launchDate + 2*365*86400) *1000).getTime())
             supplyChart.updateSeries([{
               data: circSupply
             }]);
-            supplyChart.zoomX(new Date(1620490010 *1000).getTime(), new Date((1620490010 + 1*365*86400) *1000).getTime())
+            supplyChart.zoomX(new Date(launchDate *1000).getTime(), new Date((launchDate + 1*365*86400) *1000).getTime())
           }
         }
       },
