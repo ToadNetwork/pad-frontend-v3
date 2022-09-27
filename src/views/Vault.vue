@@ -934,8 +934,10 @@
           "PARADOX NFT BSC": "#3ebbc2",
           "Wrapped BNB": "#f2d513",
           "BUSD Token": "#d98116",
+          "Binance-Peg BUSD Token": "#d98116",
           "Wrapped GLMR": "#9970BA",
-          "USD Coin": "#6E94BA"
+          "USD Coin": "#6E94BA",
+          "Catoshi": "#627fa3"
         }
 
         // Updating the pie chart
@@ -945,7 +947,7 @@
         let smallBalances : number = 0
         let total : number = 0
         for (const [key, value]  of Object.entries(vaultData)) {
-          if (value as number >= 1000) {
+          if (value as number >= 500) {
             tokenLabels.push(key)
             tokenValues.push(value)
             if (key in tokenColors) {
