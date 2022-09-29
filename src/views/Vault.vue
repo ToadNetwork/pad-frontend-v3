@@ -931,11 +931,13 @@
           "Toad Network": "#66b535",
           "Lily Pad": "#bfed79",
           "Glmr Pad": "#bfed79",
+          "Movr Pad": "#bfed79",
           "PARADOX NFT BSC": "#3ebbc2",
           "Wrapped BNB": "#f2d513",
           "BUSD Token": "#d98116",
           "Binance-Peg BUSD Token": "#d98116",
           "Wrapped GLMR": "#9970BA",
+          "Wrapped MOVR": "#29709F",
           "USD Coin": "#6E94BA",
           "Catoshi": "#627fa3"
         }
