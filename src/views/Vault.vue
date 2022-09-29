@@ -719,7 +719,6 @@
     },
     methods: {
       loadVaultAnimation() {
-        console.log('starting animation')
           clearInterval(this.animationInterval)
           var cnt=document.getElementById("count")
           var water=document.getElementById("water")
@@ -1025,7 +1024,7 @@
             `
         })
         const padStats = JSON.parse(burnStatsResponse.request.response).data.tokens
-        // console.log(padStats)
+
         this.padBurned = parseFloat(padStats[0].totalBurned)
 
         this.vaultProcessed = true
@@ -1080,8 +1079,6 @@
         const arr = []
         for(let i = 0; i<= 3650; i++) {
           const epoch = (launchDate + i*86400) *1000
-          // console.log(epoch)
-          // console.log(i)
           arr[i] = i
           const mint = mintRate*remainingSupply
           circulating = circulating + mint
