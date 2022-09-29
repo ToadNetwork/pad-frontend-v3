@@ -612,19 +612,18 @@
 
         userTokenAllowance: <number> 0,
 
-        vaultProcessed: <boolean> false
+        vaultProcessed: <boolean> false,
+        
+        animationInterval: <number> 0
       }
     },
     created () {
-      setTimeout(async () => {
+      setTimeout(async ()=>{
         await this.loadVaultData()
-        setTimeout(async () => {
           await this.getVaultLpValue()
-          // await this.scrollTo('backing-animation', 120)
+          if(this.isMobile()) await this.scrollTo('backing-animation', 120)
           await this.loadVaultAnimation()
-      }, 1000)
-
-      },60);
+          },1)
     },
     async mounted () {
       while (this.active) {
@@ -680,7 +679,7 @@
               await this.loadVaultData()
               setTimeout(async () => {
               await this.getVaultLpValue()
-              // await this.scrollTo('backing-animation', 120)
+              if(this.isMobile()) await this.scrollTo('backing-animation', 120)
               await this.loadVaultAnimation()
             }, 1000)
           }, 1000)
@@ -720,23 +719,50 @@
     },
     methods: {
       loadVaultAnimation() {
+        console.log('starting animation')
+          clearInterval(this.animationInterval)
           var cnt=document.getElementById("count")
-          cnt.innerHTML = 0 + '%'
-
           var water=document.getElementById("water")
-          var percent=cnt.innerText.split('%')[0]
-          var interval;
-          interval=setInterval(()=>{ 
+          var percent=0
+          cnt.innerHTML = 0 + '%'
+          water.style.transform='translate(0, 100%)'
+       
+          this.animationInterval=setInterval(()=>{ 
             percent++
             cnt.innerHTML = percent + '%'
             var movementDirection = Math.sign(this.backingPercentage - percent)
             water.style.transform='translate(0'+','+(movementDirection * (100-percent) )+'%)'
             if(percent==Math.floor(this.backingPercentage)){
-              clearInterval(interval)
+              clearInterval(this.animationInterval)
             }
-          }, 40)
+          }, 50)
       },
-
+      async sleep(time) {
+        return new Promise(resolve => setTimeout(resolve, time))
+      },
+      isMobile() {
+        let hasTouchScreen = false
+        if ("maxTouchPoints" in navigator) {
+            hasTouchScreen = navigator.maxTouchPoints > 0
+        } else if ("msMaxTouchPoints" in navigator) {
+            hasTouchScreen = navigator.msMaxTouchPoints > 0
+        } else {
+            const mQ = window.matchMedia && matchMedia("(pointer:coarse)")
+            if (mQ && mQ.media === "(pointer:coarse)") {
+                hasTouchScreen = !!mQ.matches
+            } else if ('orientation' in window) {
+                hasTouchScreen = true // deprecated, but good fallback
+            } else {
+                // Only as a last resort, fall back to user agent sniffing
+                const UA = navigator.userAgent
+                hasTouchScreen = (
+                    /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+                    /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA)
+                )
+            }
+        }
+        return hasTouchScreen
+      },
       scrollTo(el, offset) {
           var element = document.getElementById(el)
           var headerOffset = offset
@@ -801,11 +827,12 @@
         let explorerName = chainExplorerNames[chain]
         return '<a href="' + explorerLink + this.contractAddress + '" target="_blank">View on ' + explorerName +'</a>'
       },
-      loadVaultData () {
+      async loadVaultData () {
         this.contractAddress = this.vault.address
         this.contractABI = this.vault.abi
         this.tokens = this.vault.tokens
         this.pairs = this.vault.pairs
+        return
       },
       async getVaultLpValue() {
 
@@ -931,11 +958,13 @@
           "Toad Network": "#66b535",
           "Lily Pad": "#bfed79",
           "Glmr Pad": "#bfed79",
+          "Movr Pad": "#bfed79",
           "PARADOX NFT BSC": "#3ebbc2",
           "Wrapped BNB": "#f2d513",
           "BUSD Token": "#d98116",
           "Binance-Peg BUSD Token": "#d98116",
           "Wrapped GLMR": "#9970BA",
+          "Wrapped MOVR": "#9970BA",
           "USD Coin": "#6E94BA",
           "Catoshi": "#627fa3"
         }
@@ -974,6 +1003,7 @@
         })
         backingChart.updateSeries(tokenValues)
 
+        this.getPadInfo()
         window.setInterval(() => this.getPadInfo(), 2000)
 
         let subgraphTokenIds = [
@@ -1003,6 +1033,7 @@
         if (!this.inflationCalculated) {
           this.calculateCircSupply()
         }
+        return
       },
       async getPadInfo() {
         // Getting PAD stats
