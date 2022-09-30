@@ -237,6 +237,12 @@
             Redeem
           </v-btn>
         </div>
+        <div v-if="amount"
+        style="width: 326px; display: inline-block; border: 1px solid rgb(235 99 99); color: rgb(255 108 108); border-radius: 15px; text-align: left; padding: 15px; margin: 20px 0; max-width: 400px; vertical-align: top;">
+          <span style="font-size:  0.8em;">
+            Warning: This value is an estimation, you will receive the backing in a variety of tokens and LP's.
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -638,7 +644,7 @@
     },
     watch: {
       amount() {
-        const expectedUSD : number = this.amount * this.padPrice
+        const expectedUSD : number = this.round((this.amount * this.padPrice* this.backingPercentage) / 100, 2)
         this.expected = '~' + expectedUSD.toString() + ' USD'
       }
     },
