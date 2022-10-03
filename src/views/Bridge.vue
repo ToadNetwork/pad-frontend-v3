@@ -650,8 +650,8 @@ export default Vue.extend({
   },
   async created() {
     const [response1, response2] = await Promise.all([
-      fetch('https://bridgeapi.anyswap.exchange/v2/serverInfo/chainid'),
-      fetch('https://bridgeapi.anyswap.exchange/v3/serverinfoV3?chainId=all')
+      fetch('https://bridgeapi.multichain.org/v2/serverInfo/chainid'),
+      fetch('https://bridgeapi.multichain.org/v3/serverinfoV3?chainId=all')
     ])
     this.anyswapV2Config = await response1.json()
     this.anyswapV3Config = await response2.json()
@@ -799,7 +799,7 @@ export default Vue.extend({
 
         let addedAnyswapOperation = false
         while (true) {
-          const response = await fetch(`https://bridgeapi.anyswap.exchange/v2/history/details?params=${tx.hash}`)
+          const response = await fetch(`https://bridgeapi.multichain.org/v2/history/details?params=${tx.hash}`)
           const operationStatus = await response.json()
           if (operationStatus.info &&
               operationStatus.info.txid &&
