@@ -2,11 +2,13 @@
     <v-dialog
       v-model="dialog"
       scrollable
-      max-width="500px"
+      max-width="700px"
+      color="rgb(18 58 41 / 86%)"
     >
       <template v-slot:activator="{ on, attrs }">
         <v-btn
-          color="primary"
+        rounded
+          color="green"
           dark
           v-bind="attrs"
           v-on="on"
@@ -20,16 +22,24 @@
           </v-icon>
         </v-btn>
       </template>
-      <v-card>
-        <v-card-title>Select token or paste address</v-card-title>
-        <v-text-field
+      <v-card
+      class="token-list-card"
+      color="#1a3223"
+      height="1000px"
+      outlined
+      style="border-radius: ;"
+      max-height="100vh">
+        <v-card-title>Select token</v-card-title>
+<!--         <v-text-field
         v-model='customTokenAddress'>
-        </v-text-field>
+        </v-text-field> -->
 
         <v-divider></v-divider>
         <v-card-text style="height: 300px;">
 
           <v-card v-for="tokenData in tokenWhitelist"
+          color="#315237"
+          style="margin: 10px 5px"
           @click="selectToken(tokenData)">
             <v-card-title>{{ tokenData.symbol }}</v-card-title>
             <v-card-subtitle>{{ tokenData.description }}</v-card-subtitle>
@@ -45,13 +55,13 @@
           >
             Close
           </v-btn>
-          <v-btn
+<!--           <v-btn
             color="blue darken-1"
             text
             @click=""
           >
             Confirm
-          </v-btn>
+          </v-btn> -->
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -128,5 +138,28 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+
+.token-list-card {
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #1c2e1d;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #429647;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #99ffbb;
+}
 
 </style>

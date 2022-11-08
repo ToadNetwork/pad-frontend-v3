@@ -42,6 +42,7 @@
     </div>
 
     <v-card
+    color="#00913340"
     style="display: inline-block; padding: 20px;"
     width="100%"
     max-width="600px">
@@ -50,7 +51,7 @@
       <!-- Input token -->
       <!----------------->
       <v-card
-      color="#004347">
+      color="#618b4233">
         <v-card-title>
           Spend &nbsp;
           <TokenSelector
@@ -81,7 +82,7 @@
       <!-- Output token -->
       <!------------------>
       <v-card
-      color="#004347">
+      color="#618b4233">
         <v-card-title>
           Receive &nbsp;
           <TokenSelector
@@ -99,6 +100,8 @@
         <v-card-actions>
           <v-text-field
           v-model="outputAmount"
+          disabled
+          readonly
           label="Amount to receive">
 
           </v-text-field>
@@ -108,8 +111,10 @@
       <br>
 
       <v-btn
+      block
+      color="green"
       @click="swap()">
-          SWAP
+        SWAP
       </v-btn>
     </v-card>
 
@@ -137,6 +142,12 @@ import {
 import { ChainId } from '@/ecosystem'
 
 import TokenSelector from '@/components/swap/TokenSelector.vue'
+
+const routerAddresses = {
+  56: '0x76437234D29f84D9A12820A137c6c6A719138C24', // BNB
+  1284: '0x40F1fEF0Fe68Fd10ff904070ee00a7769EE7fe34', // Moonbeam
+  1285: '0x790d4b443edB9ce9A8d1aEC585edd89E51132D2c' // Moonriver
+}
 
 export default Vue.extend({
     components: { 
@@ -179,13 +190,13 @@ export default Vue.extend({
           set(val: EcosystemId) {
             this.$store.commit('setEcosystemId', val)
             if (val == 0) {
-              setSwapEcosystem("BSC")
+              this.setSwapEcosystem("BSC")
             }
             else if (val == 1) {
-              setSwapEcosystem("MOVR")
+              this.setSwapEcosystem("MOVR")
             }
             else if (val == 2) {
-              setSwapEcosystem("GLMR")
+              this.setSwapEcosystem("GLMR")
             }
           }
         },
@@ -212,6 +223,9 @@ export default Vue.extend({
     },
     methods: {
         setSwapEcosystem(chain_id : string) {
+          this.routerContractAddress = routerAddresses[this.chainId]
+          this.setDefaultRoute()
+
           const urlParams = new URLSearchParams(window.location.search)
           const [action, token1, token2] = [urlParams.get('action'), urlParams.get('token1'), urlParams.get('token2')]
           let appendParameters = ''
@@ -224,6 +238,8 @@ export default Vue.extend({
               appendParameters = `#/?inputCurrency=${inputCurrency}&outputCurrency=${outputCurrency}`
             }
           }
+          this.updateTokenWhitelist()
+          this.updateTokenBalances()
         },
 
         setDefaultRoute() {
@@ -238,20 +254,44 @@ export default Vue.extend({
         },
 
         async updateInputToken(newInputToken) {
-            this.inputToken = newInputToken
+          if (newInputToken.address == this.outputToken.address) {
+            this.outputToken = this.inputToken
+          }
+          this.inputToken = newInputToken
         },
 
         async updateOutputToken(newOutputToken) {
-            this.outputToken = newOutputToken
+          if (newOutputToken.address == this.inputToken.address) {
+            this.inputToken = this.outputToken
+          }
+          this.outputToken = newOutputToken
+        },
+
+        switchSelectedTokens() {
+          var tmp = this.inputToken
+          this.inputToken = this.outputToken
+          this.outputToken = tmp
         },
 
         async updateTokenBalances() {
+          if (this.inputToken.address == 'eth') {
+            const ethBalanceBn = await this.multicall.getBalance(this.userAddress)
+            const ethBalance = ethers.utils.formatEther(ethBalanceBn)
+            this.inputTokenBalance = ethBalance
+          }
+          else {
             var tokenContract = new ethers.Contract(this.inputToken.address, ERC20_ABI, this.multicall)
 
             var tokenBalanceBn = await tokenContract.balanceOf(this.userAddress)
             var decimals = await tokenContract.decimals()
             var tokenBalance = ethers.utils.formatUnits(tokenBalanceBn, decimals)
             this.inputTokenBalance = tokenBalance
+          }
+        },
+
+
+        async updateOutputEstimation() {
+
         },
 
         swap() {
