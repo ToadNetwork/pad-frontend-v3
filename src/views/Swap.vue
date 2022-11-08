@@ -69,8 +69,8 @@
         <v-card-actions>
           <v-text-field
           v-model="inputAmount"
-          :label="'Amount to spend ' + '(max: ' + inputTokenBalance + ' ' + inputToken.symbol + ')'">
-
+          :label="'Amount to spend ' + '(max: ' + inputTokenBalance + ' ' + inputToken.symbol + ')'"
+          :suffix="inputToken.symbol">
           </v-text-field>
         </v-card-actions>
 
@@ -102,8 +102,8 @@
           v-model="outputAmount"
           disabled
           readonly
+          :suffix="outputToken.symbol"
           label="Amount to receive">
-
           </v-text-field>
         </v-card-actions>
       </v-card>
@@ -219,7 +219,15 @@ export default Vue.extend({
     watch: {
         inputToken() {
             this.updateTokenBalances()
+            this.updateOutputEstimation()
         },
+        outputToken() {
+            this.updateTokenBalances()
+            this.updateOutputEstimation()
+        },
+        inputAmount() {
+            this.updateOutputEstimation()
+        }
     },
     methods: {
         setSwapEcosystem(chain_id : string) {
@@ -240,6 +248,7 @@ export default Vue.extend({
           }
           this.updateTokenWhitelist()
           this.updateTokenBalances()
+          this.updateOutputEstimation()
         },
 
         setDefaultRoute() {
@@ -289,9 +298,37 @@ export default Vue.extend({
           }
         },
 
-
         async updateOutputEstimation() {
+          const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
+          const weth = await routerContract.WETH()
+
+          const amountInBn = ethers.utils.parseEther((0 + this.inputAmount).toString())
+
+          let inputToken = this.inputToken.address
+          if (inputToken == 'eth') {
+            inputToken = weth
+          }
+
+          let outputToken = this.outputToken.address
+          if (outputToken == 'eth') {
+            outputToken = weth
+          }
+
+          try {
+            const amountsOut = await routerContract.getAmountsOut(amountInBn, [inputToken, outputToken])
+
+            const amountOut0Bn = amountsOut[0] 
+            const amountOut1Bn = amountsOut[1]
+
+            const amountOut0 = ethers.utils.formatEther(amountOut0Bn)
+            const amountOut1 = ethers.utils.formatEther(amountOut1Bn)
+
+            this.outputAmount = amountOut1.toString()
+          }
+          catch {
+            this.outputAmount = ''
+          }
         },
 
         swap() {
@@ -309,8 +346,6 @@ export default Vue.extend({
         async swapTokensForTokens() {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
-            console.log(routerContract)
-
             const amountInBn = ethers.utils.parseEther(this.inputAmount)
             const minimumAmountOutBn = ethers.utils.parseEther('0')
 
@@ -322,10 +357,7 @@ export default Vue.extend({
         async swapTokensForEth() {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
-            console.log(routerContract)
-
             const weth = await routerContract.WETH()
-            console.log(weth)
 
             const amountInBn = ethers.utils.parseEther(this.inputAmount)
             const minimumAmountOutBn = ethers.utils.parseEther('0')
@@ -338,10 +370,7 @@ export default Vue.extend({
         async swapEthForTokens() {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
-            console.log(routerContract)
-
             const weth = await routerContract.WETH()
-            console.log(weth)
 
             const amountInBn = ethers.utils.parseEther(this.inputAmount)
             const minimumAmountOutBn = ethers.utils.parseEther('0')
