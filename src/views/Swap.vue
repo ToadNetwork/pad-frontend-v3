@@ -76,7 +76,19 @@
 
       </v-card>
 
-      <br>
+      <v-btn
+      color="white"
+      plain
+      fab
+      large
+      @click="switchSelectedTokens()">
+        <v-icon
+        large
+        dark
+        >
+        mdi-swap-vertical
+        </v-icon>
+      </v-btn>
 
       <!------------------>
       <!-- Output token -->
