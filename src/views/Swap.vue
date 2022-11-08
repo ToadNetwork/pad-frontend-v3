@@ -153,6 +153,7 @@ export default Vue.extend({
             inputAmount: <string> '',
             outputAmount: <string> '',
 
+            exactToken: '',
 
             tokenWhitelist: <array> [],
 
@@ -207,7 +208,7 @@ export default Vue.extend({
     watch: {
         inputToken() {
             this.updateTokenBalances()
-        }
+        },
     },
     methods: {
         setSwapEcosystem(chain_id : string) {
@@ -254,7 +255,15 @@ export default Vue.extend({
         },
 
         swap() {
+          if (this.inputToken.address == 'eth') {
+            this.swapEthForTokens()
+          }
+          else if (this.outputToken.address == 'eth') {
+            this.swapTokensForEth()
+          }
+          else {
             this.swapTokensForTokens()
+          }
         },
 
         async swapTokensForTokens() {
@@ -262,13 +271,48 @@ export default Vue.extend({
 
             console.log(routerContract)
 
-            const amountInBn = ethers.utils.parseEther(inputAmount)
+            const amountInBn = ethers.utils.parseEther(this.inputAmount)
             const minimumAmountOutBn = ethers.utils.parseEther('0')
 
             const tx = await routerContract.populateTransaction.swapExactTokensForTokens(amountInBn, minimumAmountOutBn, [this.inputToken.address, this.outputToken.address], this.userAddress, Date.now() + 1000 * 60 * 10)
 
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
+
+        async swapTokensForEth() {
+            const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
+
+            console.log(routerContract)
+
+            const weth = await routerContract.WETH()
+            console.log(weth)
+
+            const amountInBn = ethers.utils.parseEther(this.inputAmount)
+            const minimumAmountOutBn = ethers.utils.parseEther('0')
+
+            const tx = await routerContract.populateTransaction.swapExactTokensForETH(amountInBn, minimumAmountOutBn, [this.inputToken.address, weth], this.userAddress, Date.now() + 1000 * 60 * 10)
+
+            const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+        },
+
+        async swapEthForTokens() {
+            const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
+
+            console.log(routerContract)
+
+            const weth = await routerContract.WETH()
+            console.log(weth)
+
+            const amountInBn = ethers.utils.parseEther(this.inputAmount)
+            const minimumAmountOutBn = ethers.utils.parseEther('0')
+
+            const tx = await routerContract.populateTransaction.swapExactETHForTokens(minimumAmountOutBn, [weth, this.outputToken.address], this.userAddress, Date.now() + 1000 * 60 * 10)
+
+            tx.value = amountInBn
+
+            const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+        },
+
         ...mapActions(['requestConnect', 'safeSendTransaction'])
     }
 })
