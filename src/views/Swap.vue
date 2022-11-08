@@ -153,8 +153,6 @@ import {
     DEFAULT_SWAP_ROUTES
 } from '@/config/swap_token_whitelist'
 
-import { ChainId } from '@/ecosystem'
-
 import TokenSelector from '@/components/swap/TokenSelector.vue'
 
 const routerAddresses = {
@@ -170,20 +168,20 @@ export default Vue.extend({
     },
     data() {
         return {
-            inputToken: <object> {},
-            outputToken: <object> {},
+            inputToken: <any> {},
+            outputToken: <any> {},
 
-            inputTokenAllowance: <number> 0,
-            outputTokenAllowance: <number> 0,
+            inputTokenAllowance: <string> '0',
+            outputTokenAllowance: <string> '0',
 
-            inputTokenBalance: <number> 0,
+            inputTokenBalance: <string> '0',
 
             inputAmount: <string> '',
             outputAmount: <string> '',
 
             exactToken: '',
 
-            tokenWhitelist: <array> [],
+            tokenWhitelist: <any> [],
 
             tokenSelectionDialog: <boolean> false,
             selectedTokenAddress: <string> '',
@@ -287,14 +285,14 @@ export default Vue.extend({
             this.tokenWhitelist = currentChainWhitelist
         },
 
-        async updateInputToken(newInputToken) {
+        async updateInputToken(newInputToken : any) {
           if (newInputToken.address == this.outputToken.address) {
             this.outputToken = this.inputToken
           }
           this.inputToken = newInputToken
         },
 
-        async updateOutputToken(newOutputToken) {
+        async updateOutputToken(newOutputToken : any) {
           if (newOutputToken.address == this.inputToken.address) {
             this.inputToken = this.outputToken
           }
@@ -315,7 +313,7 @@ export default Vue.extend({
             const ethBalance = ethers.utils.formatEther(ethBalanceBn)
             this.inputTokenBalance = ethBalance
 
-            this.inputTokenAllowance = 99999999999999999999999999999999999999999999999999999999999.0
+            this.inputTokenAllowance = 99999999999999999999999999999999999999999999999999999999999.0.toString()
           }
           else {
             const tokenContract = new ethers.Contract(this.inputToken.address, ERC20_ABI, this.multicall)

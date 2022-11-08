@@ -644,7 +644,7 @@
     },
     watch: {
       amount() {
-        const expectedUSD : number = this.round((this.amount * this.padPrice* this.backingPercentage) / 100, 2)
+        const expectedUSD : number = this.round(( this.amount * this.padPrice * parseFloat(this.backingPercentage)) / 100, 2)
         this.expected = '~' + expectedUSD.toString() + ' USD'
       }
     },
@@ -678,7 +678,7 @@
         set(val: EcosystemId) {
           this.$store.commit('setEcosystemId', val)
           this.totalBacking = 0
-          this.backingPercentage = 0
+          this.backingPercentage = '0'
           this.mcap = 0
           this.vaultProcessed = false
           setTimeout(async () => {
@@ -729,27 +729,29 @@
           var cnt=document.getElementById("count")
           var water=document.getElementById("water")
           var percent=0
-          cnt.innerHTML = 0 + '%'
-          water.style.transform='translate(0, 100%)'
+          cnt!.innerHTML = 0 + '%'
+          water!.style!.transform='translate(0, 100%)'
        
-          this.animationInterval=setInterval(()=>{ 
+          this.animationInterval = parseFloat( setInterval(()=>{ 
             percent++
-            cnt.innerHTML = percent + '%'
-            var movementDirection = Math.sign(this.backingPercentage - percent)
-            water.style.transform='translate(0'+','+(movementDirection * (100-percent) )+'%)'
-            if(percent==Math.floor(this.backingPercentage)){
+            cnt!.innerHTML = percent + '%'
+            var movementDirection = Math.sign( parseFloat(this.backingPercentage) - percent)
+            water!.style!.transform='translate(0'+','+(movementDirection * (100-percent) )+'%)'
+            if(percent==Math.floor(parseFloat(this.backingPercentage))){
               clearInterval(this.animationInterval)
             }
-          }, 50)
+          }, 50).toString() )
       },
-      async sleep(time) {
+      async sleep(time : any) {
         return new Promise(resolve => setTimeout(resolve, time))
       },
       isMobile() {
         let hasTouchScreen = false
         if ("maxTouchPoints" in navigator) {
+            // @ts-ignore
             hasTouchScreen = navigator.maxTouchPoints > 0
         } else if ("msMaxTouchPoints" in navigator) {
+            // @ts-ignore
             hasTouchScreen = navigator.msMaxTouchPoints > 0
         } else {
             const mQ = window.matchMedia && matchMedia("(pointer:coarse)")
@@ -759,6 +761,7 @@
                 hasTouchScreen = true // deprecated, but good fallback
             } else {
                 // Only as a last resort, fall back to user agent sniffing
+                // @ts-ignore
                 const UA = navigator.userAgent
                 hasTouchScreen = (
                     /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
@@ -768,10 +771,10 @@
         }
         return hasTouchScreen
       },
-      scrollTo(el, offset) {
+      scrollTo(el : any, offset : any) {
           var element = document.getElementById(el)
           var headerOffset = offset
-          var elementPosition = element.getBoundingClientRect().top
+          var elementPosition = element!.getBoundingClientRect()!.top
           var offsetPosition = elementPosition + window.pageYOffset - headerOffset
           
           window.scrollTo({

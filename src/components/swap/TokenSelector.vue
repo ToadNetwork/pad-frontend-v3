@@ -72,14 +72,12 @@ import Vue from 'vue'
 import { mapActions } from 'vuex'
 
 import { ethers } from 'ethers'
-import { EcosystemId, ECOSYSTEMS, ChainId } from '@/ecosystem'
+import { IEcosystem, EcosystemId, ECOSYSTEMS, ChainId } from '@/ecosystem'
 
 import {
     ERC20_ABI,
     SWAP_ROUTER_ABI
 } from '@/constants'
-
-import { ChainId } from '@/ecosystem'
 
 export default Vue.extend({
   name: 'TokenSelector',
@@ -116,19 +114,18 @@ export default Vue.extend({
 
   },
   watch: {
-    tokenWhitelist(newWhitelist) {
+    tokenWhitelist(newWhitelist : any) {
       this.updateWhitelist()
     }
   },
   methods: {
     updateWhitelist() {
-      this.tokenWhitelist.forEach((tokenData) => {
+      this.tokenWhitelist.forEach((tokenData : any) => {
         
       })
     },
 
-    selectToken(tokenData) {
-      this.selectedToken = tokenData
+    selectToken(tokenData : any) {
       this.$emit('tokenSelected', tokenData)
       this.dialog = false
     },
