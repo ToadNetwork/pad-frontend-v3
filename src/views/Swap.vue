@@ -110,12 +110,25 @@
 
       <br>
 
-      <v-btn
-      block
-      color="green"
-      @click="swap()">
-        SWAP
-      </v-btn>
+      <div
+      v-if="tokensApproved">
+        <v-btn
+        block
+        color="green"
+        @click="swap()">
+          SWAP
+        </v-btn>
+      </div>
+      <div
+      v-else>
+        <v-btn
+        block
+        color="#afa449"
+        @click="approve()">
+          APPROVE
+        </v-btn>
+      </div>
+
     </v-card>
 
   </v-container>
@@ -131,7 +144,8 @@ import SliderTabs from '@/components/SliderTabs.vue'
 
 import {
     ERC20_ABI,
-    SWAP_ROUTER_ABI
+    SWAP_ROUTER_ABI,
+    APPROVE_AMOUNT
 } from '@/constants'
 
 import {
@@ -158,6 +172,9 @@ export default Vue.extend({
         return {
             inputToken: <object> {},
             outputToken: <object> {},
+
+            inputTokenAllowance: <number> 0,
+            outputTokenAllowance: <number> 0,
 
             inputTokenBalance: <number> 0,
 
@@ -215,6 +232,14 @@ export default Vue.extend({
         chainId(): ChainId {
           return this.$store.getters.ecosystem.chainId
         },
+        tokensApproved(): boolean {
+          if ((parseFloat(this.inputAmount) > 0 && parseFloat(this.inputTokenAllowance) < parseFloat(this.inputAmount))) {
+            return false
+          }
+          else {
+            return true
+          }
+        }
     },
     watch: {
         inputToken() {
@@ -284,18 +309,26 @@ export default Vue.extend({
 
         async updateTokenBalances() {
           if (this.inputToken.address == 'eth') {
+            const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
+
             const ethBalanceBn = await this.multicall.getBalance(this.userAddress)
             const ethBalance = ethers.utils.formatEther(ethBalanceBn)
             this.inputTokenBalance = ethBalance
+
+            this.inputTokenAllowance = 99999999999999999999999999999999999999999999999999999999999.0
           }
           else {
-            var tokenContract = new ethers.Contract(this.inputToken.address, ERC20_ABI, this.multicall)
+            const tokenContract = new ethers.Contract(this.inputToken.address, ERC20_ABI, this.multicall)
 
-            var tokenBalanceBn = await tokenContract.balanceOf(this.userAddress)
-            var decimals = await tokenContract.decimals()
-            var tokenBalance = ethers.utils.formatUnits(tokenBalanceBn, decimals)
+            const tokenBalanceBn = await tokenContract.balanceOf(this.userAddress)
+            const decimals = await tokenContract.decimals()
+            const tokenBalance = ethers.utils.formatUnits(tokenBalanceBn, decimals)
             this.inputTokenBalance = tokenBalance
+
+            const tokenAllowanceBn = await tokenContract.allowance(this.userAddress, this.routerContractAddress)
+            this.inputTokenAllowance = ethers.utils.formatUnits(tokenAllowanceBn, decimals)
           }
+          console.log(this.inputTokenAllowance)
         },
 
         async updateOutputEstimation() {
@@ -331,7 +364,7 @@ export default Vue.extend({
           }
         },
 
-        swap() {
+        async swap() {
           if (this.inputToken.address == 'eth') {
             this.swapEthForTokens()
           }
@@ -341,6 +374,13 @@ export default Vue.extend({
           else {
             this.swapTokensForTokens()
           }
+        },
+
+        async approve() {
+          const inputTokenContract = new ethers.Contract(this.inputToken.address, ERC20_ABI, this.multicall)
+
+          const tx = await inputTokenContract.populateTransaction.approve(this.routerContractAddress, APPROVE_AMOUNT)
+          await this.safeSendTransaction({ tx, targetChainId: this.ecosystem.chainId})
         },
 
         async swapTokensForTokens() {
