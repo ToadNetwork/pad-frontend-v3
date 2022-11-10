@@ -2,79 +2,116 @@
   <v-container
   class="text-center">
 
-    <!-------------------------------->
-    <!-- Ecosystem selection slider -->
-    <!-------------------------------->
-    <div class="padswap-header-box">
-      <slider-tabs
-        class="padswap-ecosystem-tabs"
-        v-model="ecosystemId"
-      >
-        <v-tab class="d-flex flex-column">
-          <v-img
-            height="30"
-            width="30"
-            contain
-            src="../assets/tokens/bsc/PAD.svg"
-          />
-          <div>BSC</div>
-        </v-tab>
-        <v-tab class="d-flex flex-column">
-          <v-img
-            height="30"
-            width="30"
-            contain
-            src="../assets/tokens/moonriver/PAD.svg"
-          />
-          <div>Moonriver</div>
-        </v-tab>
-        <v-tab class="d-flex flex-column">
-          <v-img
-            height="30"
-            width="30"
-            contain
-            src="../assets/tokens/moonbeam/PAD.svg"
-          />
-          <div>Moonbeam</div>
-        </v-tab>
-      </slider-tabs>
-      <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
-    </div>
+    <v-card
+    color="#00913340"
+    style="display: inline-block; padding: 20px;"
+    width="100%"
+    max-width="600px">
 
+      <!------------->
+      <!-- Token A -->
+      <!------------->
+      <v-card
+      color="#618b4233">
+        <v-card-title>
+          Token A &nbsp;
+          <TokenSelector
+          v-bind:selectedToken="tokenA"
+          v-bind:tokenWhitelist="tokenWhitelist"
+          @tokenSelected="(newTokenData) => updateTokenA(newTokenData)"/>
+        </v-card-title>
 
-    <!----------------------------------->
-    <!-- Liquidity pairs owned by user -->
-    <!----------------------------------->
-    <v-card>
+        <v-card-subtitle>
+        </v-card-subtitle>
 
-      <v-card-title>
-        Your liquidity
-      </v-card-title>
+        <v-card-text>
+        </v-card-text>
 
-      <template v-if="loadingPairsOwnedByUser == true">
-        Loading pairs, please wait...
-      </template>
+        <v-card-actions>
+          <v-text-field
+          v-model="amountTokenA"
+          :label="'Token 1 to add ' + '(max: ' + inputTokenBalance + ' ' + tokenA.symbol + ')'"
+          :suffix="tokenA.symbol">
+          </v-text-field>
+        </v-card-actions>
 
-      <template v-else-if="pairsOwnedByUser.length == 0">
-        You don't own any liquidity on the selected chain.<br>
-        You can add liquidity below, or use the ecosystem slider to check other chains.
-      </template>
+      </v-card>
 
-      <template v-else>
-        <v-card
-        v-for="pairData in pairsOwnedByUser"
+      <v-btn
+      color="white"
+      plain
+      fab
+      large
+      @click="switchSelectedTokens()">
+        <v-icon
+        large
+        dark
         >
-          <v-card-title>
-            {{ pairData.token0.symbol }} - {{ pairData.token1.symbol }}
-          </v-card-title>
-        </v-card>
-      </template>
+        mdi-swap-vertical
+        </v-icon>
+      </v-btn>
+
+      <!------------->
+      <!-- Token B -->
+      <!------------->
+      <v-card
+      color="#618b4233">
+        <v-card-title>
+          Token B &nbsp;
+          <TokenSelector
+          v-bind:selectedToken="tokenB"
+          v-bind:tokenWhitelist="tokenWhitelist"
+          @tokenSelected="(newTokenData) => updateTokenB(newTokenData)"/>
+        </v-card-title>
+
+        <v-card-subtitle>
+        </v-card-subtitle>
+
+        <v-card-text>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-text-field
+          v-model="amountTokenB"
+          :suffix="tokenB.symbol"
+          label="Token 2 to add">
+          </v-text-field>
+        </v-card-actions>
+      </v-card>
+
+      <br>
+
+      <div
+      v-if="!tokenAisApproved || !tokenBisApproved">
+
+        <v-btn
+        v-if="!tokenAisApproved"
+        block
+        color="#afa449"
+        @click="approve('tokenA')">
+          APPROVE {{ tokenA.symbol }}
+        </v-btn>
+
+        <v-btn
+        v-if="!tokenBisApproved"
+        block
+        color="#afa449"
+        @click="approve('tokenB')">
+          APPROVE {{ tokenB.symbol }}
+        </v-btn>
+
+      </div>
+      <div
+      v-else>
+        <v-btn
+        block
+        color="green"
+        @click="addLiquidity()">
+          Add {{ tokenA.symbol }}-{{ tokenB.symbol }} liquidity
+        </v-btn>
+      </div>
 
     </v-card>
-
-
-    <AddLiquidity/>
-  
 
   </v-container>
 </template>
@@ -85,9 +122,6 @@ import { mapActions } from 'vuex'
 
 import { ethers } from 'ethers'
 import { IEcosystem, EcosystemId, ECOSYSTEMS, ChainId } from '@/ecosystem'
-import SliderTabs from '@/components/SliderTabs.vue'
-
-import AddLiquidity from '@/components/swap/AddLiquidity.vue'
 
 import {
     ERC20_ABI,
@@ -111,10 +145,9 @@ const routerAddresses = {
 }
 
 export default Vue.extend({
+    name: 'AddLiquidity',
     components: { 
         TokenSelector,
-        SliderTabs,
-        AddLiquidity
     },
     data() {
         return {
@@ -155,7 +188,8 @@ export default Vue.extend({
         }
     },
     created() {
-      this.updatePairsOwnedByUser()
+      this.updateTokenWhitelist()
+      this.setDefaultRoute()
     },
     computed: {
         ecosystemId: {
@@ -164,15 +198,7 @@ export default Vue.extend({
           },
           set(val: EcosystemId) {
             this.$store.commit('setEcosystemId', val)
-            if (val == 0) {
-              this.setSwapEcosystem("BSC")
-            }
-            else if (val == 1) {
-              this.setSwapEcosystem("MOVR")
-            }
-            else if (val == 2) {
-              this.setSwapEcosystem("GLMR")
-            }
+            this.updateTokenWhitelist()
           }
         },
         userAddress(): string {
@@ -197,74 +223,58 @@ export default Vue.extend({
           else {
             return true
           }
+        },
+        tokenAisApproved(): boolean {
+          return true
+        },
+        tokenBisApproved(): boolean{
+          return true
         }
     },
     watch: {
-        inputToken() {
+        tokenA() {
             this.updateTokenBalances()
-            this.updateOutputEstimation()
         },
-        outputToken() {
+        tokenB() {
             this.updateTokenBalances()
-            this.updateOutputEstimation()
         },
-        inputAmount() {
-            this.updateOutputEstimation()
-        }
     },
     methods: {
-        setSwapEcosystem(chain_id : string) {
-          this.routerContractAddress = routerAddresses[this.chainId]
-          this.setDefaultRoute()
-
-          const urlParams = new URLSearchParams(window.location.search)
-          const [action, token1, token2] = [urlParams.get('action'), urlParams.get('token1'), urlParams.get('token2')]
-          let appendParameters = ''
-          if(action) {
-            appendParameters = `#/${action}/${token1}/${token2}`
-          } else {
-            const inputCurrency = urlParams.get('inputCurrency')
-            const outputCurrency = urlParams.get('outputCurrency')
-            if (inputCurrency || outputCurrency) {
-              appendParameters = `#/?inputCurrency=${inputCurrency}&outputCurrency=${outputCurrency}`
-            }
-          }
-
-
-          this.updatePairsOwnedByUser()
-          this.updateTokenWhitelist()
-        },
-
         setDefaultRoute() {
             var currentChainDefaults = DEFAULT_SWAP_ROUTES[this.chainId]
-            this.inputToken = currentChainDefaults.inputToken
-            this.outputToken = currentChainDefaults.outputToken
+            this.tokenA = currentChainDefaults.inputToken
+            this.tokenB = currentChainDefaults.outputToken
         },
+
 
         updateTokenWhitelist() {
             var currentChainWhitelist = WHITELIST[this.chainId]
             this.tokenWhitelist = currentChainWhitelist
         },
 
-        async updateInputToken(newInputToken : any) {
-          if (newInputToken.address == this.outputToken.address) {
-            this.outputToken = this.inputToken
+
+        async updateTokenA(newToken : any) {
+          if (newToken.address == this.tokenB.address) {
+            this.tokenB = this.tokenA
           }
-          this.inputToken = newInputToken
+          this.tokenA = newToken
         },
 
-        async updateOutputToken(newOutputToken : any) {
-          if (newOutputToken.address == this.inputToken.address) {
-            this.inputToken = this.outputToken
+
+        async updateTokenB(newToken : any) {
+          if (newToken.address == this.tokenA.address) {
+            this.tokenA = this.tokenB
           }
-          this.outputToken = newOutputToken
+          this.tokenB = newToken
         },
+
 
         switchSelectedTokens() {
-          var tmp = this.inputToken
-          this.inputToken = this.outputToken
-          this.outputToken = tmp
+          var tmp = this.tokenA
+          this.tokenA = this.tokenB
+          this.tokenB = tmp
         },
+
 
         async updateTokenBalances() {
           if (this.inputToken.address == 'eth') {
@@ -288,6 +298,7 @@ export default Vue.extend({
             this.inputTokenAllowance = ethers.utils.formatUnits(tokenAllowanceBn, decimals)
           }
         },
+
 
         async updateOutputEstimation() {
           const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
@@ -322,18 +333,6 @@ export default Vue.extend({
           }
         },
 
-        async swap() {
-          if (this.inputToken.address == 'eth') {
-            this.swapEthForTokens()
-          }
-          else if (this.outputToken.address == 'eth') {
-            this.swapTokensForEth()
-          }
-          else {
-            this.swapTokensForTokens()
-          }
-        },
-
 
         async addLiquidity() {
           if (this.tokenA.address == 'eth' || this.tokenB.address == 'eth') {
@@ -349,8 +348,18 @@ export default Vue.extend({
         },
 
 
-        async approve() {
-          const inputTokenContract = new ethers.Contract(this.inputToken.address, ERC20_ABI, this.multicall)
+        // Approves either tokenA or tokenB, depending on whether the argument received
+        // is 'tokenA' or something else
+        async approve(tokenID : string) {
+          let tokenAddress : toString
+          if (tokenID == 'tokenA') {
+            tokenAddress = this.tokenA.address
+          }
+          else {
+            tokenAddress = this.tokenB.address
+          }
+
+          const inputTokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, this.multicall)
 
           const tx = await inputTokenContract.populateTransaction.approve(this.routerContractAddress, APPROVE_AMOUNT)
           await this.safeSendTransaction({ tx, targetChainId: this.ecosystem.chainId})
@@ -367,7 +376,7 @@ export default Vue.extend({
             const amountAMin = ethers.utils.parseEther('0')
             const amountBMin = ethers.utils.parseEther('0')
 
-            const tx = await routerContract.populateTransaction.swapExactTokensForTokens(
+            const tx = await routerContract.populateTransaction.addLiquidity(
               this.tokenA.address,
               this.tokenB.address,
               amountADesired,
@@ -379,6 +388,7 @@ export default Vue.extend({
 
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
+
 
         // Adds TokenA-ETH liquidity
         async addLiquidityETH() {
@@ -394,14 +404,15 @@ export default Vue.extend({
             const amountETHMin = ethers.utils.parseEther('0')
             const amountTokenMin = ethers.utils.parseEther('0')
 
-            const tx = await routerContract.populateTransaction.swapExactTokensForETH(
-              amountETHDesired,
+            const tx = await routerContract.populateTransaction.addLiquidityETH(
               this.tokenB.address,
               amountTokenDesired,
               amountTokenMin,
               amountETHMin,
               this.userAddress,
               Date.now() + 1000 * 60 * 10)
+
+            tx.value = amountETHDesired
 
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
@@ -428,134 +439,6 @@ export default Vue.extend({
         async removeLiquidityETH() {
 
         },
-
-        async updatePairsOwnedByUser() {
-          this.loadingPairsOwnedByUser = true
-          const pairs = await this.getBasicInfoAboutPairsOwnedByUser()
-          await this.fillPairsWithInfo(pairs)
-          this.pairsOwnedByUser = pairs
-          this.loadingPairsOwnedByUser = false
-        },
-
-
-        // Returns an array of addresses of all PadSwap liquidity pairs
-        // that exist on the currently selected chain
-        async getAllPairAddresses() {
-            const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
-            const factoryAddress = await routerContract.factory()
-
-            const factoryContract = new ethers.Contract(factoryAddress, SWAP_FACTORY_ABI, this.multicall)
-
-            const allPairsLength = await factoryContract.allPairsLength()
-
-            let promises = []
-            let pairContractAddresses : Array<string> = []
-            for (let i = 0; i < allPairsLength; i++) {
-              const p = factoryContract.allPairs(i).then((res : any) => pairContractAddresses.push(res))
-              promises.push(p)
-            }
-            await Promise.all(promises)
-
-            return pairContractAddresses
-        },
-
-
-        // Iterates through all liquidity pairs that exist on current chain
-        // and returns an array of objects for pairs owned by the user.
-        //
-        // Objects in this array will only have the pair address and user balance,
-        // the rest of the info is filled by fillPairs()
-        async getBasicInfoAboutPairsOwnedByUser() {
-          const allPairs = await this.getAllPairAddresses()
-
-          let promises = []
-          let pairs = []
-
-          for (let i = 0; i < allPairs.length; i++) {
-            const pairContract = new ethers.Contract(allPairs[i], PADSWAP_PAIR_ABI, this.multicall)
-
-            const pUserBalance = pairContract.balanceOf(this.userAddress).then((res : ethers.BigNumber) => {
-              const balance = ethers.utils.formatEther(res)
-              if (balance > 0.0) {
-                let pairData = {
-                  address: allPairs[i],
-                  userBalance: balance
-                }
-                pairs.push(pairData)
-              }
-            })
-            promises.push(pUserBalance)
-          }
-          await Promise.all(promises)
-          return pairs
-        },
-
-
-        // Takes an array of pairData objects with pair addresses,
-        // and fills these objects with all relevant info about these pairs
-        async fillPairsWithInfo(pairs : Array<any>) {
-          let promises : Array<any> = []
-
-          for (let i = 0; i < pairs.length; i++) {
-            const pairData = pairs[i]
-            const p = this.fillPairData(pairData)
-            promises.push(p)
-          }
-          await Promise.all(promises)
-        },
-
-
-        // Retrieves the basic token info given a contract address.
-        // Returns a dictionary-like object with token data.
-        async getTokenData(contractAddress : string) {
-          let tokenData : any = {
-            address: '',
-            name: '',
-            symbol: '',
-            decimals: '',
-          }
-          const tokenContract = new ethers.Contract(contractAddress, ERC20_ABI, this.multicall)
-
-          tokenData.address = contractAddress
-
-          const p1 = tokenContract.name().then((result : any) => tokenData.name = result)
-          const p2 = tokenContract.symbol().then((result : any) => tokenData.symbol = result)
-          const p3 = tokenContract.decimals().then((result : any) => tokenData.decimals = result)
-
-          const promises = [p1, p2, p3]
-          await Promise.all(promises)
-
-          return tokenData
-        },
-
-
-        // Takes the pairData object that has an 'address' parameter,
-        // fills it with all relevant data about the pair and the tokens in it
-        // including the token info for both tokens in the pair
-        //
-        // Doesn't return anything, as it operates on existing pairData objects
-        async fillPairData(pairData : any) {
-          const pairContract = new ethers.Contract(pairData.address, PADSWAP_PAIR_ABI, this.multicall)
-
-          let token0Address : string = ''
-          let token1Address : string = ''
-
-          const p1 = pairContract.name().then((result : any) => pairData.name = result)
-          const p2 = pairContract.symbol().then((result : any) => pairData.symbol = result)
-          const p3 = pairContract.decimals().then((result : any) => pairData.decimals = result)
-          const p4 = pairContract.token0().then((result : any) => token0Address = result)
-          const p5 = pairContract.token1().then((result : any) => token1Address = result)
-
-          const promises = [p1, p2, p3, p4, p5]
-          await Promise.all(promises)
-
-          const pToken0 = this.getTokenData(token0Address).then((result : any) => pairData.token0 = result)
-          const pToken1 = this.getTokenData(token1Address).then((result : any) => pairData.token1 = result)
-          const tokenDataPromises = [pToken0, pToken1]
-          await Promise.all(tokenDataPromises)
-        },
-
-
 
         ...mapActions(['requestConnect', 'safeSendTransaction'])
     }
