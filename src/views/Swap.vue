@@ -143,6 +143,14 @@
 
     </v-card>
 
+    <br>
+
+    <v-btn
+    plain
+    href="/liquidity">
+      Add/remove liquidity
+    </v-btn>
+
   </v-container>
 </template>
 
