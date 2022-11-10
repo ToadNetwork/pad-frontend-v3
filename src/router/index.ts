@@ -44,6 +44,11 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/Swap.vue')
   },
   {
+    path: '/liquidity',
+    name: 'Manage liquidity',
+    component: () => import('../views/Liquidity.vue')
+  },
+  {
     path: '/vault',
     name: 'Vault',
     component: () => import('../views/Vault.vue')
