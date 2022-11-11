@@ -42,10 +42,43 @@
     </div>
 
 
+    <v-sheet
+    style="border-radius: 30px; overflow: hidden;"
+    min-height="1000px"
+    elevation="10">
+
+    <v-tabs
+      v-model="tab"
+      background-color="#171326"
+      color="#00ff1f"
+      centered
+      dark
+      icons-and-text
+    >
+
+      <v-tabs-slider></v-tabs-slider>
+
+      <v-tab
+      href="#your-liquidity">
+        Your liquidity
+        <v-icon>mdi-account-lock-outline</v-icon>
+      </v-tab>
+
+      <v-tab href="#add-liquidity">
+        Add liquidity
+        <v-icon>mdi-database-plus</v-icon>
+      </v-tab>
+    </v-tabs>
+
+    <v-divider>
+    </v-divider>
+
+
     <!----------------------------------->
     <!-- Liquidity pairs owned by user -->
     <!----------------------------------->
-    <v-card>
+    <v-card
+    v-if="tab == 'your-liquidity'">
 
       <v-card-title>
         Your liquidity
@@ -73,7 +106,11 @@
     </v-card>
 
 
-    <AddLiquidity/>
+    <AddLiquidity
+    v-if="tab == 'add-liquidity'"/>
+
+
+    </v-sheet>
   
 
   </v-container>
@@ -118,6 +155,9 @@ export default Vue.extend({
     },
     data() {
         return {
+
+            tab: <string> 'your-liquidity',
+
             pairsOwnedByUser: <any> [],
             loadingPairsOwnedByUser: <boolean> true,
 
