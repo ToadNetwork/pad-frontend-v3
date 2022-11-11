@@ -95,11 +95,34 @@
 
       <template v-else>
         <v-card
+        color="#103418"
+        elevation="10"
+        style="margin: 10px 0"
         v-for="pairData in pairsOwnedByUser"
         >
           <v-card-title>
             {{ pairData.token0.symbol }} - {{ pairData.token1.symbol }}
           </v-card-title>
+          <v-card-subtitle>
+          </v-card-subtitle>
+
+          <v-card-text>
+            {{ pairData.token0.symbol }} : {{ pairData.token0.userBalance }}, {{ pairData.token0.userBalanceInUSD }} USD
+            <br>
+
+            {{ pairData.token1.symbol }} : {{ pairData.token1.userBalance }}, {{ pairData.token1.userBalanceInUSD }} USD
+          </v-card-text>
+
+          <v-card-actions>
+            <v-text-field
+            label="Remove liquidity">
+              <template v-slot:append>
+                <v-btn>
+                  MAX
+                </v-btn>
+              </template>
+            </v-text-field>
+          </v-card-actions>
         </v-card>
       </template>
 
@@ -195,7 +218,9 @@ export default Vue.extend({
         }
     },
     created() {
-      this.updatePairsOwnedByUser()
+      setTimeout(() => {
+          this.updatePairsOwnedByUser()
+      }, "1000")
     },
     computed: {
         ecosystemId: {
@@ -237,7 +262,10 @@ export default Vue.extend({
           else {
             return true
           }
-        }
+        },
+        priceModel(): any {
+          return this.$store.getters.ecosystem.priceModel
+        },
     },
     watch: {
         inputToken() {
@@ -255,219 +283,24 @@ export default Vue.extend({
     methods: {
         setSwapEcosystem(chain_id : string) {
           this.routerContractAddress = routerAddresses[this.chainId]
-          this.setDefaultRoute()
 
-          const urlParams = new URLSearchParams(window.location.search)
-          const [action, token1, token2] = [urlParams.get('action'), urlParams.get('token1'), urlParams.get('token2')]
-          let appendParameters = ''
-          if(action) {
-            appendParameters = `#/${action}/${token1}/${token2}`
-          } else {
-            const inputCurrency = urlParams.get('inputCurrency')
-            const outputCurrency = urlParams.get('outputCurrency')
-            if (inputCurrency || outputCurrency) {
-              appendParameters = `#/?inputCurrency=${inputCurrency}&outputCurrency=${outputCurrency}`
-            }
-          }
+          // const urlParams = new URLSearchParams(window.location.search)
+          // const [action, token1, token2] = [urlParams.get('action'), urlParams.get('token1'), urlParams.get('token2')]
+          // let appendParameters = ''
+          // if(action) {
+          //   appendParameters = `#/${action}/${token1}/${token2}`
+          // } else {
+          //   const inputCurrency = urlParams.get('inputCurrency')
+          //   const outputCurrency = urlParams.get('outputCurrency')
+          //   if (inputCurrency || outputCurrency) {
+          //     appendParameters = `#/?inputCurrency=${inputCurrency}&outputCurrency=${outputCurrency}`
+          //   }
+          // }
 
 
           this.updatePairsOwnedByUser()
-          this.updateTokenWhitelist()
         },
 
-        setDefaultRoute() {
-            var currentChainDefaults = DEFAULT_SWAP_ROUTES[this.chainId]
-            this.inputToken = currentChainDefaults.inputToken
-            this.outputToken = currentChainDefaults.outputToken
-        },
-
-        updateTokenWhitelist() {
-            var currentChainWhitelist = WHITELIST[this.chainId]
-            this.tokenWhitelist = currentChainWhitelist
-        },
-
-        async updateInputToken(newInputToken : any) {
-          if (newInputToken.address == this.outputToken.address) {
-            this.outputToken = this.inputToken
-          }
-          this.inputToken = newInputToken
-        },
-
-        async updateOutputToken(newOutputToken : any) {
-          if (newOutputToken.address == this.inputToken.address) {
-            this.inputToken = this.outputToken
-          }
-          this.outputToken = newOutputToken
-        },
-
-        switchSelectedTokens() {
-          var tmp = this.inputToken
-          this.inputToken = this.outputToken
-          this.outputToken = tmp
-        },
-
-        async updateTokenBalances() {
-          if (this.inputToken.address == 'eth') {
-            const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
-
-            const ethBalanceBn = await this.multicall.getBalance(this.userAddress)
-            const ethBalance = ethers.utils.formatEther(ethBalanceBn)
-            this.inputTokenBalance = ethBalance
-
-            this.inputTokenAllowance = 99999999999999999999999999999999999999999999999999999999999.0.toString()
-          }
-          else {
-            const tokenContract = new ethers.Contract(this.inputToken.address, ERC20_ABI, this.multicall)
-
-            const tokenBalanceBn = await tokenContract.balanceOf(this.userAddress)
-            const decimals = await tokenContract.decimals()
-            const tokenBalance = ethers.utils.formatUnits(tokenBalanceBn, decimals)
-            this.inputTokenBalance = tokenBalance
-
-            const tokenAllowanceBn = await tokenContract.allowance(this.userAddress, this.routerContractAddress)
-            this.inputTokenAllowance = ethers.utils.formatUnits(tokenAllowanceBn, decimals)
-          }
-        },
-
-        async updateOutputEstimation() {
-          const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
-
-          const weth = await routerContract.WETH()
-
-          const amountInBn = ethers.utils.parseEther((0 + this.inputAmount).toString())
-
-          let inputToken = this.inputToken.address
-          if (inputToken == 'eth') {
-            inputToken = weth
-          }
-
-          let outputToken = this.outputToken.address
-          if (outputToken == 'eth') {
-            outputToken = weth
-          }
-
-          try {
-            const amountsOut = await routerContract.getAmountsOut(amountInBn, [inputToken, outputToken])
-
-            const amountOut0Bn = amountsOut[0] 
-            const amountOut1Bn = amountsOut[1]
-
-            const amountOut0 = ethers.utils.formatEther(amountOut0Bn)
-            const amountOut1 = ethers.utils.formatEther(amountOut1Bn)
-
-            this.outputAmount = amountOut1.toString()
-          }
-          catch {
-            this.outputAmount = ''
-          }
-        },
-
-        async swap() {
-          if (this.inputToken.address == 'eth') {
-            this.swapEthForTokens()
-          }
-          else if (this.outputToken.address == 'eth') {
-            this.swapTokensForEth()
-          }
-          else {
-            this.swapTokensForTokens()
-          }
-        },
-
-
-        async addLiquidity() {
-          if (this.tokenA.address == 'eth' || this.tokenB.address == 'eth') {
-            this.addLiquidityETH()
-          }
-          else {
-            this.addLiquidityTokens()
-          }
-        },
-
-        async removeLiquidity() {
-
-        },
-
-
-        async approve() {
-          const inputTokenContract = new ethers.Contract(this.inputToken.address, ERC20_ABI, this.multicall)
-
-          const tx = await inputTokenContract.populateTransaction.approve(this.routerContractAddress, APPROVE_AMOUNT)
-          await this.safeSendTransaction({ tx, targetChainId: this.ecosystem.chainId})
-        },
-
-
-        // Adds TokenA-TokenB liquidity
-        async addLiquidityTokens() {
-            const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
-
-            const amountADesired = ethers.utils.parseEther(this.amountTokenA)
-            const amountBDesired = ethers.utils.parseEther(this.amountTokenB)
-
-            const amountAMin = ethers.utils.parseEther('0')
-            const amountBMin = ethers.utils.parseEther('0')
-
-            const tx = await routerContract.populateTransaction.swapExactTokensForTokens(
-              this.tokenA.address,
-              this.tokenB.address,
-              amountADesired,
-              amountBDesired,
-              amountAMin,
-              amountBMin,
-              this.userAddress,
-              Date.now() + 1000 * 60 * 10)
-
-            const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
-        },
-
-        // Adds TokenA-ETH liquidity
-        async addLiquidityETH() {
-            if (this.tokenA.address != 'eth' && this.tokenB.address == 'eth') {
-              this.switchSelectedTokens() // Making sure that tokenA is the eth token
-            }
-
-            const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
-
-            const amountETHDesired = ethers.utils.parseEther(this.amountTokenA)
-            const amountTokenDesired = ethers.utils.parseEther(this.amountTokenB)
-
-            const amountETHMin = ethers.utils.parseEther('0')
-            const amountTokenMin = ethers.utils.parseEther('0')
-
-            const tx = await routerContract.populateTransaction.swapExactTokensForETH(
-              amountETHDesired,
-              this.tokenB.address,
-              amountTokenDesired,
-              amountTokenMin,
-              amountETHMin,
-              this.userAddress,
-              Date.now() + 1000 * 60 * 10)
-
-            const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
-        },
-
-
-        // Removes TokenA-TokenB liquidity
-        async RemoveLiquidityTokens() {
-            const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
-
-            const weth = await routerContract.WETH()
-
-            const amountInBn = ethers.utils.parseEther(this.inputAmount)
-            const minimumAmountOutBn = ethers.utils.parseEther('0')
-
-            const tx = await routerContract.populateTransaction.swapExactETHForTokens(minimumAmountOutBn, [weth, this.outputToken.address], this.userAddress, Date.now() + 1000 * 60 * 10)
-
-            tx.value = amountInBn
-
-            const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
-        },
-
-
-        // Removes TokenA-ETH liquidity
-        async removeLiquidityETH() {
-
-        },
 
         async updatePairsOwnedByUser() {
           this.loadingPairsOwnedByUser = true
@@ -545,30 +378,6 @@ export default Vue.extend({
         },
 
 
-        // Retrieves the basic token info given a contract address.
-        // Returns a dictionary-like object with token data.
-        async getTokenData(contractAddress : string) {
-          let tokenData : any = {
-            address: '',
-            name: '',
-            symbol: '',
-            decimals: '',
-          }
-          const tokenContract = new ethers.Contract(contractAddress, ERC20_ABI, this.multicall)
-
-          tokenData.address = contractAddress
-
-          const p1 = tokenContract.name().then((result : any) => tokenData.name = result)
-          const p2 = tokenContract.symbol().then((result : any) => tokenData.symbol = result)
-          const p3 = tokenContract.decimals().then((result : any) => tokenData.decimals = result)
-
-          const promises = [p1, p2, p3]
-          await Promise.all(promises)
-
-          return tokenData
-        },
-
-
         // Takes the pairData object that has an 'address' parameter,
         // fills it with all relevant data about the pair and the tokens in it
         // including the token info for both tokens in the pair
@@ -580,21 +389,62 @@ export default Vue.extend({
           let token0Address : string = ''
           let token1Address : string = ''
 
+          // Info about the pair itself
           const p1 = pairContract.name().then((result : any) => pairData.name = result)
           const p2 = pairContract.symbol().then((result : any) => pairData.symbol = result)
           const p3 = pairContract.decimals().then((result : any) => pairData.decimals = result)
           const p4 = pairContract.token0().then((result : any) => token0Address = result)
           const p5 = pairContract.token1().then((result : any) => token1Address = result)
+          const p6 = pairContract.getReserves().then((result : any) => pairData.pairReserves = result)
+          const p7 = pairContract.totalSupply().then((result : any) => pairData.totalSupply = ethers.utils.formatEther(result))
 
-          const promises = [p1, p2, p3, p4, p5]
+          const promises = [p1, p2, p3, p4, p5, p6, p7]
           await Promise.all(promises)
 
+          // Info about the tokens in the pair
           const pToken0 = this.getTokenData(token0Address).then((result : any) => pairData.token0 = result)
           const pToken1 = this.getTokenData(token1Address).then((result : any) => pairData.token1 = result)
           const tokenDataPromises = [pToken0, pToken1]
           await Promise.all(tokenDataPromises)
+
+          // Reserves
+          const reserve0 = parseFloat(ethers.utils.formatEther(pairData.pairReserves._reserve0))
+          const reserve1 = parseFloat(ethers.utils.formatEther(pairData.pairReserves._reserve1))
+          const userTokenShare : number = parseFloat(pairData.userBalance / pairData.totalSupply)
+
+          // How much of each token the user owns in the form of LP
+          pairData.token0.userBalance = reserve0 * userTokenShare
+          pairData.token1.userBalance = reserve1 * userTokenShare
+          pairData.token0.userBalanceInUSD = pairData.token0.priceUSD * pairData.token0.userBalance
+          pairData.token1.userBalanceInUSD = pairData.token1.priceUSD * pairData.token1.userBalance
         },
 
+
+        // Retrieves the token info given a contract address.
+        // Returns a dictionary-like object with token data.
+        async getTokenData(contractAddress : string) {
+          let tokenData : any = {
+            address: '',
+            name: '',
+            symbol: '',
+            decimals: '',
+            userBalance: 0.0,
+            priceUSD: 0.0
+          }
+          const tokenContract = new ethers.Contract(contractAddress, ERC20_ABI, this.multicall)
+
+          tokenData.address = contractAddress
+
+          const p1 = tokenContract.name().then((result : any) => tokenData.name = result)
+          const p2 = tokenContract.symbol().then((result : any) => tokenData.symbol = result)
+          const p3 = tokenContract.decimals().then((result : any) => tokenData.decimals = result)
+          const promises = [p1, p2, p3]
+          await Promise.all(promises)
+
+          tokenData.priceUSD = this.priceModel.getPriceUsd(contractAddress)
+
+          return tokenData
+        },
 
 
         ...mapActions(['requestConnect', 'safeSendTransaction'])
