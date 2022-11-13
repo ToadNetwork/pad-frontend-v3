@@ -417,29 +417,6 @@ export default Vue.extend({
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
 
-
-        // Removes TokenA-TokenB liquidity
-        async RemoveLiquidityTokens() {
-            const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
-
-            const weth = await routerContract.WETH()
-
-            const amountInBn = ethers.utils.parseEther(this.inputAmount)
-            const minimumAmountOutBn = ethers.utils.parseEther('0')
-
-            const tx = await routerContract.populateTransaction.swapExactETHForTokens(minimumAmountOutBn, [weth, this.outputToken.address], this.userAddress, Date.now() + 1000 * 60 * 10)
-
-            tx.value = amountInBn
-
-            const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
-        },
-
-
-        // Removes TokenA-ETH liquidity
-        async removeLiquidityETH() {
-
-        },
-
         ...mapActions(['requestConnect', 'safeSendTransaction'])
     }
 })

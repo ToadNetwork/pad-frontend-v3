@@ -41,15 +41,17 @@
       <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
     </div>
 
-
     <v-sheet
-    style="border-radius: 30px; overflow: hidden;"
+    color="#1d1e2099"
+    style="border-radius: 30px; overflow: hidden; display: inline-block;"
     min-height="1000px"
+    width="100%"
+    max-width="900px"
     elevation="10">
 
     <v-tabs
       v-model="tab"
-      background-color="#171326"
+      background-color="rgb(23 19 38 / 70%)"
       color="#00ff1f"
       centered
       dark
@@ -78,52 +80,41 @@
     <!-- Liquidity pairs owned by user -->
     <!----------------------------------->
     <v-card
+    color="transparent"
+    style="text-align: left;"
     v-if="tab == 'your-liquidity'">
 
       <v-card-title>
         Your liquidity
       </v-card-title>
 
+
+      <v-card-subtitle>
+        <div
+        style="display: inline-block; border: 1px solid gray; padding: 10px; border-radius: 10px; margin: 10px 0;">
+          Note: this page shows unstaked liquidity (i.e. not locked in a farm).
+          <br>
+          Liquidity that is staked in a farm will not show up here - see <a href="/farms">farms</a> instead.
+        </div>
+      </v-card-subtitle>
+
+      <!-- Loading pairs for this chain -->
       <template v-if="loadingPairsOwnedByUser == true">
         Loading pairs, please wait...
       </template>
 
+      <!-- No pairs found on this chain -->
       <template v-else-if="pairsOwnedByUser.length == 0">
         You don't own any liquidity on the selected chain.<br>
         You can add liquidity below, or use the ecosystem slider to check other chains.
       </template>
 
+      <!-- Listing pairs owned by user -->
       <template v-else>
-        <v-card
-        color="#103418"
-        elevation="10"
-        style="margin: 10px 0"
+        <LiquidityPairWidget
         v-for="pairData in pairsOwnedByUser"
-        >
-          <v-card-title>
-            {{ pairData.token0.symbol }} - {{ pairData.token1.symbol }}
-          </v-card-title>
-          <v-card-subtitle>
-          </v-card-subtitle>
-
-          <v-card-text>
-            {{ pairData.token0.symbol }} : {{ pairData.token0.userBalance }}, {{ pairData.token0.userBalanceInUSD }} USD
-            <br>
-
-            {{ pairData.token1.symbol }} : {{ pairData.token1.userBalance }}, {{ pairData.token1.userBalanceInUSD }} USD
-          </v-card-text>
-
-          <v-card-actions>
-            <v-text-field
-            label="Remove liquidity">
-              <template v-slot:append>
-                <v-btn>
-                  MAX
-                </v-btn>
-              </template>
-            </v-text-field>
-          </v-card-actions>
-        </v-card>
+        :pairData="pairData"
+        />
       </template>
 
     </v-card>
@@ -146,6 +137,8 @@ import { mapActions } from 'vuex'
 import { ethers } from 'ethers'
 import { IEcosystem, EcosystemId, ECOSYSTEMS, ChainId } from '@/ecosystem'
 import SliderTabs from '@/components/SliderTabs.vue'
+
+import LiquidityPairWidget from '@/components/swap/LiquidityPairWidget.vue'
 
 import AddLiquidity from '@/components/swap/AddLiquidity.vue'
 
@@ -174,7 +167,8 @@ export default Vue.extend({
     components: { 
         TokenSelector,
         SliderTabs,
-        AddLiquidity
+        AddLiquidity,
+        LiquidityPairWidget
     },
     data() {
         return {
@@ -281,25 +275,45 @@ export default Vue.extend({
         }
     },
     methods: {
-        setSwapEcosystem(chain_id : string) {
-          this.routerContractAddress = routerAddresses[this.chainId]
+      setSwapEcosystem(chain_id : string) {
+        this.routerContractAddress = routerAddresses[this.chainId]
 
-          // const urlParams = new URLSearchParams(window.location.search)
-          // const [action, token1, token2] = [urlParams.get('action'), urlParams.get('token1'), urlParams.get('token2')]
-          // let appendParameters = ''
-          // if(action) {
-          //   appendParameters = `#/${action}/${token1}/${token2}`
-          // } else {
-          //   const inputCurrency = urlParams.get('inputCurrency')
-          //   const outputCurrency = urlParams.get('outputCurrency')
-          //   if (inputCurrency || outputCurrency) {
-          //     appendParameters = `#/?inputCurrency=${inputCurrency}&outputCurrency=${outputCurrency}`
-          //   }
-          // }
+        // const urlParams = new URLSearchParams(window.location.search)
+        // const [action, token1, token2] = [urlParams.get('action'), urlParams.get('token1'), urlParams.get('token2')]
+        // let appendParameters = ''
+        // if(action) {
+        //   appendParameters = `#/${action}/${token1}/${token2}`
+        // } else {
+        //   const inputCurrency = urlParams.get('inputCurrency')
+        //   const outputCurrency = urlParams.get('outputCurrency')
+        //   if (inputCurrency || outputCurrency) {
+        //     appendParameters = `#/?inputCurrency=${inputCurrency}&outputCurrency=${outputCurrency}`
+        //   }
+        // }
 
 
-          this.updatePairsOwnedByUser()
-        },
+        this.updatePairsOwnedByUser()
+      },
+
+      round(num : any, dec : any) {
+        num = Number(num).toFixed(20)
+        if(!Number.isFinite(Number(num))) num = '0.0'
+        num = Number(num).toFixed(20)
+        const regex = new RegExp(`^-?\\d+(?:\\.\\d{0,${dec}})?`)
+        let [int, decimals] = num.toString().replace(',', '.').split('.')
+        if(dec == 0) return int
+        const rounded = num.toString().match(regex)[0]
+        return rounded
+      },
+
+      biOrMiOrK(num : number) : string {
+        if(num>=1e9) return this.round(num/1e9, 2) + 'BI'
+        else if(num>=1e6) return this.round(num/1e6, 2) + 'M'
+        else if (num>=1e3) return this.round(num/1e3, 2) + 'K'
+        else if (num>= 1e2) return this.round(num, 2)
+        else if (num >= 1) return this.round(num, 4)
+        else return this.round(num, 6)
+      },
 
 
         async updatePairsOwnedByUser() {
@@ -320,8 +334,9 @@ export default Vue.extend({
             const factoryContract = new ethers.Contract(factoryAddress, SWAP_FACTORY_ABI, this.multicall)
 
             const allPairsLength = await factoryContract.allPairsLength()
+            const blockNumber = await this.multicall.getBlockNumber()
 
-            let promises = []
+            let promises = [this.priceModel.syncWithin(blockNumber, 12)]
             let pairContractAddresses : Array<string> = []
             for (let i = 0; i < allPairsLength; i++) {
               const p = factoryContract.allPairs(i).then((res : any) => pairContractAddresses.push(res))
@@ -340,8 +355,9 @@ export default Vue.extend({
         // the rest of the info is filled by fillPairs()
         async getBasicInfoAboutPairsOwnedByUser() {
           const allPairs = await this.getAllPairAddresses()
+          const blockNumber = await this.multicall.getBlockNumber()
 
-          let promises = []
+          let promises = [this.priceModel.syncWithin(blockNumber, 12)]
           let pairs = []
 
           for (let i = 0; i < allPairs.length; i++) {
@@ -367,7 +383,9 @@ export default Vue.extend({
         // Takes an array of pairData objects with pair addresses,
         // and fills these objects with all relevant info about these pairs
         async fillPairsWithInfo(pairs : Array<any>) {
-          let promises : Array<any> = []
+          const blockNumber = await this.multicall.getBlockNumber()
+
+          let promises = [this.priceModel.syncWithin(blockNumber, 12)]
 
           for (let i = 0; i < pairs.length; i++) {
             const pairData = pairs[i]
@@ -397,8 +415,9 @@ export default Vue.extend({
           const p5 = pairContract.token1().then((result : any) => token1Address = result)
           const p6 = pairContract.getReserves().then((result : any) => pairData.pairReserves = result)
           const p7 = pairContract.totalSupply().then((result : any) => pairData.totalSupply = ethers.utils.formatEther(result))
+          const p8 = pairContract.allowance(this.userAddress, this.routerContractAddress).then((result : any) => pairData.allowance = ethers.utils.formatEther(result))
 
-          const promises = [p1, p2, p3, p4, p5, p6, p7]
+          const promises = [p1, p2, p3, p4, p5, p6, p7, p8]
           await Promise.all(promises)
 
           // Info about the tokens in the pair
