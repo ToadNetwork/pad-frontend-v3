@@ -34,25 +34,25 @@
       height="1000px"
       outlined
       style="border-radius: ;"
-      max-height="100vh">
+      max-height="90vh">
         <v-card-title>Select token</v-card-title>
 <!--         <v-text-field
         v-model='customTokenAddress'>
         </v-text-field> -->
 
         <v-divider></v-divider>
-        <v-card-text style="height: 300px;">
+        <v-card-text style="height: 300px; margin-top: 15px;">
 
           <v-card v-for="tokenData in tokenWhitelist"
           color="#315237"
-          style="margin: 10px 5px"
+          style="margin: 25px 5px"
           @click="selectToken(tokenData)">
             <v-row>
               <v-col
               cols="3"
               class="text-center">
                 <v-layout
-                style="width: 100%"
+                style="width: 100%;"
                 fill-height
                 align-center
                 justify-center>
