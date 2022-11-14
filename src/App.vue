@@ -66,22 +66,6 @@
         </nav-menu>
       </div>
       <div class="d-flex align-center padswap-navbar ml-4">
-        <v-img
-          :src="$padswapTheme.theme.padLogoSrc"
-          style="width: 16px; height: 16px; margin-right: 6px; padding-right: 0px;"
-        />
-        <div
-          style="color: #00FC4C;"
-        >
-          ${{ padPrice | formatNumber(7) }}
-        </div>
-        <div
-          class="d-sm-flex d-none"
-          style="white-space: nowrap"
-        >
-          EN
-          <v-icon class="padswap-chevron-down">mdi-chevron-down</v-icon>
-        </div>
         <div
           @click="connectWallet"
           class="padswap-address-box"
