@@ -44,25 +44,26 @@
         <div class="icon-container">
           <img src="@/assets/icons/Farms Icon.svg">
         </div>
-        <div class="title-card-name">Farms</div>
+        <div class="title-card-name">Earn</div>
         <v-card-subtitle class="text-center" style="font-size: 1.05rem">
           Earn passive income<br>
-          by providing liquidity.
+          by providing liquidity<br>
+          and staking it in farms.
         </v-card-subtitle>
       </v-card>
 
       <v-card
-        href="/launchpad"
+        href="https://beta.nebul.ae/"
         target="/blank"
         class="title-card hover-rgb">
         <div class="icon-container">
           <img src="@/assets/icons/LaunchPAD Icon.svg">
         </div>
-        <div class="title-card-name">LaunchPAD</div>
-        <v-card-subtitle class="text-center" style="font-size: 1.05rem">Create and launch a token<br>in a few easy steps.</v-card-subtitle>
+        <div class="title-card-name">Create</div>
+        <v-card-subtitle class="text-center" style="font-size: 1.05rem">Our all-in-one DeFi suite for project owners</v-card-subtitle>
       </v-card>
 
-      <v-card
+<!--       <v-card
         href="/bridge"
         target="/blank"
         class="title-card hover-rgb">
@@ -72,8 +73,8 @@
         <div class="title-card-name">Bridge</div>
         <v-card-subtitle class="text-center" style="font-size: 1.05rem">Transfer tokens<br>between supported chains.</v-card-subtitle>
       </v-card>
-
-      <v-card
+ -->
+<!--       <v-card
         href="/vault"
         target="/blank"
         class="title-card hover-rgb">
@@ -82,9 +83,9 @@
         </div>
         <div class="title-card-name">Vault</div>
         <v-card-subtitle class="text-center" style="font-size: 1.05rem">Creates backing for PAD<br>from PadSwap fees.</v-card-subtitle>
-      </v-card>
+      </v-card> -->
 
-      <v-card
+<!--       <v-card
         href="https://meme-guardians.com/"
         target="/blank"
         class="title-card hover-rgb">
@@ -93,128 +94,11 @@
         </div>
         <div class="title-card-name">Meme Guardians</div>
         <v-card-subtitle class="text-center" style="font-size: 1.05rem">Our own online RPG, playable right now.</v-card-subtitle>
-      </v-card>
+      </v-card> -->
 
 
     </v-row>
-  </div>
 
-  <!-------------------------->
-  <!-- Market cap counter ---->
-  <!-------------------------->
-
-  <v-row style="padding-top: 20px; padding-bottom: 20px;">
-    <v-col
-    cols="12">
-      <div class="rounded-box">
-        <p class="text-center">Some stats</p>
-        <div class="inner-rounded-box">
-          <v-row
-          align="center"
-          justify="center">
-
-            <v-card
-            class="title-card">
-              <div class="title-card-name" style="font-size: 2rem; margin-top: 10px;">${{biOrMiOrK(toadMarketCap)}}</div>
-              <v-card-subtitle class="text-center" style="font-size: 1.05rem">TOAD market cap</v-card-subtitle>
-            </v-card>
-
-            <v-card
-            class="title-card">
-              <div class="title-card-name" style="font-size: 2rem; margin-top: 10px;">${{biOrMiOrK(padMarketCap)}}</div>
-              <v-card-subtitle class="text-center" style="font-size: 1.05rem">PAD market cap</v-card-subtitle>
-            </v-card>
-
-            <v-card
-            class="title-card">
-              <div class="title-card-name" style="font-size: 2rem; margin-top: 10px;">∞</div>
-              <v-card-subtitle class="text-center" style="font-size: 1.05rem">Growth potential</v-card-subtitle>
-            </v-card>
-
-          </v-row>
-        </div>
-      </div>
-    </v-col>
-  </v-row>
-
-			<!-------------------------------->
-			<!-- Get started with farming ---->
-			<!-------------------------------->
-
-			<v-row style="padding-top: 20px; padding-bottom: 20px;">
-
-				<v-col
-				cols="12">
-					<div class="rounded-box">
-						<p class="text-center">Looking to get started with farming?</p>
-						<div class="inner-rounded-box">
-							<v-row class="text-center"
-							align="center"
-							justify="center">
-								<div class="tutorial-item-container">
-									<a
-									class="tutorial-item"
-									>
-										<v-icon large class="rounded-icon">mdi-cash-multiple</v-icon>
-										<p>Buy the chain's token<br>
-                      (e.g. GLMR on Moonbeam)</p>
-									</a>
-								</div>
-
-								<v-icon>mdi-arrow-right</v-icon>
-
-								<div class="tutorial-item-container">
-									<a
-									class="tutorial-item"
-									href="/swap"
-									target="_blank"
-									>
-									<v-icon large class="rounded-icon">mdi-swap-horizontal</v-icon>
-									<p>Swap for tokens<br>of your choice</p>
-								</a>
-								</div>
-
-								<v-icon>mdi-arrow-right</v-icon>
-
-								<div class="tutorial-item-container">
-									<a
-									class="tutorial-item"
-									href="/swap"
-									target="_blank"
-									>
-										<v-icon large class="rounded-icon">mdi-vector-link</v-icon>
-										<p>Create a<br>liquidity pair</p>
-									</a>
-								</div>
-
-								<v-icon>mdi-arrow-right</v-icon>
-
-								<div class="tutorial-item-container">
-									<a
-									class="tutorial-item"
-									href="/farms"
-									target="_self"
-									>
-										<v-icon large class="rounded-icon">mdi-sprout-outline</v-icon>
-										<p>Stake LP tokens<br> in a farm</p>
-									</a>
-								</div>
-
-							</v-row>
-						</div>
-
-						<div class="info-link" style="padding-top: 15px;">
-							Don't have a BNB wallet? Here's <a href="https://academy.binance.com/en/articles/connecting-metamask-to-binance-smart-chain" target="_blank">Binance's official guide for setting up Metamask </a>
-							<v-icon small>mdi-open-in-new</v-icon>
-						</div>
-
-					</div>
-				</v-col>
-
-			</v-row>
-
-		</div>
-	</div>
 
   </v-container>
 </template>
