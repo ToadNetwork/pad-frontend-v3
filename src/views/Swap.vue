@@ -173,6 +173,8 @@ import {
     DEFAULT_SWAP_ROUTES
 } from '@/config/swap_token_whitelist'
 
+
+import { tokenInfo } from '@/mixins/tokenInfo.ts'
 import TokenSelector from '@/components/swap/TokenSelector.vue'
 
 const routerAddresses = {
@@ -186,6 +188,7 @@ export default Vue.extend({
         TokenSelector,
         SliderTabs
     },
+    mixins: [tokenInfo],
     data() {
         return {
             inputToken: <any> {},

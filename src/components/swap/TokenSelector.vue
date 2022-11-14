@@ -13,6 +13,12 @@
           v-bind="attrs"
           v-on="on"
         >
+          <v-img
+          :src="getTokenImage(ecosystemName, selectedToken.address)"
+          height="24px"
+          width="24px">
+          </v-img>
+          &nbsp;
           {{ selectedToken.symbol }}
           <v-icon
           right
@@ -41,9 +47,30 @@
           color="#315237"
           style="margin: 10px 5px"
           @click="selectToken(tokenData)">
-            <v-card-title>{{ tokenData.symbol }}</v-card-title>
-            <v-card-subtitle>{{ tokenData.description }}</v-card-subtitle>
+            <v-row>
+              <v-col
+              cols="3"
+              class="text-center">
+                <v-layout
+                style="width: 100%"
+                fill-height
+                align-center
+                justify-center>
+                  <img
+                  :src="getTokenImage(ecosystemName, tokenData.address)"
+                  height="50px"
+                  width="50px">
+                  </v-img>
+                </v-layout>
+              </v-col>
+              <v-col
+              cols="9">
+                <v-card-title>{{ tokenData.symbol }}</v-card-title>
+                <v-card-subtitle>{{ tokenData.description }}</v-card-subtitle>
+              </v-col>
+            </v-row>
           </v-card>
+
 
         </v-card-text>
         <v-divider></v-divider>
@@ -74,6 +101,8 @@ import { mapActions } from 'vuex'
 import { ethers } from 'ethers'
 import { IEcosystem, EcosystemId, ECOSYSTEMS, ChainId } from '@/ecosystem'
 
+import { tokenInfo } from '@/mixins/tokenInfo'
+
 import {
     ERC20_ABI,
     SWAP_ROUTER_ABI
@@ -81,9 +110,9 @@ import {
 
 export default Vue.extend({
   name: 'TokenSelector',
+  mixins: [tokenInfo],
   props: {
     selectedToken: Object,
-
     tokenWhitelist: Array
   },
   data() {
@@ -109,23 +138,9 @@ export default Vue.extend({
         return this.$store.getters.ecosystem.chainId
       },
   },
-  created() {
-    this.updateWhitelist()
-
-  },
-  watch: {
-    tokenWhitelist(newWhitelist : any) {
-      this.updateWhitelist()
-    }
-  },
   methods: {
-    updateWhitelist() {
-      this.tokenWhitelist.forEach((tokenData : any) => {
-        
-      })
-    },
-
     selectToken(tokenData : any) {
+      console.log(tokenData.address)
       this.$emit('tokenSelected', tokenData)
       this.dialog = false
     },
