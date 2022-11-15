@@ -28,7 +28,6 @@
     <v-row class="justify-center title-card-container">
       <v-card
         href="/swap"
-        target="/blank"
         class="title-card hover-rgb">
         <div class="icon-container">
           <img src="@/assets/icons/Swap Icon.svg">
@@ -39,7 +38,6 @@
 
       <v-card
         href="/farms"
-        target="/blank"
         class="title-card hover-rgb">
         <div class="icon-container">
           <img src="@/assets/icons/Farms Icon.svg">
@@ -54,7 +52,6 @@
 
       <v-card
         href="https://beta.nebul.ae/"
-        target="/blank"
         class="title-card hover-rgb">
         <div class="icon-container">
           <img src="@/assets/icons/LaunchPAD Icon.svg">

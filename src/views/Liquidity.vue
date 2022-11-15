@@ -99,7 +99,7 @@
       </v-card-subtitle>
 
       <!-- Loading pairs for this chain -->
-      <template v-if="loadingPairsOwnedByUser == true">
+      <template v-if="pairsOwnedByUser.length == 0">
         Loading pairs, please wait...
       </template>
 
@@ -215,6 +215,9 @@ export default Vue.extend({
       setTimeout(() => {
           this.updatePairsOwnedByUser()
       }, "1000")
+      setInterval(() => {
+          this.updatePairsOwnedByUser()
+      }, "5000")
     },
     computed: {
         ecosystemId: {
