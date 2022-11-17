@@ -120,12 +120,15 @@
         </v-card-actions>
       </v-card>
 
-      <br>
+      <br/>
+
+      <br/>
 
       <div
       v-if="tokensApproved">
         <v-btn
         block
+        x-large
         color="green"
         @click="swap()">
           SWAP
@@ -139,6 +142,53 @@
         @click="approve()">
           APPROVE
         </v-btn>
+      </div>
+
+
+      <!--------------------------------------------------->
+      <!-- Transaction settings --------------------------->
+      <!-- (slippage tolerance and transaction deadline) -->
+      <!--------------------------------------------------->
+
+      <div
+      style="margin-top: 50px;">
+        <v-row>
+          <v-col
+          style="margin: 0; padding: 0; margin-top: 5px;"
+          cols="6">
+            Slippage tolerance
+          </v-col>
+          <v-col
+          style="margin: 0; padding: 0;"
+          cols="6">
+            <v-text-field
+            style="max-width: 70px;"
+            solo-inverted
+            dense
+            v-model="slippageTolerance"
+            suffix="%">
+            </v-text-field>
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col
+          style="margin: 0; padding: 0; margin-top: 5px;"
+          cols="6">
+            Transaction deadline
+          </v-col>
+          <v-col
+          style="margin: 0; padding: 0;"
+          cols="6">
+            <v-text-field
+            style="max-width: 120px;"
+            solo-inverted
+            dense
+            v-model="transactionDeadlineMinutes"
+            suffix="minutes">
+            </v-text-field>
+          </v-col>
+        </v-row>
       </div>
 
     </v-card>
@@ -191,6 +241,11 @@ export default Vue.extend({
     mixins: [tokenInfo],
     data() {
         return {
+
+            slippageTolerance: <string> '1',
+            transactionDeadlineMinutes: <string> '15',
+
+
             inputToken: <any> {},
             outputToken: <any> {},
 
@@ -408,9 +463,12 @@ export default Vue.extend({
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
             const amountInBn = ethers.utils.parseEther(this.inputAmount)
-            const minimumAmountOutBn = ethers.utils.parseEther('0')
 
-            const tx = await routerContract.populateTransaction.swapExactTokensForTokens(amountInBn, minimumAmountOutBn, [this.inputToken.address, this.outputToken.address], this.userAddress, Date.now() + 1000 * 60 * 10)
+            const minimumPercentage = 1.0 - (parseFloat(this.slippageTolerance) / 100.0)
+            const minimumAmount = parseFloat(this.outputAmount) * minimumPercentage
+            const minimumAmountOutBn = ethers.utils.parseEther(minimumAmount.toString())
+
+            const tx = await routerContract.populateTransaction.swapExactTokensForTokens(amountInBn, minimumAmountOutBn, [this.inputToken.address, this.outputToken.address], this.userAddress, Date.now() + 1000 * 60 * parseFloat(this.transactionDeadlineMinutes))
 
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
@@ -421,9 +479,12 @@ export default Vue.extend({
             const weth = await routerContract.WETH()
 
             const amountInBn = ethers.utils.parseEther(this.inputAmount)
-            const minimumAmountOutBn = ethers.utils.parseEther('0')
 
-            const tx = await routerContract.populateTransaction.swapExactTokensForETH(amountInBn, minimumAmountOutBn, [this.inputToken.address, weth], this.userAddress, Date.now() + 1000 * 60 * 10)
+            const minimumPercentage = 1.0 - (parseFloat(this.slippageTolerance) / 100.0)
+            const minimumAmount = parseFloat(this.outputAmount) * minimumPercentage
+            const minimumAmountOutBn = ethers.utils.parseEther(minimumAmount.toString())
+
+            const tx = await routerContract.populateTransaction.swapExactTokensForETH(amountInBn, minimumAmountOutBn, [this.inputToken.address, weth], this.userAddress, Date.now() + 1000 * 60 * parseFloat(this.transactionDeadlineMinutes))
 
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
@@ -434,9 +495,12 @@ export default Vue.extend({
             const weth = await routerContract.WETH()
 
             const amountInBn = ethers.utils.parseEther(this.inputAmount)
-            const minimumAmountOutBn = ethers.utils.parseEther('0')
 
-            const tx = await routerContract.populateTransaction.swapExactETHForTokens(minimumAmountOutBn, [weth, this.outputToken.address], this.userAddress, Date.now() + 1000 * 60 * 10)
+            const minimumPercentage = 1.0 - (parseFloat(this.slippageTolerance) / 100.0)
+            const minimumAmount = parseFloat(this.outputAmount) * minimumPercentage
+            const minimumAmountOutBn = ethers.utils.parseEther(minimumAmount.toString())
+
+            const tx = await routerContract.populateTransaction.swapExactETHForTokens(minimumAmountOutBn, [weth, this.outputToken.address], this.userAddress, Date.now() + 1000 * 60 * parseFloat(this.transactionDeadlineMinutes))
 
             tx.value = amountInBn
 
