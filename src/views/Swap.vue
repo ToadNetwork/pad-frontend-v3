@@ -70,7 +70,8 @@
           <v-text-field
           v-model="inputAmount"
           :label="'Amount to spend ' + '(max: ' + inputTokenBalance + ' ' + inputToken.symbol + ')'"
-          :suffix="inputToken.symbol">
+          :suffix="inputToken.symbol"
+          @change="swapMode = 0; updateOutputEstimation()">
           </v-text-field>
         </v-card-actions>
 
@@ -112,10 +113,9 @@
         <v-card-actions>
           <v-text-field
           v-model="outputAmount"
-          disabled
-          readonly
           :suffix="outputToken.symbol"
-          label="Amount to receive">
+          label="Amount to receive"
+          @change="swapMode = 1; updateInputEstimation()">
           </v-text-field>
         </v-card-actions>
       </v-card>
@@ -145,13 +145,60 @@
       </div>
 
 
-      <!--------------------------------------------------->
-      <!-- Transaction settings --------------------------->
-      <!-- (slippage tolerance and transaction deadline) -->
-      <!--------------------------------------------------->
+      <!----------------------------------------------------->
+      <!-- Transaction settings and extra information   ----->
+      <!-- (slippage tolerance, transaction deadline, etc) -->
+      <!----------------------------------------------------->
+
+
 
       <div
       style="margin-top: 50px;">
+
+      <v-card
+      style="text-align: center;"
+      color="#618b4233">
+<!--         <v-card-title class="justify-center">
+          Swap mode:
+        </v-card-title>
+        <v-card-subtitle>
+          <v-btn-toggle
+              v-model="swapMode"
+              mandatory
+              dense
+              borderless
+
+            >
+              <v-btn>
+                Exact sold
+              </v-btn>
+              <v-btn>
+                Exact received
+              </v-btn>
+            </v-btn-toggle>
+        </v-card-subtitle> -->
+        <v-card-text>
+          <template v-if="swapMode == 0">
+            You will spend exactly {{ toNumber(inputAmount) }} {{ inputToken.symbol }}
+            <br>
+            <br>
+            Minimum received: {{ toNumber(minimumReceived) }} {{ outputToken.symbol }}
+          </template>
+          <template v-if="swapMode == 1">
+            You will receive exactly {{ toNumber(outputAmount) }} {{ outputToken.symbol }}
+            <br>
+            <br>
+            Maximum sold: {{ toNumber(maximumSold) }} {{ inputToken.symbol }}
+          </template>
+        </v-card-text>
+      </v-card>
+
+
+
+
+
+        <br/>
+
         <v-row>
           <v-col
           style="margin: 0; padding: 0; margin-top: 5px;"
@@ -257,7 +304,7 @@ export default Vue.extend({
             inputAmount: <string> '',
             outputAmount: <string> '',
 
-            exactToken: '',
+            swapMode: 0,
 
             tokenWhitelist: <any> [],
 
@@ -315,6 +362,33 @@ export default Vue.extend({
           else {
             return true
           }
+        },
+        minimumReceived(): number {
+          const minimumPercentage = 1.0 - (parseFloat(this.slippageTolerance) / 100.0)
+          const minimumAmount = parseFloat(this.outputAmount) * minimumPercentage
+          return minimumAmount
+        },
+        maximumSold(): number {
+          const maximumExtraPercentage = (parseFloat(this.slippageTolerance) / 100.0)
+          const maximumAmount = parseFloat(this.inputAmount) + parseFloat(this.inputAmount) * maximumExtraPercentage
+          return maximumAmount
+        },
+
+        // TODO: handle tokens with different decimals
+        inputAmountBn() : ethers.BigNumber {
+          return ethers.utils.parseEther(this.inputAmount.toString())
+        },
+        outputAmountBn() : ethers.BigNumber {
+          return ethers.utils.parseEther(this.outputAmount.toString())
+        },
+        maximumInBn() : ethers.BigNumber {
+          return ethers.utils.parseEther(this.maximumSold.toString())
+        },
+        minimumOutBn() : ethers.BigNumber {
+          return ethers.utils.parseEther(this.minimumReceived.toString())
+        },
+        txDeadline() : number {
+          return Date.now() + 1000 * 60 * parseFloat(this.transactionDeadlineMinutes)
         }
     },
     watch: {
@@ -324,11 +398,18 @@ export default Vue.extend({
         },
         outputToken() {
             this.updateTokenBalances()
-            this.updateOutputEstimation()
+            this.updateInputEstimation()
         },
         inputAmount() {
+          if (this.swapMode == 0) {
             this.updateOutputEstimation()
-        }
+          }
+        },
+        outputAmount() {
+          if (this.swapMode == 1) {
+            this.updateInputEstimation()
+          }
+        },
     },
     methods: {
         setSwapEcosystem(chain_id : string) {
@@ -351,6 +432,34 @@ export default Vue.extend({
           this.updateTokenBalances()
           this.updateOutputEstimation()
         },
+
+        toNumber(num : any) {
+          if (isNaN(parseFloat(num))) {
+            return 0
+          }
+          return parseFloat(num)
+        },
+
+        round(num : any, dec : any) {
+          num = Number(num).toFixed(20)
+          if(!Number.isFinite(Number(num))) num = '0.0'
+          num = Number(num).toFixed(20)
+          const regex = new RegExp(`^-?\\d+(?:\\.\\d{0,${dec}})?`)
+          let [int, decimals] = num.toString().replace(',', '.').split('.')
+          if(dec == 0) return int
+          const rounded = num.toString().match(regex)[0]
+          return rounded
+        },
+
+        biOrMiOrK(num : number) : string {
+          if(num>=1e9) return this.round(num/1e9, 2) + 'BI'
+          else if(num>=1e6) return this.round(num/1e6, 2) + 'M'
+          else if (num>=1e3) return this.round(num/1e3, 2) + 'K'
+          else if (num>= 1e2) return this.round(num, 2)
+          else if (num >= 1) return this.round(num, 4)
+          else return this.round(num, 6)
+        },
+
 
         setDefaultRoute() {
             var currentChainDefaults = DEFAULT_SWAP_ROUTES[this.chainId]
@@ -407,6 +516,10 @@ export default Vue.extend({
           console.log(this.inputTokenAllowance)
         },
 
+        updateEstimation() {
+
+        },
+
         async updateOutputEstimation() {
           const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
@@ -440,15 +553,67 @@ export default Vue.extend({
           }
         },
 
+
+        async updateInputEstimation() {
+          const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
+
+          const weth = await routerContract.WETH()
+
+          const amountOutBn = ethers.utils.parseEther((0 + this.outputAmount).toString())
+
+          let inputToken = this.inputToken.address
+          if (inputToken == 'eth') {
+            inputToken = weth
+          }
+
+          let outputToken = this.outputToken.address
+          if (outputToken == 'eth') {
+            outputToken = weth
+          }
+
+          try {
+            const amountsIn = await routerContract.getAmountsIn(amountOutBn, [inputToken, outputToken])
+
+            const amountIn0Bn = amountsIn[0] 
+            const amountIn1Bn = amountsIn[1]
+
+            const amountIn0 = ethers.utils.formatEther(amountIn0Bn)
+            const amountIn1 = ethers.utils.formatEther(amountIn1Bn)
+
+            this.inputAmount = amountIn0.toString()
+          }
+          catch {
+            this.inputAmount = ''
+          }
+        },
+
         async swap() {
+          // Swapping the chain's native token for an ERC-20 token
           if (this.inputToken.address == 'eth') {
-            this.swapEthForTokens()
+            if (this.swapMode == 0) {
+              this.swapExactETHForTokens()
+            }
+            else{
+              this.swapETHForExactTokens()
+            }
           }
+          // Swapping an ERC-20 token for the chain's native token
           else if (this.outputToken.address == 'eth') {
-            this.swapTokensForEth()
+            if (this.swapMode == 0) {
+              this.swapExactTokensForETH()
+            }
+            else{
+              this.swapTokensForExactETH()
+            }
           }
+          // Swapping an ERC-20 token for another ERC-20 token
           else {
-            this.swapTokensForTokens()
+            if (this.swapMode == 0) {
+              this.swapExactTokensForTokens()
+            }
+            else{
+              this.swapTokensForExactTokens()
+            }
           }
         },
 
@@ -459,52 +624,103 @@ export default Vue.extend({
           await this.safeSendTransaction({ tx, targetChainId: this.ecosystem.chainId})
         },
 
-        async swapTokensForTokens() {
+
+        /////////////////////////////////
+        // Swapping tokens for tokens  //
+        /////////////////////////////////
+
+        async swapExactTokensForTokens() {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
-            const amountInBn = ethers.utils.parseEther(this.inputAmount)
-
-            const minimumPercentage = 1.0 - (parseFloat(this.slippageTolerance) / 100.0)
-            const minimumAmount = parseFloat(this.outputAmount) * minimumPercentage
-            const minimumAmountOutBn = ethers.utils.parseEther(minimumAmount.toString())
-
-            const tx = await routerContract.populateTransaction.swapExactTokensForTokens(amountInBn, minimumAmountOutBn, [this.inputToken.address, this.outputToken.address], this.userAddress, Date.now() + 1000 * 60 * parseFloat(this.transactionDeadlineMinutes))
+            const tx = await routerContract.populateTransaction.swapExactTokensForTokens(
+              this.inputAmountBn,
+              this.minimumOutBn,
+              [this.inputToken.address, this.outputToken.address],
+              this.userAddress,
+              this.txDeadline)
 
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
 
-        async swapTokensForEth() {
+        async swapTokensForExactTokens() {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
-            const weth = await routerContract.WETH()
-
-            const amountInBn = ethers.utils.parseEther(this.inputAmount)
-
-            const minimumPercentage = 1.0 - (parseFloat(this.slippageTolerance) / 100.0)
-            const minimumAmount = parseFloat(this.outputAmount) * minimumPercentage
-            const minimumAmountOutBn = ethers.utils.parseEther(minimumAmount.toString())
-
-            const tx = await routerContract.populateTransaction.swapExactTokensForETH(amountInBn, minimumAmountOutBn, [this.inputToken.address, weth], this.userAddress, Date.now() + 1000 * 60 * parseFloat(this.transactionDeadlineMinutes))
+            const tx = await routerContract.populateTransaction.swapTokensForExactTokens(
+              this.outputAmountBn,
+              this.maximumInBn,
+              [this.inputToken.address, this.outputToken.address],
+              this.userAddress,
+              this.txDeadline)
 
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
 
-        async swapEthForTokens() {
-            const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
+        //////////////////////////////
+        // Swapping tokens for ETH  //
+        //////////////////////////////
+
+        async swapExactTokensForETH() {
+            const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
             const weth = await routerContract.WETH()
 
-            const amountInBn = ethers.utils.parseEther(this.inputAmount)
-
-            const minimumPercentage = 1.0 - (parseFloat(this.slippageTolerance) / 100.0)
-            const minimumAmount = parseFloat(this.outputAmount) * minimumPercentage
-            const minimumAmountOutBn = ethers.utils.parseEther(minimumAmount.toString())
-
-            const tx = await routerContract.populateTransaction.swapExactETHForTokens(minimumAmountOutBn, [weth, this.outputToken.address], this.userAddress, Date.now() + 1000 * 60 * parseFloat(this.transactionDeadlineMinutes))
-
-            tx.value = amountInBn
+            const tx = await routerContract.populateTransaction.swapExactTokensForETH(
+              this.inputAmountBn,
+              this.minimumOutBn,
+              [this.inputToken.address, weth],
+              this.userAddress,
+              this.txDeadline)
 
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+        },
+
+        async swapTokensForExactETH() {
+            const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
+            const weth = await routerContract.WETH()
+
+            const tx = await routerContract.populateTransaction.swapExactTokensForETH(
+              this.outputAmountBn,
+              this.maximumInBn,
+              [this.inputToken.address, weth],
+              this.userAddress,
+              this.txDeadline)
+
+            const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+        },
+
+
+        //////////////////////////////
+        // Swapping ETH for tokens  //
+        //////////////////////////////
+
+        async swapExactETHForTokens() {
+            const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
+            const weth = await routerContract.WETH()
+
+            const tx = await routerContract.populateTransaction.swapExactETHForTokens(
+              this.minimumOutBn,
+              [weth, this.outputToken.address],
+              this.userAddress,
+              this.txDeadline)
+
+            tx.value = this.inputAmountBn
+
+            const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+        },
+
+        async swapETHForExactTokens() {
+          const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
+          const weth = await routerContract.WETH()
+
+          const tx = await routerContract.populateTransaction.swapETHForExactTokens(
+            this.outputAmountBn,
+            [weth, this.outputToken.address],
+            this.userAddress,
+            this.txDeadline)
+
+          tx.value = this.maximumInBn
+
+          const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
 
         ...mapActions(['requestConnect', 'safeSendTransaction'])
