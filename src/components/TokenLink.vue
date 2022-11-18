@@ -80,7 +80,6 @@ export default Vue.extend({
 
     },
     toggleTooltip() {
-      console.log(tokenData)
       this.showTooltip = true
     }
   }

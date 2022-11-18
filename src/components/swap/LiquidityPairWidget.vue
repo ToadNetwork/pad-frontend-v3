@@ -131,7 +131,7 @@ import {
   PADSWAP_SINGLE_STAKE_FARM_ABI,
   PADSWAP_LP_FARM_ABI,
   APPROVE_AMOUNT } from '@/constants'
-import { IEcosystem, EcosystemId, ECOSYSTEMS } from '@/ecosystem'
+import { IEcosystem, EcosystemId, ECOSYSTEMS, ChainId } from '@/ecosystem'
 import { formatMixin } from '@/format'
 import { FarmData } from '@/types'
 import { delay, equalsInsensitive, toFloat } from '@/utils'
@@ -162,16 +162,22 @@ export default Vue.extend({
   },
   computed: {
     ecosystem(): IEcosystem {
+      // @ts-ignore-next-line
       return ECOSYSTEMS[this.ecosystemId as EcosystemId]
     },
     userAddress(): string {
       return this.$store.state.address
     },
     userLpBalanceNum(): number {
+      // @ts-ignore-next-line
       return parseFloat(ethers.utils.formatEther(this.userLpBalance ?? 0))
     },
     userStakedBalanceNum(): number {
+      // @ts-ignore-next-line
       return parseFloat(ethers.utils.formatEther(this.userStakedBalance ?? 0))
+    },
+    multicall(): ethers.providers.Provider {
+      return this.$store.getters.multicall
     },
     removeAmountBn: {
       get(): ethers.BigNumber {
@@ -203,14 +209,15 @@ export default Vue.extend({
       return this.$store.getters.ecosystem.chainId
     },
     routerContractAddress() : string {
+      // @ts-ignore-next-line
       return routerAddresses[this.chainId]
     },
     isSpendingApproved() : boolean {
-      if (!(parseFloat(this.removeAmount) > 0)) {
+      if (!(parseFloat(this.removeAmount!.toString()) > 0)) {
         return true
       }
       else {
-        return parseFloat(this.removeAmount) <= parseFloat(this.pairData.allowance)
+        return parseFloat(this.removeAmount!.toString()) <= parseFloat(this.pairData.allowance)
       }
     },
     ...mapState(['web3'])
@@ -265,7 +272,7 @@ export default Vue.extend({
         const tx = await routerContract.populateTransaction.removeLiquidity(
           this.pairData.token0.address,
           this.pairData.token1.address,
-          ethers.utils.parseEther(this.removeAmount),
+          ethers.utils.parseEther(this.removeAmount!.toString()),
           amountAMin,
           amountBMin,
           this.userAddress,
@@ -300,7 +307,7 @@ export default Vue.extend({
 
       const tx = await routerContract.populateTransaction.removeLiquidityETH(
         token.address,
-        ethers.utils.parseEther(this.removeAmount),
+        ethers.utils.parseEther(this.removeAmount!.toString()),
         amountTokenMin,
         amountETHMin,
         this.userAddress,

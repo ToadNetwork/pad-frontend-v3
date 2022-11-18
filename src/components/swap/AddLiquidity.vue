@@ -351,7 +351,7 @@ export default Vue.extend({
         // Approves either tokenA or tokenB, depending on whether the argument received
         // is 'tokenA' or something else
         async approve(tokenID : string) {
-          let tokenAddress : toString
+          let tokenAddress : string
           if (tokenID == 'tokenA') {
             tokenAddress = this.tokenA.address
           }

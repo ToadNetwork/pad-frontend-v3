@@ -439,6 +439,9 @@ export default Vue.extend({
 })
 </script>
 
+<style src="@/styles/style.css">
+</style>
+
 <style scoped>
 @font-face {
   font-family: Roboto Mono;

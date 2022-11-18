@@ -42,10 +42,14 @@
     </div>
 
     <v-card
-    color="#00913340"
-    style="display: inline-block; padding: 20px;"
+    style="display: inline-block; padding: 20px; overflow: hidden;"
     width="100%"
     max-width="600px">
+
+      <div
+      class="bg bg-aqua">
+      </div>
+
 
       <!----------------->
       <!-- Input token -->
@@ -199,43 +203,48 @@
 
         <br/>
 
-        <v-row>
-          <v-col
-          style="margin: 0; padding: 0; margin-top: 5px;"
-          cols="6">
-            Slippage tolerance
-          </v-col>
-          <v-col
-          style="margin: 0; padding: 0;"
-          cols="6">
-            <v-text-field
-            style="max-width: 70px;"
-            solo-inverted
-            dense
-            v-model="slippageTolerance"
-            suffix="%">
-            </v-text-field>
-          </v-col>
-        </v-row>
+        <v-card
+        elevation="0"
+        color="transparent">
+          <v-row>
+            <v-col
+            style="margin: 0; padding: 0; margin-top: 5px;"
+            cols="6">
+              Slippage tolerance
+            </v-col>
+            <v-col
+            style="margin: 0; padding: 0;"
+            cols="6">
+              <v-text-field
+              style="max-width: 70px;"
+              solo-inverted
+              dense
+              v-model="slippageTolerance"
+              suffix="%">
+              </v-text-field>
+            </v-col>
+          </v-row>
 
-        <v-row>
-          <v-col
-          style="margin: 0; padding: 0; margin-top: 5px;"
-          cols="6">
-            Transaction deadline
-          </v-col>
-          <v-col
-          style="margin: 0; padding: 0;"
-          cols="6">
-            <v-text-field
-            style="max-width: 120px;"
-            solo-inverted
-            dense
-            v-model="transactionDeadlineMinutes"
-            suffix="minutes">
-            </v-text-field>
-          </v-col>
-        </v-row>
+          <v-row>
+            <v-col
+            style="margin: 0; padding: 0; margin-top: 5px;"
+            cols="6">
+              Transaction deadline
+            </v-col>
+            <v-col
+            style="margin: 0; padding: 0;"
+            cols="6">
+              <v-text-field
+              style="max-width: 120px;"
+              solo-inverted
+              dense
+              v-model="transactionDeadlineMinutes"
+              suffix="minutes">
+              </v-text-field>
+            </v-col>
+          </v-row>
+        </v-card>
+
       </div>
 
     </v-card>

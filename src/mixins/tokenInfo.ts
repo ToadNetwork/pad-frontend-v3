@@ -71,7 +71,7 @@ export const tokenInfo = Vue.extend({
         return 'liquidityPair'
       },
 
-      getEcosystemName(chainIdNumber) {
+      getEcosystemName(chainIdNumber : number) {
         const chainNames : any = {
           56: 'bsc',
           1284: 'moonbeam',
@@ -80,7 +80,7 @@ export const tokenInfo = Vue.extend({
         return chainNames[chainIdNumber]
       },
 
-      getTokenImage(ecosystemName, contractAddress) {
+      getTokenImage(ecosystemName : string, contractAddress : string) {
         try {
           const image = require('@/assets/token-icons/' + ecosystemName + '/' + contractAddress + '.png')
           return image

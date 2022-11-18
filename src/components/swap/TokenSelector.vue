@@ -33,17 +33,22 @@
       color="#1a3223"
       height="1000px"
       outlined
-      style="border-radius: ;"
       max-height="90vh">
+
+        <div
+        class="bg bg-aqua">
+        </div>
+
         <v-card-title
         class="justify-center"
         style="text-align: center;">
           <v-btn-toggle
-          fill-width
           v-model="tab"
+          large
           mandatory
           dense
-          borderless>
+          rounded
+          light>
             <v-btn>
               Common tokens
             </v-btn>
@@ -58,9 +63,11 @@
 
           <template v-if="tab == 0">
             <v-card v-for="tokenData in tokenWhitelist"
-            color="#315237"
+            color="rgb(64 98 88 / 75%)"
+            elevation="10"
             style="margin: 25px 5px"
             @click="selectToken(tokenData)">
+
               <v-row>
                 <v-col
                 cols="3"
@@ -197,6 +204,7 @@ export default Vue.extend({
     async loadCustomTokenData() {
       while (this.customTokenLoading) {}
       this.customTokenLoading = true
+      // @ts-ignore-next-line
       const tokenInfo = await this.getTokenData(this.customTokenAddress)
       this.customToken = tokenInfo
       this.customTokenLoading = false

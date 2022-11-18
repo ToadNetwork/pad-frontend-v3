@@ -214,10 +214,10 @@ export default Vue.extend({
     created() {
       setTimeout(() => {
           this.updatePairsOwnedByUser()
-      }, "1000")
+      }, 1000)
       setInterval(() => {
           this.updatePairsOwnedByUser()
-      }, "5000")
+      }, 5000)
     },
     computed: {
         ecosystemId: {
@@ -265,17 +265,17 @@ export default Vue.extend({
         },
     },
     watch: {
-        inputToken() {
-            this.updateTokenBalances()
-            this.updateOutputEstimation()
-        },
-        outputToken() {
-            this.updateTokenBalances()
-            this.updateOutputEstimation()
-        },
-        inputAmount() {
-            this.updateOutputEstimation()
-        }
+        // inputToken() {
+        //     this.updateTokenBalances()
+        //     this.updateOutputEstimation()
+        // },
+        // outputToken() {
+        //     this.updateTokenBalances()
+        //     this.updateOutputEstimation()
+        // },
+        // inputAmount() {
+        //     this.updateOutputEstimation()
+        // }
     },
     methods: {
       setSwapEcosystem(chain_id : string) {
@@ -360,15 +360,15 @@ export default Vue.extend({
           const allPairs = await this.getAllPairAddresses()
           const blockNumber = await this.multicall.getBlockNumber()
 
-          let promises = [this.priceModel.syncWithin(blockNumber, 12)]
-          let pairs = []
+          let promises : any = [this.priceModel.syncWithin(blockNumber, 12)]
+          let pairs : any = []
 
           for (let i = 0; i < allPairs.length; i++) {
             const pairContract = new ethers.Contract(allPairs[i], PADSWAP_PAIR_ABI, this.multicall)
 
             const pUserBalance = pairContract.balanceOf(this.userAddress).then((res : ethers.BigNumber) => {
               const balance = ethers.utils.formatEther(res)
-              if (balance > 0.0) {
+              if (parseFloat(balance) > 0.0) {
                 let pairData = {
                   address: allPairs[i],
                   userBalance: balance
@@ -432,7 +432,7 @@ export default Vue.extend({
           // Reserves
           const reserve0 = parseFloat(ethers.utils.formatEther(pairData.pairReserves._reserve0))
           const reserve1 = parseFloat(ethers.utils.formatEther(pairData.pairReserves._reserve1))
-          const userTokenShare : number = parseFloat(pairData.userBalance / pairData.totalSupply)
+          const userTokenShare : number = parseFloat( (pairData.userBalance / pairData.totalSupply).toString() )
 
           // How much of each token the user owns in the form of LP
           pairData.token0.userBalance = reserve0 * userTokenShare
