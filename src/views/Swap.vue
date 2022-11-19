@@ -532,16 +532,14 @@ export default Vue.extend({
           console.log(this.inputTokenAllowance)
         },
 
-        updateEstimation() {
-
-        },
-
         async updateOutputEstimation() {
           const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
           const weth = await routerContract.WETH()
 
           const amountInBn = ethers.utils.parseEther((0 + this.inputAmount).toString())
+
+          let decimalsOut = 18
 
           let inputToken = this.inputToken.address
           if (inputToken == 'eth') {
@@ -552,15 +550,16 @@ export default Vue.extend({
           if (outputToken == 'eth') {
             outputToken = weth
           }
+          else {
+            const tokenContract = new ethers.Contract(this.outputToken.address, ERC20_ABI, this.multicall)
+            decimalsOut = await tokenContract.decimals()
+          }
 
           try {
             const amountsOut = await routerContract.getAmountsOut(amountInBn, [inputToken, outputToken])
 
-            const amountOut0Bn = amountsOut[0] 
             const amountOut1Bn = amountsOut[1]
-
-            const amountOut0 = ethers.utils.formatEther(amountOut0Bn)
-            const amountOut1 = ethers.utils.formatEther(amountOut1Bn)
+            const amountOut1 = ethers.utils.formatUnits(amountOut1Bn, decimalsOut)
 
             this.outputAmount = amountOut1.toString()
           }
@@ -577,9 +576,15 @@ export default Vue.extend({
 
           const amountOutBn = ethers.utils.parseEther((0 + this.outputAmount).toString())
 
+          let decimalsIn = 18
+
           let inputToken = this.inputToken.address
           if (inputToken == 'eth') {
             inputToken = weth
+          }
+          else {
+            const tokenContract = new ethers.Contract(this.inputToken.address, ERC20_ABI, this.multicall)
+            decimalsIn = await tokenContract.decimals()
           }
 
           let outputToken = this.outputToken.address
@@ -591,10 +596,8 @@ export default Vue.extend({
             const amountsIn = await routerContract.getAmountsIn(amountOutBn, [inputToken, outputToken])
 
             const amountIn0Bn = amountsIn[0] 
-            const amountIn1Bn = amountsIn[1]
 
-            const amountIn0 = ethers.utils.formatEther(amountIn0Bn)
-            const amountIn1 = ethers.utils.formatEther(amountIn1Bn)
+            const amountIn0 = ethers.utils.formatUnits(amountIn0Bn, decimalsIn)
 
             this.inputAmount = amountIn0.toString()
           }
