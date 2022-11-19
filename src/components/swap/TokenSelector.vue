@@ -39,24 +39,19 @@
         class="bg bg-aqua">
         </div>
 
-        <v-card-title
+        <div
         class="justify-center"
-        style="text-align: center;">
-          <v-btn-toggle
-          v-model="tab"
-          large
-          mandatory
-          dense
-          rounded
-          light>
-            <v-btn>
-              Common tokens
-            </v-btn>
-            <v-btn>
-              Custom token
-            </v-btn>
-          </v-btn-toggle>
-        </v-card-title>
+        style="width: 100%; text-align: right;">
+          <v-btn
+            color="transparent"
+            fab
+            small
+            dark
+            @click="dialog = false"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </div>
 
         <v-divider></v-divider>
         <v-card-text style="height: 300px; margin-top: 15px;">
@@ -119,26 +114,7 @@
               </v-card>
             </template>
           </template>
-
-
         </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="dialog = false"
-          >
-            Close
-          </v-btn>
-<!--           <v-btn
-            color="blue darken-1"
-            text
-            @click=""
-          >
-            Confirm
-          </v-btn> -->
-        </v-card-actions>
       </v-card>
     </v-dialog>
 </template>
