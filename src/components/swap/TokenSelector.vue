@@ -41,7 +41,7 @@
 
         <div
         class="justify-center"
-        style="width: 100%; text-align: right;">
+        style="width: 100%; text-align: right; position: absolute; top: 0; right: 0; z-index: 20">
           <v-btn
             color="transparent"
             fab
@@ -53,67 +53,72 @@
           </v-btn>
         </div>
 
-        <v-divider></v-divider>
-        <v-card-text style="height: 300px; margin-top: 15px;">
+        <v-card-title style="z-index: 10;">
+          Select token or paste address
+        </v-card-title>
 
-          <template v-if="tab == 0">
-            <v-card v-for="tokenData in tokenWhitelist"
-            color="rgb(64 98 88 / 75%)"
-            elevation="10"
-            style="margin: 25px 5px"
-            @click="selectToken(tokenData)">
-
-              <v-row>
-                <v-col
-                cols="3"
-                class="text-center">
-                  <v-layout
-                  style="width: 100%;"
-                  fill-height
-                  align-center
-                  justify-center>
-                    <img
-                    :src="getTokenImage(ecosystemName, tokenData.address)"
-                    height="50px"
-                    width="50px">
-                    </v-img>
-                  </v-layout>
-                </v-col>
-                <v-col
-                cols="9">
-                  <v-card-title>{{ tokenData.symbol }}</v-card-title>
-                  <v-card-subtitle>{{ tokenData.description }}</v-card-subtitle>
-                </v-col>
-              </v-row>
-            </v-card>
-          </template>
-          <template v-else>            
-            <v-text-field
+        <v-card
+        color="transparent"
+        style="margin-left: 10px; margin-right: 10px; padding-left: 10px; padding-right: 10px;">
+          <v-text-field
             label="Custom token address"
             v-model='customTokenAddress'
             :rules="contractAddressRules">
-            </v-text-field>
+          </v-text-field>
 
-            <template v-if="customTokenAddressIsValid">
-              <v-card v-if="customTokenLoading">
-                <v-progress-circular
-                indiscriminate>
-                </v-progress-circular>
-              </v-card>
+          <template v-if="customTokenAddressIsValid">
+            <v-card v-if="customTokenLoading">
+              <v-progress-circular
+              indiscriminate>
+              </v-progress-circular>
+            </v-card>
 
-              <v-card v-else>
-                <v-card-title>
-                  {{ customToken.symbol }} ({{ customToken.name }})
-                </v-card-title>
-                <v-card-actions>
-                  <v-btn
-                  @click="selectToken(customToken)">
-                    Confirm
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </template>
+            <v-card v-else>
+              <v-card-title>
+                {{ customToken.symbol }} ({{ customToken.name }})
+              </v-card-title>
+              <v-card-actions>
+                <v-btn
+                @click="selectToken(customToken)">
+                  Confirm
+                </v-btn>
+              </v-card-actions>
+            </v-card>
           </template>
+        </v-card>
+
+        <v-divider></v-divider>
+        <v-card-text style="height: 300px; margin-top: 15px;">
+
+          <v-card v-for="tokenData in tokenWhitelist"
+          color="rgb(64 98 88 / 75%)"
+          elevation="10"
+          style="margin: 25px 5px"
+          @click="selectToken(tokenData)">
+
+            <v-row>
+              <v-col
+              cols="3"
+              class="text-center">
+                <v-layout
+                style="width: 100%;"
+                fill-height
+                align-center
+                justify-center>
+                  <img
+                  :src="getTokenImage(ecosystemName, tokenData.address)"
+                  height="50px"
+                  width="50px">
+                  </v-img>
+                </v-layout>
+              </v-col>
+              <v-col
+              cols="9">
+                <v-card-title>{{ tokenData.symbol }}</v-card-title>
+                <v-card-subtitle>{{ tokenData.description }}</v-card-subtitle>
+              </v-col>
+            </v-row>
+          </v-card>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -143,14 +148,12 @@ export default Vue.extend({
   data() {
       return {
           dialog: <boolean> false,
-          tab: 0,
           customTokenAddress: <String> '',
           customToken: <any> {},
           customTokenLoading: <boolean> false,
           customTokenAddressIsValid: <boolean> false,
           contractAddressRules: [
-            (v: any) => !!v || 'Specify your token\'s contract address',
-            (v: any) => (v.length == 42 && v.slice(0, 2) == '0x') || 'Not a valid contract address.'
+            (v: any) => ( (v.length == 42 && v.slice(0, 2) == '0x') || v.length == 0 ) || 'Not a valid contract address.'
           ],
       }
   },
