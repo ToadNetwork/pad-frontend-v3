@@ -426,6 +426,9 @@ export default Vue.extend({
             this.updateInputEstimation()
           }
         },
+        userAddress() {
+          this.updateTokenBalances()
+        }
     },
     methods: {
         setSwapEcosystem(chain_id : string) {
@@ -509,6 +512,9 @@ export default Vue.extend({
         },
 
         async updateTokenBalances() {
+          if (!this.web3){
+            this.inputTokenBalance = '0'
+          }
           if (this.inputToken.address == 'eth') {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
@@ -529,7 +535,6 @@ export default Vue.extend({
             const tokenAllowanceBn = await tokenContract.allowance(this.userAddress, this.routerContractAddress)
             this.inputTokenAllowance = ethers.utils.formatUnits(tokenAllowanceBn, decimals)
           }
-          console.log(this.inputTokenAllowance)
         },
 
         async updateOutputEstimation() {
