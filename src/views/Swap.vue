@@ -2,6 +2,10 @@
   <v-container
   class="text-center">
 
+    <div
+    :style="getBackgroundStyle()">
+    </div>
+
     <!-------------------------------->
     <!-- Ecosystem selection slider -->
     <!-------------------------------->
@@ -41,14 +45,17 @@
       <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
     </div>
 
+
+
     <v-card
     style="display: inline-block; padding: 20px; overflow: hidden;"
+    color="transparent"
     width="100%"
     max-width="600px">
 
-      <div
+<!--       <div
       class="bg bg-aqua">
-      </div>
+      </div> -->
 
 
       <!----------------->
@@ -730,6 +737,19 @@ export default Vue.extend({
           tx.value = this.maximumInBn
 
           const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+        },
+
+        getBackgroundStyle() {
+          let ecosystemBackgrounds = {
+            56: "background: radial-gradient(circle, #939d773d 0%, rgba(253, 187, 45, 0) 100%);",
+            1284: "background: radial-gradient(circle, #6e00ff40 0%, rgba(253, 187, 45, 0) 100%);",
+            1285: "background: radial-gradient(circle, #007eff40 0%, rgba(253, 187, 45, 0) 100%);"
+          }
+
+          let backgroundStyle = "opacity: 80%; width: 100%; height: 100%; position: fixed; left: 0; top: 0;" + ecosystemBackgrounds[this.chainId]
+          
+          return backgroundStyle
+
         },
 
         ...mapActions(['requestConnect', 'safeSendTransaction'])
