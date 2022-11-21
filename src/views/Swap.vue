@@ -514,6 +514,7 @@ export default Vue.extend({
         async updateTokenBalances() {
           if (!this.web3){
             this.inputTokenBalance = '0'
+            return
           }
           if (this.inputToken.address == 'eth') {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
