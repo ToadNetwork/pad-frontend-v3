@@ -29,11 +29,11 @@
         </v-btn>
       </template>
       <v-card
-      class="token-list-card"
       color="#1a3223"
       height="1000px"
       outlined
-      max-height="90vh">
+      max-height="90vh"
+      class="ma-0 pa-0">
 
         <div
         class="bg bg-aqua">
@@ -87,37 +87,35 @@
         </v-card>
 
         <v-divider></v-divider>
-        <v-card-text style="height: 300px; margin-top: 15px;">
+        <v-card-text
+        class="ma-0 pa-0"
+        style="height: 300px; margin-top: 15px;">
 
           <v-card v-for="tokenData in filteredTokenList"
-          color="rgb(64 98 88 / 75%)"
-          elevation="10"
-          style="margin: 25px 5px"
+          flat
+          tile
+          color="transparent"
+          width="100%"
+          class="ma-0 pa-0"
+          style="padding-bottom: 5px !important;"
           @click="selectToken(tokenData)">
-
-            <v-row>
-              <v-col
-              cols="3"
-              class="text-center">
-                <v-layout
-                style="width: 100%;"
-                fill-height
-                align-center
-                justify-center>
-                  <img
-                  :src="getTokenImage(ecosystemName, tokenData.address)"
-                  height="50px"
-                  width="50px">
-                  </v-img>
-                </v-layout>
-              </v-col>
-              <v-col
-              cols="9">
-                <v-card-title>{{ tokenData.symbol }}</v-card-title>
-                <v-card-subtitle>{{ tokenData.description }}</v-card-subtitle>
-              </v-col>
-            </v-row>
+            <v-divider></v-divider>
+            <v-card-title>
+              <img
+              style="height: 30px; width: 30px; margin-right: 10px;"
+              :src="getTokenImage(ecosystemName, tokenData.address)">
+              </img>
+              <span style="margin-bottom: 3px;">
+                {{ tokenData.symbol }}
+              </span>
+            </v-card-title>
+            <v-card-subtitle
+            color="#cfcfcfb3"
+            style="margin-top: -10px;">
+              {{ tokenData.description }}
+            </v-card-subtitle>
           </v-card>
+
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -230,6 +228,8 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+
+
 
 .token-list-card {
   border-radius: 20px;
