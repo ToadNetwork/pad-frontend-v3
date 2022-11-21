@@ -61,9 +61,8 @@
         color="transparent"
         style="margin-left: 10px; margin-right: 10px; padding-left: 10px; padding-right: 10px;">
           <v-text-field
-            label="Custom token address"
-            v-model='customTokenAddress'
-            :rules="contractAddressRules">
+            label="Type a token name, or paste address"
+            v-model='customTokenAddress'>
           </v-text-field>
 
           <template v-if="customTokenAddressIsValid">
@@ -90,7 +89,7 @@
         <v-divider></v-divider>
         <v-card-text style="height: 300px; margin-top: 15px;">
 
-          <v-card v-for="tokenData in tokenWhitelist"
+          <v-card v-for="tokenData in filteredTokenList"
           color="rgb(64 98 88 / 75%)"
           elevation="10"
           style="margin: 25px 5px"
@@ -152,9 +151,7 @@ export default Vue.extend({
           customToken: <any> {},
           customTokenLoading: <boolean> false,
           customTokenAddressIsValid: <boolean> false,
-          contractAddressRules: [
-            (v: any) => ( (v.length == 42 && v.slice(0, 2) == '0x') || v.length == 0 ) || 'Not a valid contract address.'
-          ],
+          filteredTokenList: <any> []
       }
   },
   computed: {
@@ -174,6 +171,9 @@ export default Vue.extend({
         return this.$store.getters.ecosystem.chainId
       },
   },
+  created() {
+    this.updateFilteredTokenList()
+  },
   methods: {
     selectToken(tokenData : any) {
       console.log(tokenData.address)
@@ -187,6 +187,26 @@ export default Vue.extend({
       const tokenInfo = await this.getTokenData(this.customTokenAddress)
       this.customToken = tokenInfo
       this.customTokenLoading = false
+    },
+
+    // Filters the token whitelist,
+    // only displaying the tokens that match the search query
+    // in their name or adress
+    updateFilteredTokenList() {
+      const list = []
+      for (let i = 0; i < this.tokenWhitelist.length; i++) {
+        let token = this.tokenWhitelist[i]
+
+        const query = this.customTokenAddress.toUpperCase()
+        const address = token.address.toUpperCase()
+        const symbol = token.symbol.toUpperCase()
+        const name = token.name.toUpperCase()
+
+        if (address.includes(query) || symbol.includes(query) || name.includes(query)) {
+          list.push(token)
+        }
+      }
+      this.filteredTokenList = list
     }
   },
   watch: {
@@ -194,11 +214,16 @@ export default Vue.extend({
       if (ethers.utils.isAddress(val)) {
         this.loadCustomTokenData()
         this.customTokenAddressIsValid = true
+        this.filteredTokenList = []
       }
       else {
         this.customTokenAddressIsValid = false
+        this.updateFilteredTokenList()
       }
-    }
+    },
+    tokenWhitelist(newWhitelist) {
+      this.updateFilteredTokenList()
+    },
   }
 })
 
