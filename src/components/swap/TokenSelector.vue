@@ -36,7 +36,7 @@
       class="ma-0 pa-0">
 
         <div
-        class="bg bg-aqua">
+        class="bg bg-dark">
         </div>
 
         <div
@@ -53,14 +53,16 @@
           </v-btn>
         </div>
 
-        <v-card-title style="z-index: 10;">
-          Select token or paste address
+        <v-card-title style="z-index: 10; font-size: 1em;">
+          Select token
         </v-card-title>
 
         <v-card
         color="transparent"
-        style="margin-left: 10px; margin-right: 10px; padding-left: 10px; padding-right: 10px;">
+        flat
+        style="margin: 10px; padding-left: 10px; padding-right: 10px;">
           <v-text-field
+          outlined
             label="Type a token name, or paste address"
             v-model='customTokenAddress'>
           </v-text-field>

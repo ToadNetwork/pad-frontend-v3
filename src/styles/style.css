@@ -119,3 +119,10 @@
   background: rgb(57 94 79);
   background: linear-gradient(114deg, rgb(66 114 76) 0%, rgb(25 37 62) 100%);
 }
+
+.bg-dark {
+  background: rgb(27 33 42);
+  background: radial-gradient(circle, rgb(36 44 56) 0%, rgb(12 20 20) 100%);
+}
+
+

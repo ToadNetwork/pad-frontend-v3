@@ -750,7 +750,7 @@ export default Vue.extend({
 
         getBackgroundStyle() {
           let ecosystemBackgrounds = {
-            56: "background: radial-gradient(circle, #939d773d 0%, rgba(253, 187, 45, 0) 100%);",
+            56: "background: radial-gradient(circle, #6a6a6a45 0%, rgba(253, 187, 45, 0) 100%);",
             1284: "background: radial-gradient(circle, #6e00ff40 0%, rgba(253, 187, 45, 0) 100%);",
             1285: "background: radial-gradient(circle, #007eff40 0%, rgba(253, 187, 45, 0) 100%);"
           }
