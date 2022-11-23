@@ -543,10 +543,6 @@ export default Vue.extend({
 
           const weth = await routerContract.WETH()
 
-          const amountInBn = ethers.utils.parseEther((0 + this.inputAmount).toString())
-
-          let decimalsOut = 18
-
           let inputToken = this.inputToken.address
           if (inputToken == 'eth') {
             inputToken = weth
@@ -556,10 +552,11 @@ export default Vue.extend({
           if (outputToken == 'eth') {
             outputToken = weth
           }
-          else {
-            const tokenContract = new ethers.Contract(this.outputToken.address, ERC20_ABI, this.multicall)
-            decimalsOut = await tokenContract.decimals()
-          }
+
+          const decimalsIn = await this.getDecimals(inputToken)
+          const decimalsOut = await this.getDecimals(outputToken)
+
+          const amountInBn = ethers.utils.parseUnits((0 + this.inputAmount).toString(), decimalsIn)
 
           try {
             const amountsOut = await routerContract.getAmountsOut(amountInBn, [inputToken, outputToken])
@@ -575,28 +572,37 @@ export default Vue.extend({
         },
 
 
+        async getDecimals(tokenContractAddress) {
+          if (tokenContractAddress == 'eth') {
+            return 18
+          }
+          else {
+            let tokenContract = new ethers.Contract(tokenContractAddress, ERC20_ABI, this.multicall)
+            const decimals = await tokenContract.decimals()
+            return decimals
+          }
+        },
+
+
         async updateInputEstimation() {
           const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
           const weth = await routerContract.WETH()
 
-          const amountOutBn = ethers.utils.parseEther((0 + this.outputAmount).toString())
-
-          let decimalsIn = 18
-
           let inputToken = this.inputToken.address
           if (inputToken == 'eth') {
             inputToken = weth
           }
-          else {
-            const tokenContract = new ethers.Contract(this.inputToken.address, ERC20_ABI, this.multicall)
-            decimalsIn = await tokenContract.decimals()
-          }
-
+   
           let outputToken = this.outputToken.address
           if (outputToken == 'eth') {
             outputToken = weth
           }
+
+          const decimalsIn = await this.getDecimals(inputToken)
+          const decimalsOut = await this.getDecimals(outputToken)
+
+          const amountOutBn = ethers.utils.parseUnits((0 + this.outputAmount).toString(), decimalsOut)
 
           try {
             const amountsIn = await routerContract.getAmountsIn(amountOutBn, [inputToken, outputToken])
