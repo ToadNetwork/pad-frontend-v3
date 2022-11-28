@@ -195,7 +195,7 @@ export default Vue.extend({
     updateFilteredTokenList() {
       const list = []
       for (let i = 0; i < this.tokenWhitelist.length; i++) {
-        let token = this.tokenWhitelist[i]
+        let token : any = this.tokenWhitelist[i]
 
         const query = this.customTokenAddress.toUpperCase()
         const address = token.address.toUpperCase()

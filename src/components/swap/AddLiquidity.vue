@@ -3,7 +3,8 @@
   class="text-center">
 
     <v-card
-    color="#00913340"
+    flat
+    color="transparent"
     style="display: inline-block; padding: 20px;"
     width="100%"
     max-width="600px">
@@ -11,10 +12,12 @@
       <!------------->
       <!-- Token A -->
       <!------------->
+
       <v-card
       color="#618b4233">
         <v-card-title>
-          Token A &nbsp;
+
+          Token 1 &nbsp;
           <TokenSelector
           v-bind:selectedToken="tokenA"
           v-bind:tokenWhitelist="tokenWhitelist"
@@ -31,25 +34,24 @@
           <v-text-field
           v-model="amountTokenA"
           :label="'Token 1 to add ' + '(max: ' + inputTokenBalance + ' ' + tokenA.symbol + ')'"
-          :suffix="tokenA.symbol">
+          :suffix="tokenA.symbol"
+          @change="swapMode = 0; updateEstimationForTokenB()">
           </v-text-field>
         </v-card-actions>
 
       </v-card>
 
-      <v-btn
-      color="white"
-      plain
-      fab
-      large
-      @click="switchSelectedTokens()">
+
+
+      <div
+      style="margin: 10px; opacity: 0.6;">
         <v-icon
         large
         dark
         >
-        mdi-swap-vertical
+        mdi-plus
         </v-icon>
-      </v-btn>
+      </div>
 
       <!------------->
       <!-- Token B -->
@@ -57,7 +59,7 @@
       <v-card
       color="#618b4233">
         <v-card-title>
-          Token B &nbsp;
+          Token 2 &nbsp;
           <TokenSelector
           v-bind:selectedToken="tokenB"
           v-bind:tokenWhitelist="tokenWhitelist"
@@ -74,7 +76,8 @@
           <v-text-field
           v-model="amountTokenB"
           :suffix="tokenB.symbol"
-          label="Token 2 to add">
+          label="Token 2 to add"
+          @change="swapMode = 1; updateEstimationForTokenA()">
           </v-text-field>
         </v-card-actions>
       </v-card>
@@ -176,6 +179,8 @@ export default Vue.extend({
 
             exactToken: '',
 
+            estimationMode: 0,
+
             tokenWhitelist: <any> [],
 
             tokenSelectionDialog: <boolean> false,
@@ -234,10 +239,29 @@ export default Vue.extend({
     watch: {
         tokenA() {
             this.updateTokenBalances()
+            this.updateEstimationForTokenB()
         },
         tokenB() {
             this.updateTokenBalances()
+            this.updateEstimationForTokenA()
         },
+        amountTokenA() {
+          if (this.estimationMode == 0) {
+            this.updateEstimationForTokenB()
+          }
+        },
+        amountTokenB() {
+          if (this.estimationMode == 1) {
+            this.updateEstimationForTokenB()
+          }
+        },
+        userAddress() {
+          this.updateTokenBalances()
+        },
+        ecosystem() {
+          this.estimationMode = 0
+          this.updateEstimationForTokenA()
+        }
     },
     methods: {
         setDefaultRoute() {
@@ -269,6 +293,86 @@ export default Vue.extend({
         },
 
 
+        async getDecimals(tokenContractAddress : string) {
+          if (tokenContractAddress == 'eth') {
+            return 18
+          }
+          else {
+            let tokenContract = new ethers.Contract(tokenContractAddress, ERC20_ABI, this.multicall)
+            const decimals = await tokenContract.decimals()
+            return decimals
+          }
+        },
+
+        async updateEstimationForTokenA() {
+          const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
+
+          const weth = await routerContract.WETH()
+
+          let inputToken = this.tokenA.address
+          if (inputToken == 'eth') {
+            inputToken = weth
+          }
+   
+          let outputToken = this.tokenB.address
+          if (outputToken == 'eth') {
+            outputToken = weth
+          }
+
+          const decimalsIn = await this.getDecimals(inputToken)
+          const decimalsOut = await this.getDecimals(outputToken)
+
+          const amountOutBn = ethers.utils.parseUnits((0 + this.amountTokenB).toString(), decimalsOut)
+
+          try {
+            const amountsIn = await routerContract.getAmountsIn(amountOutBn, [inputToken, outputToken])
+
+            const amountIn0Bn = amountsIn[0] 
+
+            const amountIn0 = ethers.utils.formatUnits(amountIn0Bn, decimalsIn)
+
+            this.amountTokenA = amountIn0.toString()
+          }
+          catch {
+            this.amountTokenA = ''
+          }
+        },
+
+        async updateEstimationForTokenB() {
+          const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
+
+          const weth = await routerContract.WETH()
+
+          let inputToken = this.tokenA.address
+          if (inputToken == 'eth') {
+            inputToken = weth
+          }
+
+          let outputToken = this.tokenB.address
+          if (outputToken == 'eth') {
+            outputToken = weth
+          }
+
+          const decimalsIn = await this.getDecimals(inputToken)
+          const decimalsOut = await this.getDecimals(outputToken)
+
+          const amountInBn = ethers.utils.parseUnits((0 + this.amountTokenA).toString(), decimalsIn)
+
+          try {
+            const amountsOut = await routerContract.getAmountsOut(amountInBn, [inputToken, outputToken])
+
+            const amountOut1Bn = amountsOut[1]
+            const amountOut1 = ethers.utils.formatUnits(amountOut1Bn, decimalsOut)
+
+            this.amountTokenB = amountOut1.toString()
+          }
+          catch {
+            this.amountTokenB = ''
+          }
+        },
+
+
+
         switchSelectedTokens() {
           var tmp = this.tokenA
           this.tokenA = this.tokenB
@@ -296,40 +400,6 @@ export default Vue.extend({
 
             const tokenAllowanceBn = await tokenContract.allowance(this.userAddress, this.routerContractAddress)
             this.inputTokenAllowance = ethers.utils.formatUnits(tokenAllowanceBn, decimals)
-          }
-        },
-
-
-        async updateOutputEstimation() {
-          const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
-
-          const weth = await routerContract.WETH()
-
-          const amountInBn = ethers.utils.parseEther((0 + this.inputAmount).toString())
-
-          let inputToken = this.inputToken.address
-          if (inputToken == 'eth') {
-            inputToken = weth
-          }
-
-          let outputToken = this.outputToken.address
-          if (outputToken == 'eth') {
-            outputToken = weth
-          }
-
-          try {
-            const amountsOut = await routerContract.getAmountsOut(amountInBn, [inputToken, outputToken])
-
-            const amountOut0Bn = amountsOut[0] 
-            const amountOut1Bn = amountsOut[1]
-
-            const amountOut0 = ethers.utils.formatEther(amountOut0Bn)
-            const amountOut1 = ethers.utils.formatEther(amountOut1Bn)
-
-            this.outputAmount = amountOut1.toString()
-          }
-          catch {
-            this.outputAmount = ''
           }
         },
 

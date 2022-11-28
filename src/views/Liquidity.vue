@@ -99,7 +99,11 @@
       </v-card-subtitle>
 
       <!-- Loading pairs for this chain -->
-      <template v-if="pairsOwnedByUser.length == 0">
+      <template v-if="!this.web3">
+        Connect your wallet to see your liquidity
+      </template>
+      
+      <template v-else-if="pairsOwnedByUser.length == 0">
         Loading pairs, please wait...
       </template>
 

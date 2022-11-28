@@ -572,7 +572,7 @@ export default Vue.extend({
         },
 
 
-        async getDecimals(tokenContractAddress) {
+        async getDecimals(tokenContractAddress : string) {
           if (tokenContractAddress == 'eth') {
             return 18
           }
