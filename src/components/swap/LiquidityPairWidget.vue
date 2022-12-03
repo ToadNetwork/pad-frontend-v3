@@ -2,8 +2,7 @@
   <div>
   <v-expansion-panels>
     <v-expansion-panel
-    style="border-radius: 20px; overflow: hidden; margin: 10px 0;"
-    background-color="#28233ab3"
+    style="border-radius: 20px; overflow: hidden; margin: 10px 0; background-color: rgba(1, 1, 1, 0.5);"
     >
       <v-expansion-panel-header>
         <v-row>
@@ -30,15 +29,13 @@
 
       <v-expansion-panel-content>
 
-
         <v-divider></v-divider>
 
         <div>
         </div>
 
-
-
-        <v-simple-table>
+        <v-simple-table
+        style="background-color: transparent;">
           <tbody>
             <tr>
               <td>LP tokens owned</td>
@@ -73,7 +70,6 @@
             min="0.0"
             solo
             outlined
-            rounded
             dense
             color="#00FC4c"
             background-color="#71767F"
@@ -107,8 +103,7 @@
             </v-btn>
 
           </div>
-        </div>        
-
+        </div>
 
       </v-expansion-panel-content>
     </v-expansion-panel>
@@ -157,7 +152,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      removeAmount: <string | null> null
+      removeAmount: <string> '',
     }
   },
   computed: {

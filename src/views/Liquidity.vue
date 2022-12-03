@@ -47,7 +47,8 @@
     min-height="1000px"
     width="100%"
     max-width="900px"
-    elevation="10">
+    flat
+    class="bg-deep">
 
     <v-tabs
       v-model="tab"
@@ -82,17 +83,13 @@
     <v-card
     color="transparent"
     style="text-align: left;"
-    v-if="tab == 'your-liquidity'">
-
-      <v-card-title>
-        Your liquidity
-      </v-card-title>
-
+    v-if="tab == 'your-liquidity'"
+    flat>
 
       <v-card-subtitle>
         <div
         style="display: inline-block; border: 1px solid gray; padding: 10px; border-radius: 10px; margin: 10px 0;">
-          Note: this page shows unstaked liquidity (i.e. not locked in a farm).
+          Note: this page only shows unstaked liquidity (i.e. not locked in a farm).
           <br>
           Liquidity that is staked in a farm will not show up here - see <a href="/farms">farms</a> instead.
         </div>

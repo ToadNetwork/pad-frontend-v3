@@ -14,7 +14,7 @@
       <!------------->
 
       <v-card
-      color="#618b4233">
+      color="rgb(122 122 122 / 5%)">
         <v-card-title>
 
           Token 1 &nbsp;
@@ -57,7 +57,7 @@
       <!-- Token B -->
       <!------------->
       <v-card
-      color="#618b4233">
+      color="rgb(122 122 122 / 5%)">
         <v-card-title>
           Token 2 &nbsp;
           <TokenSelector

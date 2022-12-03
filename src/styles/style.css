@@ -125,4 +125,7 @@
   background: radial-gradient(circle, rgb(36 44 56) 0%, rgb(12 20 20) 100%);
 }
 
-
+.bg-deep {
+  background: rgb(20 20 20);
+  background: radial-gradient(circle, rgb(20 20 20) 0%, rgb(26 35 42) 100%);
+}
