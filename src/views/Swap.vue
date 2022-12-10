@@ -45,17 +45,11 @@
       <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
     </div>
 
-
-
     <v-card
     style="display: inline-block; padding: 20px; overflow: hidden;"
     color="transparent"
     width="100%"
     max-width="600px">
-
-<!--       <div
-      class="bg bg-aqua">
-      </div> -->
 
 
       <!----------------->
@@ -88,6 +82,9 @@
 
       </v-card>
 
+      <!------------------------------------>
+      <!-- "Change swap direction" button -->
+      <!------------------------------------>
       <v-btn
       color="white"
       plain
@@ -135,8 +132,30 @@
 
       <br/>
 
+
+      <!------------------------------------->
+      <!-- Connect / approve / swap button -->
+      <!------------------------------------->
       <div
-      v-if="tokensApproved">
+      v-if="!isConnected || !web3">
+        <v-btn
+        block
+        color="orange"
+        @click="connectWallet()">
+          CONNECT WALLET
+        </v-btn>
+      </div>
+      <div
+      v-else-if="!tokensApproved">
+        <v-btn
+        block
+        color="#afa449"
+        @click="approve()">
+          APPROVE
+        </v-btn>
+      </div>
+      <div
+      v-else>
         <v-btn
         block
         x-large
@@ -145,15 +164,7 @@
           SWAP
         </v-btn>
       </div>
-      <div
-      v-else>
-        <v-btn
-        block
-        color="#afa449"
-        @click="approve()">
-          APPROVE
-        </v-btn>
-      </div>
+
 
 
       <!----------------------------------------------------->
@@ -169,25 +180,6 @@
       <v-card
       style="text-align: center;"
       color="#618b4233">
-<!--         <v-card-title class="justify-center">
-          Swap mode:
-        </v-card-title>
-        <v-card-subtitle>
-          <v-btn-toggle
-              v-model="swapMode"
-              mandatory
-              dense
-              borderless
-
-            >
-              <v-btn>
-                Exact sold
-              </v-btn>
-              <v-btn>
-                Exact received
-              </v-btn>
-            </v-btn-toggle>
-        </v-card-subtitle> -->
         <v-card-text>
           <template v-if="swapMode == 0">
             You will spend exactly {{ toNumber(inputAmount) }} {{ inputToken.symbol }}
@@ -203,10 +195,6 @@
           </template>
         </v-card-text>
       </v-card>
-
-
-
-
 
         <br/>
 
@@ -269,7 +257,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
 import { ethers } from 'ethers'
 import { IEcosystem, EcosystemId, ECOSYSTEMS, ChainId } from '@/ecosystem'
@@ -479,7 +467,6 @@ export default Vue.extend({
           else return this.round(num, 6)
         },
 
-
         setDefaultRoute() {
             var currentChainDefaults = DEFAULT_SWAP_ROUTES[this.chainId]
             this.inputToken = currentChainDefaults.inputToken
@@ -618,6 +605,15 @@ export default Vue.extend({
           }
         },
 
+
+        // Prompts the user to connect the wallet
+        async connectWallet() {
+          this.$store.dispatch('requestConnect')
+        },
+
+
+        // Calls the appropriate function depending on swap type
+        // (tokens for tokens, eth for tokens, etc.)
         async swap() {
           // Swapping the chain's native token for an ERC-20 token
           if (this.inputToken.address == 'eth') {
@@ -754,6 +750,7 @@ export default Vue.extend({
           const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
 
+        // Returns the appropriate background color depending on the ecosystem
         getBackgroundStyle() {
           let ecosystemBackgrounds = {
             56: "background: radial-gradient(circle, #6a6a6a45 0%, rgba(253, 187, 45, 0) 100%);",
@@ -767,6 +764,7 @@ export default Vue.extend({
 
         },
 
+        ...mapGetters(['isConnected']),
         ...mapActions(['requestConnect', 'safeSendTransaction'])
     }
 })
