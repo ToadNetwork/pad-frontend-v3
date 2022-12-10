@@ -2,9 +2,10 @@
   <div>
   <v-expansion-panels>
     <v-expansion-panel
-    style="border-radius: 20px; overflow: hidden; margin: 10px 0; background-color: rgba(1, 1, 1, 0.5);"
+    style="border-radius: 20px; overflow: hidden; margin: 10px 0;"
     >
-      <v-expansion-panel-header>
+      <v-expansion-panel-header
+      color="#0019ff1a">
         <v-row>
           <v-col
           cols="12">
@@ -27,9 +28,9 @@
         </v-row>
       </v-expansion-panel-header>
 
-      <v-expansion-panel-content>
+      <v-expansion-panel-content
+      color="#18182a">
 
-        <v-divider></v-divider>
 
         <div>
         </div>

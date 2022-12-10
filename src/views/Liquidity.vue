@@ -43,16 +43,15 @@
 
     <v-sheet
     color="#1d1e2099"
-    style="border-radius: 30px; overflow: hidden; display: inline-block;"
+    style="border-radius: 30px; overflow: hidden; display: inline-block; background: transparent;"
     min-height="1000px"
     width="100%"
     max-width="900px"
-    flat
-    class="bg-deep">
+    flat>
 
     <v-tabs
       v-model="tab"
-      background-color="rgb(23 19 38 / 70%)"
+      background-color="transparent"
       color="#00ff1f"
       centered
       dark
@@ -88,6 +87,7 @@
 
       <v-card-subtitle>
         <div
+        class="bg-deep"
         style="display: inline-block; border: 1px solid gray; padding: 10px; border-radius: 10px; margin: 10px 0;">
           Note: this page only shows unstaked liquidity (i.e. not locked in a farm).
           <br>
