@@ -43,7 +43,8 @@
 
     <v-sheet
     color="#1d1e2099"
-    style="border-radius: 30px; overflow: hidden; display: inline-block; background: transparent;"
+    style="overflow: hidden; display: inline-block; background: transparent;"
+    class="ma-0 pa-0"
     min-height="1000px"
     width="100%"
     max-width="900px"
@@ -83,6 +84,7 @@
     color="transparent"
     style="text-align: left;"
     v-if="tab == 'your-liquidity'"
+    class="ma-0 pa-0"
     flat>
 
       <v-card-subtitle>

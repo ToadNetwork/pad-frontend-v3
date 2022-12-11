@@ -33,8 +33,7 @@
         <v-card-actions>
           <v-text-field
           v-model="amountTokenA"
-          :label="'Token 1 to add ' + '(max: ' + inputTokenBalance + ' ' + tokenA.symbol + ')'"
-          :suffix="tokenA.symbol"
+          :label="'Amount of ' + tokenA.symbol +' to add ' + '(max: ' + inputTokenBalance + ' ' + tokenA.symbol + ')'"
           @change="swapMode = 0; updateEstimationForTokenB()">
           </v-text-field>
         </v-card-actions>
@@ -75,8 +74,7 @@
         <v-card-actions>
           <v-text-field
           v-model="amountTokenB"
-          :suffix="tokenB.symbol"
-          label="Token 2 to add"
+          :label="'Amount of ' + tokenB.symbol +' to add'"
           @change="swapMode = 1; updateEstimationForTokenA()">
           </v-text-field>
         </v-card-actions>

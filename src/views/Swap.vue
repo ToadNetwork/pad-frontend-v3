@@ -74,8 +74,7 @@
         <v-card-actions>
           <v-text-field
           v-model="inputAmount"
-          :label="'Amount to spend ' + '(max: ' + inputTokenBalance + ' ' + inputToken.symbol + ')'"
-          :suffix="inputToken.symbol"
+          :label="'Amount of ' + inputToken.symbol +' to spend ' + '(max: ' + inputTokenBalance + ' ' + inputToken.symbol + ')'"
           @change="swapMode = 0; updateOutputEstimation()">
           </v-text-field>
         </v-card-actions>
@@ -121,8 +120,7 @@
         <v-card-actions>
           <v-text-field
           v-model="outputAmount"
-          :suffix="outputToken.symbol"
-          label="Amount to receive"
+          :label="'Amount of ' + outputToken.symbol + ' to receive'"
           @change="swapMode = 1; updateInputEstimation()">
           </v-text-field>
         </v-card-actions>
