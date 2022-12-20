@@ -26,6 +26,11 @@ const routes: Array<RouteConfig> = [
     component: Home
   },
   {
+    path: '/farm-tools',
+    name: 'Farm Tools',
+    component: () => import('../views/FarmTools.vue')
+  },
+  {
     path: '/about',
     name: 'About',
     // route level code-splitting
