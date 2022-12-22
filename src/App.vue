@@ -219,25 +219,32 @@ export default Vue.extend({
     navSections(): NavSection[] {
       // TODO: refactor to IEcosystem
       return [{
-        title: 'Products',
+        title: 'Exchange',
         autoExpand: true,
         items: [{
           name: 'Swap',
-          desc: 'Buy or sell any token instantly on PadSwap',
+          desc: 'Buy or sell any token instantly',
           href: '/swap',
           target: '_self',
           iconSrc: require('@/assets/icons/Swap Icon.svg')
         },
         {
-          name: 'LaunchPad',
-          desc: 'Partake in exclusive presales',
-          href: '/launchpad',
+          name: 'Farms',
+          desc: 'Earn passive income by staking liquidity',
+          href: '/farms',
           target: '_self',
-          iconSrc: require('@/assets/icons/LaunchPAD Icon.svg')
+          iconSrc: require('@/assets/icons/Farms Icon.svg')
+        },
+        {
+          name: 'Liquidity',
+          desc: 'Add liqudity, earn transaction fees',
+          href: '/liquidity',
+          target: '_self',
+          iconSrc: require('@/assets/icons/Faucet Icon.svg')
         },
         {
           name: 'Bridge',
-          desc: 'Bridge tokens between chains',
+          desc: 'Bridge TOAD between chains',
           href: '/bridge',
           target: '_self',
           iconSrc: require('@/assets/icons/Bridge Icon.svg')
@@ -248,52 +255,44 @@ export default Vue.extend({
           href: '/vault',
           target: '_self',
           iconSrc: require('@/assets/icons/Vault Icon.svg')
-        },
-        {
-          name: 'Farms',
-          desc: 'Earn passive income by staking liquidity',
-          href: '/farms',
-          target: '_self',
-          iconSrc: require('@/assets/icons/Farms Icon.svg')
-        },
-        {
-          name: 'Buy crypto with fiat',
-          desc: 'The easiest way to buy BNB or BUSD',
-          href: '/onramp',
-          target: '_self',
-          iconSrc: require('@/assets/icons/On Ramp Icon.svg')
-        },
-        {
-          name: 'Faucet',
-          desc: 'Get some gas',
-          href: '/faucet',
-          target: '_self',
-          iconSrc: require('@/assets/icons/Faucet Icon.svg')
-        },
-        {
-          name: 'Stats',
-          desc: 'Analyze token prices and their volume',
-          href: this.ecosystem.infoUrl,
-          target: '_blank',
-          iconSrc: require('@/assets/icons/Stats Icon.svg')
         }]
       },
       {
-        title: 'Content',
-        items: [{
-          name: 'TOAD Academy',
-          desc: 'Learn about crypto in a fun way',
-          href: 'https://toad.academy/',
+        title: 'Create',
+        autoExpand: true,
+        items: [
+        {
+          name: 'Token factory',
+          desc: 'Create your own token in a few clicks',
+          href: 'https://beta.nebul.ae/tokenfactory',
           target: '_blank',
-          iconSrc: require('@/assets/icons/TOADAcademy Icon.svg')
+          iconSrc: require('@/assets/icons/Token List Icon.svg')
         },
         {
-          name: 'Games',
-          desc: 'Play our TOAD-themed games',
-          href: 'https://toad.academy/games',
+          name: 'Launchpad',
+          desc: 'Partake in presales, or start your own',
+          href: 'https://beta.nebul.ae/launchpad',
           target: '_blank',
-          iconSrc: require('@/assets/icons/Games Icon.svg')
+          iconSrc: require('@/assets/icons/LaunchPAD Icon.svg')
         },
+        {
+          name: 'Farm factory',
+          desc: 'Create your own farm to incentivize your users',
+          href: 'https://beta.nebul.ae/farmfactory',
+          target: '_blank',
+          iconSrc: require('@/assets/icons/Farms Icon.svg')
+        },
+        {
+          name: 'Vault factory',
+          desc: 'Create permanent backing for your token',
+          href: 'https://beta.nebul.ae/',
+          target: '_blank',
+          iconSrc: require('@/assets/icons/Vault Icon.svg')
+        }]
+      },
+      {
+        title: 'Socials',
+        items: [
         {
           name: 'YouTube',
           desc: 'Watch our series of educational animated videos',
@@ -302,23 +301,6 @@ export default Vue.extend({
           iconSrc: require('@/assets/icons/YouTube Icon.svg')
         },
         {
-          name: 'Piramyd Store',
-          desc: 'Official TOAD merch',
-          href: 'https://piramyd.me/toad-network-x-piramyd/',
-          target: '_blank',
-          iconSrc: require('@/assets/icons/Piramyd Store Icon.svg')
-        },
-        {
-          name: 'Token List',
-          desc: 'Catalog of tokens listed on PadSwap',
-          href: '/token-list',
-          target: '_self',
-          iconSrc: require('@/assets/icons/Token List Icon.svg')
-        }]
-      },
-      {
-        title: 'Socials',
-        items: [{
           name: 'Telegram',
           desc: 'Come chat with us on Telegram',
           href: 'https://t.me/toadnetwork',
@@ -348,27 +330,20 @@ export default Vue.extend({
         }]
       },
       {
-        title: 'About',
+        title: 'Info',
         items: [{
-          name: 'TOAD Docs',
-          desc: 'Learn all about TOAD on our Wiki',
+          name: 'Docs',
+          desc: 'Learn all about us on our Wiki',
           href: 'https://docs.toad.network/',
           target: '_blank',
           iconSrc: require('@/assets/icons/Docs Icon.svg')
         },
         {
-          name: 'Audit Report',
-          desc: 'PadSwap contracts audit report by SpadeAudits',
-          href: 'https://spadetech.io/wp-content/uploads/2021/06/toad_Padswap_audit_report.pdf',
+          name: 'PadSwap Stats',
+          desc: 'Analyze token prices and their volume',
+          href: this.ecosystem.infoUrl,
           target: '_blank',
-          iconSrc: require('@/assets/icons/Audit Icon.svg')
-        },
-        {
-          name: 'White Paper',
-          desc: 'PadSwap white paper',
-          href: 'https://www.dropbox.com/s/bng5e1bq2u03bk6/PAD%20WHITEPAPER.PDF',
-          target: '_blank',
-          iconSrc: require('@/assets/icons/White Paper Icon.svg')
+          iconSrc: require('@/assets/icons/Stats Icon.svg')
         },
         {
           name: 'Donate',

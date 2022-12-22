@@ -52,6 +52,7 @@
 
       <v-card
         href="https://beta.nebul.ae/"
+        target="_blank"
         class="title-card hover-rgb">
         <div class="icon-container">
           <img src="@/assets/icons/LaunchPAD Icon.svg">
