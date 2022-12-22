@@ -76,6 +76,14 @@
           v-model="inputAmount"
           :label="'Amount of ' + inputToken.symbol +' to spend ' + '(max: ' + inputTokenBalance + ' ' + inputToken.symbol + ')'"
           @change="swapMode = 0; updateOutputEstimation()">
+            <template v-slot:append>
+              <v-btn
+                @click="setMax"
+                x-small
+                color="#595E67">
+                Max
+              </v-btn>
+            </template>
           </v-text-field>
         </v-card-actions>
 
@@ -488,6 +496,11 @@ export default Vue.extend({
             this.inputToken = this.outputToken
           }
           this.outputToken = newOutputToken
+        },
+
+
+        setMax() {
+          this.inputAmount = this.inputTokenBalance
         },
 
         switchSelectedTokens() {
