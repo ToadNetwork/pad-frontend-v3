@@ -85,8 +85,7 @@
                 <v-btn
                   @click="setMax"
                   x-small
-                  color="#595E67"
-                  class="padswap-max-btn mr-n3">
+                  color="#595E67">
                   Max
                 </v-btn>
               </template>
