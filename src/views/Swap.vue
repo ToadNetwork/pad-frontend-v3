@@ -86,7 +86,6 @@
             </template>
           </v-text-field>
         </v-card-actions>
-
       </v-card>
 
       <!------------------------------------>
@@ -173,82 +172,96 @@
 
 
 
-      <!----------------------------------------------------->
-      <!-- Transaction settings and extra information   ----->
-      <!-- (slippage tolerance, transaction deadline, etc) -->
-      <!----------------------------------------------------->
+      <!----------------------------------------->
+      <!-- Transaction info panel,             -->
+      <!-- shown only if input amount is not 0 -->
+      <!----------------------------------------->
 
+      <br/>
+      <br/>
 
+      <v-simple-table
+      dense
+      plain
+      style="background-color: transparent;"
+      v-if="parseFloat(0 + inputAmount) > 0">
+        <tbody>
+          <tr>
+            <td>Price impact:</td><td>{{ priceImpactPercent }}%</td>
+          </tr>
+          <tr>
+            <td>Amount spent:</td>
+            <td>
+              <template v-if="swapMode == 0">
+                Exactly {{ toNumber(inputAmount) }} {{ inputToken.symbol }}
+              </template>
+              <template v-if="swapMode == 1">
+                At most {{ toNumber(maximumSold) }} {{ inputToken.symbol }}
+              </template>
+            </td>
+          </tr>
+          <tr>
+            <td>Amount received:</td>
+            <td>
+              <template v-if="swapMode == 0">
+                At least {{ toNumber(minimumReceived) }} {{ outputToken.symbol }}
+              </template>
+              <template v-if="swapMode == 1">
+                Exactly {{ toNumber(outputAmount) }} {{ outputToken.symbol }}
+              </template>
+            </td>
+          </tr>
+        </tbody>
+      </v-simple-table>
 
-      <div
-      style="margin-top: 50px;">
+      <br/>
+      <br/>
+
+      <!--------------------------------------->
+      <!-- Customizable transaction settings -->
+      <!--------------------------------------->
 
       <v-card
-      style="text-align: center;"
-      color="#618b4233">
-        <v-card-text>
-          Price impact: {{ priceImpactPercent }}%
-          <br>
-          <template v-if="swapMode == 0">
-            You will spend exactly {{ toNumber(inputAmount) }} {{ inputToken.symbol }}
-            <br>
-            <br>
-            Minimum received: {{ toNumber(minimumReceived) }} {{ outputToken.symbol }}
-          </template>
-          <template v-if="swapMode == 1">
-            You will receive exactly {{ toNumber(outputAmount) }} {{ outputToken.symbol }}
-            <br>
-            <br>
-            Maximum sold: {{ toNumber(maximumSold) }} {{ inputToken.symbol }}
-          </template>
-        </v-card-text>
+      elevation="0"
+      color="transparent">
+        <v-row>
+          <v-col
+          style="margin: 0; padding: 0; margin-top: 5px;"
+          cols="6">
+            Slippage tolerance
+          </v-col>
+          <v-col
+          style="margin: 0; padding: 0;"
+          cols="6">
+            <v-text-field
+            style="max-width: 70px;"
+            solo-inverted
+            dense
+            v-model="slippageTolerance"
+            suffix="%">
+            </v-text-field>
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col
+          style="margin: 0; padding: 0; margin-top: 5px;"
+          cols="6">
+            Transaction deadline
+          </v-col>
+          <v-col
+          style="margin: 0; padding: 0;"
+          cols="6">
+            <v-text-field
+            style="max-width: 120px;"
+            solo-inverted
+            dense
+            v-model="transactionDeadlineMinutes"
+            suffix="minutes">
+            </v-text-field>
+          </v-col>
+        </v-row>
       </v-card>
-
-        <br/>
-
-        <v-card
-        elevation="0"
-        color="transparent">
-          <v-row>
-            <v-col
-            style="margin: 0; padding: 0; margin-top: 5px;"
-            cols="6">
-              Slippage tolerance
-            </v-col>
-            <v-col
-            style="margin: 0; padding: 0;"
-            cols="6">
-              <v-text-field
-              style="max-width: 70px;"
-              solo-inverted
-              dense
-              v-model="slippageTolerance"
-              suffix="%">
-              </v-text-field>
-            </v-col>
-          </v-row>
-
-          <v-row>
-            <v-col
-            style="margin: 0; padding: 0; margin-top: 5px;"
-            cols="6">
-              Transaction deadline
-            </v-col>
-            <v-col
-            style="margin: 0; padding: 0;"
-            cols="6">
-              <v-text-field
-              style="max-width: 120px;"
-              solo-inverted
-              dense
-              v-model="transactionDeadlineMinutes"
-              suffix="minutes">
-              </v-text-field>
-            </v-col>
-          </v-row>
-        </v-card>
-
-      </div>
 
     </v-card>
 
