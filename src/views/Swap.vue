@@ -186,17 +186,17 @@
       style="background-color: transparent;"
       v-if="parseFloat(0 + inputAmount) > 0">
         <tbody>
-          <tr>
+          <tr :style="getPriceImpactStyle()">
             <td>Price impact:</td><td>{{ priceImpactPercent }}%</td>
           </tr>
           <tr>
             <td>Amount spent:</td>
             <td>
               <template v-if="swapMode == 0">
-                Exactly {{ toNumber(inputAmount) }} {{ inputToken.symbol }}
+                <span style="color: rgb(159 255 232);">Exactly</span> {{ toNumber(inputAmount) }} {{ inputToken.symbol }}
               </template>
               <template v-if="swapMode == 1">
-                At most {{ toNumber(maximumSold) }} {{ inputToken.symbol }}
+                <span style="color: rgb(255 219 140);">At most</span> {{ toNumber(maximumSold) }} {{ inputToken.symbol }}
               </template>
             </td>
           </tr>
@@ -204,10 +204,10 @@
             <td>Amount received:</td>
             <td>
               <template v-if="swapMode == 0">
-                At least {{ toNumber(minimumReceived) }} {{ outputToken.symbol }}
+                <span style="color: rgb(255 219 140);">At least</span> {{ toNumber(minimumReceived) }} {{ outputToken.symbol }}
               </template>
               <template v-if="swapMode == 1">
-                Exactly {{ toNumber(outputAmount) }} {{ outputToken.symbol }}
+                <span style="color: rgb(159 255 232);">Exactly</span> {{ toNumber(outputAmount) }} {{ outputToken.symbol }}
               </template>
             </td>
           </tr>
@@ -462,12 +462,14 @@ export default Vue.extend({
           this.updateOutputEstimation()
         },
 
+
         toNumber(num : any) {
           if (isNaN(parseFloat(num))) {
             return 0
           }
           return parseFloat(num)
         },
+
 
         round(num : any, dec : any) {
           num = Number(num).toFixed(20)
@@ -480,6 +482,7 @@ export default Vue.extend({
           return rounded
         },
 
+
         biOrMiOrK(num : number) : string {
           if(num>=1e9) return this.round(num/1e9, 2) + 'BI'
           else if(num>=1e6) return this.round(num/1e6, 2) + 'M'
@@ -489,11 +492,13 @@ export default Vue.extend({
           else return this.round(num, 6)
         },
 
+
         setDefaultRoute() {
             var currentChainDefaults = DEFAULT_SWAP_ROUTES[this.chainId]
             this.inputToken = currentChainDefaults.inputToken
             this.outputToken = currentChainDefaults.outputToken
         },
+
 
         updateTokenWhitelist() {
             var currentChainWhitelist = WHITELIST[this.chainId]
@@ -507,6 +512,7 @@ export default Vue.extend({
           this.inputToken = newInputToken
         },
 
+
         async updateOutputToken(newOutputToken : any) {
           if (newOutputToken.address == this.inputToken.address) {
             this.inputToken = this.outputToken
@@ -519,11 +525,13 @@ export default Vue.extend({
           this.inputAmount = this.inputTokenBalance
         },
 
+
         switchSelectedTokens() {
           var tmp = this.inputToken
           this.inputToken = this.outputToken
           this.outputToken = tmp
         },
+
 
         async updateTokenBalances() {
           if (!this.web3){
@@ -551,6 +559,7 @@ export default Vue.extend({
             this.inputTokenAllowance = ethers.utils.formatUnits(tokenAllowanceBn, decimals)
           }
         },
+
 
         async updateOutputEstimation() {
           // Not doing anything if the input amount is zero
@@ -699,12 +708,14 @@ export default Vue.extend({
           }
         },
 
+
         async approve() {
           const inputTokenContract = new ethers.Contract(this.inputToken.address, ERC20_ABI, this.multicall)
 
           const tx = await inputTokenContract.populateTransaction.approve(this.routerContractAddress, APPROVE_AMOUNT)
           await this.safeSendTransaction({ tx, targetChainId: this.ecosystem.chainId})
         },
+
 
 
         /////////////////////////////////
@@ -724,6 +735,7 @@ export default Vue.extend({
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
 
+
         async swapTokensForExactTokens() {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
@@ -736,6 +748,7 @@ export default Vue.extend({
 
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
+
 
 
         //////////////////////////////
@@ -756,6 +769,7 @@ export default Vue.extend({
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
 
+
         async swapTokensForExactETH() {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
             const weth = await routerContract.WETH()
@@ -769,6 +783,7 @@ export default Vue.extend({
 
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
+
 
 
         //////////////////////////////
@@ -790,6 +805,7 @@ export default Vue.extend({
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
 
+
         async swapETHForExactTokens() {
           const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
           const weth = await routerContract.WETH()
@@ -805,6 +821,12 @@ export default Vue.extend({
           const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
 
+
+
+        //////////////
+        // Styling  //
+        ///////////////
+
         // Returns the appropriate background color depending on the ecosystem
         getBackgroundStyle() {
           let ecosystemBackgrounds = {
@@ -816,8 +838,28 @@ export default Vue.extend({
           let backgroundStyle = "opacity: 80%; width: 100%; height: 100%; position: fixed; left: 0; top: 0;" + ecosystemBackgrounds[this.chainId]
           
           return backgroundStyle
-
         },
+
+
+        // Returns the price impact color based on its severity
+        getPriceImpactStyle() {
+          let impactStyles : any = {
+            1.0: "color: rgb(49, 208, 170);",
+            3.0: "color: white;",
+            5.0: "color: rgb(240, 185, 11);"
+          }
+
+          // Returning one of the "safe" colors if the price impact is below one of the thresholds
+          for (const [key, value] of Object.entries(impactStyles)) {
+            if (parseFloat(this.priceImpactPercent) < key) {
+              return value
+            }
+          }
+
+          // Otherwise the slippage is too high and the color will be red
+          return "color: rgb(237, 75, 158);"
+        },
+
 
         ...mapGetters(['isConnected']),
         ...mapActions(['requestConnect', 'safeSendTransaction'])
