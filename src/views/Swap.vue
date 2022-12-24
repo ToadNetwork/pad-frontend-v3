@@ -187,6 +187,8 @@
       style="text-align: center;"
       color="#618b4233">
         <v-card-text>
+          Price impact: {{ priceImpactPercent }}%
+          <br>
           <template v-if="swapMode == 0">
             You will spend exactly {{ toNumber(inputAmount) }} {{ inputToken.symbol }}
             <br>
@@ -301,6 +303,7 @@ export default Vue.extend({
 
             slippageTolerance: <string> '1',
             transactionDeadlineMinutes: <string> '15',
+            priceImpactPercent: <string> '',
 
 
             inputToken: <any> {},
@@ -537,6 +540,12 @@ export default Vue.extend({
         },
 
         async updateOutputEstimation() {
+          // Not doing anything if the input amount is zero
+          if (0 + this.inputAmount == 0) {
+            this.outputAmount = '0'
+            return
+          }
+
           const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
           const weth = await routerContract.WETH()
@@ -554,15 +563,37 @@ export default Vue.extend({
           const decimalsIn = await this.getDecimals(inputToken)
           const decimalsOut = await this.getDecimals(outputToken)
 
-          const amountInBn = ethers.utils.parseUnits((0 + this.inputAmount).toString(), decimalsIn)
 
           try {
-            const amountsOut = await routerContract.getAmountsOut(amountInBn, [inputToken, outputToken])
+            // Retrieving the actual output amounts from input amount provided by user
+            const amountInBn = ethers.utils.parseUnits((0 + this.inputAmount).toString(), decimalsIn)
+            const pAmountsOut = routerContract.getAmountsOut(amountInBn, [inputToken, outputToken])
 
+            // Retrieving output amounts with a much smaller input amount,
+            // to compare the resulting amounts and calculate the price impact
+            const smallInputAmount = parseFloat(0.0 + this.inputAmount) / 100000.0
+            const smallInputAmountBn = ethers.utils.parseUnits(smallInputAmount.toString(), decimalsIn)
+            const pSmallAmountsOut = routerContract.getAmountsOut(smallInputAmountBn, [inputToken, outputToken])
+
+            // Parsing the normal output token amount
+            const amountsOut = await pAmountsOut
             const amountOut1Bn = amountsOut[1]
-            const amountOut1 = ethers.utils.formatUnits(amountOut1Bn, decimalsOut)
+            const outputAmount = ethers.utils.formatUnits(amountOut1Bn, decimalsOut)
 
-            this.outputAmount = amountOut1.toString()
+            // Parsing the output amount with a smaller input amount
+            const smallAmountsOut = await pSmallAmountsOut
+            const smallAmountOut1Bn = smallAmountsOut[1]
+            const smallOutputAmount = ethers.utils.formatUnits(smallAmountOut1Bn, decimalsOut)
+
+            // Calculating the price impact
+            const smallOutputValue = parseFloat(smallOutputAmount) / parseFloat(smallInputAmount)
+            const realOutputValue = parseFloat(outputAmount) / parseFloat(this.inputAmount)
+            const receivedValuePercent = (realOutputValue / smallOutputValue) * 100.0
+            const impactPercent = 100.0 - receivedValuePercent
+
+            // Recording the results
+            this.priceImpactPercent = impactPercent.toFixed(2)
+            this.outputAmount = outputAmount.toString()
           }
           catch {
             this.outputAmount = ''
