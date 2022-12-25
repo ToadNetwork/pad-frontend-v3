@@ -751,7 +751,7 @@ export default Vue.extend({
         // to routing the transaction through PAD, TOAD, or the chain's native token 
         //
 
-        async findBestRoute(amountBn, inputTokenAddress, outputTokenAddress, exactIn = true) {
+        async findBestRoute(amountBn : ethers.BigNumber, inputTokenAddress : string, outputTokenAddress : string, exactIn : boolean = true) {
 
           const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
           const weth = await routerContract.WETH()
@@ -768,11 +768,11 @@ export default Vue.extend({
           }
 
           // Calculating resulting prices for all routes
-          const promises = [routerContract.WETH()]
-          const results = []
+          const promises : any = [routerContract.WETH()]
+          const results : any = []
           for (const route of possibleRoutes) {
             if (exactIn == true) { // "Exact input" mode
-              const p = routerContract.getAmountsOut(amountBn, route).then((res) => {
+              const p = routerContract.getAmountsOut(amountBn, route).then((res : any) => {
                 var amountOut = res[res.length - 1]
                 results.push({
                   "route": route,
@@ -782,7 +782,7 @@ export default Vue.extend({
               promises.push(p)
             }
             else { // "Exact output" mode
-              const p = routerContract.getAmountsIn(amountBn, route).then((res) => {
+              const p = routerContract.getAmountsIn(amountBn, route).then((res : any) => {
                 var amountIn = res[0]
                 results.push({
                   "route": route,
@@ -954,7 +954,7 @@ export default Vue.extend({
 
           // Returning one of the "safe" colors if the price impact is below one of the thresholds
           for (const [key, value] of Object.entries(impactStyles)) {
-            if (parseFloat(this.priceImpactPercent) < key) {
+            if (parseFloat(this.priceImpactPercent) < parseFloat(key)) {
               return value
             }
           }
