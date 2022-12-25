@@ -6,6 +6,7 @@
     :style="getBackgroundStyle()">
     </div>
 
+
     <!-------------------------------->
     <!-- Ecosystem selection slider -->
     <!-------------------------------->
@@ -88,6 +89,7 @@
         </v-card-actions>
       </v-card>
 
+
       <!------------------------------------>
       <!-- "Change swap direction" button -->
       <!------------------------------------>
@@ -104,6 +106,7 @@
         mdi-swap-vertical
         </v-icon>
       </v-btn>
+
 
       <!------------------>
       <!-- Output token -->
@@ -303,6 +306,18 @@ const routerAddresses = {
   56: '0x76437234D29f84D9A12820A137c6c6A719138C24', // BNB
   1284: '0x40F1fEF0Fe68Fd10ff904070ee00a7769EE7fe34', // Moonbeam
   1285: '0x790d4b443edB9ce9A8d1aEC585edd89E51132D2c' // Moonriver
+}
+
+const padAddresses = {
+  56: '0xC0888d80EE0AbF84563168b3182650c0AdDEb6d5',
+  1284: '0x59193512877E2EC3bB27C178A8888Cfac62FB32D',
+  1285: '0x45488C50184Ce2092756ba7CdF85731fD17e6f3d'
+}
+
+const toadAddresses = {
+  56: '0x463E737D8F740395ABf44f7aac2D9531D8D539E9',
+  1284: '0xF480f38C366dAaC4305dC484b2Ad7a496FF00CeA',
+  1285: '0x165DBb08de0476271714952C3C1F068693bd60D7'
 }
 
 export default Vue.extend({
@@ -505,6 +520,7 @@ export default Vue.extend({
             this.tokenWhitelist = currentChainWhitelist
         },
 
+
         async updateInputToken(newInputToken : any) {
           if (newInputToken.address == this.outputToken.address) {
             this.outputToken = this.inputToken
@@ -585,27 +601,24 @@ export default Vue.extend({
           const decimalsIn = await this.getDecimals(inputToken)
           const decimalsOut = await this.getDecimals(outputToken)
 
-
           try {
             // Retrieving the actual output amounts from input amount provided by user
-            const amountInBn = ethers.utils.parseUnits((0 + this.inputAmount).toString(), decimalsIn)
-            const pAmountsOut = routerContract.getAmountsOut(amountInBn, [inputToken, outputToken])
+            const amountInBn = ethers.utils.parseUnits(this.inputAmount.toString(), decimalsIn)
+            const bestResult = await this.findBestRouteExactIn(amountInBn, inputToken, outputToken)
+
+            // Parsing the normal output token amount
+            const amountOutBn = bestResult["price"]
+            const outputAmount = ethers.utils.formatUnits(amountOutBn, decimalsOut)
 
             // Retrieving output amounts with a much smaller input amount,
             // to compare the resulting amounts and calculate the price impact
             const smallInputAmount = parseFloat(0.0 + this.inputAmount) / 100000.0
             const smallInputAmountBn = ethers.utils.parseUnits(smallInputAmount.toString(), decimalsIn)
-            const pSmallAmountsOut = routerContract.getAmountsOut(smallInputAmountBn, [inputToken, outputToken])
-
-            // Parsing the normal output token amount
-            const amountsOut = await pAmountsOut
-            const amountOut1Bn = amountsOut[1]
-            const outputAmount = ethers.utils.formatUnits(amountOut1Bn, decimalsOut)
+            const smallAmountsOut = await routerContract.getAmountsOut(smallInputAmountBn, bestResult["route"])
 
             // Parsing the output amount with a smaller input amount
-            const smallAmountsOut = await pSmallAmountsOut
-            const smallAmountOut1Bn = smallAmountsOut[1]
-            const smallOutputAmount = ethers.utils.formatUnits(smallAmountOut1Bn, decimalsOut)
+            const smallAmountOutBn = smallAmountsOut[smallAmountsOut.length - 1]
+            const smallOutputAmount = ethers.utils.formatUnits(smallAmountOutBn, decimalsOut)
 
             // Calculating the price impact
             const smallOutputValue = parseFloat(smallOutputAmount) / parseFloat(smallInputAmount)
@@ -616,6 +629,7 @@ export default Vue.extend({
             // Recording the results
             this.priceImpactPercent = impactPercent.toFixed(2)
             this.outputAmount = outputAmount.toString()
+
           }
           catch {
             this.outputAmount = ''
@@ -636,6 +650,8 @@ export default Vue.extend({
 
 
         async updateInputEstimation() {
+          console.log("estimating amounts in")
+
           const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
           const weth = await routerContract.WETH()
@@ -714,6 +730,57 @@ export default Vue.extend({
 
           const tx = await inputTokenContract.populateTransaction.approve(this.routerContractAddress, APPROVE_AMOUNT)
           await this.safeSendTransaction({ tx, targetChainId: this.ecosystem.chainId})
+        },
+
+
+        //
+        // Attempts to find a good swap route
+        // by simply comparing a direct tokenA-tokenB swap  
+        // to routing the transaction through PAD, TOAD, or the chain's native token 
+        //
+
+        async findBestRouteExactIn(amountInBn, inputTokenAddress, outputTokenAddress) {
+
+          const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
+          const weth = await routerContract.WETH()
+          const pad = padAddresses[this.chainId]
+          const toad = toadAddresses[this.chainId]
+          const routingAddresses = [weth, pad, toad]
+
+          // List of possible routes to compare against each other
+          const possibleRoutes = [[inputTokenAddress, outputTokenAddress]]
+          for (const routingAddress of routingAddresses) {
+            if (inputTokenAddress != routingAddress && outputTokenAddress != routingAddress) {
+              possibleRoutes.push([inputTokenAddress, routingAddress, outputTokenAddress])
+            }
+          }
+
+          // Calculating resulting prices for all routes
+          const promises = [routerContract.WETH()]
+          const results = []
+          for (const route of possibleRoutes) {
+            const p = routerContract.getAmountsOut(amountInBn, route).then((res) => {
+              var amountOut = res[res.length - 1]
+              results.push({
+                "route": route,
+                "price": amountOut
+              })
+            })
+            promises.push(p)
+          }
+          await Promise.all(promises)
+
+          // Indentifying the best route to take
+          let bestResult = results[0]
+          for (const result of results) {
+            const priceCurrent = ethers.utils.formatEther(bestResult["price"])
+            const priceNew = ethers.utils.formatEther(result["price"])
+            if (priceNew > priceCurrent) {
+              bestResult = result
+            }
+          }
+
+          return bestResult
         },
 
 
