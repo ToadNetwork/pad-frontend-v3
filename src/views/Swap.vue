@@ -66,12 +66,6 @@
           @tokenSelected="(newTokenData) => updateInputToken(newTokenData)"/>
         </v-card-title>
 
-        <v-card-subtitle>
-        </v-card-subtitle>
-
-        <v-card-text>
-        </v-card-text>
-
         <v-card-actions>
           <v-text-field
           v-model="inputAmount"
@@ -120,12 +114,6 @@
           v-bind:tokenWhitelist="tokenWhitelist"
           @tokenSelected="(newTokenData) => updateOutputToken(newTokenData)"/>
         </v-card-title>
-
-        <v-card-subtitle>
-        </v-card-subtitle>
-
-        <v-card-text>
-        </v-card-text>
 
         <v-card-actions>
           <v-text-field

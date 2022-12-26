@@ -90,6 +90,36 @@ export const tokenInfo = Vue.extend({
       },
 
 
+      // Retrieves the user balance for this token
+      async getTokenBalance(contractAddress : string) {
+        if (contractAddress == 'eth') {
+          const ethBalanceBn = await this.multicall.getBalance(this.address)
+          const ethBalance = ethers.utils.formatEther(ethBalanceBn)
+          return ethBalance
+        }
+        else {
+          const tokenContract = new ethers.Contract(contractAddress, ERC20_ABI, this.multicall)
+          const tokenBalanceBn = await tokenContract.balanceOf(this.address)
+          const decimals = await tokenContract.decimals()
+          const tokenBalance = ethers.utils.formatUnits(tokenBalanceBn, decimals)
+          return tokenBalance
+        }
+      },
+
+      async getTokenAllowance(tokenContractAddress : string, spenderContractAddress : string) {
+        if (tokenContractAddress == 'eth') {
+          return 99999999999999999999999999999999999999999999999999999999999.0.toString()
+        }
+        else {
+          const tokenContract = new ethers.Contract(tokenContractAddress, ERC20_ABI, this.multicall)
+          const tokenAllowanceBn = await tokenContract.allowance(this.address, spenderContractAddress)
+          const decimals = await tokenContract.decimals()
+          const tokenAllowance = ethers.utils.formatUnits(tokenAllowanceBn, decimals)
+          return tokenAllowance
+        }
+      },
+
+
       // Retrieves the basic token info
       async getTokenData(contractAddress : string) {
         let tokenData : any = {
