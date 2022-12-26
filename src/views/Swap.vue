@@ -76,7 +76,7 @@
           <v-text-field
           v-model="inputAmount"
           :label="'Amount of ' + inputToken.symbol +' to spend ' + '(max: ' + inputTokenBalance + ' ' + inputToken.symbol + ')'"
-          @change="swapMode = 0; updateOutputEstimation()">
+          @click="selectedField = 'input'">
             <template v-slot:append>
               <v-btn
                 @click="setMax"
@@ -131,7 +131,7 @@
           <v-text-field
           v-model="outputAmount"
           :label="'Amount of ' + outputToken.symbol + ' to receive'"
-          @change="swapMode = 1; updateInputEstimation()">
+          @click="selectedField='output'">
           </v-text-field>
         </v-card-actions>
       </v-card>
@@ -329,6 +329,8 @@ export default Vue.extend({
     data() {
         return {
 
+          selectedField: 'input',
+
             slippageTolerance: <string> '1',
             transactionDeadlineMinutes: <string> '15',
             priceImpactPercent: <string> '',
@@ -434,20 +436,22 @@ export default Vue.extend({
     },
     watch: {
         inputToken() {
-            this.updateTokenBalances()
-            this.updateOutputEstimation()
+          this.updateTokenBalances()
+          this.updateOutputEstimation()
         },
         outputToken() {
-            this.updateTokenBalances()
-            this.updateInputEstimation()
+          this.updateTokenBalances()
+          this.updateInputEstimation()
         },
         inputAmount() {
-          if (this.swapMode == 0) {
+          if (this.selectedField == 'input') {
+            this.swapMode = 0
             this.updateOutputEstimation()
           }
         },
         outputAmount() {
-          if (this.swapMode == 1) {
+          if (this.selectedField == 'output') {
+            this.swapMode = 1
             this.updateInputEstimation()
           }
         },
