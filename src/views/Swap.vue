@@ -144,6 +144,12 @@
       <!------------------------------------->
       <!-- Connect / approve / swap button -->
       <!------------------------------------->
+
+
+          {{ inputTokenBalance }}
+          {{ inputAmount }}
+
+      <!-- Prompting the user to connect wallet if not connected -->
       <div
       v-if="!isConnected || !web3">
         <v-btn
@@ -153,6 +159,19 @@
           CONNECT WALLET
         </v-btn>
       </div>
+
+      <!-- Disabling the swap button if user doesn't have enough tokens for this swap -->
+      <div
+      v-else-if="parseFloat(inputTokenBalance) < parseFloat(inputAmount)">
+        <v-btn
+        block
+        color="gray"
+        disabled>
+          Insufficient {{ inputToken.symbol }} balance
+        </v-btn>
+      </div>
+
+
       <div
       v-else-if="!tokensApproved">
         <v-btn
@@ -616,7 +635,7 @@ export default Vue.extend({
 
           // Retrieving input amounts with a much smaller output amount,
           // to compare the resulting amounts and calculate the price impact
-          const smallOutputAmount = parseFloat(0.0 + this.outputAmount) / 100000.0
+          const smallOutputAmount : number = (parseFloat(0.0 + this.outputAmount) / 100000.0).toFixed(decimalsOut)
           const smallOutputAmountBn = ethers.utils.parseUnits(smallOutputAmount.toString(), decimalsOut)
           const smallAmountsIn = await routerContract.getAmountsIn(smallOutputAmountBn, bestResult["route"])
 
@@ -670,7 +689,7 @@ export default Vue.extend({
 
           // Retrieving output amounts with a much smaller input amount,
           // to compare the resulting amounts and calculate the price impact
-          const smallInputAmount = parseFloat(0.0 + this.inputAmount) / 100000.0
+          const smallInputAmount : number = (parseFloat(0.0 + this.inputAmount) / 100000.0).toFixed(decimalsIn)
           const smallInputAmountBn = ethers.utils.parseUnits(smallInputAmount.toString(), decimalsIn)
           const smallAmountsOut = await routerContract.getAmountsOut(smallInputAmountBn, bestResult["route"])
 
