@@ -145,10 +145,6 @@
       <!-- Connect / approve / swap button -->
       <!------------------------------------->
 
-
-          {{ inputTokenBalance }}
-          {{ inputAmount }}
-
       <!-- Prompting the user to connect wallet if not connected -->
       <div
       v-if="!isConnected || !web3">
@@ -171,7 +167,18 @@
         </v-btn>
       </div>
 
+      <!-- Disabling the button if the swap results are currently being estimated -->
+      <div
+      v-else-if="isEstimationLoading">
+        <v-btn
+        block
+        color="gray"
+        disabled>
+          Updating {{ swapMode == 0 ? 'output' : 'input' }} estimation
+        </v-btn>
+      </div>
 
+      <!-- "Approve" button if the input token is not approved -->
       <div
       v-else-if="!tokensApproved">
         <v-btn
@@ -181,6 +188,8 @@
           APPROVE
         </v-btn>
       </div>
+
+      <!-- "Swap" button if everything is OK and we're ready to swap -->
       <div
       v-else>
         <v-btn
@@ -348,35 +357,37 @@ export default Vue.extend({
     data() {
         return {
 
+          isEstimationLoading: <boolean> false,
+
           selectedField: 'input',
 
-            slippageTolerance: <string> '1',
-            transactionDeadlineMinutes: <string> '15',
-            priceImpactPercent: <string> '',
+          slippageTolerance: <string> '1',
+          transactionDeadlineMinutes: <string> '15',
+          priceImpactPercent: <string> '',
 
 
-            inputToken: <any> {},
-            outputToken: <any> {},
+          inputToken: <any> {},
+          outputToken: <any> {},
 
-            inputTokenAllowance: <string> '0',
-            outputTokenAllowance: <string> '0',
+          inputTokenAllowance: <string> '0',
+          outputTokenAllowance: <string> '0',
 
-            inputTokenBalance: <string> '0',
+          inputTokenBalance: <string> '0',
 
-            inputAmount: <string> '',
-            outputAmount: <string> '',
+          inputAmount: <string> '',
+          outputAmount: <string> '',
 
-            swapMode: 0,
+          swapMode: 0,
 
-            tokenWhitelist: <any> [],
+          tokenWhitelist: <any> [],
 
-            tokenSelectionDialog: <boolean> false,
-            selectedTokenAddress: <string> '',
+          tokenSelectionDialog: <boolean> false,
+          selectedTokenAddress: <string> '',
 
-            routerContractAddress: <string> '0x40F1fEF0Fe68Fd10ff904070ee00a7769EE7fe34',
+          routerContractAddress: <string> '0x40F1fEF0Fe68Fd10ff904070ee00a7769EE7fe34',
 
-            inputTokenAddress: <string> '0x59193512877E2EC3bB27C178A8888Cfac62FB32D',
-            outputTokenAddress: <string> '0xF480f38C366dAaC4305dC484b2Ad7a496FF00CeA'
+          inputTokenAddress: <string> '0x59193512877E2EC3bB27C178A8888Cfac62FB32D',
+          outputTokenAddress: <string> '0xF480f38C366dAaC4305dC484b2Ad7a496FF00CeA'
         }
     },
     created() {
@@ -400,6 +411,9 @@ export default Vue.extend({
             else if (val == 2) {
               this.setSwapEcosystem("GLMR")
             }
+            this.swapMode = 0
+            this.inputAmount = ''
+            this.outputAmount = ''
           }
         },
         userAddress(): string {
@@ -601,9 +615,12 @@ export default Vue.extend({
 
 
         async updateInputEstimation() {
+          this.isEstimationLoading = true
+
           // Not doing anything if the input amount is zero
           if (0 + this.outputAmount == 0) {
             this.inputAmount = ''
+            this.isEstimationLoading = false
             return
           }
 
@@ -653,13 +670,17 @@ export default Vue.extend({
           this.priceImpactPercent = impactPercent.toFixed(2)
           this.inputAmount = inputAmount.toString()
 
+          this.isEstimationLoading = false
         },
 
 
         async updateOutputEstimation() {
+          this.isEstimationLoading = true
+
           // Not doing anything if the input amount is zero
           if (0 + this.inputAmount == 0) {
             this.outputAmount = ''
+            this.isEstimationLoading = false
             return
           }
 
@@ -706,6 +727,8 @@ export default Vue.extend({
           // Recording the results
           this.priceImpactPercent = impactPercent.toFixed(2)
           this.outputAmount = outputAmount.toString()
+
+          this.isEstimationLoading = false
         },
 
 
