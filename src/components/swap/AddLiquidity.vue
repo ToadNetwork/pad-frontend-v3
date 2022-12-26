@@ -57,7 +57,7 @@
       <v-card
       color="#16323eb3">
         <v-card-title>
-          Token 2 &nbsp;
+          Token B &nbsp;
           <TokenSelector
           v-bind:selectedToken="tokenB"
           v-bind:tokenWhitelist="tokenWhitelist"
@@ -155,6 +155,9 @@ export default Vue.extend({
     mixins: [tokenInfo],
     data() {
         return {
+
+          isEstimationLoading: <boolean> false,
+
           selectedField: <string> 'tokenA',
 
             pairsOwnedByUser: <any> [],
@@ -166,8 +169,8 @@ export default Vue.extend({
             tokenA: <any> {},
             tokenB: <any> {},
 
-            amountTokenA: <string> '',
-            amountTokenB: <string> '',
+            amountTokenA: <string> '0',
+            amountTokenB: <string> '0',
 
             amountToWithdraw: <string> '',
 
@@ -231,8 +234,16 @@ export default Vue.extend({
         chainId(): ChainId {
           return this.$store.getters.ecosystem.chainId
         },
-        tokensApproved(): boolean {
-          if ((parseFloat(this.inputAmount) > 0 && parseFloat(this.inputTokenAllowance) < parseFloat(this.inputAmount))) {
+        isApprovedTokenA(): boolean {
+          if ((parseFloat(this.amountTokenA) > 0 && parseFloat(this.allowanceTokenA) < parseFloat(this.amountTokenA))) {
+            return false
+          }
+          else {
+            return true
+          }
+        },
+        isApprovedTokenB(): boolean {
+          if ((parseFloat(this.amountTokenB) > 0 && parseFloat(this.allowanceTokenB) < parseFloat(this.amountTokenB))) {
             return false
           }
           else {
@@ -321,6 +332,20 @@ export default Vue.extend({
         },
 
         async updateEstimation(tokenToEstimate = 'tokenA') {
+          this.isEstimationLoading = true
+
+          // Not doing anything if the input amount is zero
+          if ((0 + this.amountTokenA == 0 && tokenToEstimate == 'tokenB')) {
+            this.amountTokenB = ''
+            this.isEstimationLoading = false
+            return
+          }
+          if ((0 + this.amountTokenB == 0 && tokenToEstimate == 'tokenA')) {
+            this.amountTokenA = ''
+            this.isEstimationLoading = false
+            return
+          }
+
           const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
           const factoryContractAddress = await routerContract.factory()
@@ -371,6 +396,8 @@ export default Vue.extend({
             const totalEstimation = estimationTokenB * parseFloat(this.amountTokenA)
             this.amountTokenB = (totalEstimation.toFixed(decimalsOut)).toString()
           }
+
+          this.isEstimationLoading = false
         },
 
 
