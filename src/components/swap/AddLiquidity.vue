@@ -5,7 +5,8 @@
     <v-card
     flat
     color="transparent"
-    style="display: inline-block; padding: 20px;"
+    class="pa-0"
+    style="display: inline-block;"
     width="100%"
     max-width="600px">
 
@@ -83,34 +84,93 @@
 
       <br>
 
-      <div
-      v-if="!tokenAisApproved || !tokenBisApproved">
 
-        <v-btn
-        v-if="!tokenAisApproved"
-        block
-        color="#afa449"
-        @click="approve('tokenA')">
-          APPROVE {{ tokenA.symbol }}
-        </v-btn>
+      <div style="text-align: center;">
+        <div style="display: inline-block; width: 90%;">
 
-        <v-btn
-        v-if="!tokenBisApproved"
-        block
-        color="#afa449"
-        @click="approve('tokenB')">
-          APPROVE {{ tokenB.symbol }}
-        </v-btn>
+          <!-- Prompting the user to connect wallet if not connected -->
+          <div
+          v-if="!isConnected || !web3">
+            <v-btn
+            block
+            height="50px"
+            color="orange"
+            @click="connectWallet()">
+              CONNECT WALLET
+            </v-btn>
+          </div>
 
-      </div>
-      <div
-      v-else>
-        <v-btn
-        block
-        color="green"
-        @click="addLiquidity()">
-          Add {{ tokenA.symbol }}-{{ tokenB.symbol }} liquidity
-        </v-btn>
+          <!-- Disabling the button if user doesn't have enough tokens for this swap -->
+          <div
+          v-else-if="parseFloat(balanceTokenA) < parseFloat(amountTokenA)">
+            <v-btn
+            block
+            height="50px"
+            color="gray"
+            disabled>
+              Insufficient {{ tokenA.symbol }} balance
+            </v-btn>
+          </div>
+          <div
+          v-else-if="parseFloat(balanceTokenB) < parseFloat(amountTokenB)">
+            <v-btn
+            block
+            height="50px"
+            color="gray"
+            disabled>
+              Insufficient {{ tokenB.symbol }} balance
+            </v-btn>
+          </div>
+
+          <!-- Disabling the button if the swap results are currently being estimated -->
+          <div
+          v-else-if="isEstimationLoading">
+            <v-btn
+            block
+            height="50px"
+            color="gray"
+            disabled>
+              <v-progress-circular
+                indeterminate
+                :size="20"
+                :width="3"
+                color="gray"
+              ></v-progress-circular>
+              &nbsp;
+              Estimating token amounts
+            </v-btn>
+          </div>
+
+          <div
+          v-else-if="!isApprovedTokenA || !isApprovedTokenB">
+            <v-btn
+            v-if="!isApprovedTokenA"
+            block
+            color="#afa449"
+            @click="approve('tokenA')">
+              APPROVE {{ tokenA.symbol }}
+            </v-btn>
+
+            <v-btn
+            v-if="!isApprovedTokenB"
+            block
+            color="#afa449"
+            @click="approve('tokenB')">
+              APPROVE {{ tokenB.symbol }}
+            </v-btn>
+          </div>
+
+          <div
+          v-else>
+            <v-btn
+            block
+            color="green"
+            @click="addLiquidity()">
+              Add {{ tokenA.symbol }}-{{ tokenB.symbol }} liquidity
+            </v-btn>
+          </div>
+
+        </div>
       </div>
 
     </v-card>
@@ -120,7 +180,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
 import { ethers } from 'ethers'
 import { IEcosystem, EcosystemId, ECOSYSTEMS, ChainId } from '@/ecosystem'
@@ -242,12 +302,6 @@ export default Vue.extend({
             return true
           }
         },
-        tokenAisApproved(): boolean {
-          return true
-        },
-        tokenBisApproved(): boolean{
-          return true
-        }
     },
     watch: {
         tokenA() {
@@ -275,6 +329,7 @@ export default Vue.extend({
       // Called on initialization
       // and when switching to another chain
       initializeForCurrentChain() {
+        this.routerContractAddress = routerAddresses[this.chainId]
         this.estimationMode = 0
         this.amountTokenA = ''
         this.amountTokenB = ''
@@ -447,8 +502,8 @@ export default Vue.extend({
         },
 
 
-        // Approves either tokenA or tokenB, depending on whether the argument received
-        // is 'tokenA' or something else
+        // Approves either tokenA or tokenB
+        // Takes 'tokenA' or 'tokenB' as argument
         async approve(tokenID : string) {
           let tokenAddress : string
           if (tokenID == 'tokenA') {
@@ -516,6 +571,7 @@ export default Vue.extend({
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
 
+        ...mapGetters(['isConnected']),
         ...mapActions(['requestConnect', 'safeSendTransaction'])
     }
 })

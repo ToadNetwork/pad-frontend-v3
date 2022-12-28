@@ -134,10 +134,10 @@
       <!-- Connect / approve / swap button -->
       <!------------------------------------->
 
-      <!-- Prompting the user to connect wallet if not connected -->
       <div style="text-align: center;">
         <div style="display: inline-block; width: 90%;">
 
+          <!-- Prompting the user to connect wallet if not connected -->
           <div
           v-if="!isConnected || !web3">
             <v-btn
@@ -169,7 +169,14 @@
             height="50px"
             color="gray"
             disabled>
-              Updating {{ swapMode == 0 ? 'output' : 'input' }} estimation
+              <v-progress-circular
+                indeterminate
+                :size="20"
+                :width="3"
+                color="gray"
+              ></v-progress-circular>
+              &nbsp;
+              Finding best swap route
             </v-btn>
           </div>
 
