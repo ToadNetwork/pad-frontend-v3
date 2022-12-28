@@ -46,9 +46,11 @@
       <v-subheader class="padswap-ecosystem-subheader">Select ecosystem</v-subheader>
     </div>
 
+
+
     <v-card
     class="ma-0 pa-0"
-    style="display: inline-block; overflow: hidden;"
+    style="display: inline-block; overflow: hidden; z-index: 1"
     color="transparent"
     width="100%"
     max-width="600px">
@@ -57,32 +59,44 @@
       <!----------------->
       <!-- Input token -->
       <!----------------->
-      <v-card
-      color="#618b4233">
-        <v-card-title>
-          Spend &nbsp;
-          <TokenSelector
-          v-bind:selectedToken="inputToken"
-          v-bind:tokenWhitelist="tokenWhitelist"
-          @tokenSelected="(newTokenData) => updateInputToken(newTokenData)"/>
-        </v-card-title>
 
-        <v-card-actions>
-          <v-text-field
-          v-model="inputAmount"
-          :label="'Amount of ' + inputToken.symbol +' to spend ' + '(max: ' + inputTokenBalance + ' ' + inputToken.symbol + ')'"
-          @focus="selectedField = 'input'">
-            <template v-slot:append>
-              <v-btn
-                @click="setMax"
-                x-small
-                color="#595E67">
-                Max
-              </v-btn>
-            </template>
-          </v-text-field>
-        </v-card-actions>
-      </v-card>
+      <div
+      class="gradient-border"
+      style="z-index: -1;">
+        <v-card
+        color="transparent">
+          <div
+          :class="getCardStyle()"
+          style="border-radius: 15px; z-index: -1">
+          </div>
+
+          <v-card-title>
+            Spend &nbsp;
+            <TokenSelector
+            v-bind:selectedToken="inputToken"
+            v-bind:tokenWhitelist="tokenWhitelist"
+            @tokenSelected="(newTokenData) => updateInputToken(newTokenData)"/>
+          </v-card-title>
+
+          <v-card-actions>
+            <v-text-field
+            v-model="inputAmount"
+            :label="'Amount of ' + inputToken.symbol +' to spend ' + '(max: ' + inputTokenBalance + ' ' + inputToken.symbol + ')'"
+            @focus="selectedField = 'input'">
+              <template v-slot:append>
+                <v-btn
+                  @click="setMax"
+                  x-small
+                  color="#595E67">
+                  Max
+                </v-btn>
+              </template>
+            </v-text-field>
+          </v-card-actions>
+        </v-card>
+      </div>
+
+      
 
 
       <!------------------------------------>
@@ -106,24 +120,33 @@
       <!------------------>
       <!-- Output token -->
       <!------------------>
-      <v-card
-      color="#618b4233">
-        <v-card-title>
-          Receive &nbsp;
-          <TokenSelector
-          v-bind:selectedToken="outputToken"
-          v-bind:tokenWhitelist="tokenWhitelist"
-          @tokenSelected="(newTokenData) => updateOutputToken(newTokenData)"/>
-        </v-card-title>
+      <div
+      class="gradient-border"
+      style="z-index: -1;">
+        <v-card
+        color="transparent">
+          <div
+          :class="getCardStyle()"
+          style="border-radius: 15px; z-index: -1">
+          </div>
 
-        <v-card-actions>
-          <v-text-field
-          v-model="outputAmount"
-          :label="'Amount of ' + outputToken.symbol + ' to receive'"
-          @focus="selectedField='output'">
-          </v-text-field>
-        </v-card-actions>
-      </v-card>
+          <v-card-title>
+            Receive &nbsp;
+            <TokenSelector
+            v-bind:selectedToken="outputToken"
+            v-bind:tokenWhitelist="tokenWhitelist"
+            @tokenSelected="(newTokenData) => updateOutputToken(newTokenData)"/>
+          </v-card-title>
+
+          <v-card-actions>
+            <v-text-field
+            v-model="outputAmount"
+            :label="'Amount of ' + outputToken.symbol + ' to receive'"
+            @focus="selectedField='output'">
+            </v-text-field>
+          </v-card-actions>
+        </v-card>
+      </div>
 
       <br/>
 
@@ -997,7 +1020,7 @@ export default Vue.extend({
         // Styling  //
         ///////////////
 
-        // Returns the appropriate background color depending on the ecosystem
+        // Returns the appropriate page background color depending on the ecosystem
         getBackgroundStyle() {
           let ecosystemBackgrounds = {
             56: "background: radial-gradient(circle, #6a6a6a45 0%, rgba(253, 187, 45, 0) 100%);",
@@ -1010,6 +1033,18 @@ export default Vue.extend({
           return backgroundStyle
         },
 
+        // Returns the appropriate background class for the token selection cards
+        getCardStyle() {
+          let ecosystemBackgrounds = {
+            56: "bg bg-bsc",
+            1284: "bg bg-moonbeam",
+            1285: "bg bg-moonriver"
+          }
+
+          const backgroundClass = ecosystemBackgrounds[this.chainId]
+          
+          return backgroundClass
+        },
 
         // Returns the price impact color based on its severity
         getPriceImpactStyle() {

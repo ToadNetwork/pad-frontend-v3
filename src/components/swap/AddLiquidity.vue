@@ -322,7 +322,7 @@ export default Vue.extend({
         userAddress() {
           this.updateTokenBalances()
         },
-        chainId() {
+        chainId() { // Re-initializing after changing chain
           this.initializeForCurrentChain()
         }
     },

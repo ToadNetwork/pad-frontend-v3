@@ -129,3 +129,39 @@
   background: rgb(20 20 20);
   background: radial-gradient(circle, rgb(20 20 20) 0%, rgb(26 35 42) 100%);
 }
+
+.bg-moonbeam {
+  background: rgb(26 0 36);
+  background: linear-gradient(114deg, rgb(26 0 36) 0%, rgb(14 0 32) 100%);
+}
+
+.bg-moonriver {
+  background: rgb(0 14 36);
+  background: linear-gradient(114deg, rgb(0 14 36) 0%, hsl(191deg 87% 7%) 100%);
+}
+
+.bg-bsc {
+  background: rgb(24 22 0);
+  background: linear-gradient(114deg, rgb(24 22 0) 0%, hsl(78deg 18% 9%) 100%);
+}
+
+/***********************************/
+/*         Fancy borders           */
+/***********************************/
+
+.gradient-border {
+  position: relative;
+  padding: 1px;
+  background: linear-gradient(60deg, #5f86f2, #a65ff2, #f25fd0, #f25f61, #f2cb5f, #abf25f, #5ff281, #5ff2f0);
+  background-size: 300% 300%;
+  background-position: 0 50%;
+  border-radius: 15px;
+  animation: moveGradientBorder 8s alternate infinite;
+}
+
+
+@keyframes moveGradientBorder {
+  50% {
+    background-position: 100% 50%;
+  }
+}
