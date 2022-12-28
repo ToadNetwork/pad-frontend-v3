@@ -47,7 +47,8 @@
     </div>
 
     <v-card
-    style="display: inline-block; padding: 20px; overflow: hidden;"
+    class="ma-0 pa-0"
+    style="display: inline-block; overflow: hidden;"
     color="transparent"
     width="100%"
     max-width="600px">
@@ -134,60 +135,73 @@
       <!------------------------------------->
 
       <!-- Prompting the user to connect wallet if not connected -->
-      <div
-      v-if="!isConnected || !web3">
-        <v-btn
-        block
-        color="orange"
-        @click="connectWallet()">
-          CONNECT WALLET
-        </v-btn>
+      <div style="text-align: center;">
+        <div style="display: inline-block; width: 90%;">
+
+          <div
+          v-if="!isConnected || !web3">
+            <v-btn
+            block
+            height="50px"
+            color="orange"
+            @click="connectWallet()">
+              CONNECT WALLET
+            </v-btn>
+          </div>
+
+          <!-- Disabling the swap button if user doesn't have enough tokens for this swap -->
+          <div
+          v-else-if="parseFloat(inputTokenBalance) < parseFloat(inputAmount)">
+            <v-btn
+            block
+            height="50px"
+            color="gray"
+            disabled>
+              Insufficient {{ inputToken.symbol }} balance
+            </v-btn>
+          </div>
+
+          <!-- Disabling the button if the swap results are currently being estimated -->
+          <div
+          v-else-if="isEstimationLoading">
+            <v-btn
+            block
+            height="50px"
+            color="gray"
+            disabled>
+              Updating {{ swapMode == 0 ? 'output' : 'input' }} estimation
+            </v-btn>
+          </div>
+
+          <!-- "Approve" button if the input token is not approved -->
+          <div
+          v-else-if="!tokensApproved">
+            <v-btn
+            block
+            height="50px"
+            color="#afa449"
+            @click="approve()">
+              APPROVE
+            </v-btn>
+          </div>
+
+          <!-- "Swap" button if everything is OK and we're ready to swap -->
+          <div
+          v-else>
+            <v-btn
+            block
+            height="50px"
+            x-large
+            color="green"
+            @click="swap()">
+              SWAP
+            </v-btn>
+          </div>
+
+        </div>
       </div>
 
-      <!-- Disabling the swap button if user doesn't have enough tokens for this swap -->
-      <div
-      v-else-if="parseFloat(inputTokenBalance) < parseFloat(inputAmount)">
-        <v-btn
-        block
-        color="gray"
-        disabled>
-          Insufficient {{ inputToken.symbol }} balance
-        </v-btn>
-      </div>
 
-      <!-- Disabling the button if the swap results are currently being estimated -->
-      <div
-      v-else-if="isEstimationLoading">
-        <v-btn
-        block
-        color="gray"
-        disabled>
-          Updating {{ swapMode == 0 ? 'output' : 'input' }} estimation
-        </v-btn>
-      </div>
-
-      <!-- "Approve" button if the input token is not approved -->
-      <div
-      v-else-if="!tokensApproved">
-        <v-btn
-        block
-        color="#afa449"
-        @click="approve()">
-          APPROVE
-        </v-btn>
-      </div>
-
-      <!-- "Swap" button if everything is OK and we're ready to swap -->
-      <div
-      v-else>
-        <v-btn
-        block
-        x-large
-        color="green"
-        @click="swap()">
-          SWAP
-        </v-btn>
-      </div>
 
 
 
@@ -606,7 +620,7 @@ export default Vue.extend({
           this.isEstimationLoading = true
 
           // Not doing anything if the input amount is zero
-          if (0 + this.outputAmount == 0) {
+          if (parseFloat(this.outputAmount) == 0) {
             this.inputAmount = ''
             this.isEstimationLoading = false
             return
@@ -640,7 +654,7 @@ export default Vue.extend({
 
           // Retrieving input amounts with a much smaller output amount,
           // to compare the resulting amounts and calculate the price impact
-          const smallOutputAmount : number = (parseFloat(0.0 + this.outputAmount) / 100000.0).toFixed(decimalsOut)
+          const smallOutputAmount : number = parseFloat( ( parseFloat(0.0 + this.outputAmount) / 100000.0).toFixed(decimalsOut) )
           const smallOutputAmountBn = ethers.utils.parseUnits(smallOutputAmount.toString(), decimalsOut)
           const smallAmountsIn = await routerContract.getAmountsIn(smallOutputAmountBn, bestResult["route"])
 
@@ -649,7 +663,7 @@ export default Vue.extend({
           const smallInputAmount = ethers.utils.formatUnits(smallAmountInBn, decimalsIn)
 
           // Calculating the price impact
-          const smallInputValue = parseFloat(smallOutputAmount) / parseFloat(smallInputAmount)
+          const smallInputValue = smallOutputAmount / parseFloat(smallInputAmount)
           const realInputValue = parseFloat(this.outputAmount) / parseFloat(inputAmount)
           const receivedValuePercent = (realInputValue / smallInputValue) * 100.0
           const impactPercent = 100.0 - receivedValuePercent
@@ -666,7 +680,7 @@ export default Vue.extend({
           this.isEstimationLoading = true
 
           // Not doing anything if the input amount is zero
-          if (0 + this.inputAmount == 0) {
+          if (parseFloat(this.inputAmount) == 0) {
             this.outputAmount = ''
             this.isEstimationLoading = false
             return
@@ -698,7 +712,7 @@ export default Vue.extend({
 
           // Retrieving output amounts with a much smaller input amount,
           // to compare the resulting amounts and calculate the price impact
-          const smallInputAmount : number = (parseFloat(0.0 + this.inputAmount) / 100000.0).toFixed(decimalsIn)
+          const smallInputAmount : number = parseFloat( (parseFloat(0.0 + this.inputAmount) / 100000.0).toFixed(decimalsIn) )
           const smallInputAmountBn = ethers.utils.parseUnits(smallInputAmount.toString(), decimalsIn)
           const smallAmountsOut = await routerContract.getAmountsOut(smallInputAmountBn, bestResult["route"])
 
@@ -707,7 +721,7 @@ export default Vue.extend({
           const smallOutputAmount = ethers.utils.formatUnits(smallAmountOutBn, decimalsOut)
 
           // Calculating the price impact
-          const smallOutputValue = parseFloat(smallOutputAmount) / parseFloat(smallInputAmount)
+          const smallOutputValue = parseFloat(smallOutputAmount) / smallInputAmount
           const realOutputValue = parseFloat(outputAmount) / parseFloat(this.inputAmount)
           const receivedValuePercent = (realOutputValue / smallOutputValue) * 100.0
           const impactPercent = 100.0 - receivedValuePercent

@@ -200,6 +200,7 @@ export default Vue.extend({
         }
     },
     created() {
+      // @ts-ignore-next-line
       this.updateTokenWhitelist()
       this.setDefaultRoute()
     },
@@ -210,7 +211,8 @@ export default Vue.extend({
           },
           set(val: EcosystemId) {
             this.$store.commit('setEcosystemId', val)
-            this.updateTokenWhitelist(),
+            // @ts-ignore-next-line
+            this.updateTokenWhitelist()
 
             this.estimationMode = 0
             this.amountTokenA = ''
@@ -335,12 +337,12 @@ export default Vue.extend({
           this.isEstimationLoading = true
 
           // Not doing anything if the input amount is zero
-          if ((0 + this.amountTokenA == 0 && tokenToEstimate == 'tokenB')) {
+          if ((parseFloat(this.amountTokenA) == 0 && tokenToEstimate == 'tokenB')) {
             this.amountTokenB = ''
             this.isEstimationLoading = false
             return
           }
-          if ((0 + this.amountTokenB == 0 && tokenToEstimate == 'tokenA')) {
+          if ((parseFloat(this.amountTokenB) == 0 && tokenToEstimate == 'tokenA')) {
             this.amountTokenA = ''
             this.isEstimationLoading = false
             return
@@ -370,6 +372,7 @@ export default Vue.extend({
           const pairAddress = await factoryContract.getPair(inputToken, outputToken)
           const pairContract = new ethers.Contract(pairAddress, PADSWAP_PAIR_ABI, this.multicall)
 
+          // @ts-ignore-next-line
           const pairData = await this.getPairData(pairAddress)
 
           const reserves = await pairContract.getReserves()          
@@ -410,9 +413,13 @@ export default Vue.extend({
 
 
         async updateTokenBalances() {
+          // @ts-ignore-next-line
           const pBalanceA = this.getTokenBalance(this.tokenA.address)
+          // @ts-ignore-next-line
           const pBalanceB = this.getTokenBalance(this.tokenB.address)
+          // @ts-ignore-next-line
           const pAllowanceA = this.getTokenAllowance(this.tokenA.address, this.routerContractAddress)
+          // @ts-ignore-next-line
           const pAllowanceB = this.getTokenAllowance(this.tokenB.address, this.routerContractAddress)
 
           this.balanceTokenA = await pBalanceA

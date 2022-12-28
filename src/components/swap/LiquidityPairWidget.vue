@@ -21,7 +21,7 @@
           </v-col>
           <v-col>              
             <div style="display: block; margin-left: 5px; margin-top: 10px; margin-bottom: 10px;">
-              Staked value: <b>${{ biOrMiOrK(pairData.token0.userBalanceInUSD + pairData.token1.userBalanceInUSD) }}</b>
+              Value: <b>${{ biOrMiOrK(pairData.token0.userBalanceInUSD + pairData.token1.userBalanceInUSD) }}</b>
             </div>
           </v-col
           cols="12">
