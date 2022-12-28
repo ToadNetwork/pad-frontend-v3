@@ -267,9 +267,7 @@ export default Vue.extend({
           },
           set(val: EcosystemId) {
             this.$store.commit('setEcosystemId', val)
-            this.initializeForCurrentChain()
           }
-
         },
         userAddress(): string {
           return this.$store.state.address
@@ -323,12 +321,16 @@ export default Vue.extend({
         },
         userAddress() {
           this.updateTokenBalances()
+        },
+        chainId() {
+          this.initializeForCurrentChain()
         }
     },
     methods: {
       // Called on initialization
       // and when switching to another chain
       initializeForCurrentChain() {
+        console.log("Initializing for " + this.chainId.toString())
         this.routerContractAddress = routerAddresses[this.chainId]
         this.estimationMode = 0
         this.amountTokenA = ''

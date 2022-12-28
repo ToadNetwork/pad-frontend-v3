@@ -409,16 +409,6 @@ export default Vue.extend({
           },
           set(val: EcosystemId) {
             this.$store.commit('setEcosystemId', val)
-            if (val == 0) {
-              this.setSwapEcosystem("BSC")
-            }
-            else if (val == 1) {
-              this.setSwapEcosystem("MOVR")
-            }
-            else if (val == 2) {
-              this.setSwapEcosystem("GLMR")
-            }
-            this.initializeForCurrentChain()
           }
         },
         userAddress(): string {
@@ -495,6 +485,9 @@ export default Vue.extend({
         },
         userAddress() {
           this.updateTokenBalances()
+        },
+        chainId() { // Re-initializing after changing chain
+          this.initializeForCurrentChain()
         }
     },
     methods: {
@@ -507,6 +500,16 @@ export default Vue.extend({
         this.updateTokenWhitelist()
         this.setDefaultRoute()
         setTimeout(this.updateTokenBalances, 200)
+
+        if (this.chainId == 0) {
+          this.setSwapEcosystem("BSC")
+        }
+        else if (this.chainId == 1) {
+          this.setSwapEcosystem("MOVR")
+        }
+        else if (this.chainId == 2) {
+          this.setSwapEcosystem("GLMR")
+        }
       },
 
         setSwapEcosystem(chain_id : string) {
