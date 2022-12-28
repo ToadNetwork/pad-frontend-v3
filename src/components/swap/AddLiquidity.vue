@@ -26,7 +26,7 @@
           <v-text-field
           v-model="amountTokenA"
           :label="'Amount of ' + tokenA.symbol +' to add ' + '(max: ' + balanceTokenA + ' ' + tokenA.symbol + ')'"
-          @click="selectedField = 'tokenA'">
+          @focus="estimationMode = 0">
             <template v-slot:append>
               <v-btn
                 @click="setMaxA()"
@@ -68,7 +68,7 @@
           <v-text-field
           v-model="amountTokenB"
           :label="'Amount of ' + tokenB.symbol + ' to add ' + '(max: ' + balanceTokenB + ' ' + tokenB.symbol + ')'"
-          @click="selectedField='tokenB'">
+          @focus="estimationMode = 1">
             <template v-slot:append>
               <v-btn
                 @click="setMaxB()"
@@ -158,8 +158,6 @@ export default Vue.extend({
 
           isEstimationLoading: <boolean> false,
 
-          selectedField: <string> 'tokenA',
-
             pairsOwnedByUser: <any> [],
             loadingPairsOwnedByUser: <boolean> true,
 
@@ -200,9 +198,7 @@ export default Vue.extend({
         }
     },
     created() {
-      // @ts-ignore-next-line
-      this.updateTokenWhitelist()
-      this.setDefaultRoute()
+      this.initializeForCurrentChain()
     },
     computed: {
         ecosystemId: {
@@ -211,15 +207,9 @@ export default Vue.extend({
           },
           set(val: EcosystemId) {
             this.$store.commit('setEcosystemId', val)
-            // @ts-ignore-next-line
-            this.updateTokenWhitelist()
-
-            this.estimationMode = 0
-            this.amountTokenA = ''
-            this.amountTokenB = ''
-            this.updateTokenBalances()
-
+            this.initializeForCurrentChain()
           }
+
         },
         userAddress(): string {
           return this.$store.state.address
@@ -262,29 +252,37 @@ export default Vue.extend({
     watch: {
         tokenA() {
             this.updateTokenBalances()
-            this.updateEstimation('tokenB')
+            this.updateEstimation()
         },
         tokenB() {
             this.updateTokenBalances()
-            this.updateEstimation('tokenA')
+            this.updateEstimation()
         },
         amountTokenA() {
-          if (this.selectedField == 'tokenA') {
-            this.estimationMode = 0
-            this.updateEstimation('tokenB')
-          }
+          this.updateEstimation()
         },
         amountTokenB() {
-          if (this.selectedField == 'tokenB') {
-            this.estimationMode = 1
-            this.updateEstimation('tokenA')
-          }
+          this.updateEstimation()
+        },
+        estimationMode() {
+          this.updateEstimation()
         },
         userAddress() {
           this.updateTokenBalances()
         }
     },
     methods: {
+      // Called on initialization
+      // and when switching to another chain
+      initializeForCurrentChain() {
+        this.estimationMode = 0
+        this.amountTokenA = ''
+        this.amountTokenB = ''
+        this.updateTokenWhitelist()
+        this.setDefaultRoute()
+        setTimeout(this.updateTokenBalances, 200)
+      },
+
         setDefaultRoute() {
             var currentChainDefaults = DEFAULT_SWAP_ROUTES[this.chainId]
             this.tokenA = currentChainDefaults.inputToken
@@ -333,16 +331,16 @@ export default Vue.extend({
           }
         },
 
-        async updateEstimation(tokenToEstimate = 'tokenA') {
+        async updateEstimation() {
           this.isEstimationLoading = true
 
           // Not doing anything if the input amount is zero
-          if ((parseFloat(this.amountTokenA) == 0 && tokenToEstimate == 'tokenB')) {
+          if ((parseFloat(0 + this.amountTokenA) == 0 && this.estimationMode == 0)) {
             this.amountTokenB = ''
             this.isEstimationLoading = false
             return
           }
-          if ((parseFloat(this.amountTokenB) == 0 && tokenToEstimate == 'tokenA')) {
+          if ((parseFloat(0 + this.amountTokenB) == 0 && this.estimationMode == 1)) {
             this.amountTokenA = ''
             this.isEstimationLoading = false
             return
@@ -390,7 +388,7 @@ export default Vue.extend({
             estimationTokenA = tmp
           }
 
-          if (tokenToEstimate == 'tokenA') {
+          if (this.estimationMode == 1) {
             const totalEstimation = estimationTokenA * parseFloat(this.amountTokenB)
             this.amountTokenA = (totalEstimation.toFixed(decimalsIn)).toString()
           }
@@ -413,6 +411,12 @@ export default Vue.extend({
 
 
         async updateTokenBalances() {
+           if (!this.web3){
+            this.balanceTokenA = '0'
+            this.balanceTokenB = '0'
+            return
+          }
+
           // @ts-ignore-next-line
           const pBalanceA = this.getTokenBalance(this.tokenA.address)
           // @ts-ignore-next-line

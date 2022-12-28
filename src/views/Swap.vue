@@ -71,7 +71,7 @@
           <v-text-field
           v-model="inputAmount"
           :label="'Amount of ' + inputToken.symbol +' to spend ' + '(max: ' + inputTokenBalance + ' ' + inputToken.symbol + ')'"
-          @click="selectedField = 'input'">
+          @focus="selectedField = 'input'">
             <template v-slot:append>
               <v-btn
                 @click="setMax"
@@ -120,7 +120,7 @@
           <v-text-field
           v-model="outputAmount"
           :label="'Amount of ' + outputToken.symbol + ' to receive'"
-          @click="selectedField='output'">
+          @focus="selectedField='output'">
           </v-text-field>
         </v-card-actions>
       </v-card>
@@ -393,9 +393,7 @@ export default Vue.extend({
         }
     },
     created() {
-        this.setDefaultRoute()
-        this.updateTokenWhitelist()
-        setTimeout(this.updateTokenBalances, 200)
+      this.initializeForCurrentChain()
     },
     computed: {
         ecosystemId: {
@@ -413,9 +411,7 @@ export default Vue.extend({
             else if (val == 2) {
               this.setSwapEcosystem("GLMR")
             }
-            this.swapMode = 0
-            this.inputAmount = ''
-            this.outputAmount = ''
+            this.initializeForCurrentChain()
           }
         },
         userAddress(): string {
@@ -495,6 +491,17 @@ export default Vue.extend({
         }
     },
     methods: {
+      // Called on initialization
+      // and when switching to another chain
+      initializeForCurrentChain() {
+        this.swapMode = 0
+        this.inputAmount = ''
+        this.outputAmount = ''
+        this.updateTokenWhitelist()
+        this.setDefaultRoute()
+        setTimeout(this.updateTokenBalances, 200)
+      },
+
         setSwapEcosystem(chain_id : string) {
           this.routerContractAddress = routerAddresses[this.chainId]
           this.setDefaultRoute()
@@ -620,7 +627,7 @@ export default Vue.extend({
           this.isEstimationLoading = true
 
           // Not doing anything if the input amount is zero
-          if (parseFloat(this.outputAmount) == 0) {
+          if (parseFloat(0 + this.outputAmount) == 0) {
             this.inputAmount = ''
             this.isEstimationLoading = false
             return
@@ -655,7 +662,7 @@ export default Vue.extend({
           // Retrieving input amounts with a much smaller output amount,
           // to compare the resulting amounts and calculate the price impact
           const smallOutputAmount : number = parseFloat( ( parseFloat(0.0 + this.outputAmount) / 100000.0).toFixed(decimalsOut) )
-          const smallOutputAmountBn = ethers.utils.parseUnits(smallOutputAmount.toString(), decimalsOut)
+          const smallOutputAmountBn: ethers.BigNumber = amountOutBn.div(100000)
           const smallAmountsIn = await routerContract.getAmountsIn(smallOutputAmountBn, bestResult["route"])
 
           // Parsing the resulting input amount with a smaller output amount
@@ -680,7 +687,7 @@ export default Vue.extend({
           this.isEstimationLoading = true
 
           // Not doing anything if the input amount is zero
-          if (parseFloat(this.inputAmount) == 0) {
+          if (parseFloat(0 + this.inputAmount) == 0) {
             this.outputAmount = ''
             this.isEstimationLoading = false
             return
@@ -703,7 +710,7 @@ export default Vue.extend({
           const decimalsOut = await this.getDecimals(outputToken)
 
           // Retrieving the actual output amounts from input amount provided by user
-          const amountInBn = ethers.utils.parseUnits(this.inputAmount.toString(), decimalsIn)
+          const amountInBn : ethers.BigNumber = ethers.utils.parseUnits(this.inputAmount.toString(), decimalsIn)
           const bestResult = await this.findBestRoute(amountInBn, inputToken, outputToken)
 
           // Parsing the normal output token amount
@@ -713,8 +720,10 @@ export default Vue.extend({
           // Retrieving output amounts with a much smaller input amount,
           // to compare the resulting amounts and calculate the price impact
           const smallInputAmount : number = parseFloat( (parseFloat(0.0 + this.inputAmount) / 100000.0).toFixed(decimalsIn) )
-          const smallInputAmountBn = ethers.utils.parseUnits(smallInputAmount.toString(), decimalsIn)
+          const smallInputAmountBn : ethers.BigNumber = amountInBn.div(100000)
           const smallAmountsOut = await routerContract.getAmountsOut(smallInputAmountBn, bestResult["route"])
+
+          console.log("small amounts retrieved")
 
           // Parsing the output amount with a smaller input amount
           const smallAmountOutBn = smallAmountsOut[smallAmountsOut.length - 1]
