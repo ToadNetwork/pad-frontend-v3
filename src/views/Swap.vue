@@ -64,13 +64,14 @@
       class="gradient-border"
       style="z-index: -1;">
         <v-card
+        style="padding: 0px 10px 10px 10px;"
         color="transparent">
           <div
           :class="getCardStyle()"
           style="border-radius: 15px; z-index: -1">
           </div>
 
-          <v-card-title style="font-size: 1.1em; padding-left: 10px;">
+          <v-card-title style="font-size: 1.1em; padding-left: 10px; margin-bottom: 5px;">
             Spend &nbsp;
             <TokenSelector
             v-bind:selectedToken="inputToken"
@@ -80,7 +81,9 @@
 
           <v-card-actions>
             <v-text-field
+            hide-details
             v-model="inputAmount"
+            outlined
             :label="'Amount of ' + inputToken.symbol +' to spend ' + '(max: ' + inputTokenBalance + ' ' + inputToken.symbol + ')'"
             @focus="selectedField = 'input'">
               <template v-slot:append>
@@ -124,13 +127,14 @@
       class="gradient-border"
       style="z-index: -1;">
         <v-card
+        style="padding: 0px 10px 10px 10px;"
         color="transparent">
           <div
           :class="getCardStyle()"
           style="border-radius: 15px; z-index: -1">
           </div>
 
-          <v-card-title style="font-size: 1.1em; padding-left: 10px;">
+          <v-card-title style="font-size: 1.1em; padding-left: 10px; margin-bottom: 5px;">
             Receive &nbsp;
             <TokenSelector
             v-bind:selectedToken="outputToken"
@@ -140,6 +144,8 @@
 
           <v-card-actions>
             <v-text-field
+            hide-details
+            outlined
             v-model="outputAmount"
             :label="'Amount of ' + outputToken.symbol + ' to receive'"
             @focus="selectedField='output'">

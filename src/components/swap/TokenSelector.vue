@@ -4,6 +4,7 @@
       scrollable
       max-width="700px"
       color="rgb(18 58 41 / 86%)"
+      content-class="ma-0"
     >
       <template v-slot:activator="{ on, attrs }">
         <v-btn
