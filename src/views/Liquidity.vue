@@ -87,7 +87,7 @@
     class="ma-0 pa-0"
     flat>
 
-      <v-card-subtitle>
+      <v-card-subtitle class="text-center">
         <div
         class="bg-deep"
         style="display: inline-block; border: 1px solid gray; padding: 10px; border-radius: 10px; margin: 10px 0;">
@@ -99,11 +99,28 @@
 
       <!-- Loading pairs for this chain -->
       <template v-if="!this.web3">
-        Connect your wallet to see your liquidity
+        <v-btn
+        block
+        disabled>
+          Connect your wallet to see your liquidity
+        </v-btn>
       </template>
       
       <template v-else-if="pairsOwnedByUser.length == 0">
-        Loading pairs, please wait...
+        <div>
+          <v-progress-linear
+          color="grey"
+          indeterminate
+          rounded
+          height="6"
+          ></v-progress-linear>
+          <v-btn
+          plain
+          block
+          disabled>
+            Loading pairs, please wait...
+          </v-btn>
+        </div>
       </template>
 
       <!-- No pairs found on this chain -->
