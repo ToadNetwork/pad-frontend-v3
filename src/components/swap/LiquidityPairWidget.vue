@@ -2,7 +2,7 @@
   <div>
   <v-expansion-panels>
     <v-expansion-panel
-    style="border-radius: 20px; overflow: hidden; margin: 10px 0;"
+    style="border-radius: 20px; overflow: hidden; margin: 10px 0; border: 1px dashed gray;"
     >
       <v-expansion-panel-header
       color="#0019ff1a">
@@ -11,12 +11,20 @@
           cols="12">
             <v-chip
             outlined>
-              {{ pairData.token0.symbol }}
+             <img
+              style="height: 25px; width: 25px; margin-right: 10px;"
+              :src="getTokenImage($store.getters.ecosystem.routeName, pairData.token0.address)">
+              </img>
+              <span style="margin-top: 2px; margin-right: 5px">{{ pairData.token0.symbol }}</span>
             </v-chip>
             &nbsp;-&nbsp;
             <v-chip
             outlined>
-              {{ pairData.token1.symbol }}
+             <img
+              style="height: 25px; width: 25px; margin-right: 10px;"
+              :src="getTokenImage($store.getters.ecosystem.routeName, pairData.token1.address)">
+              </img>
+              <span style="margin-top: 2px; margin-right: 5px">{{ pairData.token1.symbol }}</span>
             </v-chip>
           </v-col>
           <v-col>              
@@ -60,7 +68,7 @@
         class="text-center"
         style="margin-top: 30px;">
           <div
-          style="display: inline-block;">
+          style="display: inline-block; width: 100%;">
 
             <v-text-field
             width="100%"
@@ -69,11 +77,9 @@
             :disabled="pairData.userBalance == 0"
             type="number"
             min="0.0"
-            solo
             outlined
             dense
             color="#00FC4c"
-            background-color="#71767F"
             hide-spin-buttons
             :hide-details="validationStatus.message == null"
             :error-messages="validationStatus.message"
@@ -97,9 +103,11 @@
             </v-btn>
             <v-btn
             v-else
+            color="yellow"
             @click="withdraw()"
-            width="100%">
-              Withdraw
+            width="100%"
+            plain>
+              Withdraw {{ pairData.token0.symbol }}-{{ pairData.token1.symbol }} LP
             </v-btn>
 
           </div>
@@ -115,6 +123,7 @@
 import Vue from 'vue'
 import { mapActions, mapState } from 'vuex'
 import { ethers } from 'ethers'
+import { tokenInfo } from '@/mixins/tokenInfo'
 
 import {
   ERC20_ABI,
@@ -145,7 +154,7 @@ const routerAddresses = {
 
 export default Vue.extend({
   name: 'LiquidityPairWidget',
-  mixins: [formatMixin],
+  mixins: [formatMixin, tokenInfo],
   props: {
     pairData : Object,
     pairChainId : Number,
