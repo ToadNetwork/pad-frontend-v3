@@ -330,7 +330,6 @@ export default Vue.extend({
       // Called on initialization
       // and when switching to another chain
       initializeForCurrentChain() {
-        console.log("Initializing for " + this.chainId.toString())
         this.routerContractAddress = routerAddresses[this.chainId]
         this.estimationMode = 0
         this.amountTokenA = ''

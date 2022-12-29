@@ -70,7 +70,7 @@
           style="border-radius: 15px; z-index: -1">
           </div>
 
-          <v-card-title>
+          <v-card-title style="font-size: 1.1em; padding-left: 10px;">
             Spend &nbsp;
             <TokenSelector
             v-bind:selectedToken="inputToken"
@@ -130,7 +130,7 @@
           style="border-radius: 15px; z-index: -1">
           </div>
 
-          <v-card-title>
+          <v-card-title style="font-size: 1.1em; padding-left: 10px;">
             Receive &nbsp;
             <TokenSelector
             v-bind:selectedToken="outputToken"
@@ -517,6 +517,7 @@ export default Vue.extend({
       // Called on initialization
       // and when switching to another chain
       initializeForCurrentChain() {
+        this.routerContractAddress = routerAddresses[this.chainId]
         this.swapMode = 0
         this.inputAmount = ''
         this.outputAmount = ''
@@ -524,13 +525,13 @@ export default Vue.extend({
         this.setDefaultRoute()
         setTimeout(this.updateTokenBalances, 200)
 
-        if (this.chainId == 0) {
+        if (this.chainId == 56) {
           this.setSwapEcosystem("BSC")
         }
-        else if (this.chainId == 1) {
+        else if (this.chainId == 1285) {
           this.setSwapEcosystem("MOVR")
         }
-        else if (this.chainId == 2) {
+        else if (this.chainId == 1284) {
           this.setSwapEcosystem("GLMR")
         }
       },
