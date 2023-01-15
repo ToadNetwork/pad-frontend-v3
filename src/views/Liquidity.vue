@@ -106,7 +106,7 @@
         </v-btn>
       </template>
       
-      <template v-else-if="pairsOwnedByUser.length == 0">
+      <template v-else-if="loadingPairsOwnedByUser == true">
         <div>
           <v-progress-linear
           color="grey"
@@ -235,9 +235,6 @@ export default Vue.extend({
       setTimeout(() => {
           this.updatePairsOwnedByUser()
       }, 1000)
-      setInterval(() => {
-          this.updatePairsOwnedByUser()
-      }, 5000)
     },
     computed: {
         ecosystemId: {
@@ -255,6 +252,7 @@ export default Vue.extend({
             else if (val == 2) {
               this.setSwapEcosystem("GLMR")
             }
+            this.updatePairsOwnedByUser()
           }
         },
         userAddress(): string {
