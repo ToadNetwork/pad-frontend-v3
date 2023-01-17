@@ -114,12 +114,17 @@
           rounded
           height="6"
           ></v-progress-linear>
-          <v-btn
+          <v-card
+          class="text-center"
+          color="transparent"
           plain
-          block
-          disabled>
+          block>
+            <br>
             Loading pairs, please wait...
-          </v-btn>
+            <br>
+            <br>
+            If the loading takes more than a minute, please refresh the page.
+          </v-card>
         </div>
       </template>
 
@@ -283,6 +288,9 @@ export default Vue.extend({
         },
     },
     watch: {
+      web3() {
+        this.updatePairsOwnedByUser()
+      }
         // inputToken() {
         //     this.updateTokenBalances()
         //     this.updateOutputEstimation()
