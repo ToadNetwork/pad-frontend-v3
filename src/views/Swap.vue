@@ -715,26 +715,30 @@ export default Vue.extend({
 
           const inputAmount = ethers.utils.formatUnits(amountInBn, decimalsIn)
 
-          // Retrieving input amounts with a much smaller output amount,
-          // to compare the resulting amounts and calculate the price impact
-          const smallOutputAmount : number = parseFloat( ( parseFloat(0.0 + this.outputAmount) / 100000.0).toFixed(decimalsOut) )
-          const smallOutputAmountBn: ethers.BigNumber = amountOutBn.div(100000)
-          const smallAmountsIn = await routerContract.getAmountsIn(smallOutputAmountBn, bestResult["route"])
+          try {
+            // Retrieving input amounts with a much smaller output amount,
+            // to compare the resulting amounts and calculate the price impact
+            const smallOutputAmount : number = parseFloat( ( parseFloat(0.0 + this.outputAmount) / 100000.0).toFixed(decimalsOut) )
+            const smallOutputAmountBn: ethers.BigNumber = amountOutBn.div(100000)
+            const smallAmountsIn = await routerContract.getAmountsIn(smallOutputAmountBn, bestResult["route"])
 
-          // Parsing the resulting input amount with a smaller output amount
-          const smallAmountInBn = smallAmountsIn[0]
-          const smallInputAmount = ethers.utils.formatUnits(smallAmountInBn, decimalsIn)
+            // Parsing the resulting input amount with a smaller output amount
+            const smallAmountInBn = smallAmountsIn[0]
+            const smallInputAmount = ethers.utils.formatUnits(smallAmountInBn, decimalsIn)
 
-          // Calculating the price impact
-          const smallInputValue = smallOutputAmount / parseFloat(smallInputAmount)
-          const realInputValue = parseFloat(this.outputAmount) / parseFloat(inputAmount)
-          const receivedValuePercent = (realInputValue / smallInputValue) * 100.0
-          const impactPercent = 100.0 - receivedValuePercent
+            // Calculating the price impact
+            const smallInputValue = smallOutputAmount / parseFloat(smallInputAmount)
+            const realInputValue = parseFloat(this.outputAmount) / parseFloat(inputAmount)
+            const receivedValuePercent = (realInputValue / smallInputValue) * 100.0
+            const impactPercent = 100.0 - receivedValuePercent
+            this.priceImpactPercent = impactPercent.toFixed(2)
+          }
+          catch (err) {
+            this.priceImpactPercent = "0.1"
+          }
 
           // Recording the results
-          this.priceImpactPercent = impactPercent.toFixed(2)
           this.inputAmount = inputAmount.toString()
-
           this.isEstimationLoading = false
         },
 
@@ -777,29 +781,32 @@ export default Vue.extend({
           const amountOutBn = bestResult["price"]
           const outputAmount = ethers.utils.formatUnits(amountOutBn, decimalsOut)
 
-          console.log("calculating small amounts...")
-
 
           // Retrieving output amounts with a much smaller input amount,
           // to compare the resulting amounts and calculate the price impact
-          const smallInputAmount : number = parseFloat( (parseFloat(0.0 + this.inputAmount) / 100000.0).toFixed(decimalsIn) )
-          const smallInputAmountBn : ethers.BigNumber = amountInBn.div(100000)
-          const smallAmountsOut = await routerContract.getAmountsOut(smallInputAmountBn, bestResult["route"])
+          try {
+            const smallInputAmount : number = parseFloat( (parseFloat(0.0 + this.inputAmount) / 100000.0).toFixed(decimalsIn) )
+            const smallInputAmountBn : ethers.BigNumber = amountInBn.div(100000)
+            const smallAmountsOut = await routerContract.getAmountsOut(smallInputAmountBn, bestResult["route"])
 
-          console.log("small amounts calculated")
+            // Parsing the output amount with a smaller input amount
+            const smallAmountOutBn = smallAmountsOut[smallAmountsOut.length - 1]
+            const smallOutputAmount = ethers.utils.formatUnits(smallAmountOutBn, decimalsOut)
 
-          // Parsing the output amount with a smaller input amount
-          const smallAmountOutBn = smallAmountsOut[smallAmountsOut.length - 1]
-          const smallOutputAmount = ethers.utils.formatUnits(smallAmountOutBn, decimalsOut)
+            // Calculating the price impact
+            const smallOutputValue = parseFloat(smallOutputAmount) / smallInputAmount
+            const realOutputValue = parseFloat(outputAmount) / parseFloat(this.inputAmount)
+            const receivedValuePercent = (realOutputValue / smallOutputValue) * 100.0
+            const impactPercent = 100.0 - receivedValuePercent
 
-          // Calculating the price impact
-          const smallOutputValue = parseFloat(smallOutputAmount) / smallInputAmount
-          const realOutputValue = parseFloat(outputAmount) / parseFloat(this.inputAmount)
-          const receivedValuePercent = (realOutputValue / smallOutputValue) * 100.0
-          const impactPercent = 100.0 - receivedValuePercent
+            this.priceImpactPercent = impactPercent.toFixed(2)
+
+          }
+          catch (err) {
+            this.priceImpactPercent = "0.1"
+          }
 
           // Recording the results
-          this.priceImpactPercent = impactPercent.toFixed(2)
           this.outputAmount = outputAmount.toString()
 
           this.isEstimationLoading = false
