@@ -264,30 +264,16 @@ export default Vue.extend({
         {
           name: 'Token factory',
           desc: 'Create your own token in a few clicks',
-          href: 'https://beta.nebul.ae/tokenfactory',
-          target: '_blank',
+          href: '/tokenfactory',
+          target: '_self',
           iconSrc: require('@/assets/icons/Token List Icon.svg')
         },
         {
           name: 'Launchpad',
           desc: 'Partake in presales, or start your own',
-          href: 'https://beta.nebul.ae/launchpad',
-          target: '_blank',
+          href: '/launchpad',
+          target: '_self',
           iconSrc: require('@/assets/icons/LaunchPAD Icon.svg')
-        },
-        {
-          name: 'Farm factory',
-          desc: 'Create your own farm to incentivize your users',
-          href: 'https://beta.nebul.ae/farmfactory',
-          target: '_blank',
-          iconSrc: require('@/assets/icons/Farms Icon.svg')
-        },
-        {
-          name: 'Vault factory',
-          desc: 'Create permanent backing for your token',
-          href: 'https://beta.nebul.ae/',
-          target: '_blank',
-          iconSrc: require('@/assets/icons/Vault Icon.svg')
         }]
       },
       {

@@ -50,7 +50,18 @@
         </v-card-subtitle>
       </v-card>
 
+
       <v-card
+        href="/vault"
+        class="title-card hover-rgb">
+        <div class="icon-container">
+          <img src="@/assets/icons/Vault Icon.svg">
+        </div>
+        <div class="title-card-name">Vault</div>
+        <v-card-subtitle class="text-center" style="font-size: 1.05rem">Collects backing for PAD from service fees</v-card-subtitle>
+      </v-card>
+
+<!--       <v-card
         href="https://beta.nebul.ae/"
         target="_blank"
         class="title-card hover-rgb">
@@ -59,7 +70,7 @@
         </div>
         <div class="title-card-name">Create</div>
         <v-card-subtitle class="text-center" style="font-size: 1.05rem">Our all-in-one DeFi suite for project owners</v-card-subtitle>
-      </v-card>
+      </v-card> -->
 
 <!--       <v-card
         href="/bridge"
