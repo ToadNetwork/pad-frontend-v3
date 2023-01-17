@@ -410,6 +410,8 @@ export default Vue.extend({
 
           inputToken: <any> {},
           outputToken: <any> {},
+          decimalsIn: <number> 18,
+          decimalsOut: <number> 18,
 
           inputTokenAllowance: <string> '0',
           outputTokenAllowance: <string> '0',
@@ -481,16 +483,20 @@ export default Vue.extend({
 
         // TODO: handle tokens with different decimals
         inputAmountBn() : ethers.BigNumber {
-          return ethers.utils.parseEther(this.inputAmount.toString())
+          const inputAmount = parseFloat(this.inputAmount.toString())
+          return ethers.utils.parseUnits(inputAmount.toFixed(this.decimalsIn).toString(), this.decimalsIn)
         },
         outputAmountBn() : ethers.BigNumber {
-          return ethers.utils.parseEther(this.outputAmount.toString())
+          const outputAmount = parseFloat(this.outputAmount.toString())
+          return ethers.utils.parseUnits(outputAmount.toFixed(this.decimalsOut).toString(), this.decimalsOut)
         },
         maximumInBn() : ethers.BigNumber {
-          return ethers.utils.parseEther(this.maximumSold.toString())
+          const maximumSold = parseFloat(this.maximumSold.toString())
+          return ethers.utils.parseUnits(maximumSold.toFixed(this.decimalsIn).toString(), this.decimalsIn)
         },
         minimumOutBn() : ethers.BigNumber {
-          return ethers.utils.parseEther(this.minimumReceived.toString())
+          const minimumReceived = parseFloat(this.minimumReceived.toString())
+          return ethers.utils.parseUnits(minimumReceived.toFixed(this.decimalsOut).toString(), this.decimalsOut)
         },
         txDeadline() : number {
           return Date.now() + 1000 * 60 * parseFloat(this.transactionDeadlineMinutes)
@@ -694,6 +700,8 @@ export default Vue.extend({
 
           const decimalsIn = await this.getDecimals(inputToken)
           const decimalsOut = await this.getDecimals(outputToken)
+          this.decimalsIn = decimalsIn
+          this.decimalsOut = decimalsOut
 
           // Retrieving the actual input amounts from output amount provided by user
           const amountOutBn = ethers.utils.parseUnits(this.outputAmount.toString(), decimalsOut)
@@ -703,6 +711,7 @@ export default Vue.extend({
 
           // Parsing the resulting input token amount with user-specified output amount
           const amountInBn = bestResult["price"]
+
           const inputAmount = ethers.utils.formatUnits(amountInBn, decimalsIn)
 
           // Retrieving input amounts with a much smaller output amount,
@@ -754,6 +763,8 @@ export default Vue.extend({
 
           const decimalsIn = await this.getDecimals(inputToken)
           const decimalsOut = await this.getDecimals(outputToken)
+          this.decimalsIn = decimalsIn
+          this.decimalsOut = decimalsOut
 
           // Retrieving the actual output amounts from input amount provided by user
           const amountInBn : ethers.BigNumber = ethers.utils.parseUnits(this.inputAmount.toString(), decimalsIn)
@@ -861,6 +872,8 @@ export default Vue.extend({
           const toad = toadAddresses[this.chainId]
           const routingAddresses = [weth, pad, toad]
 
+          const excludeFromRouting = ["0x12958C31CcDFBd08641626fC070161452C00D09F"]
+
           // Factory contract, inferred from the router contract
           const factoryAddress = await routerContract.factory()
           const factoryContract = new ethers.Contract(factoryAddress, SWAP_FACTORY_ABI, this.multicall)
@@ -932,7 +945,9 @@ export default Vue.extend({
           const possibleRoutes = [[inputTokenAddress, outputTokenAddress]]
           for (const routingAddress of tokensPairedWithBothTokens) {
             if (inputTokenAddress != routingAddress && outputTokenAddress != routingAddress) {
-              possibleRoutes.push([inputTokenAddress, routingAddress, outputTokenAddress])
+              if (!excludeFromRouting.includes(routingAddress)) {
+                possibleRoutes.push([inputTokenAddress, routingAddress, outputTokenAddress])
+              }
             }
           }
 
@@ -968,22 +983,30 @@ export default Vue.extend({
             await Promise.all(promises)
           } catch (err) {}
 
+
           // Indentifying the best swap route
           let bestResult = results[0]
           for (const result of results) {
+
             const priceCurrent = ethers.utils.formatEther(bestResult["price"])
             const priceNew = ethers.utils.formatEther(result["price"])
+            console.log(result)
+            console.log(priceCurrent)
+            console.log(priceNew)
 
             if (exactIn == true) { // Looking for highest output if in "exact input" mode
-              if (parseFloat(priceNew) > parseFloat(priceCurrent)) {
+              if (result["price"].gt(bestResult["price"])) {
                 bestResult = result
               }
             }
             else { // Looking for lowest input if in "exact output" mode
-              if (parseFloat(priceNew) < parseFloat(priceCurrent)) {
+              if (result["price"] < bestResult["price"]) {
                 bestResult = result
               }
             }
+
+            console.log(bestResult)
+
           }
 
           return bestResult
@@ -996,6 +1019,7 @@ export default Vue.extend({
 
         async swapExactTokensForTokens() {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
+
 
             const tx = await routerContract.populateTransaction.swapExactTokensForTokens(
               this.inputAmountBn,
@@ -1030,6 +1054,8 @@ export default Vue.extend({
         async swapExactTokensForETH() {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
             const weth = await routerContract.WETH()
+
+            console.log(this.swapRoute)
 
             const tx = await routerContract.populateTransaction.swapExactTokensForETH(
               this.inputAmountBn,
