@@ -397,6 +397,8 @@ export default Vue.extend({
     data() {
         return {
 
+          swapRoute: <Array<any>> [],
+
           isEstimationLoading: <boolean> false,
 
           selectedField: 'input',
@@ -695,6 +697,7 @@ export default Vue.extend({
           // Retrieving the actual input amounts from output amount provided by user
           const amountOutBn = ethers.utils.parseUnits(this.outputAmount.toString(), decimalsOut)
           const bestResult = await this.findBestRoute(amountOutBn, inputToken, outputToken, false)
+          this.swapRoute = bestResult.route
 
 
           // Parsing the resulting input token amount with user-specified output amount
@@ -754,6 +757,7 @@ export default Vue.extend({
           // Retrieving the actual output amounts from input amount provided by user
           const amountInBn : ethers.BigNumber = ethers.utils.parseUnits(this.inputAmount.toString(), decimalsIn)
           const bestResult = await this.findBestRoute(amountInBn, inputToken, outputToken)
+          this.swapRoute = bestResult.route
 
           // Parsing the normal output token amount
           const amountOutBn = bestResult["price"]
@@ -997,7 +1001,7 @@ export default Vue.extend({
             const tx = await routerContract.populateTransaction.swapExactTokensForTokens(
               this.inputAmountBn,
               this.minimumOutBn,
-              [this.inputToken.address, this.outputToken.address],
+              this.swapRoute,
               this.userAddress,
               this.txDeadline)
 
@@ -1011,7 +1015,7 @@ export default Vue.extend({
             const tx = await routerContract.populateTransaction.swapTokensForExactTokens(
               this.outputAmountBn,
               this.maximumInBn,
-              [this.inputToken.address, this.outputToken.address],
+              this.swapRoute,
               this.userAddress,
               this.txDeadline)
 
@@ -1031,7 +1035,7 @@ export default Vue.extend({
             const tx = await routerContract.populateTransaction.swapExactTokensForETH(
               this.inputAmountBn,
               this.minimumOutBn,
-              [this.inputToken.address, weth],
+              this.swapRoute,
               this.userAddress,
               this.txDeadline)
 
@@ -1046,7 +1050,7 @@ export default Vue.extend({
             const tx = await routerContract.populateTransaction.swapExactTokensForETH(
               this.outputAmountBn,
               this.maximumInBn,
-              [this.inputToken.address, weth],
+              this.swapRoute,
               this.userAddress,
               this.txDeadline)
 
@@ -1065,7 +1069,7 @@ export default Vue.extend({
 
             const tx = await routerContract.populateTransaction.swapExactETHForTokens(
               this.minimumOutBn,
-              [weth, this.outputToken.address],
+              this.swapRoute,
               this.userAddress,
               this.txDeadline)
 
@@ -1081,7 +1085,7 @@ export default Vue.extend({
 
           const tx = await routerContract.populateTransaction.swapETHForExactTokens(
             this.outputAmountBn,
-            [weth, this.outputToken.address],
+            this.swapRoute,
             this.userAddress,
             this.txDeadline)
 
