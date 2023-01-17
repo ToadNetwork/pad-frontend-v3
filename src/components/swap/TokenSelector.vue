@@ -65,7 +65,8 @@
         flat
         style="margin: 10px; padding-left: 10px; padding-right: 10px;">
           <v-text-field
-          outlined
+            autocomplete="off"
+            outlined
             label="Type a token name, or paste address"
             v-model='customTokenAddress'>
           </v-text-field>
