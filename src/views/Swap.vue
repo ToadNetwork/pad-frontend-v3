@@ -674,6 +674,7 @@ export default Vue.extend({
         },
 
 
+        // Called when the user specifies an exact output amount
         async updateInputEstimation() {
           this.isEstimationLoading = true
 
@@ -738,6 +739,7 @@ export default Vue.extend({
         },
 
 
+        // Called when the user specifies an exact input amount
         async updateOutputEstimation() {
           this.isEstimationLoading = true
 
@@ -775,11 +777,16 @@ export default Vue.extend({
           const amountOutBn = bestResult["price"]
           const outputAmount = ethers.utils.formatUnits(amountOutBn, decimalsOut)
 
+          console.log("calculating small amounts...")
+
+
           // Retrieving output amounts with a much smaller input amount,
           // to compare the resulting amounts and calculate the price impact
           const smallInputAmount : number = parseFloat( (parseFloat(0.0 + this.inputAmount) / 100000.0).toFixed(decimalsIn) )
           const smallInputAmountBn : ethers.BigNumber = amountInBn.div(100000)
           const smallAmountsOut = await routerContract.getAmountsOut(smallInputAmountBn, bestResult["route"])
+
+          console.log("small amounts calculated")
 
           // Parsing the output amount with a smaller input amount
           const smallAmountOutBn = smallAmountsOut[smallAmountsOut.length - 1]
@@ -990,9 +997,7 @@ export default Vue.extend({
 
             const priceCurrent = ethers.utils.formatEther(bestResult["price"])
             const priceNew = ethers.utils.formatEther(result["price"])
-            console.log(result)
-            console.log(priceCurrent)
-            console.log(priceNew)
+
 
             if (exactIn == true) { // Looking for highest output if in "exact input" mode
               if (result["price"].gt(bestResult["price"])) {
@@ -1004,8 +1009,6 @@ export default Vue.extend({
                 bestResult = result
               }
             }
-
-            console.log(bestResult)
 
           }
 
