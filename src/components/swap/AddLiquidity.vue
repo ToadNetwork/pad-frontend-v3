@@ -6,39 +6,51 @@
     flat
     color="transparent"
     class="pa-0"
-    style="display: inline-block;"
+    style="display: inline-block; z-index: 2; margin-top: 20px;"
     width="100%"
     max-width="600px">
 
       <!------------->
       <!-- Token A -->
       <!------------->
-      <v-card
-      color="#16323eb3">
-        <v-card-title>
-          Token A &nbsp;
-          <TokenSelector
-          v-bind:selectedToken="tokenA"
-          v-bind:tokenWhitelist="tokenWhitelist"
-          @tokenSelected="(newTokenData) => updateTokenA(newTokenData)"/>
-        </v-card-title>
+      <div
+      class="gradient-border"
+      style="z-index: -1;">
+        <v-card
+        style="padding: 0px 10px 10px 10px;"
+        color="transparent">
+          <div
+          :class="getCardStyle()"
+          style="border-radius: 15px; z-index: -1">
+          </div>
 
-        <v-card-actions>
-          <v-text-field
-          v-model="amountTokenA"
-          :label="'Amount of ' + tokenA.symbol +' to add ' + '(max: ' + balanceTokenA + ' ' + tokenA.symbol + ')'"
-          @focus="estimationMode = 0">
-            <template v-slot:append>
-              <v-btn
-                @click="setMaxA()"
-                x-small
-                color="#595E67">
-                Max
-              </v-btn>
-            </template>
-          </v-text-field>
-        </v-card-actions>
-      </v-card>
+          <v-card-title style="font-size: 1.1em; padding-left: 10px; margin-bottom: 5px;">
+            Token A &nbsp;
+            <TokenSelector
+            v-bind:selectedToken="tokenA"
+            v-bind:tokenWhitelist="tokenWhitelist"
+            @tokenSelected="(newTokenData) => updateTokenA(newTokenData)"/>
+          </v-card-title>
+
+          <v-card-actions>
+            <v-text-field
+            hide-details
+            outlined
+            v-model="amountTokenA"
+            :label="'Amount of ' + tokenA.symbol +' to add ' + '(max: ' + balanceTokenA + ' ' + tokenA.symbol + ')'"
+            @focus="estimationMode = 0">
+              <template v-slot:append>
+                <v-btn
+                  @click="setMaxA()"
+                  x-small
+                  color="#595E67">
+                  Max
+                </v-btn>
+              </template>
+            </v-text-field>
+          </v-card-actions>
+        </v-card>
+      </div>
 
 
       <div
@@ -55,32 +67,44 @@
       <!-- Token B -->
       <!------------->
 
-      <v-card
-      color="#16323eb3">
-        <v-card-title>
-          Token B &nbsp;
-          <TokenSelector
-          v-bind:selectedToken="tokenB"
-          v-bind:tokenWhitelist="tokenWhitelist"
-          @tokenSelected="(newTokenData) => updateTokenB(newTokenData)"/>
-        </v-card-title>
+      <div
+      class="gradient-border"
+      style="z-index: -1;">
+        <v-card
+        style="padding: 0px 10px 10px 10px;"
+        color="transparent">
+          <div
+          :class="getCardStyle()"
+          style="border-radius: 15px; z-index: -1">
+          </div>
 
-        <v-card-actions>
-          <v-text-field
-          v-model="amountTokenB"
-          :label="'Amount of ' + tokenB.symbol + ' to add ' + '(max: ' + balanceTokenB + ' ' + tokenB.symbol + ')'"
-          @focus="estimationMode = 1">
-            <template v-slot:append>
-              <v-btn
-                @click="setMaxB()"
-                x-small
-                color="#595E67">
-                Max
-              </v-btn>
-            </template>
-          </v-text-field>
-        </v-card-actions>
-      </v-card>
+          <v-card-title style="font-size: 1.1em; padding-left: 10px; margin-bottom: 5px;">
+            Token B &nbsp;
+            <TokenSelector
+            v-bind:selectedToken="tokenB"
+            v-bind:tokenWhitelist="tokenWhitelist"
+            @tokenSelected="(newTokenData) => updateTokenB(newTokenData)"/>
+          </v-card-title>
+
+          <v-card-actions>
+            <v-text-field
+            hide-details
+            outlined
+            v-model="amountTokenB"
+            :label="'Amount of ' + tokenB.symbol + ' to add ' + '(max: ' + balanceTokenB + ' ' + tokenB.symbol + ')'"
+            @focus="estimationMode = 1">
+              <template v-slot:append>
+                <v-btn
+                  @click="setMaxB()"
+                  x-small
+                  color="#595E67">
+                  Max
+                </v-btn>
+              </template>
+            </v-text-field>
+          </v-card-actions>
+        </v-card>
+      </div>
 
       <br>
 
@@ -338,6 +362,18 @@ export default Vue.extend({
         this.setDefaultRoute()
         setTimeout(this.updateTokenBalances, 200)
       },
+
+        getCardStyle() {
+          let ecosystemBackgrounds = {
+            56: "bg bg-bsc",
+            1284: "bg bg-moonbeam",
+            1285: "bg bg-moonriver"
+          }
+
+          const backgroundClass = ecosystemBackgrounds[this.chainId]
+          
+          return backgroundClass
+        },
 
         setDefaultRoute() {
             var currentChainDefaults = DEFAULT_SWAP_ROUTES[this.chainId]
