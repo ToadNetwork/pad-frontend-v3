@@ -291,17 +291,6 @@ export default Vue.extend({
       web3() {
         this.updatePairsOwnedByUser()
       }
-        // inputToken() {
-        //     this.updateTokenBalances()
-        //     this.updateOutputEstimation()
-        // },
-        // outputToken() {
-        //     this.updateTokenBalances()
-        //     this.updateOutputEstimation()
-        // },
-        // inputAmount() {
-        //     this.updateOutputEstimation()
-        // }
     },
     methods: {
       setSwapEcosystem(chain_id : string) {

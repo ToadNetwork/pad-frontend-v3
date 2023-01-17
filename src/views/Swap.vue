@@ -434,6 +434,7 @@ export default Vue.extend({
     },
     created() {
       this.initializeForCurrentChain()
+      setInterval(this.updateTokenBalances, 3000)
     },
     computed: {
         ecosystemId: {
@@ -768,8 +769,6 @@ export default Vue.extend({
           const smallInputAmount : number = parseFloat( (parseFloat(0.0 + this.inputAmount) / 100000.0).toFixed(decimalsIn) )
           const smallInputAmountBn : ethers.BigNumber = amountInBn.div(100000)
           const smallAmountsOut = await routerContract.getAmountsOut(smallInputAmountBn, bestResult["route"])
-
-          console.log("small amounts retrieved")
 
           // Parsing the output amount with a smaller input amount
           const smallAmountOutBn = smallAmountsOut[smallAmountsOut.length - 1]

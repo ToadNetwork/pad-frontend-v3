@@ -283,6 +283,7 @@ export default Vue.extend({
     },
     created() {
       this.initializeForCurrentChain()
+      setInterval(this.updateTokenBalances, 3000)
     },
     computed: {
         ecosystemId: {

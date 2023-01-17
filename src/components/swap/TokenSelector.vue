@@ -180,7 +180,6 @@ export default Vue.extend({
   },
   methods: {
     selectToken(tokenData : any) {
-      console.log(tokenData.address)
       this.$emit('tokenSelected', tokenData)
       this.dialog = false
     },
