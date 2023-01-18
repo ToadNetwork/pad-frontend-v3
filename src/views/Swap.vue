@@ -500,7 +500,10 @@ export default Vue.extend({
         },
         txDeadline() : number {
           return Date.now() + 1000 * 60 * parseFloat(this.transactionDeadlineMinutes)
-        }
+        },
+        priceModel(): any {
+          return this.$store.getters.ecosystem.priceModel
+        },
     },
     watch: {
         inputToken() {

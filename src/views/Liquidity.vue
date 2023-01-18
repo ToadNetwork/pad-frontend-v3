@@ -476,6 +476,7 @@ export default Vue.extend({
           const tokenDataPromises = [pToken0, pToken1]
           await Promise.all(tokenDataPromises)
 
+
           // Reserves
           const reserve0 = parseFloat(ethers.utils.formatEther(pairData.pairReserves._reserve0))
           const reserve1 = parseFloat(ethers.utils.formatEther(pairData.pairReserves._reserve1))
