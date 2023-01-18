@@ -97,9 +97,10 @@
               </template>
             </v-text-field>
             <v-btn
+            plain
             v-if="!isSpendingApproved"
             @click="approve()">
-              APPROVE
+              APPROVE  {{ pairData.token0.symbol }}-{{ pairData.token1.symbol }} LP
             </v-btn>
             <v-btn
             v-else
@@ -164,6 +165,11 @@ export default Vue.extend({
       removeAmount: <string> '',
     }
   },
+  created() {
+    setInterval(() => {
+          this.updateAllowance()
+      }, 3000)
+  },
   computed: {
     ecosystem(): IEcosystem {
       // @ts-ignore-next-line
@@ -227,6 +233,12 @@ export default Vue.extend({
     ...mapState(['web3'])
   },
   methods: {
+    async updateAllowance() {
+      const pairContract = new ethers.Contract(this.pairData.address, PADSWAP_PAIR_ABI, this.multicall)
+      const allowance = await pairContract.allowance(this.userAddress, this.routerContractAddress)
+      this.pairData.allowance = allowance
+    },
+
     round(num : any, dec : any) {
       num = Number(num).toFixed(20)
       if(!Number.isFinite(Number(num))) num = '0.0'
