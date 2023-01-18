@@ -129,9 +129,15 @@
       </template>
 
       <!-- No pairs found on this chain -->
+
       <template v-else-if="pairsOwnedByUser.length == 0">
-        You don't own any liquidity on the selected chain.<br>
-        You can add liquidity below, or use the ecosystem slider to check other chains.
+        <v-card
+        color="transparent">
+          <v-card-text class="text-center">
+            No liquidity found on the selected chain.
+          </v-card-text>
+      </v-card>
+        
       </template>
 
       <!-- Listing pairs owned by user -->
@@ -141,6 +147,21 @@
         :pairData="pairData"
         />
       </template>
+
+      <div style="text-align: center; margin-top: 10px;">
+        <v-btn
+        style
+        rounded
+        outlined
+        color="grey"
+        large
+        @click="updatePairsOwnedByUser()">
+          <v-icon>
+            mdi-refresh
+          </v-icon>
+          Refresh
+        </v-btn>
+      </div>
 
     </v-card>
 
@@ -196,50 +217,49 @@ export default Vue.extend({
         LiquidityPairWidget
     },
     data() {
-        return {
+      return {
+        tab: <string> 'your-liquidity',
 
-            tab: <string> 'your-liquidity',
+        pairsOwnedByUser: <any> [],
+        loadingPairsOwnedByUser: <boolean> false,
 
-            pairsOwnedByUser: <any> [],
-            loadingPairsOwnedByUser: <boolean> true,
+        inputToken: <any> {},
+        outputToken: <any> {},
 
-            inputToken: <any> {},
-            outputToken: <any> {},
+        tokenA: <any> {},
+        tokenB: <any> {},
 
-            tokenA: <any> {},
-            tokenB: <any> {},
+        amountTokenA: <string> '',
+        amountTokenB: <string> '',
 
-            amountTokenA: <string> '',
-            amountTokenB: <string> '',
-
-            amountToWithdraw: <string> '',
+        amountToWithdraw: <string> '',
 
 
-            inputTokenAllowance: <string> '0',
-            outputTokenAllowance: <string> '0',
+        inputTokenAllowance: <string> '0',
+        outputTokenAllowance: <string> '0',
 
-            inputTokenBalance: <string> '0',
+        inputTokenBalance: <string> '0',
 
-            inputAmount: <string> '',
-            outputAmount: <string> '',
+        inputAmount: <string> '',
+        outputAmount: <string> '',
 
-            exactToken: '',
+        exactToken: '',
 
-            tokenWhitelist: <any> [],
+        tokenWhitelist: <any> [],
 
-            tokenSelectionDialog: <boolean> false,
-            selectedTokenAddress: <string> '',
+        tokenSelectionDialog: <boolean> false,
+        selectedTokenAddress: <string> '',
 
-            routerContractAddress: <string> '0x40F1fEF0Fe68Fd10ff904070ee00a7769EE7fe34',
+        routerContractAddress: <string> '0x40F1fEF0Fe68Fd10ff904070ee00a7769EE7fe34',
 
-            inputTokenAddress: <string> '0x59193512877E2EC3bB27C178A8888Cfac62FB32D',
-            outputTokenAddress: <string> '0xF480f38C366dAaC4305dC484b2Ad7a496FF00CeA'
-        }
+        inputTokenAddress: <string> '0x59193512877E2EC3bB27C178A8888Cfac62FB32D',
+        outputTokenAddress: <string> '0xF480f38C366dAaC4305dC484b2Ad7a496FF00CeA'
+      }
     },
     created() {
       setTimeout(() => {
           this.updatePairsOwnedByUser()
-      }, 1000)
+      }, 50)
     },
     computed: {
         ecosystemId: {
@@ -335,11 +355,23 @@ export default Vue.extend({
 
 
         async updatePairsOwnedByUser() {
-          this.loadingPairsOwnedByUser = true
-          const pairs = await this.getBasicInfoAboutPairsOwnedByUser()
-          await this.fillPairsWithInfo(pairs)
-          this.pairsOwnedByUser = pairs
-          this.loadingPairsOwnedByUser = false
+          // Stopping the execution if another instance of this method is still running
+          if (this.loadingPairsOwnedByUser) {
+            return
+          }
+
+          // try...catch block should prevent the page from getting stuck
+          // in case of unexpected errors occuring when loading pairs
+          try {
+            this.loadingPairsOwnedByUser = true
+            const pairs = await this.getBasicInfoAboutPairsOwnedByUser()
+            await this.fillPairsWithInfo(pairs)
+            this.pairsOwnedByUser = pairs
+            this.loadingPairsOwnedByUser = false
+          }
+          catch (err) {
+            this.loadingPairsOwnedByUser = false
+          }
         },
 
 

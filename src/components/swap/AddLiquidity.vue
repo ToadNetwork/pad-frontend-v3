@@ -238,48 +238,47 @@ export default Vue.extend({
     },
     mixins: [tokenInfo],
     data() {
-        return {
+      return {
+        isEstimationLoading: <boolean> false,
 
-          isEstimationLoading: <boolean> false,
+        pairsOwnedByUser: <any> [],
+        loadingPairsOwnedByUser: <boolean> true,
 
-            pairsOwnedByUser: <any> [],
-            loadingPairsOwnedByUser: <boolean> true,
+        inputToken: <any> {},
+        outputToken: <any> {},
 
-            inputToken: <any> {},
-            outputToken: <any> {},
+        tokenA: <any> {},
+        tokenB: <any> {},
 
-            tokenA: <any> {},
-            tokenB: <any> {},
+        amountTokenA: <string> '0',
+        amountTokenB: <string> '0',
 
-            amountTokenA: <string> '0',
-            amountTokenB: <string> '0',
-
-            amountToWithdraw: <string> '',
+        amountToWithdraw: <string> '',
 
 
-            inputTokenAllowance: <string> '0',
-            outputTokenAllowance: <string> '0',
+        inputTokenAllowance: <string> '0',
+        outputTokenAllowance: <string> '0',
 
-            balanceTokenA: <string> '0',
-            balanceTokenB: <string> '0',
+        balanceTokenA: <string> '0',
+        balanceTokenB: <string> '0',
 
-            allowanceTokenA: <string> '0',
-            allowanceTokenB: <string> '0',
+        allowanceTokenA: <string> '0',
+        allowanceTokenB: <string> '0',
 
-            exactToken: '',
+        exactToken: '',
 
-            estimationMode: 0,
+        estimationMode: 0,
 
-            tokenWhitelist: <any> [],
+        tokenWhitelist: <any> [],
 
-            tokenSelectionDialog: <boolean> false,
-            selectedTokenAddress: <string> '',
+        tokenSelectionDialog: <boolean> false,
+        selectedTokenAddress: <string> '',
 
-            routerContractAddress: <string> '0x40F1fEF0Fe68Fd10ff904070ee00a7769EE7fe34',
+        routerContractAddress: <string> '0x40F1fEF0Fe68Fd10ff904070ee00a7769EE7fe34',
 
-            inputTokenAddress: <string> '0x59193512877E2EC3bB27C178A8888Cfac62FB32D',
-            outputTokenAddress: <string> '0xF480f38C366dAaC4305dC484b2Ad7a496FF00CeA'
-        }
+        inputTokenAddress: <string> '0x59193512877E2EC3bB27C178A8888Cfac62FB32D',
+        outputTokenAddress: <string> '0xF480f38C366dAaC4305dC484b2Ad7a496FF00CeA'
+      }
     },
     created() {
       this.initializeForCurrentChain()
