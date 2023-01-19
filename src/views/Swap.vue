@@ -529,22 +529,22 @@ export default Vue.extend({
     watch: {
         inputToken() {
           this.updateTokenBalances()
-          this.updateOutputEstimation()
+          this.updateEstimation()
         },
         outputToken() {
           this.updateTokenBalances()
-          this.updateInputEstimation()
+          this.updateEstimation()
         },
         inputAmount() {
           if (this.selectedField == 'input') {
             this.swapMode = 0
-            this.updateOutputEstimation()
+            this.updateEstimation()
           }
         },
         outputAmount() {
           if (this.selectedField == 'output') {
             this.swapMode = 1
-            this.updateInputEstimation()
+            this.updateEstimation()
           }
         },
         userAddress() {
@@ -597,9 +597,10 @@ export default Vue.extend({
               appendParameters = `#/?inputCurrency=${inputCurrency}&outputCurrency=${outputCurrency}`
             }
           }
+          this.swapMode = 0
           this.updateTokenWhitelist()
           this.updateTokenBalances()
-          this.updateOutputEstimation()
+          this.updateEstimation()
         },
 
 
@@ -706,90 +707,12 @@ export default Vue.extend({
           }
         },
 
+        async updateEstimation() {
+          // More readable representation of what should be estimated
+          const tokenToEstimate = (this.swapMode == 0 ? 'output' : 'input')
 
-        // Called when the user specifies an exact output amount
-        async updateInputEstimation() {
-          this.isEstimationLoading = true
-
-          // Not doing anything if the input amount is zero
-          if (parseFloat(0 + this.outputAmount) == 0) {
-            this.inputAmount = ''
-            this.isEstimationLoading = false
-            return
-          }
-
-          const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
-
-          const weth = await routerContract.WETH()
-
-          let inputToken = this.inputToken.address
-          if (inputToken == 'eth') {
-            inputToken = weth
-          }
-
-          let outputToken = this.outputToken.address
-          if (outputToken == 'eth') {
-            outputToken = weth
-          }
-
-          // Handling the case of swapping between
-          // the chain's native token and its wrapped version
-          // (ETH <-> WETH)
-          if (inputToken.toLowerCase() == weth.toLowerCase() && outputToken.toLowerCase() == weth.toLowerCase()) {
-            this.decimalsIn = 18
-            this.decimalsOut = 18
-            this.inputAmount = this.outputAmount
-            this.isEstimationLoading = false
-            this.priceImpactPercent = '0'
-            return
-          }
-
-          const decimalsIn = await this.getDecimals(inputToken)
-          const decimalsOut = await this.getDecimals(outputToken)
-          this.decimalsIn = decimalsIn
-          this.decimalsOut = decimalsOut
-
-          // Retrieving the actual input amounts from output amount provided by user
-          const amountOutBn = ethers.utils.parseUnits(this.outputAmount.toString(), decimalsOut)
-          const bestResult = await this.findBestRoute(amountOutBn, inputToken, outputToken, false)
-          this.swapRoute = bestResult.route
-
-
-          // Parsing the resulting input token amount with user-specified output amount
-          const amountInBn = bestResult["price"]
-
-          const inputAmount = ethers.utils.formatUnits(amountInBn, decimalsIn)
-
-          try {
-            // Retrieving input amounts with a much smaller output amount,
-            // to compare the resulting amounts and calculate the price impact
-            const smallOutputAmount : number = parseFloat( ( parseFloat(0.0 + this.outputAmount) / 100000.0).toFixed(decimalsOut) )
-            const smallOutputAmountBn: ethers.BigNumber = amountOutBn.div(100000)
-            const smallAmountsIn = await routerContract.getAmountsIn(smallOutputAmountBn, bestResult["route"])
-
-            // Parsing the resulting input amount with a smaller output amount
-            const smallAmountInBn = smallAmountsIn[0]
-            const smallInputAmount = ethers.utils.formatUnits(smallAmountInBn, decimalsIn)
-
-            // Calculating the price impact
-            const smallInputValue = smallOutputAmount / parseFloat(smallInputAmount)
-            const realInputValue = parseFloat(this.outputAmount) / parseFloat(inputAmount)
-            const receivedValuePercent = (realInputValue / smallInputValue) * 100.0
-            const impactPercent = 100.0 - receivedValuePercent
-            this.priceImpactPercent = impactPercent.toFixed(2)
-          }
-          catch (err) {
-            this.priceImpactPercent = "0.1"
-          }
-
-          // Recording the results
-          this.inputAmount = inputAmount.toString()
-          this.isEstimationLoading = false
-        },
-
-
-        // Called when the user specifies an exact input amount
-        async updateOutputEstimation() {
+          // Used for showing the loading status in the UI
+          // TODO: ensure that only one instance of this method can be running at a time
           this.isEstimationLoading = true
 
           // Not doing anything if the input amount is zero
@@ -799,72 +722,118 @@ export default Vue.extend({
             return
           }
 
+          // Swap router contract
           const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
-          const weth = await routerContract.WETH()
 
+          // Input and output tokens
           let inputToken = this.inputToken.address
+          let outputToken = this.outputToken.address
+
+          // If one of the tokens is the chain's native token, substituting it with the wrapped version
+          const weth = await routerContract.WETH()
           if (inputToken == 'eth') {
             inputToken = weth
           }
-
-          let outputToken = this.outputToken.address
           if (outputToken == 'eth') {
             outputToken = weth
           }
 
-          // Handling the case of swapping between
-          // the chain's native token and its wrapped version
-          // (ETH <-> WETH)
+          // If swapping between the chain's native token and its wrapped version,
+          // estimation is not required as it will always be 1:1
           if (inputToken.toLowerCase() == weth.toLowerCase() && outputToken.toLowerCase() == weth.toLowerCase()) {
             this.decimalsIn = 18
             this.decimalsOut = 18
-            this.outputAmount = this.inputAmount
+            if (tokenToEstimate == 'input') {
+              this.inputAmount = this.outputAmount
+            }
+            else {
+              this.outputAmount = this.inputAmount
+            }
+            
             this.isEstimationLoading = false
             this.priceImpactPercent = '0'
             return
           }
 
+          // Decimals of input and output tokens
           const decimalsIn = await this.getDecimals(inputToken)
           const decimalsOut = await this.getDecimals(outputToken)
           this.decimalsIn = decimalsIn
           this.decimalsOut = decimalsOut
 
+          // Input/output amounts as numeric strings
+          let inputAmount : string = (0 + this.inputAmount).toString()
+          let outputAmount : string = (0 + this.outputAmount).toString()
+
           // Retrieving the actual output amounts from input amount provided by user
-          const amountInBn : ethers.BigNumber = ethers.utils.parseUnits(this.inputAmount.toString(), decimalsIn)
-          const bestResult = await this.findBestRoute(amountInBn, inputToken, outputToken)
+          let amountInBn : ethers.BigNumber = ethers.utils.parseUnits(inputAmount, decimalsIn)
+          let amountOutBn : ethers.BigNumber = ethers.utils.parseUnits(outputAmount, decimalsOut)
+
+          // Finding the best route
+          const isExactInMode = (tokenToEstimate == 'output' ? true : false)
+          const bestResult = await this.findBestRoute(amountInBn, inputToken, outputToken, isExactInMode)
           this.swapRoute = bestResult.route
 
-          // Parsing the normal output token amount
-          const amountOutBn = bestResult["price"]
-          const outputAmount = ethers.utils.formatUnits(amountOutBn, decimalsOut)
-
-
-          // Retrieving output amounts with a much smaller input amount,
-          // to compare the resulting amounts and calculate the price impact
-          try {
-            const smallInputAmount : number = parseFloat( (parseFloat(0.0 + this.inputAmount) / 100000.0).toFixed(decimalsIn) )
-            const smallInputAmountBn : ethers.BigNumber = amountInBn.div(100000)
-            const smallAmountsOut = await routerContract.getAmountsOut(smallInputAmountBn, bestResult["route"])
-
-            // Parsing the output amount with a smaller input amount
-            const smallAmountOutBn = smallAmountsOut[smallAmountsOut.length - 1]
-            const smallOutputAmount = ethers.utils.formatUnits(smallAmountOutBn, decimalsOut)
-
-            // Calculating the price impact
-            const smallOutputValue = parseFloat(smallOutputAmount) / smallInputAmount
-            const realOutputValue = parseFloat(outputAmount) / parseFloat(this.inputAmount)
-            const receivedValuePercent = (realOutputValue / smallOutputValue) * 100.0
-            const impactPercent = 100.0 - receivedValuePercent
-
-            this.priceImpactPercent = impactPercent.toFixed(2)
-
+          // Parsing the output token amount according to the best route
+          if (tokenToEstimate == 'input') {
+            amountInBn = bestResult["price"]
+            inputAmount = ethers.utils.formatUnits(amountInBn, decimalsIn)
           }
-          catch (err) {
-            this.priceImpactPercent = "0.1"
+          else if (tokenToEstimate == 'output') {
+            amountOutBn = bestResult["price"]
+            outputAmount = ethers.utils.formatUnits(amountOutBn, decimalsOut)
           }
 
-          // Recording the results
-          this.outputAmount = outputAmount.toString()
+          // Calculating price impact and recording the results
+          if (tokenToEstimate == 'input') {
+            try {
+              const smallInputAmount : number = parseFloat( (parseFloat(0.0 + this.inputAmount) / 100000.0).toFixed(decimalsIn) )
+              const smallInputAmountBn : ethers.BigNumber = amountInBn.div(100000)
+              const smallAmountsOut = await routerContract.getAmountsOut(smallInputAmountBn, bestResult["route"])
+
+              // Parsing the output amount with a smaller input amount
+              const smallAmountOutBn = smallAmountsOut[smallAmountsOut.length - 1]
+              const smallOutputAmount = ethers.utils.formatUnits(smallAmountOutBn, decimalsOut)
+
+              // Calculating the price impact
+              const smallOutputValue = parseFloat(smallOutputAmount) / smallInputAmount
+              const realOutputValue = parseFloat(outputAmount) / parseFloat(this.inputAmount)
+              const receivedValuePercent = (realOutputValue / smallOutputValue) * 100.0
+              const impactPercent = 100.0 - receivedValuePercent
+
+              this.priceImpactPercent = impactPercent.toFixed(2)
+            }
+            catch (err) {
+              this.priceImpactPercent = "0.1"
+            }
+
+            this.inputAmount = inputAmount.toString()
+          }
+          else if (tokenToEstimate == 'output') {
+            try {
+              const smallInputAmount : number = parseFloat( (parseFloat(0.0 + this.inputAmount) / 100000.0).toFixed(decimalsIn) )
+              const smallInputAmountBn : ethers.BigNumber = amountInBn.div(100000)
+              const smallAmountsOut = await routerContract.getAmountsOut(smallInputAmountBn, bestResult["route"])
+
+              // Parsing the output amount with a smaller input amount
+              const smallAmountOutBn = smallAmountsOut[smallAmountsOut.length - 1]
+              const smallOutputAmount = ethers.utils.formatUnits(smallAmountOutBn, decimalsOut)
+
+              // Calculating the price impact
+              const smallOutputValue = parseFloat(smallOutputAmount) / smallInputAmount
+              const realOutputValue = parseFloat(outputAmount) / parseFloat(this.inputAmount)
+              const receivedValuePercent = (realOutputValue / smallOutputValue) * 100.0
+              const impactPercent = 100.0 - receivedValuePercent
+
+              this.priceImpactPercent = impactPercent.toFixed(2)
+
+            }
+            catch (err) {
+              this.priceImpactPercent = "0.1"
+            }
+
+            this.outputAmount = outputAmount.toString()
+          }
 
           this.isEstimationLoading = false
         },
