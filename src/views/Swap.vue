@@ -224,14 +224,36 @@
           <!-- "Swap" button if everything is OK and we're ready to swap -->
           <div
           v-else>
-            <v-btn
-            block
-            height="50px"
-            x-large
-            color="green"
-            @click="swap()">
-              SWAP
-            </v-btn>
+            <template v-if="inputToken.address.toLowerCase() == 'eth' && outputToken.address.toLowerCase() == wethAddress.toLowerCase()">
+              <v-btn
+              block
+              height="50px"
+              x-large
+              color="green"
+              @click="wrapETH()">
+                Wrap {{ inputToken.symbol }}
+              </v-btn>
+            </template>
+            <template v-else-if="outputToken.address.toLowerCase() == 'eth' && inputToken.address.toLowerCase() == wethAddress.toLowerCase()">
+              <v-btn
+              block
+              height="50px"
+              x-large
+              color="green"
+              @click="unwrapETH()">
+                Unwrap {{ outputToken.symbol }}
+              </v-btn>
+            </template>
+            <template v-else>
+              <v-btn
+              block
+              height="50px"
+              x-large
+              color="green"
+              @click="swap()">
+                SWAP
+              </v-btn>
+            </template>
           </div>
 
         </div>
@@ -355,6 +377,7 @@ import SliderTabs from '@/components/SliderTabs.vue'
 
 import {
     ERC20_ABI,
+    WETH_ABI,
     PADSWAP_PAIR_ABI,
     SWAP_ROUTER_ABI,
     SWAP_FACTORY_ABI,
@@ -412,6 +435,7 @@ export default Vue.extend({
           outputToken: <any> {},
           decimalsIn: <number> 18,
           decimalsOut: <number> 18,
+          wethAddress: <string> '',
 
           inputTokenAllowance: <string> '0',
           outputTokenAllowance: <string> '0',
@@ -428,10 +452,7 @@ export default Vue.extend({
           tokenSelectionDialog: <boolean> false,
           selectedTokenAddress: <string> '',
 
-          routerContractAddress: <string> '0x40F1fEF0Fe68Fd10ff904070ee00a7769EE7fe34',
-
-          inputTokenAddress: <string> '0x59193512877E2EC3bB27C178A8888Cfac62FB32D',
-          outputTokenAddress: <string> '0xF480f38C366dAaC4305dC484b2Ad7a496FF00CeA'
+          routerContractAddress: <string> '0x40F1fEF0Fe68Fd10ff904070ee00a7769EE7fe34'
         }
     },
     created() {
@@ -536,13 +557,17 @@ export default Vue.extend({
     methods: {
       // Called on initialization
       // and when switching to another chain
-      initializeForCurrentChain() {
+      async initializeForCurrentChain() {
         this.routerContractAddress = routerAddresses[this.chainId]
         this.swapMode = 0
         this.inputAmount = ''
         this.outputAmount = ''
         this.updateTokenWhitelist()
         this.setDefaultRoute()
+
+        const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
+        this.wethAddress = await routerContract.WETH()
+
         setTimeout(this.updateTokenBalances, 200)
 
         if (this.chainId == 56) {
@@ -664,7 +689,12 @@ export default Vue.extend({
             this.inputTokenAllowance = 99999999999999999999999999999999999999999999999999999999999.0.toString()
           }
           else {
-            const tokenContract = new ethers.Contract(this.inputToken.address, ERC20_ABI, this.multicall)
+            let abi = ERC20_ABI
+            if (this.inputToken.address == this.wethAddress) {
+              abi = WETH_ABI
+            }
+
+            const tokenContract = new ethers.Contract(this.inputToken.address, abi, this.multicall)
 
             const tokenBalanceBn = await tokenContract.balanceOf(this.userAddress)
             const decimals = await tokenContract.decimals()
@@ -700,6 +730,18 @@ export default Vue.extend({
           let outputToken = this.outputToken.address
           if (outputToken == 'eth') {
             outputToken = weth
+          }
+
+          // Handling the case of swapping between
+          // the chain's native token and its wrapped version
+          // (ETH <-> WETH)
+          if (inputToken.toLowerCase() == weth.toLowerCase() && outputToken.toLowerCase() == weth.toLowerCase()) {
+            this.decimalsIn = 18
+            this.decimalsOut = 18
+            this.inputAmount = this.outputAmount
+            this.isEstimationLoading = false
+            this.priceImpactPercent = '0'
+            return
           }
 
           const decimalsIn = await this.getDecimals(inputToken)
@@ -768,6 +810,18 @@ export default Vue.extend({
           let outputToken = this.outputToken.address
           if (outputToken == 'eth') {
             outputToken = weth
+          }
+
+          // Handling the case of swapping between
+          // the chain's native token and its wrapped version
+          // (ETH <-> WETH)
+          if (inputToken.toLowerCase() == weth.toLowerCase() && outputToken.toLowerCase() == weth.toLowerCase()) {
+            this.decimalsIn = 18
+            this.decimalsOut = 18
+            this.outputAmount = this.inputAmount
+            this.isEstimationLoading = false
+            this.priceImpactPercent = '0'
+            return
           }
 
           const decimalsIn = await this.getDecimals(inputToken)
@@ -1025,6 +1079,27 @@ export default Vue.extend({
           return bestResult
         },
 
+        //////////////////////////////////////////////////
+        // Wrapping/unwrapping the chain's native token //
+        //////////////////////////////////////////////////
+
+        async wrapETH() {
+          const wethContract = new ethers.Contract(this.wethAddress, WETH_ABI, this.multicall)
+
+          const tx = await wethContract.populateTransaction.deposit()
+          tx.value = this.inputAmountBn
+
+          const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+        },
+
+        async unwrapETH() {
+          const wethContract = new ethers.Contract(this.wethAddress, WETH_ABI, this.multicall)
+
+          const tx = await wethContract.populateTransaction.withdraw(this.inputAmountBn)
+
+          const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
+        },
+
 
         /////////////////////////////////
         // Swapping tokens for tokens  //
@@ -1067,8 +1142,6 @@ export default Vue.extend({
         async swapExactTokensForETH() {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
             const weth = await routerContract.WETH()
-
-            console.log(this.swapRoute)
 
             const tx = await routerContract.populateTransaction.swapExactTokensForETH(
               this.inputAmountBn,

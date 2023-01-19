@@ -23,7 +23,7 @@ export const WHITELIST = {
 	 	{
       name: 'WBNB Token',
       symbol: 'WBNB',
-      address: '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c',
+      address: '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c', 
       description: 'Wrapped BNB'
   	},
     {
