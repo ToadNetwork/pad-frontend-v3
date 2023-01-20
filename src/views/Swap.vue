@@ -271,39 +271,56 @@
       <br/>
       <br/>
 
-      <v-simple-table
-      dense
-      plain
-      style="background-color: transparent;"
-      v-if="parseFloat(0 + inputAmount) > 0">
-        <tbody>
-          <tr :style="getPriceImpactStyle()">
-            <td>Price impact:</td><td>{{ priceImpactPercent }}%</td>
-          </tr>
-          <tr>
-            <td>Amount spent:</td>
-            <td>
-              <template v-if="swapMode == 0">
-                <span style="color: rgb(159 255 232);">Exactly</span> {{ toNumber(inputAmount) }} {{ inputToken.symbol }}
-              </template>
-              <template v-if="swapMode == 1">
-                <span style="color: rgb(255 219 140);">At most</span> {{ toNumber(maximumSold) }} {{ inputToken.symbol }}
-              </template>
-            </td>
-          </tr>
-          <tr>
-            <td>Amount received:</td>
-            <td>
-              <template v-if="swapMode == 0">
-                <span style="color: rgb(255 219 140);">At least</span> {{ toNumber(minimumReceived) }} {{ outputToken.symbol }}
-              </template>
-              <template v-if="swapMode == 1">
-                <span style="color: rgb(159 255 232);">Exactly</span> {{ toNumber(outputAmount) }} {{ outputToken.symbol }}
-              </template>
-            </td>
-          </tr>
-        </tbody>
-      </v-simple-table>
+      <template v-if="!isEstimationLoading && parseFloat(0 + inputAmount) > 0 || parseFloat(0 + outputAmount) > 0">
+        <v-simple-table
+        dense
+        plain
+        style="background-color: transparent;">
+
+            <tbody>
+              <tr :style="getPriceImpactStyle()">
+                <td>Price impact:</td><td>{{ priceImpactPercent }}%</td>
+              </tr>
+              <tr>
+                <td>Amount spent:</td>
+                <td>
+                  <template v-if="swapMode == 0">
+                    <span style="color: rgb(159 255 232);">Exactly</span> {{ toNumber(inputAmount) }} {{ inputToken.symbol }}
+                  </template>
+                  <template v-if="swapMode == 1">
+                    <span style="color: rgb(255 219 140);">At most</span> {{ toNumber(maximumSold) }} {{ inputToken.symbol }}
+                  </template>
+                </td>
+              </tr>
+              <tr>
+                <td>Amount received:</td>
+                <td>
+                  <template v-if="swapMode == 0">
+                    <span style="color: rgb(255 219 140);">At least</span> {{ toNumber(minimumReceived) }} {{ outputToken.symbol }}
+                  </template>
+                  <template v-if="swapMode == 1">
+                    <span style="color: rgb(159 255 232);">Exactly</span> {{ toNumber(outputAmount) }} {{ outputToken.symbol }}
+                  </template>
+                </td>
+              </tr>
+            </tbody>
+        </v-simple-table>
+        <div style="margin-top: 15px;">
+          <template v-for="tokenData in swapRouteDetails">
+            <v-chip
+            outlined>
+             <img
+              style="height: 20px; width: 20px; margin-right: 5px;"
+              :src="getTokenImage($store.getters.ecosystem.routeName, tokenData.address)">
+              </img>
+              <span style="margin-top: 2px;">{{ tokenData.symbol }}</span>
+            </v-chip>
+            <v-icon small style="opacity: 50%; margin: 0 5px;" v-if="tokenData != swapRouteDetails[swapRouteDetails.length - 1]">
+              mdi-arrow-right
+            </v-icon>
+          </template>
+        </div>
+      </template>
 
       <br/>
       <br/>
@@ -423,7 +440,8 @@ export default Vue.extend({
     data() {
         return {
 
-          swapRoute: <Array<any>> [],
+          swapRoute: <Array<any>> [], // Array of token addresses describing the swap route
+          swapRouteDetails: [], // Array of dictionaries with token data, to show detailed route info in the UI
 
           isEstimationLoading: <boolean> false,
 
@@ -776,6 +794,7 @@ export default Vue.extend({
           const isExactInMode = (tokenToEstimate == 'output' ? true : false)
           const bestResult = await this.findBestRoute(amountInBn, inputToken, outputToken, isExactInMode)
           this.swapRoute = bestResult.route
+          this.getRouteDetails(bestResult.route).then((res : any) => this.swapRouteDetails = res)
 
           // Parsing the output token amount according to the best route
           if (tokenToEstimate == 'input') {
@@ -903,8 +922,7 @@ export default Vue.extend({
 
         //
         // Attempts to find a good swap route
-        // by simply comparing a direct tokenA-tokenB swap  
-        // to routing the transaction through PAD, TOAD, or the chain's native token 
+        // by estimating the resulting price of every route in the list and finding the best one
         //
         async findBestRoute(amountBn : ethers.BigNumber, inputTokenAddress : string, outputTokenAddress : string, exactIn : boolean = true) {
           // Swap router contract
@@ -955,14 +973,12 @@ export default Vue.extend({
             await Promise.all(promises)
           } catch (err) {}
 
-
           // Indentifying the best swap route
           let bestResult = results[0]
           for (const result of results) {
 
             const priceCurrent = ethers.utils.formatEther(bestResult["price"])
             const priceNew = ethers.utils.formatEther(result["price"])
-
 
             if (exactIn == true) { // Looking for highest output if in "exact input" mode
               if (result["price"].gt(bestResult["price"])) {
@@ -974,11 +990,24 @@ export default Vue.extend({
                 bestResult = result
               }
             }
-
           }
 
           return bestResult
         },
+
+        ///////////////////////////////////////////////
+        // Filling the details about the swap route, //
+        // to then show this info in the UI          //
+        ///////////////////////////////////////////////
+        async getRouteDetails(swapRoute : Array<string>) {
+          const routeDetails = []
+          for (const tokenAddress of swapRoute) {
+            const tokenData = await this.getTokenData(tokenAddress)
+            routeDetails.push(tokenData)
+          }
+          return routeDetails
+        },
+
 
         //////////////////////////////////////////////////
         // Wrapping/unwrapping the chain's native token //
