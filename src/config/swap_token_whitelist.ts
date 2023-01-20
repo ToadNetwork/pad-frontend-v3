@@ -1,3 +1,7 @@
+//
+// Tokens that will be whitelisted in the swap UI
+//
+
 export const WHITELIST = {
 
 	// BSC whitelist
