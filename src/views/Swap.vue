@@ -389,6 +389,9 @@ import {
     DEFAULT_SWAP_ROUTES
 } from '@/config/swap_token_whitelist'
 
+import {
+  ROUTING_WHITELIST
+} from '@/config/routing_token_whitelist'
 
 import { tokenInfo } from '@/mixins/tokenInfo.ts'
 import TokenSelector from '@/components/swap/TokenSelector.vue'
@@ -903,92 +906,21 @@ export default Vue.extend({
         // by simply comparing a direct tokenA-tokenB swap  
         // to routing the transaction through PAD, TOAD, or the chain's native token 
         //
-
         async findBestRoute(amountBn : ethers.BigNumber, inputTokenAddress : string, outputTokenAddress : string, exactIn : boolean = true) {
-
+          // Swap router contract
           const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
-          const weth = await routerContract.WETH()
-          const pad = padAddresses[this.chainId]
-          const toad = toadAddresses[this.chainId]
-          const routingAddresses = [weth, pad, toad]
-
-          const excludeFromRouting = ["0x12958C31CcDFBd08641626fC070161452C00D09F"]
 
           // Factory contract, inferred from the router contract
           const factoryAddress = await routerContract.factory()
           const factoryContract = new ethers.Contract(factoryAddress, SWAP_FACTORY_ABI, this.multicall)
 
-          //
-          // Retrieves the addresses of all existing liquidity pairs
-          const pairAddresses : Array<string> = []
-          const pRetrievePairAddresses : Array<Promise<any>> = []
-          const allPairsLength = await factoryContract.allPairsLength()
-          let i : number = 0
-          while ( i < allPairsLength ) {
-            const promise = factoryContract.allPairs(i).then((pairAddress : string) => {pairAddresses.push(pairAddress)})
-            pRetrievePairAddresses.push(promise)
-            i += 1
-          }
-          await Promise.all(pRetrievePairAddresses)
+          // The list of possible routes contains at least two routes: the direct route, and the route through the chain's native token
+          const weth = await routerContract.WETH()
+          const possibleRoutes = [[inputTokenAddress, outputTokenAddress], [inputTokenAddress, weth, outputTokenAddress]]
 
-          //
-          // Iterates through all pairs, retrieving the two tokens of each pair
-          const pairs : any = {}
-          const pRetrievePairs : Array<Promise<any>> = []
-          for (const pairAddress of pairAddresses) {
-            const pairContract = new ethers.Contract(pairAddress, PADSWAP_PAIR_ABI, this.multicall)
-            pairs[pairAddress] = {}
-            const pToken0 = pairContract.token0().then((tokenAddress : string) => pairs[pairAddress]["token0"] = tokenAddress)
-            const pToken1 = pairContract.token1().then((tokenAddress : string) => pairs[pairAddress]["token1"] = tokenAddress)
-            pRetrievePairs.push(pToken0, pToken1)
-          }
-          await Promise.all(pRetrievePairs)
-          
-          // Identifies the tokens that are paired with the input token
-          // or the output token
-          const allTokens : Array<string> = []
-          const tokensPairedWithInputToken : Array<string> = []
-          const tokensPairedWithOutputToken : Array<string> = []
-          for (const pairAddress of pairAddresses) {
-            const pair = pairs[pairAddress]
-
-            for (const token of [pair.token0, pair.token1]) {
-              if (!allTokens.includes(token)) {
-                allTokens.push(token)
-              }
-            }
-
-            if (pair.token0 == inputTokenAddress) {
-              tokensPairedWithInputToken.push(pair.token1)
-            }
-            if (pair.token1 == inputTokenAddress) {
-              tokensPairedWithInputToken.push(pair.token0)
-            }
-            if (pair.token0 == outputTokenAddress) {
-              tokensPairedWithOutputToken.push(pair.token1)
-            }
-            if (pair.token1 == outputTokenAddress) {
-              tokensPairedWithOutputToken.push(pair.token0)
-            }
-          }
-
-          // Identifies tokens that are paired with both the input and the output token
-          // to use them for routing the transaction
-          const tokensPairedWithBothTokens = []
-          for (const tokenAddress of allTokens) {
-            if (tokensPairedWithInputToken.includes(tokenAddress) && tokensPairedWithOutputToken.includes(tokenAddress)) {
-              tokensPairedWithBothTokens.push(tokenAddress)
-            }
-          }
-
-          // List of possible routes to compare against each other
-          const possibleRoutes = [[inputTokenAddress, outputTokenAddress]]
-          for (const routingAddress of tokensPairedWithBothTokens) {
-            if (inputTokenAddress != routingAddress && outputTokenAddress != routingAddress) {
-              if (!excludeFromRouting.includes(routingAddress)) {
-                possibleRoutes.push([inputTokenAddress, routingAddress, outputTokenAddress])
-              }
-            }
+          // Populating the list of possible routes with token addresses taken from the routing whitelist
+          for (const routingToken of ROUTING_WHITELIST[this.chainId]) {
+            possibleRoutes.push([inputTokenAddress, routingToken.address, outputTokenAddress])
           }
 
           // Calculating resulting prices for all routes
