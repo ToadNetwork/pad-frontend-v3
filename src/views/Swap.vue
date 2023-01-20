@@ -979,28 +979,29 @@ export default Vue.extend({
           } catch (err) {}
 
           // Indentifying the best swap route
-          let bestResult = results[0]
+          let bestRoute = results[0] // The "default" route is the direct "TokenA->TokenB" route
           for (const result of results) {
 
-            console.log(result)
-            console.log(ethers.utils.formatEther(bestResult["price"]))
-
-            const priceCurrent = ethers.utils.formatEther(bestResult["price"])
+            const priceCurrent = ethers.utils.formatEther(bestRoute["price"])
             const priceNew = ethers.utils.formatEther(result["price"])
 
             if (exactIn == true) { // Looking for highest output if in "exact input" mode
-              if (result["price"].gt(bestResult["price"])) {
-                bestResult = result
+              if (result["price"].gt(bestRoute["price"])) {
+                if (parseFloat(priceNew) / parseFloat(priceCurrent) > 1.01) {
+                  bestRoute = result
+                }
               }
             }
             else { // Looking for lowest input if in "exact output" mode
-              if (result["price"] < bestResult["price"]) {
-                bestResult = result
+              if (result["price"] < bestRoute["price"]) {
+                if (parseFloat(priceNew) / parseFloat(priceCurrent) < 0.99) {
+                  bestRoute = result
+                }
               }
             }
           }
 
-          return bestResult
+          return bestRoute
         },
 
 
