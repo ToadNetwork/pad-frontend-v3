@@ -737,8 +737,13 @@ export default Vue.extend({
           this.isEstimationLoading = true
 
           // Not doing anything if the input amount is zero
-          if (parseFloat(0 + this.inputAmount) == 0) {
+          if (tokenToEstimate == 'output' && parseFloat(0 + this.inputAmount) == 0) {
             this.outputAmount = ''
+            this.isEstimationLoading = false
+            return
+          }
+          if (tokenToEstimate == 'input' && parseFloat(0 + this.outputAmount) == 0) {
+            this.inputAmount = ''
             this.isEstimationLoading = false
             return
           }
@@ -792,7 +797,8 @@ export default Vue.extend({
 
           // Finding the best route
           const isExactInMode = (tokenToEstimate == 'output' ? true : false)
-          const bestResult = await this.findBestRoute(amountInBn, inputToken, outputToken, isExactInMode)
+          const tokenAmountBn = (tokenToEstimate == 'output' ? amountInBn : amountOutBn)
+          const bestResult = await this.findBestRoute(tokenAmountBn, inputToken, outputToken, isExactInMode)
           this.swapRoute = bestResult.route
           this.getRouteDetails(bestResult.route).then((res : any) => this.swapRouteDetails = res)
 
@@ -809,21 +815,21 @@ export default Vue.extend({
           // Calculating price impact and recording the results
           if (tokenToEstimate == 'input') {
             try {
-              const smallInputAmount : number = parseFloat( (parseFloat(0.0 + this.inputAmount) / 100000.0).toFixed(decimalsIn) )
-              const smallInputAmountBn : ethers.BigNumber = amountInBn.div(100000)
-              const smallAmountsOut = await routerContract.getAmountsOut(smallInputAmountBn, bestResult["route"])
+              const smallOutputAmount : number = parseFloat( ( parseFloat(0.0 + this.outputAmount) / 100000.0).toFixed(decimalsOut) )
+              const smallOutputAmountBn: ethers.BigNumber = amountOutBn.div(100000)
+              const smallAmountsIn = await routerContract.getAmountsIn(smallOutputAmountBn, bestResult["route"])
 
-              // Parsing the output amount with a smaller input amount
-              const smallAmountOutBn = smallAmountsOut[smallAmountsOut.length - 1]
-              const smallOutputAmount = ethers.utils.formatUnits(smallAmountOutBn, decimalsOut)
+              // Parsing the resulting input amount with a smaller output amount
+              const smallAmountInBn = smallAmountsIn[0]
+              const smallInputAmount = ethers.utils.formatUnits(smallAmountInBn, decimalsIn)
 
               // Calculating the price impact
-              const smallOutputValue = parseFloat(smallOutputAmount) / smallInputAmount
-              const realOutputValue = parseFloat(outputAmount) / parseFloat(this.inputAmount)
-              const receivedValuePercent = (realOutputValue / smallOutputValue) * 100.0
+              const smallInputValue = smallOutputAmount / parseFloat(smallInputAmount)
+              const realInputValue = parseFloat(this.outputAmount) / parseFloat(inputAmount)
+              const receivedValuePercent = (realInputValue / smallInputValue) * 100.0
               const impactPercent = 100.0 - receivedValuePercent
 
-              this.priceImpactPercent = impactPercent.toFixed(2)
+              this.priceImpactPercent = (impactPercent > 0 ? impactPercent.toFixed(2) : '0')
             }
             catch (err) {
               this.priceImpactPercent = "0.1"
@@ -847,8 +853,7 @@ export default Vue.extend({
               const receivedValuePercent = (realOutputValue / smallOutputValue) * 100.0
               const impactPercent = 100.0 - receivedValuePercent
 
-              this.priceImpactPercent = impactPercent.toFixed(2)
-
+              this.priceImpactPercent = (impactPercent > 0 ? impactPercent.toFixed(2) : '0')
             }
             catch (err) {
               this.priceImpactPercent = "0.1"
@@ -920,10 +925,10 @@ export default Vue.extend({
         },
 
 
-        //
-        // Attempts to find a good swap route
-        // by estimating the resulting price of every route in the list and finding the best one
-        //
+        //==================================================================//
+        // Finds the best possible swap route based on the whitelist        //
+        // by estimating the result of every route and finding the best one //
+        //==================================================================//
         async findBestRoute(amountBn : ethers.BigNumber, inputTokenAddress : string, outputTokenAddress : string, exactIn : boolean = true) {
           // Swap router contract
           const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
@@ -977,6 +982,9 @@ export default Vue.extend({
           let bestResult = results[0]
           for (const result of results) {
 
+            console.log(result)
+            console.log(ethers.utils.formatEther(bestResult["price"]))
+
             const priceCurrent = ethers.utils.formatEther(bestResult["price"])
             const priceNew = ethers.utils.formatEther(result["price"])
 
@@ -995,13 +1003,16 @@ export default Vue.extend({
           return bestResult
         },
 
-        ///////////////////////////////////////////////
+
+        //===========================================//
         // Filling the details about the swap route, //
         // to then show this info in the UI          //
-        ///////////////////////////////////////////////
+        //===========================================//
+
         async getRouteDetails(swapRoute : Array<string>) {
           const routeDetails = []
           for (const tokenAddress of swapRoute) {
+            //@ts-ignore-next-line
             const tokenData = await this.getTokenData(tokenAddress)
             routeDetails.push(tokenData)
           }
@@ -1009,9 +1020,9 @@ export default Vue.extend({
         },
 
 
-        //////////////////////////////////////////////////
+        //==============================================//
         // Wrapping/unwrapping the chain's native token //
-        //////////////////////////////////////////////////
+        //==============================================//
 
         async wrapETH() {
           const wethContract = new ethers.Contract(this.wethAddress, WETH_ABI, this.multicall)
@@ -1031,13 +1042,12 @@ export default Vue.extend({
         },
 
 
-        /////////////////////////////////
-        // Swapping tokens for tokens  //
-        /////////////////////////////////
+        //============================//
+        // Swapping tokens for tokens //
+        //============================//
 
         async swapExactTokensForTokens() {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
-
 
             const tx = await routerContract.populateTransaction.swapExactTokensForTokens(
               this.inputAmountBn,
@@ -1065,9 +1075,9 @@ export default Vue.extend({
 
 
 
-        //////////////////////////////
-        // Swapping tokens for ETH  //
-        //////////////////////////////
+        //=====================================================//
+        // Swapping ERC-20 tokens for the chain's native token //
+        //=====================================================//
 
         async swapExactTokensForETH() {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
@@ -1100,9 +1110,9 @@ export default Vue.extend({
 
 
 
-        //////////////////////////////
-        // Swapping ETH for tokens  //
-        //////////////////////////////
+        //=====================================================//
+        // Swapping the chain's native token for ERC-20 tokens //
+        //=====================================================//
 
         async swapExactETHForTokens() {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
