@@ -461,6 +461,7 @@ export default Vue.extend({
           inputTokenAllowance: <string> '0',
           outputTokenAllowance: <string> '0',
 
+          inputTokenBalanceBn: <ethers.BigNumber> ethers.BigNumber.from(0),
           inputTokenBalance: <string> '0',
 
           inputAmount: <string> '',
@@ -523,10 +524,13 @@ export default Vue.extend({
           return maximumAmount
         },
 
-        // TODO: handle tokens with different decimals
         inputAmountBn() : ethers.BigNumber {
-          const inputAmount = parseFloat(this.inputAmount.toString())
-          return ethers.utils.parseUnits(inputAmount.toFixed(this.decimalsIn).toString(), this.decimalsIn)
+          let inputAmount = parseFloat(this.inputAmount.toString())
+          let inputAmountBn = ethers.utils.parseUnits(inputAmount.toFixed(this.decimalsIn).toString(), this.decimalsIn)
+          if (inputAmountBn.gt(this.inputTokenBalanceBn)) {
+            inputAmountBn = this.inputTokenBalanceBn
+          }
+          return inputAmountBn
         },
         outputAmountBn() : ethers.BigNumber {
           const outputAmount = parseFloat(this.outputAmount.toString())
@@ -706,6 +710,7 @@ export default Vue.extend({
 
             const ethBalanceBn = await this.multicall.getBalance(this.userAddress)
             const ethBalance = ethers.utils.formatEther(ethBalanceBn)
+            this.inputTokenBalanceBn = ethBalanceBn
             this.inputTokenBalance = ethBalance
 
             this.inputTokenAllowance = 99999999999999999999999999999999999999999999999999999999999.0.toString()
@@ -721,6 +726,7 @@ export default Vue.extend({
             const tokenBalanceBn = await tokenContract.balanceOf(this.userAddress)
             const decimals = await tokenContract.decimals()
             const tokenBalance = ethers.utils.formatUnits(tokenBalanceBn, decimals)
+            this.inputTokenBalanceBn = tokenBalanceBn
             this.inputTokenBalance = tokenBalance
 
             const tokenAllowanceBn = await tokenContract.allowance(this.userAddress, this.routerContractAddress)
