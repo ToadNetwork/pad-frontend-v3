@@ -1056,7 +1056,7 @@ export default Vue.extend({
         async swapExactTokensForTokens() {
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
-            const tx = await routerContract.populateTransaction.swapExactTokensForTokens(
+            const tx = await routerContract.populateTransaction.swapExactTokensForTokensSupportingFeeOnTransferTokens(
               this.inputAmountBn,
               this.minimumOutBn,
               this.swapRoute,
@@ -1090,7 +1090,7 @@ export default Vue.extend({
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
             const weth = await routerContract.WETH()
 
-            const tx = await routerContract.populateTransaction.swapExactTokensForETH(
+            const tx = await routerContract.populateTransaction.swapExactTokensForETHSupportingFeeOnTransferTokens(
               this.inputAmountBn,
               this.minimumOutBn,
               this.swapRoute,
@@ -1125,7 +1125,7 @@ export default Vue.extend({
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
             const weth = await routerContract.WETH()
 
-            const tx = await routerContract.populateTransaction.swapExactETHForTokens(
+            const tx = await routerContract.populateTransaction.swapExactETHForTokensSupportingFeeOnTransferTokens(
               this.minimumOutBn,
               this.swapRoute,
               this.userAddress,

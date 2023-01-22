@@ -321,7 +321,7 @@ export default Vue.extend({
       const amountETHMin = ethers.utils.parseEther('0')
       const amountTokenMin = ethers.utils.parseEther('0')
 
-      const tx = await routerContract.populateTransaction.removeLiquidityETH(
+      const tx = await routerContract.populateTransaction.removeLiquidityETHSupportingFeeOnTransferTokens(
         token.address,
         ethers.utils.parseEther(this.removeAmount!.toString()),
         amountTokenMin,
