@@ -1,148 +1,19 @@
 <template>
   <v-container class="faucet-page">
 
-
-    <h1>GLMR Faucet</h1>
-    <div class="faucet-container">
-
-      <div class="tab-container">
-        <div class="tabs">
-          <v-tooltip
-            v-for="tab in tabs"
-            :key="tab.title"
-            :disabled="!tab.disabled"
-            open-on-hover
-            bottom
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <button
-                v-on="on"
-                v-bind="attrs"
-                :class="['tab-btn', { 'tab-active': selected === tab.title }]"
-              >
-                {{ tab.title }}
-              </button>
-            </template>
-
-            Coming soon!
-          </v-tooltip>
-        </div>
-
-        <div class="tab-description" style="display:block; padding-top: 20px;">
-          <span v-if="selected == 'Redeem code'">Redeem a code to get GLMR</span>
-        </div>
-      </div>
-
-      <div class="content">
-
-        <div v-if="selected == 'Redeem code'">
-          
-          <span>Enter code:</span>
-          <v-text-field
-            v-model="code"
-            class="text-field"
-            filled
-            outlined
-            clearable
-            placeholder="XXXX-XXXX-XXXX-XXXX"
-            :error="Boolean(code) && !validationStatus"
-            type="string">
-          </v-text-field>
-
-          <span>Your GLMR wallet:</span>
-          <v-text-field
-            class="text-field"
-            disabled
-            :value="displayedAddress"
-            filled
-            outlined
-            clearable
-            placeholder="0x..."
-            type="string">
-          </v-text-field>
-
-          <br>
-          <div class="d-flex justify-center flex-column">
-            <span v-if="errorPrompt" style="color: red">
-              {{ errorPrompt }}
-            </span>
-            <template v-if="redeemTx">
-              Success!
-              <a
-                :href="`https://blockscout.moonbeam.network/tx/${redeemTx}`"
-                target="_blank"
-              >
-                View on explorer
-              </a>
-            </template>
-          </div>
-          <v-btn
-            @click="address ? redeemCoupon() : $store.dispatch('requestConnect')"
-            x-large
-            :ripple="validationStatus"
-            :disabled="address && Boolean(code) && !validationStatus"
-            :loading="isRedeemingCode"
-            color="primary"
-            class="my-3">
-            <template v-if="address">
-              Redeem GLMR
-            </template>
-            <template v-else>
-              Connect Wallet
-            </template>
-
-          </v-btn>
-
-        </div>
-
-
-        <div v-if="selected == 'Create code'">
-          <span>BNB to deposit (min 0.001, max 0.1):</span>
-          <v-text-field
-            v-model="bridgeAmount"
-            filled
-            outlined
-            clearable
-            :messages="balanceMessage"
-            placeholder="0.0"
-            type="number"
-            min="0.0">
-            <template v-slot:prepend-inner>
-              <v-btn
-                v-show="tokenBalance !== null"
-                x-small
-                @click="setMaxTokens">
-                Max
-              </v-btn>
-            </template>
-          </v-text-field>
-
-
-          <span>This will be your code.</span>
-          <span>Make sure to write it down.</span>
-          <v-text-field
-              class="text-field"
-              filled
-              outlined
-              placeholder="0x..."
-              readonly
-              type="string"
-              v-model="createdCode">
-          </v-text-field>
-
-          <br>
-          <v-btn
-            x-large
-            :ripple="true"
-            color="primary"
-            class="my-3">
-            Deposit BNB
-          </v-btn>
-        </div>
-      </div>
-
-    </div>
-
+    <v-card
+    style="display: inline-block; max-width: 600px;"
+    color="rgba(0.5, 0.5, 0.5, 0.6)"
+    >
+      <v-card-title>
+        GLMR Faucet
+      </v-card-title>
+      <v-card-text class="text-left">
+        This faucet is currently not active.
+        <br>
+        Stay tuned for updates.
+      </v-card-text>
+    </v-card>
 
   </v-container>
 </template>
