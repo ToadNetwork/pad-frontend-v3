@@ -109,8 +109,23 @@
       <br>
 
 
+
+
       <div style="text-align: center;">
         <div style="display: inline-block; width: 90%;">
+
+          <v-card
+          v-if="!pairAlreadyExists"
+          style="margin: 0 0 20px 0;"
+          class="text-left"
+          outlined>
+            <v-card-title>This pair does not exist yet.</v-card-title>
+            <v-card-text>
+              You are the first liquidity provider in the {{ tokenA.symbol }}-{{ tokenB.symbol }} pool.<br><br>
+              Because the pool doesn't already exist, you will need to manually enter the amounts of {{ tokenA.symbol }} and {{ tokenB.symbol }} to add to the pool.<br><br>
+              Please double-check the ratio of tokens you add, as the ratio between added tokens will determine the price of the tokens in the pool.
+            </v-card-text>
+          </v-card>
 
           <!-- Prompting the user to connect wallet if not connected -->
           <div
@@ -266,6 +281,11 @@ export default Vue.extend({
         allowanceTokenB: <string> '0',
 
         exactToken: '',
+
+        // Checked while updating the token estimation.
+        // Set to false if the pair for these two tokens doesn't already exist.
+        // If false, a warning will be shown about being the first liquidity provider.
+        pairAlreadyExists: <boolean> true,
 
         estimationMode: 0,
 
@@ -458,15 +478,31 @@ export default Vue.extend({
           const decimalsIn = await this.getDecimals(inputToken)
           const decimalsOut = await this.getDecimals(outputToken)
 
+          // Checking if the pair for these two tokens already exists.
+          // If it doesn't, then the amount of other token cannot be auto-estimated,
+          // and a warning will be shown about being the first provider in that pool.
+          let pairAddress : string = ""
+          try {
+            pairAddress = await factoryContract.getPair(inputToken, outputToken)
+            this.pairAlreadyExists = true
+          }
+          catch (err) {
+            this.pairAlreadyExists = false
+            this.isEstimationLoading = false
+            return
+          }
+          if (pairAddress == '0x0000000000000000000000000000000000000000') {
+            this.pairAlreadyExists = false
+            this.isEstimationLoading = false
+            return
+          }
 
-          const pairAddress = await factoryContract.getPair(inputToken, outputToken)
           const pairContract = new ethers.Contract(pairAddress, PADSWAP_PAIR_ABI, this.multicall)
 
           // @ts-ignore-next-line
           const pairData = await this.getPairData(pairAddress)
 
           const reserves = await pairContract.getReserves()          
-
 
           const token0Amount : number = parseFloat(ethers.utils.formatUnits(reserves._reserve0, pairData.token0.decimals))
           const token1Amount : number = parseFloat(ethers.utils.formatUnits(reserves._reserve1, pairData.token1.decimals))
