@@ -448,12 +448,12 @@ export default Vue.extend({
 
           // Not doing anything if the input amount is zero
           if ((parseFloat(0 + this.amountTokenA) == 0 && this.estimationMode == 0)) {
-            this.amountTokenB = ''
+            // this.amountTokenB = ''
             this.isEstimationLoading = false
             return
           }
           if ((parseFloat(0 + this.amountTokenB) == 0 && this.estimationMode == 1)) {
-            this.amountTokenA = ''
+            // this.amountTokenA = ''
             this.isEstimationLoading = false
             return
           }
