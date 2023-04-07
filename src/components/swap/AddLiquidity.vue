@@ -510,11 +510,12 @@ export default Vue.extend({
           let estimationTokenA = token0Amount / token1Amount // How much tokenA you will get for one tokenB
           let estimationTokenB = token1Amount / token0Amount // How much tokenB you will get for one tokenA
           
-          if (pairData.token0.address != inputToken) {
+          if (pairData.token0.address.toLowerCase() != inputToken.toLowerCase()) {
             const tmp = estimationTokenB
             estimationTokenB = estimationTokenA
             estimationTokenA = tmp
           }
+
 
           if (this.estimationMode == 1) {
             const totalEstimation = estimationTokenA * parseFloat(this.amountTokenB)
