@@ -804,6 +804,7 @@ export default Vue.extend({
           // Finding the best route
           const isExactInMode = (tokenToEstimate == 'output' ? true : false)
           const tokenAmountBn = (tokenToEstimate == 'output' ? amountInBn : amountOutBn)
+
           const bestResult = await this.findBestRoute(tokenAmountBn, inputToken, outputToken, isExactInMode)
           this.swapRoute = bestResult.route
           this.getRouteDetails(bestResult.route).then((res : any) => this.swapRouteDetails = res)
@@ -952,27 +953,39 @@ export default Vue.extend({
             possibleRoutes.push([inputTokenAddress, routingToken.address, outputTokenAddress])
           }
 
+          var amountTmp = ethers.utils.formatEther(amountBn)
+          amountBn = ethers.utils.parseEther(amountTmp)
+
+          // amountBn = ethers.utils.formatUnits(inputAmount.toFixed(this.decimalsIn).toString()
+
           // Calculating resulting prices for all routes
           const promises : any = [routerContract.WETH()]
-          const results : any = []
+          const results : Array<any> = []
           for (const route of possibleRoutes) {
             if (exactIn == true) { // "Exact input" mode
               const p = routerContract.getAmountsOut(amountBn, route).then((res : any) => {
-                var amountOut = res[res.length - 1]
-                results.push({
-                  "route": route,
-                  "price": amountOut
-                })
+                try {
+                  var amountOut = res[res.length - 1]
+                  results.push({
+                    "route": route,
+                    "price": amountOut
+                  })
+                }
+                catch {}
               })
               promises.push(p)
             }
             else { // "Exact output" mode
               const p = routerContract.getAmountsIn(amountBn, route).then((res : any) => {
-                var amountIn = res[0]
-                results.push({
+                try {
+                  var amountIn = res[0]
+                  results.push({
                   "route": route,
                   "price": amountIn
-                })
+                  })
+                }
+                catch {}
+                
               })
               promises.push(p)
             } 
@@ -980,9 +993,17 @@ export default Vue.extend({
 
           // This construction is needed to ensure that the code keeps running
           // even if the contract shits itself during one of the estimations
-          try {
-            await Promise.all(promises)
-          } catch (err) {}
+          for (const p of promises) {
+            try { await p }
+            catch(err) {}
+          }
+
+          for (const p of promises) {
+            try {
+              const res = await p
+            }
+            catch(err) {}
+          }
 
           // Indentifying the best swap route
           let bestRoute = results[0] // The "default" route is the direct "TokenA->TokenB" route
@@ -1063,6 +1084,8 @@ export default Vue.extend({
               this.userAddress,
               this.txDeadline)
 
+            console.log(tx)
+
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
 
@@ -1076,6 +1099,8 @@ export default Vue.extend({
               this.swapRoute,
               this.userAddress,
               this.txDeadline)
+
+            console.log(tx)
 
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
@@ -1097,6 +1122,8 @@ export default Vue.extend({
               this.userAddress,
               this.txDeadline)
 
+            console.log(tx)
+
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
 
@@ -1105,12 +1132,14 @@ export default Vue.extend({
             const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
             const weth = await routerContract.WETH()
 
-            const tx = await routerContract.populateTransaction.swapExactTokensForETH(
+            const tx = await routerContract.populateTransaction.swapTokensForExactETH(
               this.outputAmountBn,
               this.maximumInBn,
               this.swapRoute,
               this.userAddress,
               this.txDeadline)
+
+            console.log(tx)
 
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
@@ -1133,6 +1162,8 @@ export default Vue.extend({
 
             tx.value = this.inputAmountBn
 
+            console.log(tx)
+
             const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
 
@@ -1148,6 +1179,8 @@ export default Vue.extend({
             this.txDeadline)
 
           tx.value = this.maximumInBn
+
+          console.log(tx)
 
           const txReceipt: ethers.providers.TransactionReceipt | false = await this.safeSendTransaction({ tx, targetChainId: this.chainId })
         },
