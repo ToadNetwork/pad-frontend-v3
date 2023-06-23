@@ -227,7 +227,8 @@ export default Vue.extend({
         return true
       }
       else {
-        return parseFloat(this.removeAmount!.toString()) <= parseFloat(this.pairData.allowance)
+        const allowance = ethers.utils.formatEther(this.pairData.allowance)
+        return parseFloat(this.removeAmount!.toString()) <= parseFloat(allowance)
       }
     },
     ...mapState(['web3'])
