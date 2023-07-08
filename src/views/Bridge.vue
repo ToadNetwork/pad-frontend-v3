@@ -17,7 +17,18 @@
       </v-btn>
     </template>
   </v-snackbar>
-  <v-container style="max-width: 600px">
+
+  <v-container style="max-width: 800px">
+    <div class="warning">
+      <h3>Attention!</h3>
+      <br>
+      <p>The bridge is currently disabled due to an exploit on Multichain's side.</p>
+      <p>You can keep track of updates here:
+        <a href="https://twitter.com/MultichainOrg">https://twitter.com/MultichainOrg</a></p>
+    </div>
+  </v-container>
+
+<!--   <v-container style="max-width: 600px">
     <v-dialog
       v-model="showOperationDialog"
       :persistent="operationInProgress"
@@ -272,7 +283,7 @@
         </v-timeline>
       </v-card>
     </v-dialog>
-  </v-container>
+  </v-container> -->
 </div>
 </template>
 <script lang="ts">
@@ -910,6 +921,11 @@ export default Vue.extend({
 }
 
 
+.warning {
+  background: #ac762269 !important;
+  border-radius: 20px;
+  padding: 20px;
+}
 
 .stats-caption {
   color: rgb(155 107 254);
