@@ -107,7 +107,29 @@
       </div>
 
       <br>
-
+      
+      <v-card
+      elevation="0"
+      color="transparent">
+        <v-row>
+          <v-col
+          style="margin: 0; padding: 0; margin-top: 5px;"
+          cols="6">
+            Slippage tolerance
+          </v-col>
+          <v-col
+          style="margin: 0; padding: 0;"
+          cols="6">
+            <v-text-field
+            style="max-width: 70px;"
+            solo-inverted
+            dense
+            v-model="slippageTolerance"
+            suffix="%">
+            </v-text-field>
+          </v-col>
+        </v-row>
+      </v-card>
 
 
 
@@ -254,6 +276,8 @@ export default Vue.extend({
     mixins: [tokenInfo],
     data() {
       return {
+        slippageTolerance: <string> '1',
+        
         isEstimationLoading: <boolean> false,
 
         pairsOwnedByUser: <any> [],
@@ -596,13 +620,15 @@ export default Vue.extend({
 
         // Adds TokenA-TokenB liquidity
         async addLiquidityTokens() {
-            const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
+          const routerContract = new ethers.Contract(this.routerContractAddress, SWAP_ROUTER_ABI, this.multicall)
 
-            const amountADesired = ethers.utils.parseEther(this.amountTokenA)
-            const amountBDesired = ethers.utils.parseEther(this.amountTokenB)
+          const amountADesired = ethers.utils.parseEther(this.amountTokenA)
+          const amountBDesired = ethers.utils.parseEther(this.amountTokenB)
 
-            const amountAMin = ethers.utils.parseEther('0')
-            const amountBMin = ethers.utils.parseEther('0')
+          const minimumPercentage = 100 - parseInt(this.slippageTolerance)
+
+            const amountAMin = amountADesired.mul(minimumPercentage).div(100)
+            const amountBMin = amountBDesired.mul(minimumPercentage).div(100)
 
             const tx = await routerContract.populateTransaction.addLiquidity(
               this.tokenA.address,
@@ -629,8 +655,10 @@ export default Vue.extend({
             const amountETHDesired = ethers.utils.parseEther(this.amountTokenA)
             const amountTokenDesired = ethers.utils.parseEther(this.amountTokenB)
 
-            const amountETHMin = ethers.utils.parseEther('0')
-            const amountTokenMin = ethers.utils.parseEther('0')
+            const minimumPercentage = 100 - parseInt(this.slippageTolerance)
+
+            const amountETHMin = amountETHDesired.mul(minimumPercentage).div(100)
+            const amountTokenMin = amountTokenDesired.mul(minimumPercentage).div(100)
 
             const tx = await routerContract.populateTransaction.addLiquidityETH(
               this.tokenB.address,
